@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:forzado/core/app_colors.dart';
 import 'package:forzado/models/onboarding%20.dart';
 import 'package:forzado/pages/login_page.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class OnBoardigpage extends StatefulWidget {
   const OnBoardigpage({super.key});
@@ -109,11 +110,13 @@ class _OnBoardigpageState extends State<OnBoardigpage> {
                       )),
                 ),
                 GestureDetector(
-                  onTap: () {
+                  onTap: () async {
                     _pageController.nextPage(
                         duration: const Duration(seconds: 1),
                         curve: Curves.decelerate);
                     if (currentIndex == 2) {
+                      final prefs = await SharedPreferences.getInstance();
+                      await prefs.setBool('aceptOm', true);
                       final route =
                           MaterialPageRoute(builder: (_) => const LoginPage());
                       Navigator.push(context, route);
@@ -125,9 +128,9 @@ class _OnBoardigpageState extends State<OnBoardigpage> {
                     decoration: BoxDecoration(
                         color: AppColors.primaryColor,
                         borderRadius: BorderRadius.circular(20)),
-                    child: const Text(
-                      'Siguiente',
-                      style: TextStyle(
+                    child: Text(
+                      currentIndex == 2 ? 'Aceptar' : 'Siguiente',
+                      style: const TextStyle(
                         color: Colors.white,
                         letterSpacing: 2,
                       ),

@@ -5,6 +5,7 @@ import 'package:forzado/core/app_colors.dart';
 import 'package:forzado/models/login.dart';
 import 'package:forzado/pages/home_page.dart';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -36,7 +37,6 @@ class _LoginPageState extends State<LoginPage> {
     setState(() {
       isLoading = false;
     });
-    print(response.body);
     return ApiResponse.fromJson(json.decode(response.body));
   }
 
@@ -95,6 +95,10 @@ class _LoginPageState extends State<LoginPage> {
                             final res = await login(_usernameController.text,
                                 _passwordController.text);
                             if (res.success) {
+                              final prefs =
+                                  await SharedPreferences.getInstance();
+                              prefs.setBool('logged', true);
+
                               final route = MaterialPageRoute(
                                   builder: (_) => const Home());
                               Navigator.push(context, route);

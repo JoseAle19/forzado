@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:forzado/core/app_colors.dart';
+import 'package:forzado/pages/home_page.dart';
+import 'package:forzado/pages/login_page.dart';
 import 'package:forzado/pages/onboardig.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -10,13 +13,25 @@ class SplashScreen extends StatefulWidget {
 }
 
 class _SplashScreenState extends State<SplashScreen> {
-  void _nextPage() {
-    MaterialPageRoute route =
-        MaterialPageRoute(builder: (_) => OnBoardigpage());
+  void _nextPage() async {
+    final prefs = await SharedPreferences.getInstance();
+
+    final bool? hasAcceptedOnboarding = prefs.getBool('aceptOm');
+    final bool? isUserLoggedIn = prefs.getBool('logged');
+
+    Widget nextPage;
+
+    if (hasAcceptedOnboarding == true) {
+      nextPage = isUserLoggedIn == true ? Home() : LoginPage();
+    } else {
+      nextPage = const OnBoardigpage();
+    }
 
     Future.delayed(const Duration(seconds: 1), () {
-      print('Pasar ala siguiente pantalla');
-      Navigator.pushReplacement(context, route);
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (_) => nextPage),
+      );
     });
   }
 
