@@ -22,7 +22,7 @@ class _SplashScreenState extends State<SplashScreen> {
     Widget nextPage;
 
     if (hasAcceptedOnboarding == true) {
-      nextPage = isUserLoggedIn == true ? Home() : LoginPage();
+      nextPage = isUserLoggedIn == true ? Home() : Home();
     } else {
       nextPage = const OnBoardigpage();
     }
