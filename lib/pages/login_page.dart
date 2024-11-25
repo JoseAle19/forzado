@@ -2,9 +2,12 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:forzado/core/app_colors.dart';
+import 'package:forzado/core/urls.dart';
+import 'package:forzado/models/jwt_model.dart';
 import 'package:forzado/models/login.dart';
 import 'package:forzado/pages/home_page.dart';
 import 'package:http/http.dart' as http;
+import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginPage extends StatefulWidget {
@@ -38,6 +41,21 @@ class _LoginPageState extends State<LoginPage> {
       isLoading = false;
     });
     return ApiResponse.fromJson(json.decode(response.body));
+  }
+
+  void decodeAndSaveData(ApiResponse res) async {
+    final prefs = await SharedPreferences.getInstance();
+
+    JwtModel decodedToken = JwtDecoder.decode(res.token!) as JwtModel;
+
+    prefs.setBool('logged', true);
+  prefs.setString('username', decodedToken.email);
+
+    bool hasExpired = JwtDecoder.isExpired(res.token!);
+    if (hasExpired) {
+      final route = MaterialPageRoute(builder: (_) => LoginPage());
+      Navigator.push(context, route);
+    }
   }
 
   @override
@@ -92,13 +110,11 @@ class _LoginPageState extends State<LoginPage> {
                         ),
                         GestureDetector(
                           onTap: () async {
-                            final res = await login(_usernameController.text,
+                            ApiResponse res = await login(
+                                _usernameController.text,
                                 _passwordController.text);
                             if (res.success) {
-                              final prefs =
-                                  await SharedPreferences.getInstance();
-                              prefs.setBool('logged', true);
-
+                              decodeAndSaveData(res);
                               final route = MaterialPageRoute(
                                   builder: (_) => const Home());
                               Navigator.push(context, route);
