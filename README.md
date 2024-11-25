@@ -1,3 +1,3 @@
 # Inspección App
 
-Desarrollada por José Alejandro
+Desarrollado by José Alejandro
