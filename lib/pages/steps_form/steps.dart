@@ -1,7 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:forzado/widgets/custom_ropdown_button.dart';
+import 'package:forzado/widgets/line_step.dart';
 
-class Steps extends StatelessWidget {
+class Steps extends StatefulWidget {
   const Steps({super.key});
+
+  @override
+  State<Steps> createState() => _StepsState();
+}
+
+class _StepsState extends State<Steps> {
+int currentStep = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -24,7 +33,7 @@ class Steps extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               // Linea de los steps
-              LineSteps(),
+              CustomStepper(),
               // Titulo de las inspecciones
               const Padding(
                 padding: EdgeInsets.symmetric(vertical: 20),
@@ -98,91 +107,6 @@ class Steps extends StatelessWidget {
           ),
         ),
       ),
-    );
-  }
-}
-
-// ignore: must_be_immutable
-class LineSteps extends StatelessWidget {
-  List steps = [1, 2, 3];
-
-  LineSteps({super.key});
-  @override
-  Widget build(BuildContext context) {
-    return SizedBox(
-      width: double.infinity,
-      child: Stack(
-        alignment: Alignment.center,
-        children: [
-          const SizedBox(
-            width: double.infinity,
-            child: Divider(
-              color: Colors.grey,
-              thickness: 5,
-            ),
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [for (var step in steps) _iconText(step)],
-          )
-        ],
-      ),
-    );
-  }
-
-  Widget _iconText(int index) {
-    return Container(
-      height: 50,
-      width: 50,
-      decoration:
-          const BoxDecoration(shape: BoxShape.circle, color: Color(0xffA6A5A5)),
-      child: Center(
-        child: Text(
-            style: const TextStyle(color: Colors.white, fontFamily: 'noto'),
-            index.toString()),
-      ),
-    );
-  }
-}
-
-class CustomDropDownButton extends StatelessWidget {
-  const CustomDropDownButton(
-      {super.key, required this.descriptionField, required this.hintText});
-  final String descriptionField;
-  final String hintText;
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const SizedBox(
-          height: 20,
-        ),
-        Text(descriptionField),
-        DropdownButtonFormField(
-            value: null,
-            hint: SizedBox(
-                width: MediaQuery.of(context).size.width * 0.7,
-                child: Text(
-                  hintText,
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                )),
-            items: const [
-              DropdownMenuItem(
-                  value: 'opc1', child: Text('Prefijo del Tag o Sub Área')),
-              DropdownMenuItem(value: 'opc2', child: Text('Opcion 2')),
-            ],
-            validator: (value) {
-              if (value!.isEmpty) {
-                return 'Selecciona una opción';
-              }
-              return null;
-            },
-            onChanged: (value) {
-              print(value);
-            }),
-      ],
     );
   }
 }
