@@ -28,17 +28,24 @@ class Steps extends StatelessWidget {
               const Padding(
                 padding: const EdgeInsets.symmetric(vertical: 20),
                 child: const Text(
-                  'Identificación de la Tarea',
+                  'Tag y Subfijo',
                   style: TextStyle(
-                      fontSize: 18, fontFamily: 'noto', color: Colors.black),
+                      fontSize: 18, fontFamily: 'noto', color: Color(0xff0F2851)),
                 ),
               ),
               // DropDown Buttons
               const CustomDropDownButton(
-                descriptionField: 'Gerencia:',
+                hintText: 'Prefijo del Tag o Sub Área',
+                descriptionField: 'Tag (Prefijo)*',
               ),
               const CustomDropDownButton(
-                descriptionField: 'Superintendencia:',
+                hintText: 'Parte Central  del Tag Asoc. al instrumento o Equipo',
+                descriptionField: 'Tag (Centro) *',
+              ),
+             
+              const CustomDropDownButton(
+                hintText: 'SubFijo del Tag' ,
+                descriptionField: 'Tag (Sub Fijo) *',
               ),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -46,32 +53,39 @@ class Steps extends StatelessWidget {
                   const SizedBox(
                     height: 15,
                   ),
-                  const Text('Supervisor Responsable del Trabajo'),
-                  TextFormField(
-                    decoration: const InputDecoration(
-                      hintText: 'Supervisor ',
-                    ),
-                  ),
-                ],
-              ),
-              const CustomDropDownButton(
-                descriptionField: 'Lider de Equipo de Trabajo:',
-              ),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const SizedBox(
-                    height: 15,
-                  ),
-                  const Text('Descripción de la Tarea'),
+                  const Text('Descripción *'),
                   TextFormField(
                     maxLines: 5,
                     decoration: InputDecoration(
-                      hintText: 'Supervisor ',
+                      hintText: 'Agregar descripción',
                     ),
                   ),
                 ],
               ),
+
+
+              const CustomDropDownButton(
+                hintText: 'Disciplina que solicita el Forzado' ,
+                descriptionField: 'Disciplina *',
+              ),
+
+              const CustomDropDownButton(
+                hintText: 'Disciplina que solicita el Forzado' ,
+                descriptionField: 'Turno *',
+              ),
+
+
+              Container(
+                alignment: Alignment.center,
+                color: const Color(0xff009283),
+                padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 40),
+                margin: const EdgeInsets.symmetric(vertical: 20),
+                child: const Text('Continuar', style: TextStyle(
+                  fontSize: 18,
+                  fontFamily: 'noto',
+                  color: Colors.white,
+                ),),
+              )
             ],
           ),
         ),
@@ -87,12 +101,12 @@ class LineSteps extends StatelessWidget {
   LineSteps({super.key});
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return SizedBox(
       width: double.infinity,
       child: Stack(
         alignment: Alignment.center,
         children: [
-          Container(
+          const SizedBox(
             width: double.infinity,
             child: Divider(
               color: Colors.grey,
@@ -124,8 +138,9 @@ class LineSteps extends StatelessWidget {
 }
 
 class CustomDropDownButton extends StatelessWidget {
-  const CustomDropDownButton({super.key, required this.descriptionField});
+  const CustomDropDownButton({super.key, required this.descriptionField, required this.hintText});
   final String descriptionField;
+  final String hintText;
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -136,10 +151,10 @@ class CustomDropDownButton extends StatelessWidget {
         ),
         Text(descriptionField),
         DropdownButtonFormField(
-            value: 'opc1',
-            hint: const Text('Selecciona una opcion'),
+            value: null,
+            hint:   Text(hintText),
             items: const [
-              DropdownMenuItem(value: 'opc1', child: Text('Opcion 1')),
+              DropdownMenuItem(value: 'opc1', child: Text('Prefijo del Tag o Sub Área')),
               DropdownMenuItem(value: 'opc2', child: Text('Opcion 2')),
             ],
             validator: (value) {
