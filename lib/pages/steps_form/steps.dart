@@ -7,10 +7,11 @@ class Steps extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        leading:
-             IconButton(onPressed: (){
+        leading: IconButton(
+            onPressed: () {
               Navigator.pop(context);
-             }, icon: const  Icon(Icons.arrow_back_ios)),
+            },
+            icon: const Icon(Icons.arrow_back_ios)),
         title: const Text(
           'IPERC',
           style: TextStyle(fontFamily: 'noto'),
@@ -26,11 +27,13 @@ class Steps extends StatelessWidget {
               LineSteps(),
               // Titulo de las inspecciones
               const Padding(
-                padding: const EdgeInsets.symmetric(vertical: 20),
-                child: const Text(
+                padding: EdgeInsets.symmetric(vertical: 20),
+                child: Text(
                   'Tag y Subfijo',
                   style: TextStyle(
-                      fontSize: 18, fontFamily: 'noto', color: Color(0xff0F2851)),
+                      fontSize: 18,
+                      fontFamily: 'noto',
+                      color: Color(0xff0F2851)),
                 ),
               ),
               // DropDown Buttons
@@ -39,12 +42,13 @@ class Steps extends StatelessWidget {
                 descriptionField: 'Tag (Prefijo)*',
               ),
               const CustomDropDownButton(
-                hintText: 'Parte Central  del Tag Asoc. al instrumento o Equipo',
+                hintText:
+                    'Parte Central  del Tag Asoc. al instrumento o Equipo',
                 descriptionField: 'Tag (Centro) *',
               ),
-             
+
               const CustomDropDownButton(
-                hintText: 'SubFijo del Tag' ,
+                hintText: 'SubFijo del Tag',
                 descriptionField: 'Tag (Sub Fijo) *',
               ),
               Column(
@@ -56,35 +60,39 @@ class Steps extends StatelessWidget {
                   const Text('Descripción *'),
                   TextFormField(
                     maxLines: 5,
-                    decoration: InputDecoration(
+                    decoration: const InputDecoration(
                       hintText: 'Agregar descripción',
                     ),
                   ),
                 ],
               ),
 
-
               const CustomDropDownButton(
-                hintText: 'Disciplina que solicita el Forzado' ,
+                hintText: 'Disciplina que solicita el Forzado',
                 descriptionField: 'Disciplina *',
               ),
 
               const CustomDropDownButton(
-                hintText: 'Disciplina que solicita el Forzado' ,
+                hintText: 'Disciplina que solicita el Forzado',
                 descriptionField: 'Turno *',
               ),
 
-
               Container(
                 alignment: Alignment.center,
-                color: const Color(0xff009283),
-                padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 40),
+                decoration: BoxDecoration(
+                    color: const Color(0xff009283),
+                    borderRadius: BorderRadius.circular(15)),
+                padding:
+                    const EdgeInsets.symmetric(vertical: 10, horizontal: 40),
                 margin: const EdgeInsets.symmetric(vertical: 20),
-                child: const Text('Continuar', style: TextStyle(
-                  fontSize: 18,
-                  fontFamily: 'noto',
-                  color: Colors.white,
-                ),),
+                child: const Text(
+                  'Continuar',
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontFamily: 'noto',
+                    color: Colors.white,
+                  ),
+                ),
               )
             ],
           ),
@@ -127,10 +135,10 @@ class LineSteps extends StatelessWidget {
       height: 50,
       width: 50,
       decoration:
-          BoxDecoration(shape: BoxShape.circle, color: Color(0xffA6A5A5)),
+          const BoxDecoration(shape: BoxShape.circle, color: Color(0xffA6A5A5)),
       child: Center(
         child: Text(
-            style: TextStyle(color: Colors.white, fontFamily: 'noto'),
+            style: const TextStyle(color: Colors.white, fontFamily: 'noto'),
             index.toString()),
       ),
     );
@@ -138,7 +146,8 @@ class LineSteps extends StatelessWidget {
 }
 
 class CustomDropDownButton extends StatelessWidget {
-  const CustomDropDownButton({super.key, required this.descriptionField, required this.hintText});
+  const CustomDropDownButton(
+      {super.key, required this.descriptionField, required this.hintText});
   final String descriptionField;
   final String hintText;
   @override
@@ -152,9 +161,16 @@ class CustomDropDownButton extends StatelessWidget {
         Text(descriptionField),
         DropdownButtonFormField(
             value: null,
-            hint:   Text(hintText),
+            hint: SizedBox(
+                width: MediaQuery.of(context).size.width * 0.7,
+                child: Text(
+                  hintText,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                )),
             items: const [
-              DropdownMenuItem(value: 'opc1', child: Text('Prefijo del Tag o Sub Área')),
+              DropdownMenuItem(
+                  value: 'opc1', child: Text('Prefijo del Tag o Sub Área')),
               DropdownMenuItem(value: 'opc2', child: Text('Opcion 2')),
             ],
             validator: (value) {
