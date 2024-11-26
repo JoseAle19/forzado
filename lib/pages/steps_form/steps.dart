@@ -8,8 +8,10 @@ class Steps extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         leading:
-            const IconButton(onPressed: null, icon: Icon(Icons.arrow_back_ios)),
-        title: Text(
+             IconButton(onPressed: (){
+              Navigator.pop(context);
+             }, icon: const  Icon(Icons.arrow_back_ios)),
+        title: const Text(
           'IPERC',
           style: TextStyle(fontFamily: 'noto'),
         ),

@@ -31,7 +31,9 @@ dependencies:
   cupertino_icons: ^1.0.6
   flutter:
     sdk: flutter
+  flutter_svg: ^2.0.15
   http: ^1.2.2
+  jwt_decoder: ^2.0.1
   shared_preferences: ^2.3.3
 
 dev_dependencies:
@@ -53,6 +55,7 @@ flutter:
   assets:
     - assets/logos/
     - assets/onboarding/
+    - assets/svgs/
     - assets/
 
   # An image asset can refer to one or more resolution-specific "variants", see
