@@ -33,7 +33,7 @@ class _LoginPageState extends State<LoginPage> {
     });
 
     final response = await http.post(
-      Uri.parse('https://sntps2jn-3001.brs.devtunnels.ms/api/mobile/auth'),
+      Uri.parse('${AppUrl.url}/api/mobile/auth'),
       headers: headers,
       body: body,
     );
