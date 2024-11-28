@@ -67,24 +67,22 @@ class _LoginPageState extends State<LoginPage> {
           SingleChildScrollView(
             child: Column(
               children: [
-                Flexible(
-                  child: Container(
-                    width: double.infinity,
-                    decoration: const BoxDecoration(
-                        image: DecorationImage(
-                            scale: 10,
-                            alignment: Alignment.topLeft,
-                            fit: BoxFit.cover,
-                            image: AssetImage('assets/login.png')),
-                        color: Colors.transparent,
-                        borderRadius: BorderRadius.only(
-                            bottomLeft: Radius.circular(100))),
-                  ),
+                Container(
+                  height: size.height * 0.7,
+                  width: double.infinity,
+                  decoration: const BoxDecoration(
+                      image: DecorationImage(
+                          scale: 10,
+                          alignment: Alignment.topLeft,
+                          fit: BoxFit.cover,
+                          image: AssetImage('assets/login.png')),
+                      color: Colors.transparent,
+                      borderRadius:
+                          BorderRadius.only(bottomLeft: Radius.circular(100))),
                 ),
                 Container(
                   width: double.infinity,
-                  // color: Colors.green,
-                  // height: size.height * 0.3,
+                  height: size.height * 0.3,
                   child: Padding(
                     padding: const EdgeInsets.all(20.0),
                     child: Column(

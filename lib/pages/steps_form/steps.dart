@@ -10,7 +10,7 @@ class Steps extends StatefulWidget {
 }
 
 class _StepsState extends State<Steps> {
-int currentStep = 0;
+  int currentStep = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -33,7 +33,7 @@ int currentStep = 0;
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               // Linea de los steps
-              CustomStepper(),
+              // CustomStepper(),
               // Titulo de las inspecciones
               const Padding(
                 padding: EdgeInsets.symmetric(vertical: 20),

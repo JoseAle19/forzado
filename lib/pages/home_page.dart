@@ -22,7 +22,7 @@ class _HomeState extends State<Home> {
   void getData() async {
     final prefs = await SharedPreferences.getInstance();
     setState(() {
-      user = prefs.getString('username')!;
+      user = prefs.getString('username') ?? 'usuario';
     });
   }
 
