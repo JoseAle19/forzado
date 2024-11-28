@@ -1,9 +1,30 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:forzado/pages/steps_form/steps.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-class Home extends StatelessWidget {
+class Home extends StatefulWidget {
   const Home({super.key});
+
+  @override
+  State<Home> createState() => _HomeState();
+}
+
+class _HomeState extends State<Home> {
+  String user = '';
+
+  @override
+  void initState() {
+    getData();
+    super.initState();
+  }
+
+  void getData() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      user = prefs.getString('username')!;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -11,8 +32,8 @@ class Home extends StatelessWidget {
         bottomNavigationBar: CustomBotttomNavigation(),
         appBar: AppBar(
           automaticallyImplyLeading: false,
-          title: const Text(
-            'Hola Jose@gmail.com',
+          title: Text(
+            'Hola ${user}',
             style: TextStyle(fontFamily: 'noto', fontWeight: FontWeight.bold),
           ),
           actions: const [
@@ -26,8 +47,9 @@ class Home extends StatelessWidget {
             physics: const BouncingScrollPhysics(),
             children: [
               GestureDetector(
-                onTap: (){
-                  final route = MaterialPageRoute(builder: (_)=>const Steps());
+                onTap: () {
+                  final route =
+                      MaterialPageRoute(builder: (_) => const Steps());
                   Navigator.push(context, route);
                 },
                 child: Container(

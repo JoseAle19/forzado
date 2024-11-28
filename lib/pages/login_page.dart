@@ -45,12 +45,12 @@ class _LoginPageState extends State<LoginPage> {
 
   void decodeAndSaveData(ApiResponse res) async {
     final prefs = await SharedPreferences.getInstance();
+    Map<String, dynamic> decodedToken = JwtDecoder.decode(res.token!);
 
-    JwtModel decodedToken = JwtDecoder.decode(res.token!) as JwtModel;
+    JwtModel jwtModel = JwtModel.fromJson(decodedToken);
 
     prefs.setBool('logged', true);
-  prefs.setString('username', decodedToken.email);
-
+    prefs.setString('username', jwtModel.email);
     bool hasExpired = JwtDecoder.isExpired(res.token!);
     if (hasExpired) {
       final route = MaterialPageRoute(builder: (_) => LoginPage());
@@ -67,23 +67,24 @@ class _LoginPageState extends State<LoginPage> {
           SingleChildScrollView(
             child: Column(
               children: [
-                Container(
-                  width: double.infinity,
-                  height: size.height * 0.7,
-                  decoration: const BoxDecoration(
-                      image: DecorationImage(
-                          scale: 10,
-                          alignment: Alignment.topLeft,
-                          fit: BoxFit.cover,
-                          image: AssetImage('assets/login.png')),
-                      color: Colors.transparent,
-                      borderRadius:
-                          BorderRadius.only(bottomLeft: Radius.circular(100))),
+                Flexible(
+                  child: Container(
+                    width: double.infinity,
+                    decoration: const BoxDecoration(
+                        image: DecorationImage(
+                            scale: 10,
+                            alignment: Alignment.topLeft,
+                            fit: BoxFit.cover,
+                            image: AssetImage('assets/login.png')),
+                        color: Colors.transparent,
+                        borderRadius: BorderRadius.only(
+                            bottomLeft: Radius.circular(100))),
+                  ),
                 ),
                 Container(
                   width: double.infinity,
                   // color: Colors.green,
-                  height: size.height * 0.3,
+                  // height: size.height * 0.3,
                   child: Padding(
                     padding: const EdgeInsets.all(20.0),
                     child: Column(
