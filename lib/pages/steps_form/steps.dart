@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:forzado/services/api_client.dart';
+import 'package:forzado/services/center_service.dart';
 import 'package:forzado/widgets/custom_ropdown_button.dart';
-import 'package:forzado/widgets/line_step.dart';
 
 class Steps extends StatefulWidget {
   const Steps({super.key});
@@ -11,6 +12,8 @@ class Steps extends StatefulWidget {
 
 class _StepsState extends State<Steps> {
   int currentStep = 0;
+
+  final CenterService centerService = new CenterService(ApiClient());
 
   @override
   Widget build(BuildContext context) {
@@ -32,9 +35,7 @@ class _StepsState extends State<Steps> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Linea de los steps
-              // CustomStepper(),
-              // Titulo de las inspecciones
+           
               const Padding(
                 padding: EdgeInsets.symmetric(vertical: 20),
                 child: Text(
@@ -46,7 +47,8 @@ class _StepsState extends State<Steps> {
                 ),
               ),
               // DropDown Buttons
-              const CustomDropDownButton(
+                CustomDropDownButton(
+                service: centerService,
                 hintText: 'Prefijo del Tag o Sub Área',
                 descriptionField: 'Tag (Prefijo)*',
               ),
