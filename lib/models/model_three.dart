@@ -1,23 +1,23 @@
 // To parse this JSON data, do
 //
-//     final riesgoAModel = riesgoAModelFromJson(jsonString);
+//     final modelThree = modelThreeFromJson(jsonString);
 
 import 'dart:convert';
 
-RiesgoAModel riesgoAModelFromJson(String str) => RiesgoAModel.fromJson(json.decode(str));
+ModelThree modelThreeFromJson(String str) => ModelThree.fromJson(json.decode(str));
 
-String riesgoAModelToJson(RiesgoAModel data) => json.encode(data.toJson());
+String modelThreeToJson(ModelThree data) => json.encode(data.toJson());
 
-class RiesgoAModel {
+class ModelThree {
     final bool success;
     final List<Value> values;
 
-    RiesgoAModel({
+    ModelThree({
         required this.success,
         required this.values,
     });
 
-    factory RiesgoAModel.fromJson(Map<String, dynamic> json) => RiesgoAModel(
+    factory ModelThree.fromJson(Map<String, dynamic> json) => ModelThree(
         success: json["success"],
         values: List<Value>.from(json["values"].map((x) => Value.fromJson(x))),
     );
@@ -30,20 +30,20 @@ class RiesgoAModel {
 
 class Value {
     final int id;
-    final String descripcion;
+    final String nombre;
 
     Value({
         required this.id,
-        required this.descripcion,
+        required this.nombre,
     });
 
     factory Value.fromJson(Map<String, dynamic> json) => Value(
-        id: json["id"],
-        descripcion: json["descripcion"],
+        id: json["id"] ??0000 ,
+        nombre: json["nombre"] ??'Sin informacion' ,
     );
 
     Map<String, dynamic> toJson() => {
         "id": id,
-        "descripcion": descripcion,
+        "nombre": nombre,
     };
 }

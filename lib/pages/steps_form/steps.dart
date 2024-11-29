@@ -1,7 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:forzado/core/urls.dart';
 import 'package:forzado/services/api_client.dart';
-import 'package:forzado/services/center_service.dart';
-import 'package:forzado/widgets/custom_ropdown_button.dart';
+import 'package:forzado/services/service_one.dart';
+import 'package:forzado/services/service_three.dart';
+import 'package:forzado/services/service_two.dart';
+import 'package:forzado/widgets/custom_dropdown_one.dart';
+import 'package:forzado/widgets/custom_dropdown_three.dart';
+import 'package:forzado/widgets/custom_dropdown_two.dart';
 
 class Steps extends StatefulWidget {
   const Steps({super.key});
@@ -12,8 +17,6 @@ class Steps extends StatefulWidget {
 
 class _StepsState extends State<Steps> {
   int currentStep = 0;
-
-  final CenterService centerService = new CenterService(ApiClient());
 
   @override
   Widget build(BuildContext context) {
@@ -32,23 +35,19 @@ class _StepsState extends State<Steps> {
         body: PageView(
           scrollDirection: Axis.horizontal,
           children: [
-            TabOne(
-              centerService: centerService,
-            ),
-            TabTwo(
-              centerService: centerService,
-            ),
-            TabThree(
-              centerService: centerService,
-            ),
+            TabOne(),
+            TabTwo(),
+            TabThree(),
           ],
         ));
   }
 }
 
+// ignore: must_be_immutable
 class TabOne extends StatelessWidget {
-  const TabOne({super.key, this.centerService});
-  final centerService;
+  TabOne({super.key});
+  ServiceOne serviceOne = ServiceOne(ApiClient());
+  ServiceTwo serviceTwo = ServiceTwo(ApiClient());
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -66,22 +65,19 @@ class TabOne extends StatelessWidget {
               ),
             ),
             // DropDown Buttons
-            CustomDropDownButton(
-              service: centerService,
+            CustomDropDownButtonOne(
+              endPoint: AppUrl.gettagPrefijo1,
+              service: serviceOne,
               hintText: 'Prefijo del Tag o Sub Área',
               descriptionField: 'Tag (Prefijo)*',
             ),
-            CustomDropDownButton(
-              service: centerService,
+            CustomDropDownButtonOne(
+              endPoint: AppUrl.getTagCentro1,
+              service: serviceOne,
               hintText: 'Parte Central  del Tag Asoc. al instrumento o Equipo',
               descriptionField: 'Tag (Centro) *',
             ),
-
-            CustomDropDownButton(
-              service: centerService,
-              hintText: 'SubFijo del Tag',
-              descriptionField: 'Tag (Sub Fijo) *',
-            ),
+         
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -98,14 +94,16 @@ class TabOne extends StatelessWidget {
               ],
             ),
 
-            CustomDropDownButton(
-              service: centerService,
+            CustomDropDownButtonTwo(
+              endPoint: AppUrl.getTagDisciplina2,
+              service: serviceTwo,
               hintText: 'Disciplina que solicita el Forzado',
               descriptionField: 'Disciplina *',
             ),
 
-            CustomDropDownButton(
-              service: centerService,
+            CustomDropDownButtonTwo(
+              endPoint: AppUrl.getTurno2,
+              service: serviceTwo,
               hintText: 'Disciplina que solicita el Forzado',
               descriptionField: 'Turno *',
             ),
@@ -133,9 +131,12 @@ class TabOne extends StatelessWidget {
   }
 }
 
+// ignore: must_be_immutable
 class TabTwo extends StatelessWidget {
-  const TabTwo({super.key, this.centerService});
-  final centerService;
+   TabTwo({super.key});
+  ServiceOne serviceOne = ServiceOne(ApiClient());
+  ServiceTwo serviceTwo = ServiceTwo(ApiClient());
+  ServiceThree serviceThree = ServiceThree(ApiClient());
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -153,36 +154,48 @@ class TabTwo extends StatelessWidget {
               ),
             ),
             // DropDown Buttons
-            CustomDropDownButton(
-              service: centerService,
-              descriptionField: 'Interlock Seguridad*',
-              hintText: 'Seleccion Interlock',
+            DropdownButtonFormField(
+              value: null,
+              hint: const Text('Requiere Interlock'),
+              items: const [
+                DropdownMenuItem(value: 'si', child: Text('Si')),
+                DropdownMenuItem(value: 'NO', child: Text('No')),
+              ],
+              onChanged: (value) {
+                // Todo: rear logica despues
+              },
             ),
-            CustomDropDownButton(
-              service: centerService,
+            CustomDropDownButtonThree(
+              endPoint: AppUrl.getResponsable3,
+              service: serviceThree,
               descriptionField: 'Responsable*',
               hintText: 'Seleccione Gerencia Responsable del Forzado',
             ),
 
-            CustomDropDownButton(
-              service: centerService,
+            CustomDropDownButtonTwo(
+              endPoint: AppUrl.getRiesgoA2,
+              service: serviceTwo,
               descriptionField: 'Riesgo A*',
               hintText: 'Riesgo',
             ),
 
-            CustomDropDownButton(
-              service: centerService,
+            CustomDropDownButtonTwo(
+              endPoint: AppUrl.getProbabilidad2,
+              service: serviceTwo,
               descriptionField: 'Probabilidad*',
               hintText: 'Categoria de Consecuencias',
             ),
 
-            CustomDropDownButton(
-              service: centerService,
+            CustomDropDownButtonTwo(
+              endPoint: AppUrl.getImpacto2,
+              service: serviceTwo,
               descriptionField: 'Impacto*',
               hintText: 'Seleccione Impacto de la Secuencia',
             ),
-            CustomDropDownButton(
-              service: centerService,
+            // esta esta pendiente
+            CustomDropDownButtonTwo(
+              endPoint: AppUrl.getRiesgoA2,
+              service: serviceTwo,
               descriptionField: 'Riesgo*',
               hintText: 'Riesgo',
             ),
@@ -209,9 +222,12 @@ class TabTwo extends StatelessWidget {
   }
 }
 
+// ignore: must_be_immutable
 class TabThree extends StatelessWidget {
-  const TabThree({super.key, this.centerService});
-  final centerService;
+   TabThree({super.key});
+  ServiceOne serviceOne = ServiceOne(ApiClient());
+  ServiceTwo serviceTwo = ServiceTwo(ApiClient());
+  ServiceThree serviceThree = ServiceThree(ApiClient());
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -229,31 +245,36 @@ class TabThree extends StatelessWidget {
               ),
             ),
             // DropDown Buttons
-            CustomDropDownButton(
-              service: centerService,
+            CustomDropDownButtonThree(
+              endPoint: AppUrl.getSolicitantes3,
+              service: serviceThree,
               descriptionField: 'Solicitante (AN) *',
               hintText: 'Seleccione Solicitante del Forzado',
             ),
-            CustomDropDownButton(
-              service: centerService,
+            CustomDropDownButtonThree(
+              endPoint: AppUrl.getResponsable3,
+              service: serviceThree,
               descriptionField: 'Aprobador *',
               hintText: 'Seleccione Aprobador del Forzado',
             ),
 
-            CustomDropDownButton(
-              service: centerService,
+            CustomDropDownButtonThree(
+              endPoint: AppUrl.getResponsable3,
+              service: serviceThree,
               descriptionField: 'Ejecutor *',
               hintText: 'Seleccione Ejecutor',
             ),
 
-            CustomDropDownButton(
-              service: centerService,
+            CustomDropDownButtonThree(
+              endPoint: AppUrl.getResponsable3,
+              service: serviceThree,
               descriptionField: 'Autorización *',
               hintText: 'Carlos Meneses Garcia',
             ),
 
-            CustomDropDownButton(
-              service: centerService,
+            CustomDropDownButtonThree(
+              endPoint: AppUrl.getResponsable3,
+              service: serviceThree,
               descriptionField: 'Tipo de Forzado*',
               hintText: 'Seleccione Tipo de Forzado',
             ),
