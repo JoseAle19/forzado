@@ -1,23 +1,23 @@
 // To parse this JSON data, do
 //
-//     final probabilityModel = probabilityModelFromJson(jsonString);
+//     final modelTwo = modelTwoFromJson(jsonString);
 
 import 'dart:convert';
 
-ProbabilityModel probabilityModelFromJson(String str) => ProbabilityModel.fromJson(json.decode(str));
+ModelTwo modelTwoFromJson(String str) => ModelTwo.fromJson(json.decode(str));
 
-String probabilityModelToJson(ProbabilityModel data) => json.encode(data.toJson());
+String modelTwoToJson(ModelTwo data) => json.encode(data.toJson());
 
-class ProbabilityModel {
+class ModelTwo {
     final bool success;
     final List<Value> values;
 
-    ProbabilityModel({
+    ModelTwo({
         required this.success,
         required this.values,
     });
 
-    factory ProbabilityModel.fromJson(Map<String, dynamic> json) => ProbabilityModel(
+    factory ModelTwo.fromJson(Map<String, dynamic> json) => ModelTwo(
         success: json["success"],
         values: List<Value>.from(json["values"].map((x) => Value.fromJson(x))),
     );
@@ -38,8 +38,8 @@ class Value {
     });
 
     factory Value.fromJson(Map<String, dynamic> json) => Value(
-        id: json["id"],
-        descripcion: json["descripcion"],
+        id: json["id"]?? 0000,
+        descripcion: json["descripcion"] ?? 'Sin informacion',
     );
 
     Map<String, dynamic> toJson() => {

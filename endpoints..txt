@@ -1,0 +1,14 @@
+ 
+activo Model One
+subarea Model One
+
+disciplina Model Two
+turno Model Two
+
+
+impacto Model Two
+motivo-rechazo Model Two
+probabilidad Model Two
+responsable Model Three
+riesgo-a Model Two
+tipo-forzado Model Two

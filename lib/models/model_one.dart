@@ -1,23 +1,23 @@
 // To parse this JSON data, do
 //
-//     final disciplineModel = disciplineModelFromJson(jsonString);
+//     final modelOne = modelOneFromJson(jsonString);
 
 import 'dart:convert';
 
-DisciplineModel disciplineModelFromJson(String str) => DisciplineModel.fromJson(json.decode(str));
+ModelOne modelOneFromJson(String str) => ModelOne.fromJson(json.decode(str));
 
-String disciplineModelToJson(DisciplineModel data) => json.encode(data.toJson());
+String modelOneToJson(ModelOne data) => json.encode(data.toJson());
 
-class DisciplineModel {
+class ModelOne {
     final bool success;
     final List<Value> values;
 
-    DisciplineModel({
+    ModelOne({
         required this.success,
         required this.values,
     });
 
-    factory DisciplineModel.fromJson(Map<String, dynamic> json) => DisciplineModel(
+    factory ModelOne.fromJson(Map<String, dynamic> json) => ModelOne(
         success: json["success"],
         values: List<Value>.from(json["values"].map((x) => Value.fromJson(x))),
     );
@@ -30,20 +30,24 @@ class DisciplineModel {
 
 class Value {
     final int id;
+    final String codigo;
     final String descripcion;
 
     Value({
         required this.id,
+        required this.codigo,
         required this.descripcion,
     });
 
     factory Value.fromJson(Map<String, dynamic> json) => Value(
-        id: json["id"],
-        descripcion: json["descripcion"],
+        id: json["id"] ??000,
+        codigo: json["codigo"] ??'Sin informacion',
+        descripcion: json["descripcion"] ??'Sin informacion',
     );
 
     Map<String, dynamic> toJson() => {
         "id": id,
+        "codigo": codigo,
         "descripcion": descripcion,
     };
 }
