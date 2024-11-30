@@ -2,9 +2,11 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:forzado/core/app_colors.dart';
+import 'package:forzado/models/jwt_model.dart';
 import 'package:forzado/models/login.dart';
 import 'package:forzado/pages/home_page.dart';
 import 'package:http/http.dart' as http;
+import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginPage extends StatefulWidget {
@@ -30,7 +32,7 @@ class _LoginPageState extends State<LoginPage> {
     });
 
     final response = await http.post(
-      Uri.parse('https://sntps2jn-3001.brs.devtunnels.ms/api/mobile/auth'),
+      Uri.parse('https://sntps2jn-3000.brs.devtunnels.ms/api/mobile/auth'),
       headers: headers,
       body: body,
     );
@@ -38,6 +40,21 @@ class _LoginPageState extends State<LoginPage> {
       isLoading = false;
     });
     return ApiResponse.fromJson(json.decode(response.body));
+  }
+
+  void decodeAndSaveData(ApiResponse res) async {
+    final prefs = await SharedPreferences.getInstance();
+    Map<String, dynamic> decodedToken = JwtDecoder.decode(res.token!);
+
+    JwtModel jwtModel = JwtModel.fromJson(decodedToken);
+
+    prefs.setBool('logged', true);
+    prefs.setString('username', jwtModel.email);
+    bool hasExpired = JwtDecoder.isExpired(res.token!);
+    if (hasExpired) {
+      final route = MaterialPageRoute(builder: (_) => LoginPage());
+      Navigator.push(context, route);
+    }
   }
 
   @override
@@ -50,8 +67,8 @@ class _LoginPageState extends State<LoginPage> {
             child: Column(
               children: [
                 Container(
-                  width: double.infinity,
                   height: size.height * 0.7,
+                  width: double.infinity,
                   decoration: const BoxDecoration(
                       image: DecorationImage(
                           scale: 10,
@@ -64,7 +81,6 @@ class _LoginPageState extends State<LoginPage> {
                 ),
                 Container(
                   width: double.infinity,
-                  // color: Colors.green,
                   height: size.height * 0.3,
                   child: Padding(
                     padding: const EdgeInsets.all(20.0),
@@ -82,6 +98,8 @@ class _LoginPageState extends State<LoginPage> {
                               hintText: 'Ingrese su usuario'),
                         ),
                         TextFormField(
+                          obscureText: true,
+                          keyboardType: TextInputType.text,
                           controller: _passwordController,
                           cursorColor: AppColors.primaryColor,
                           decoration: InputDecoration(
@@ -92,13 +110,11 @@ class _LoginPageState extends State<LoginPage> {
                         ),
                         GestureDetector(
                           onTap: () async {
-                            final res = await login(_usernameController.text,
+                            ApiResponse res = await login(
+                                _usernameController.text,
                                 _passwordController.text);
                             if (res.success) {
-                              final prefs =
-                                  await SharedPreferences.getInstance();
-                              prefs.setBool('logged', true);
-
+                              decodeAndSaveData(res);
                               final route = MaterialPageRoute(
                                   builder: (_) => const Home());
                               Navigator.push(context, route);
