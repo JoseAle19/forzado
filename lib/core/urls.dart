@@ -10,7 +10,7 @@ class AppUrl {
   static const String getTagCentro1 = "/api/maestras/activo";
 
   static const String getTagDisciplina2 = "/api/maestras/disciplina";
-  static const String getTurno2 = "/api/maestras/impacto";
+  static const String getTurno2 = "/api/maestras/turno";
   static const String getRechazo2 = "/api/maestras/motivo-rechazo";
   static const String getProbabilidad2 = "/api/maestras/probabilidad";
   static const String getRiesgoA2 = "/api/maestras/riesgo-a";
@@ -19,4 +19,9 @@ class AppUrl {
 
   static const String getResponsable3 = "/api/maestras/responsable";
   static const String getSolicitantes3 = "/api/usuarios";
+  static const String getEjecutor = "/api/usuarios";
+  static const String getAprobadores = "/api/usuarios/aprobadores";
+
+// Endpoitn de alta de forzado
+  static const String postAddForzado = "/api/solicitudes/alta";
 }

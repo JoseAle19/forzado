@@ -8,8 +8,7 @@ class CustomDropDownButtonTwo extends StatefulWidget {
       required this.descriptionField,
       required this.hintText,
       this.service,
-      required this.endPoint      
-      });
+      required this.endPoint});
   final String descriptionField;
   final String hintText;
   final ServiceTwo? service;
@@ -51,10 +50,10 @@ class _CustomDropDownButtonState extends State<CustomDropDownButtonTwo> {
           future: _futureModel,
           builder: (BuildContext context, AsyncSnapshot<ModelTwo> snapshot) {
             if (snapshot.hasError) {
-              return const  Text('Error al cargar los centros');
+              return const Text('Error al cargar los centros');
             }
             if (snapshot.connectionState == ConnectionState.waiting) {
-              return  const Center(child: CircularProgressIndicator());
+              return const Center(child: CircularProgressIndicator());
             }
             if (snapshot.data?.success == false) {
               return const Text(
@@ -76,7 +75,16 @@ class _CustomDropDownButtonState extends State<CustomDropDownButtonTwo> {
                     )),
                 items: items.map((item) {
                   return DropdownMenuItem(
-                      value: item.id.toString(), child: Text(item.descripcion));
+                      value: item.id.toString(),
+                      child: SizedBox(
+                        width: 200,
+                        child: Text(
+                          item.descripcion,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: const TextStyle(fontSize: 12),
+                        ),
+                      ));
                 }).toList(),
                 validator: (value) {
                   if (value!.isEmpty) {

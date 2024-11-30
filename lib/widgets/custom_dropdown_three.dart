@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
- import 'package:forzado/models/model_three.dart';
+import 'package:forzado/models/model_three.dart';
 import 'package:forzado/services/service_three.dart';
 
 class CustomDropDownButtonThree extends StatefulWidget {
@@ -8,15 +8,15 @@ class CustomDropDownButtonThree extends StatefulWidget {
       required this.descriptionField,
       required this.hintText,
       this.service,
-      required this.endPoint      
-      });
+      required this.endPoint});
   final String descriptionField;
   final String hintText;
   final ServiceThree? service;
   final String endPoint;
 
   @override
-  State<CustomDropDownButtonThree> createState() => _CustomDropDownButtonState();
+  State<CustomDropDownButtonThree> createState() =>
+      _CustomDropDownButtonState();
 }
 
 class _CustomDropDownButtonState extends State<CustomDropDownButtonThree> {
@@ -51,10 +51,10 @@ class _CustomDropDownButtonState extends State<CustomDropDownButtonThree> {
           future: _futureModel,
           builder: (BuildContext context, AsyncSnapshot<ModelThree> snapshot) {
             if (snapshot.hasError) {
-              return const  Text('Error al cargar los centros');
+              return const Text('Error al cargar los centros');
             }
             if (snapshot.connectionState == ConnectionState.waiting) {
-              return  const Center(child: CircularProgressIndicator());
+              return const Center(child: CircularProgressIndicator());
             }
             if (snapshot.data?.success == false) {
               return const Text(
@@ -76,7 +76,16 @@ class _CustomDropDownButtonState extends State<CustomDropDownButtonThree> {
                     )),
                 items: items.map((item) {
                   return DropdownMenuItem(
-                      value: item.id.toString(), child: Text(item.nombre));
+                      value: item.id.toString(),
+                      child: SizedBox(
+                        width: 200,
+                        child: Text(
+                          item.nombre,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: const TextStyle(fontSize: 12),
+                        ),
+                      ));
                 }).toList(),
                 validator: (value) {
                   if (value!.isEmpty) {
