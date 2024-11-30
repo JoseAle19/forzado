@@ -77,7 +77,7 @@ class TabOne extends StatelessWidget {
               hintText: 'Parte Central  del Tag Asoc. al instrumento o Equipo',
               descriptionField: 'Tag (Centro) *',
             ),
-         
+
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -133,7 +133,7 @@ class TabOne extends StatelessWidget {
 
 // ignore: must_be_immutable
 class TabTwo extends StatelessWidget {
-   TabTwo({super.key});
+  TabTwo({super.key});
   ServiceOne serviceOne = ServiceOne(ApiClient());
   ServiceTwo serviceTwo = ServiceTwo(ApiClient());
   ServiceThree serviceThree = ServiceThree(ApiClient());
@@ -224,7 +224,7 @@ class TabTwo extends StatelessWidget {
 
 // ignore: must_be_immutable
 class TabThree extends StatelessWidget {
-   TabThree({super.key});
+  TabThree({super.key});
   ServiceOne serviceOne = ServiceOne(ApiClient());
   ServiceTwo serviceTwo = ServiceTwo(ApiClient());
   ServiceThree serviceThree = ServiceThree(ApiClient());

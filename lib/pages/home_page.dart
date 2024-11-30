@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:forzado/pages/steps_form/steps.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:forzado/pages/remove_forzado/screen/home_page.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -81,33 +82,40 @@ class _HomeState extends State<Home> {
                   ),
                 ),
               ),
-              Container(
-                margin: const EdgeInsets.only(top: 20),
-                padding: const EdgeInsets.all(20),
-                width: double.infinity,
-                decoration: BoxDecoration(
-                    boxShadow: const [
-                      BoxShadow(
-                        color: Colors.black26,
-                        spreadRadius: 2.0,
-                        blurRadius: 5.0,
-                        offset: Offset(-2.0, 0),
+              GestureDetector(
+                onTap: () {
+                  final route =
+                      MaterialPageRoute(builder: (_) => const HomePageRemove());
+                  Navigator.push(context, route);
+                },
+                child: Container(
+                  margin: const EdgeInsets.only(top: 20),
+                  padding: const EdgeInsets.all(20),
+                  width: double.infinity,
+                  decoration: BoxDecoration(
+                      boxShadow: const [
+                        BoxShadow(
+                          color: Colors.black26,
+                          spreadRadius: 2.0,
+                          blurRadius: 5.0,
+                          offset: Offset(-2.0, 0),
+                        ),
+                      ],
+                      color: const Color(0xff8B280A),
+                      borderRadius: BorderRadius.circular(10)),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      SvgPicture.asset('assets/svgs/bank.svg'),
+                      const SizedBox(
+                        height: 5,
                       ),
+                      const Text(
+                        'Baja Forzado',
+                        style: TextStyle(color: Colors.white),
+                      )
                     ],
-                    color: const Color(0xff8B280A),
-                    borderRadius: BorderRadius.circular(10)),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    SvgPicture.asset('assets/svgs/bank.svg'),
-                    const SizedBox(
-                      height: 5,
-                    ),
-                    const Text(
-                      'Baja Forzado',
-                      style: TextStyle(color: Colors.white),
-                    )
-                  ],
+                  ),
                 ),
               ),
               Container(

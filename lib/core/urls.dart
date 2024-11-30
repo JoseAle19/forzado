@@ -19,4 +19,7 @@ class AppUrl {
 
   static const String getResponsable3 = "/api/maestras/responsable";
   static const String getSolicitantes3 = "/api/usuarios";
+
+  // Endpoints lista de forzados
+  static const String getListForzados = "/api/solicitudes/alta";
 }
