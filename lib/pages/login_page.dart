@@ -2,9 +2,11 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:forzado/core/app_colors.dart';
+import 'package:forzado/home_page.dart';
 import 'package:forzado/models/jwt_model.dart';
 import 'package:forzado/models/login.dart';
-import 'package:forzado/pages/home_page.dart';
+import 'package:forzado/pages/aprobador/home_approve.dart';
+import 'package:forzado/pages/ejecutor/home_executer.dart';
 import 'package:http/http.dart' as http;
 import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -45,16 +47,33 @@ class _LoginPageState extends State<LoginPage> {
   void decodeAndSaveData(ApiResponse res) async {
     final prefs = await SharedPreferences.getInstance();
     Map<String, dynamic> decodedToken = JwtDecoder.decode(res.token!);
-
     JwtModel jwtModel = JwtModel.fromJson(decodedToken);
 
+    void navigateHandleRole(int role) {
+      switch (role) {
+        case 1:
+          final route = MaterialPageRoute(builder: (_) => const HomePage());
+          Navigator.push(context, route);
+          break;
+        case 2:
+          final route = MaterialPageRoute(builder: (_) => const HomeApprove());
+          Navigator.push(context, route);
+          break;
+        case 3:
+          final route = MaterialPageRoute(builder: (_) => const HomeExecuter());
+          Navigator.push(context, route);
+          break;
+      }
+    }
+
     prefs.setBool('logged', true);
-    prefs.setString('username', jwtModel.email);
+    prefs.setString('username', jwtModel.name);
     bool hasExpired = JwtDecoder.isExpired(res.token!);
     if (hasExpired) {
       final route = MaterialPageRoute(builder: (_) => LoginPage());
       Navigator.push(context, route);
     }
+    navigateHandleRole(jwtModel.areaId);
   }
 
   @override
@@ -115,9 +134,9 @@ class _LoginPageState extends State<LoginPage> {
                                 _passwordController.text);
                             if (res.success) {
                               decodeAndSaveData(res);
-                              final route = MaterialPageRoute(
-                                  builder: (_) => const Home());
-                              Navigator.push(context, route);
+                              // final route = MaterialPageRoute(
+                              //     builder: (_) => const Home());
+                              // Navigator.push(context, route);
                             } else {
                               ScaffoldMessenger.of(context).showSnackBar(
                                   SnackBar(content: Text(res.message!)));

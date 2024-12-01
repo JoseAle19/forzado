@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:forzado/pages/login_page.dart';
 import 'package:forzado/pages/steps_form/step_form.dart';
 import 'package:forzado/pages/steps_form/steps.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -37,9 +38,18 @@ class _HomeState extends State<Home> {
             'Hola ${user}',
             style: TextStyle(fontFamily: 'noto', fontWeight: FontWeight.bold),
           ),
-          actions: const [
+          actions: [
+            const IconButton(
+                onPressed: null, icon: Icon(Icons.notifications_none_outlined)),
             IconButton(
-                onPressed: null, icon: Icon(Icons.notifications_none_outlined))
+                onPressed: () async {
+                  final prefs = await SharedPreferences.getInstance();
+                  prefs.clear();
+                  final route =
+                      MaterialPageRoute(builder: (_) => const LoginPage());
+                  Navigator.push(context, route);
+                },
+                icon: Icon(Icons.login_rounded))
           ],
         ),
         body: Padding(
@@ -117,40 +127,6 @@ class _HomeState extends State<Home> {
                 color: const Color(0xffD9D9D9),
                 width: double.infinity,
               ),
-              Container(
-                padding: const EdgeInsets.all(20),
-                width: double.infinity,
-                decoration: BoxDecoration(
-                    boxShadow: const [
-                      BoxShadow(
-                        color: Colors.black26,
-                        spreadRadius: 2.0,
-                        blurRadius: 5.0,
-                        offset: Offset(-2.0, 0),
-                      ),
-                    ],
-                    color: const Color(0xff2A508A),
-                    borderRadius: BorderRadius.circular(10)),
-                child: const Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Forzados Finalizados',
-                      style: TextStyle(color: Colors.white),
-                    ),
-                    SizedBox(
-                      height: 5,
-                    ),
-                    Text(
-                      '578',
-                      style: TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 22),
-                    )
-                  ],
-                ),
-              ),
               Row(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -175,7 +151,7 @@ class _HomeState extends State<Home> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            'Forzados Pendientes',
+                            'Pendientes Alta',
                             style: TextStyle(color: Colors.white),
                           ),
                           SizedBox(
@@ -212,7 +188,7 @@ class _HomeState extends State<Home> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            'Forzados Aprobados',
+                            'Pendientes Baja',
                             style: TextStyle(color: Colors.white),
                           ),
                           SizedBox(
@@ -231,41 +207,245 @@ class _HomeState extends State<Home> {
                   ),
                 ],
               ),
-              Container(
-                margin: const EdgeInsets.symmetric(vertical: 20),
-                padding:
-                    const EdgeInsets.symmetric(vertical: 40, horizontal: 20),
-                width: double.infinity,
-                decoration: BoxDecoration(
-                    boxShadow: const [
-                      BoxShadow(
-                        color: Colors.black26,
-                        spreadRadius: 2.0,
-                        blurRadius: 5.0,
-                        offset: Offset(-2.0, 0),
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Expanded(
+                    child: Container(
+                      margin: const EdgeInsets.only(top: 20, right: 5),
+                      padding: const EdgeInsets.symmetric(
+                          vertical: 40, horizontal: 20),
+                      decoration: BoxDecoration(
+                          boxShadow: const [
+                            BoxShadow(
+                              color: Colors.black26,
+                              spreadRadius: 2.0,
+                              blurRadius: 5.0,
+                              offset: Offset(-2.0, 0),
+                            ),
+                          ],
+                          color: const Color(0xffCA811A),
+                          borderRadius: BorderRadius.circular(10)),
+                      child: const Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Aprobado Alta',
+                            style: TextStyle(color: Colors.white),
+                          ),
+                          SizedBox(
+                            height: 5,
+                          ),
+                          Text(
+                            '12',
+                            style: TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 22),
+                          )
+                        ],
                       ),
-                    ],
-                    color: const Color(0xff4286AF),
-                    borderRadius: BorderRadius.circular(10)),
-                child: const Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Forzados Rechazados',
-                      style: TextStyle(color: Colors.white),
                     ),
-                    SizedBox(
-                      height: 5,
+                  ),
+                  Expanded(
+                    child: Container(
+                      margin: const EdgeInsets.only(top: 20, left: 5),
+                      padding: const EdgeInsets.symmetric(
+                          vertical: 40, horizontal: 20),
+                      decoration: BoxDecoration(
+                          boxShadow: const [
+                            BoxShadow(
+                              color: Colors.black26,
+                              spreadRadius: 2.0,
+                              blurRadius: 5.0,
+                              offset: Offset(-2.0, 0),
+                            ),
+                          ],
+                          color: const Color(0xff3D8566),
+                          borderRadius: BorderRadius.circular(10)),
+                      child: const Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Aprobado Baja',
+                            style: TextStyle(color: Colors.white),
+                          ),
+                          SizedBox(
+                            height: 5,
+                          ),
+                          Text(
+                            '4',
+                            style: TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 22),
+                          )
+                        ],
+                      ),
                     ),
-                    Text(
-                      '9',
-                      style: TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 22),
-                    )
-                  ],
-                ),
+                  ),
+                ],
+              ),
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Expanded(
+                    child: Container(
+                      margin: const EdgeInsets.only(top: 20, right: 5),
+                      padding: const EdgeInsets.symmetric(
+                          vertical: 40, horizontal: 20),
+                      decoration: BoxDecoration(
+                          boxShadow: const [
+                            BoxShadow(
+                              color: Colors.black26,
+                              spreadRadius: 2.0,
+                              blurRadius: 5.0,
+                              offset: Offset(-2.0, 0),
+                            ),
+                          ],
+                          color: const Color(0xffCA811A),
+                          borderRadius: BorderRadius.circular(10)),
+                      child: const Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Ejecutado Alta',
+                            style: TextStyle(color: Colors.white),
+                          ),
+                          SizedBox(
+                            height: 5,
+                          ),
+                          Text(
+                            '12',
+                            style: TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 22),
+                          )
+                        ],
+                      ),
+                    ),
+                  ),
+                  Expanded(
+                    child: Container(
+                      margin: const EdgeInsets.only(top: 20, left: 5),
+                      padding: const EdgeInsets.symmetric(
+                          vertical: 40, horizontal: 20),
+                      decoration: BoxDecoration(
+                          boxShadow: const [
+                            BoxShadow(
+                              color: Colors.black26,
+                              spreadRadius: 2.0,
+                              blurRadius: 5.0,
+                              offset: Offset(-2.0, 0),
+                            ),
+                          ],
+                          color: const Color(0xff3D8566),
+                          borderRadius: BorderRadius.circular(10)),
+                      child: const Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Finalizados',
+                            style: TextStyle(color: Colors.white),
+                          ),
+                          SizedBox(
+                            height: 5,
+                          ),
+                          Text(
+                            '4',
+                            style: TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 22),
+                          )
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Expanded(
+                    child: Container(
+                      margin: const EdgeInsets.only(top: 20, right: 5),
+                      padding: const EdgeInsets.symmetric(
+                          vertical: 40, horizontal: 20),
+                      decoration: BoxDecoration(
+                          boxShadow: const [
+                            BoxShadow(
+                              color: Colors.black26,
+                              spreadRadius: 2.0,
+                              blurRadius: 5.0,
+                              offset: Offset(-2.0, 0),
+                            ),
+                          ],
+                          color: const Color(0xffCA811A),
+                          borderRadius: BorderRadius.circular(10)),
+                      child: const Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Rechazado Alta',
+                            style: TextStyle(color: Colors.white),
+                          ),
+                          SizedBox(
+                            height: 5,
+                          ),
+                          Text(
+                            '12',
+                            style: TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 22),
+                          )
+                        ],
+                      ),
+                    ),
+                  ),
+                  Expanded(
+                    child: Container(
+                      margin: const EdgeInsets.only(top: 20, left: 5),
+                      padding: const EdgeInsets.symmetric(
+                          vertical: 40, horizontal: 20),
+                      decoration: BoxDecoration(
+                          boxShadow: const [
+                            BoxShadow(
+                              color: Colors.black26,
+                              spreadRadius: 2.0,
+                              blurRadius: 5.0,
+                              offset: Offset(-2.0, 0),
+                            ),
+                          ],
+                          color: const Color(0xff3D8566),
+                          borderRadius: BorderRadius.circular(10)),
+                      child: const Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Rechazado Baja',
+                            style: TextStyle(color: Colors.white),
+                          ),
+                          SizedBox(
+                            height: 5,
+                          ),
+                          Text(
+                            '4',
+                            style: TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 22),
+                          )
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ],
           ),
