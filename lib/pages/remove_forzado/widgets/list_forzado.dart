@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:forzado/models/remove_forzado/model_list_remove.dart';
+import 'package:forzado/pages/remove_forzado/screen/form_remove.dart';
 
 class ListForzado extends StatelessWidget {
   const ListForzado({
@@ -8,6 +9,17 @@ class ListForzado extends StatelessWidget {
   });
 
   final List<Datum> data;
+
+  void navigateDetailForzado(BuildContext context, Datum item) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => FormRemoveForzado(
+          detailForzado: item,
+        ),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -48,9 +60,11 @@ class ListForzado extends StatelessWidget {
               ),
             ),
             const SizedBox(width: 16),
-            const IconButton(
-              onPressed: null,
-              icon: Icon(
+            IconButton(
+              onPressed: () {
+                navigateDetailForzado(context, item);
+              },
+              icon: const Icon(
                 Icons.arrow_right_alt_sharp,
                 size: 30,
               ),

@@ -56,6 +56,7 @@ class _HomePageRemoveState extends State<HomePageRemove> {
               return const Center(child: CircularProgressIndicator());
             }
             if (snapshot.hasError) {
+              print(snapshot.error);
               return const Center(
                   child: Text('Ocurrio un error, contacta a soporte'));
             }
