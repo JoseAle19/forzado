@@ -2,25 +2,23 @@ import 'package:flutter/material.dart';
 import 'package:forzado/models/model_three.dart';
 import 'package:forzado/services/service_three.dart';
 
- // ignore: must_be_immutable
+// ignore: must_be_immutable
 class CustomDropDownButtonThree extends StatefulWidget {
-    CustomDropDownButtonThree(
- 
+  CustomDropDownButtonThree(
       {super.key,
       required this.descriptionField,
       required this.hintText,
       this.service,
-       required this.endPoint,
-      required this.currentValue, required this.onChanged
-      });
- 
+      required this.endPoint,
+      required this.currentValue,
+      required this.onChanged});
+
   final String descriptionField;
   final String hintText;
   final ServiceThree? service;
   final String endPoint;
-   String currentValue = '';
+  String currentValue = '';
   final ValueChanged<String> onChanged;
- 
 
   @override
   State<CustomDropDownButtonThree> createState() =>
@@ -28,7 +26,6 @@ class CustomDropDownButtonThree extends StatefulWidget {
 }
 
 class _CustomDropDownButtonState extends State<CustomDropDownButtonThree> {
-
   late Future<ModelThree> _futureModel;
   late List<Value> items = [];
 
@@ -62,7 +59,12 @@ class _CustomDropDownButtonState extends State<CustomDropDownButtonThree> {
               return const Text('Error al cargar los centros');
             }
             if (snapshot.connectionState == ConnectionState.waiting) {
-              return const Center(child: CircularProgressIndicator());
+              return Center(
+                  child: DropdownButtonFormField(
+                      value: null,
+                      hint: const Text('Cargando.......'),
+                      items: [],
+                      onChanged: null));
             }
             if (snapshot.data?.success == false) {
               return const Text(
@@ -74,8 +76,7 @@ class _CustomDropDownButtonState extends State<CustomDropDownButtonThree> {
                   'No hay informacion disponible, por favor contacta a soporte');
             }
             return DropdownButtonFormField(
-                 value: widget.currentValue.isEmpty ? null : widget.currentValue,
- 
+                value: widget.currentValue.isEmpty ? null : widget.currentValue,
                 hint: SizedBox(
                     width: MediaQuery.of(context).size.width * 0.7,
                     child: Text(
@@ -104,9 +105,8 @@ class _CustomDropDownButtonState extends State<CustomDropDownButtonThree> {
                 },
                 onChanged: (value) {
                   setState(() {
-                     widget.onChanged(
+                    widget.onChanged(
                         value!); // Llamas al callback para notificar al padre
- 
                   });
                 });
           },

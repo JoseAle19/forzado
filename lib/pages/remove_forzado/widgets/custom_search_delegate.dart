@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:forzado/models/remove_forzado/model_list_remove.dart';
+import 'package:forzado/pages/remove_forzado/screen/form_remove.dart';
 
 class CustomSearchDelegate extends SearchDelegate<String> {
   final List<Datum> searchList;
@@ -52,15 +53,26 @@ class CustomSearchDelegate extends SearchDelegate<String> {
 
     return ListView.builder(
       itemCount: suggestionList.length,
-      itemBuilder: (context, index) {
+      itemBuilder: (context, i) {
         return ListTile(
-          title: Text(suggestionList[index].nombre),
+          title: Hero(
+              tag: suggestionList[i].id.toString(),
+              child: Text(suggestionList[i].nombre)),
           onTap: () {
-            query = suggestionList[index].nombre;
-            close(context, suggestionList[index].id.toString());
+            Datum removeForzado = suggestionList[i];
+            query = suggestionList[i].nombre;
+            handleNavigate(context, removeForzado);
           },
         );
       },
     );
+  }
+
+  void handleNavigate(BuildContext context, Datum detailForzado) {
+    final route = MaterialPageRoute(
+        builder: (_) => FormRemoveForzado(
+              detailForzado: detailForzado,
+            ));
+    Navigator.push(context, route);
   }
 }

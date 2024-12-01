@@ -1,5 +1,8 @@
 {
     "cSpell.words": [
+        "descripción",
+        "Forzado",
+        "nombre",
         "Siguiente"
     ],
     "args": ["--web-port=35739"]

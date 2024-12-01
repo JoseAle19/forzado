@@ -1,0 +1,16 @@
+enum ValuesType {
+  tagPrefijo,
+  tagCentro,
+  description,
+  tagDisciplina,
+  slot,
+  segurity,
+  responsability,
+  risk,
+  probability,
+  impact,
+  applicant,
+  approver,
+  executor,
+  forzado,
+}

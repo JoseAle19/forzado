@@ -1,7 +1,7 @@
 class AppUrl {
   // Base URL del servidor
   static const String url =
-      "https://sntps2jn-3000.brs.devtunnels.ms"; // Cambia según tu configuración
+      "https://sntps2jn-3001.brs.devtunnels.ms"; // Cambia según tu configuración
 
   // Endpoints  para vitarme equivocacion de rutas
   static const String login = "api/mobile/auth/";
@@ -19,10 +19,10 @@ class AppUrl {
 
   static const String getResponsable3 = "/api/maestras/responsable";
   static const String getSolicitantes3 = "/api/usuarios";
-   static const String getEjecutor = "/api/usuarios";
+  static const String getEjecutor = "/api/usuarios";
   static const String getAprobadores = "/api/usuarios/aprobadores";
 
 // Endpoitn de alta de forzado
   static const String postAddForzado = "/api/solicitudes/alta";
- 
+  static const String getListForzados = "/api/solicitudes/alta";
 }
