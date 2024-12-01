@@ -2,28 +2,32 @@ import 'package:flutter/material.dart';
 import 'package:forzado/models/model_one.dart';
 import 'package:forzado/services/service_one.dart';
 
-// ignore: must_be_immutable
+ // ignore: must_be_immutable
 class CustomDropDownButtonOne extends StatefulWidget {
   CustomDropDownButtonOne(
+ 
       {super.key,
       required this.descriptionField,
       required this.hintText,
       this.service,
-      required this.endPoint,
+       required this.endPoint,
       required this.currentValue,
       required this.onChanged});
+ 
   final String descriptionField;
   final String hintText;
   final ServiceOne? service;
   final String endPoint;
-  String currentValue;
+   String currentValue;
   final ValueChanged<String> onChanged;
+ 
 
   @override
   State<CustomDropDownButtonOne> createState() => _CustomDropDownButtonState();
 }
 
 class _CustomDropDownButtonState extends State<CustomDropDownButtonOne> {
+  
   late Future<ModelOne> _futureModel;
   late List<Value> items = [];
 
@@ -69,7 +73,8 @@ class _CustomDropDownButtonState extends State<CustomDropDownButtonOne> {
                   'No hay informacion disponible, por favor contacta a soporte');
             }
             return DropdownButtonFormField(
-                value: widget.currentValue.isEmpty ? null : widget.currentValue,
+                 value: widget.currentValue.isEmpty ? null : widget.currentValue,
+ 
                 hint: SizedBox(
                     width: MediaQuery.of(context).size.width * 0.7,
                     child: Text(
@@ -98,8 +103,9 @@ class _CustomDropDownButtonState extends State<CustomDropDownButtonOne> {
                 },
                 onChanged: (value) {
                   setState(() {
-                    widget.onChanged(
+                     widget.onChanged(
                         value!); // Llamas al callback para notificar al padre
+ 
                   });
                 });
           },
