@@ -1,7 +1,3 @@
-// To parse this JSON data, do
-//
-//     final modelListRemove = modelListRemoveFromJson(jsonString);
-
 import 'dart:convert';
 
 ModelListRemove modelListRemoveFromJson(String str) =>

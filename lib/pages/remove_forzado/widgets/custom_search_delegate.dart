@@ -6,7 +6,6 @@ class CustomSearchDelegate extends SearchDelegate<String> {
 
   CustomSearchDelegate({required this.searchList});
 
-
   @override
   List<Widget>? buildActions(BuildContext context) {
     return [
@@ -37,7 +36,7 @@ class CustomSearchDelegate extends SearchDelegate<String> {
         itemBuilder: (context, index) {
           return ListTile(
             title: Text(searchResults[index].nombre),
-            onTap: () => close(context, searchResults[index].nombre),
+            onTap: () => close(context, searchResults[index].id.toString()),
           );
         });
   }
@@ -58,7 +57,7 @@ class CustomSearchDelegate extends SearchDelegate<String> {
           title: Text(suggestionList[index].nombre),
           onTap: () {
             query = suggestionList[index].nombre;
-            // Show the search results based on the selected suggestion.
+            close(context, suggestionList[index].id.toString());
           },
         );
       },
