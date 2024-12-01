@@ -10,6 +10,7 @@ String jwtModelToJson(JwtModel data) => json.encode(data.toJson());
 
 class JwtModel {
   final String email;
+  final String name;
   final int areaId;
   final String areaName;
   final int iat;
@@ -17,6 +18,7 @@ class JwtModel {
 
   JwtModel({
     required this.email,
+    required this.name,
     required this.areaId,
     required this.areaName,
     required this.iat,
@@ -25,6 +27,7 @@ class JwtModel {
 
   factory JwtModel.fromJson(Map<String, dynamic> json) => JwtModel(
         email: json["email"],
+        name: json["name"],
         areaId: json["areaId"],
         areaName: json["areaName"],
         iat: json["iat"],
@@ -33,6 +36,7 @@ class JwtModel {
 
   Map<String, dynamic> toJson() => {
         "email": email,
+        "name": name,
         "areaId": areaId,
         "areaName": areaName,
         "iat": iat,
