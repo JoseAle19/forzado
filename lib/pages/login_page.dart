@@ -2,7 +2,6 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:forzado/core/app_colors.dart';
-import 'package:forzado/core/urls.dart';
 import 'package:forzado/models/jwt_model.dart';
 import 'package:forzado/models/login.dart';
 import 'package:forzado/pages/home_page.dart';
@@ -99,6 +98,8 @@ class _LoginPageState extends State<LoginPage> {
                               hintText: 'Ingrese su usuario'),
                         ),
                         TextFormField(
+                          obscureText: true,
+                          keyboardType: TextInputType.text,
                           controller: _passwordController,
                           cursorColor: AppColors.primaryColor,
                           decoration: InputDecoration(

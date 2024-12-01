@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:forzado/pages/steps_form/step_form.dart';
 import 'package:forzado/pages/steps_form/steps.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:forzado/pages/remove_forzado/screen/home_page.dart';
@@ -50,7 +51,7 @@ class _HomeState extends State<Home> {
               GestureDetector(
                 onTap: () {
                   final route =
-                      MaterialPageRoute(builder: (_) => const Steps());
+                      MaterialPageRoute(builder: (_) => const StepperForm());
                   Navigator.push(context, route);
                 },
                 child: Container(

@@ -10,7 +10,7 @@ class AppUrl {
   static const String getTagCentro1 = "/api/maestras/activo";
 
   static const String getTagDisciplina2 = "/api/maestras/disciplina";
-  static const String getTurno2 = "/api/maestras/impacto";
+  static const String getTurno2 = "/api/maestras/turno";
   static const String getRechazo2 = "/api/maestras/motivo-rechazo";
   static const String getProbabilidad2 = "/api/maestras/probabilidad";
   static const String getRiesgoA2 = "/api/maestras/riesgo-a";
@@ -22,4 +22,5 @@ class AppUrl {
 
   // Endpoints lista de forzados
   static const String getListForzados = "/api/solicitudes/alta";
+ 
 }
