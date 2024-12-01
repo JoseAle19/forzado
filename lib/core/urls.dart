@@ -19,9 +19,10 @@ class AppUrl {
 
   static const String getResponsable3 = "/api/maestras/responsable";
   static const String getSolicitantes3 = "/api/usuarios";
-  static const String getEjecutor = "/api/usuarios";
+   static const String getEjecutor = "/api/usuarios";
   static const String getAprobadores = "/api/usuarios/aprobadores";
 
 // Endpoitn de alta de forzado
   static const String postAddForzado = "/api/solicitudes/alta";
+ 
 }

@@ -68,6 +68,7 @@ class _CustomDropDownButtonState extends State<CustomDropDownButtonOne> {
                   'Ocurró un errorr, Por favor contacta a soporte');
             }
             final items = snapshot.data!.values;
+            
             if (items.isEmpty) {
               return const Text(
                   'No hay informacion disponible, por favor contacta a soporte');
