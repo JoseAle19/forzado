@@ -37,7 +37,7 @@ class ModelListRemove {
 
 class Datum {
   final int? id;
-  final String? nombre;
+  final String nombre;
   final String? area;
   final String? solicitante;
   final String? estado;
@@ -63,7 +63,7 @@ class Datum {
 
   Datum({
     this.id,
-    this.nombre,
+    required this.nombre,
     this.area,
     this.solicitante,
     this.estado,
@@ -89,29 +89,32 @@ class Datum {
   });
 
   factory Datum.fromJson(Map<String, dynamic> json) => Datum(
-        id: json["id"],
-        nombre: json["nombre"],
-        area: json["area"],
-        solicitante: json["solicitante"],
-        estado: json["estado"],
+        id: json["id"] ?? 'no información',
+        nombre: json["nombre"] ?? 'no información',
+        area: json["area"] ?? 'no información',
+        solicitante: json["solicitante"] ?? 'no información',
+        estado: json["estado"] ?? 'no información',
         fecha: DateTime.parse(json["fecha"]),
-        descripcion: json["descripcion"],
-        estadoSolicitud: json["estadoSolicitud"],
-        fechaRealizacion: json["fechaRealizacion"],
-        fechaCierre: json["fechaCierre"],
-        usuarioCreacion: json["usuarioCreacion"],
+        descripcion: json["descripcion"] ?? 'no información',
+        estadoSolicitud: json["estadoSolicitud"] ?? 'no información',
+        fechaRealizacion: json["fechaRealizacion"] ?? 'no información',
+        fechaCierre: json["fechaCierre"] ?? 'no información',
+        usuarioCreacion: json["usuarioCreacion"] ?? 'no información',
         fechaCreacion: DateTime.parse(json["fechaCreacion"]),
-        usuarioModificacion: json["usuarioModificacion"],
-        fechaModificacion: DateTime.parse(json["fechaModificacion"]),
-        subareaCodigo: json["subareaCodigo"],
-        subareaDescripcion: json["subareaDescripcion"],
-        disciplinaDescripcion: json["disciplinaDescripcion"],
-        turnoDescripcion: turnoDescripcionValues.map[json["turnoDescripcion"]]!,
-        motivoRechazoDescripcion: json["motivoRechazoDescripcion"],
+        usuarioModificacion: json["usuarioModificacion"] ?? 'no información',
+        fechaModificacion:
+            DateTime.parse(json["fechaModificacion"]),
+        subareaCodigo: json["subareaCodigo"] ?? 'no información',
+        subareaDescripcion: json["subareaDescripcion"] ?? 'no información',
+        disciplinaDescripcion: json["disciplinaDescripcion"] ?? 'no información',
+        turnoDescripcion:
+            turnoDescripcionValues.map[json["turnoDescripcion"]],
+        motivoRechazoDescripcion:
+            json["motivoRechazoDescripcion"] ?? 'no información',
         tipoForzadoDescripcion:
-            tipoForzadoDescripcionValues.map[json["tipoForzadoDescripcion"]]!,
-        tagCentroCodigo: json["tagCentroCodigo"],
-        tagCentroDescripcion: json["tagCentroDescripcion"],
+            tipoForzadoDescripcionValues.map[json["tipoForzadoDescripcion"]],
+        tagCentroCodigo: json["tagCentroCodigo"] ?? 'no información',
+        tagCentroDescripcion: json["tagCentroDescripcion"] ?? 'no información',
         responsableNombre:
             responsableNombreValues.map[json["responsableNombre"]]!,
         riesgoDescripcion:

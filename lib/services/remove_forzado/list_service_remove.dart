@@ -9,7 +9,6 @@ class ListServiceRemove {
   Future<ModelListRemove> getDataByEndpoint(String endPoint) async {
     try {
       final res = await apiClient.get(endPoint);
-
       if (res.statusCode == 200) {
         return modelListRemoveFromJson(res.body);
       } else {
