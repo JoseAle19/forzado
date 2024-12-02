@@ -28,6 +28,7 @@ environment:
 # the latest version available on pub.dev. To see which dependencies have newer
 # versions available, run `flutter pub outdated`.
 dependencies:
+  connectivity_plus: ^6.1.0
   cupertino_icons: ^1.0.6
   easy_stepper: ^0.8.5+1
   flutter:

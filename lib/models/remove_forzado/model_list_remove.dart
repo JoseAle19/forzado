@@ -100,9 +100,11 @@ class Datum {
             ? DateTime.parse(json["fechaCreacion"])
             : null,
         usuarioModificacion: json["usuarioModificacion"] ?? 'no información',
+
         fechaModificacion: json["fechaModificacion"] != null
             ? DateTime.parse(json["fechaModificacion"])
             : null,
+
         subareaCodigo: json["subareaCodigo"] ?? 'no información',
         subareaDescripcion: json["subareaDescripcion"] ?? 'no información',
         disciplinaDescripcion:
