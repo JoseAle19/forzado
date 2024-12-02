@@ -3,7 +3,8 @@
         "descripción",
         "Forzado",
         "nombre",
-        "Siguiente"
+        "Siguiente",
+        "Stateapplicant"
     ],
     "args": ["--web-port=35739"]
 
