@@ -1,105 +1,11 @@
-import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:forzado/pages/login_page.dart';
-import 'package:forzado/pages/page_offline.dart';
 import 'package:forzado/pages/remove_forzado/screen/home_page.dart';
-import 'package:forzado/pages/steps_form/step_form.dart';
-import 'package:forzado/widgets/sync.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:forzado/pages/steps_form/stepper_form.dart';
 
-class Home extends StatefulWidget {
-  const Home({super.key});
+class PageOffline extends StatelessWidget {
+  const PageOffline({super.key});
 
-  @override
-  State<Home> createState() => _HomeState();
-}
-
-class _HomeState extends State<Home> {
-  bool isConnected = false;
-  PageController _controller = PageController();
-  String user = '';
-  @override
-  void initState() {
-    getData();
-    _iniciarVerificacion();
-    super.initState();
-  }
-
-  void _iniciarVerificacion() async {
-    await verifyConnection();
-    _controller.jumpToPage(isConnected ? 0 : 1);
-  }
-
-  Future<void> verifyConnection() async {
-    final List<ConnectivityResult> connectivityResult =
-        await (Connectivity().checkConnectivity());
-    setState(() {
-      if (connectivityResult.contains(ConnectivityResult.wifi) ||
-          connectivityResult.contains(ConnectivityResult.mobile)) {
-        isConnected = true;
-      } else {
-        isConnected = false;
-      }
-    });
-  }
-
-  void disposePageController() {
-    _controller.dispose();
-  }
-
-  void getData() async {
-    final prefs = await SharedPreferences.getInstance();
-    setState(() {
-      user = prefs.getString('username') ?? 'usuario';
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-        bottomNavigationBar: const CustomBotttomNavigation(),
-        appBar: AppBar(
-          automaticallyImplyLeading: false,
-          title: Text(
-            'Hola ${user}',
-            style: TextStyle(fontFamily: 'noto', fontWeight: FontWeight.bold),
-          ),
-          actions: [
-            const IconButton(
-                onPressed: null, icon: Icon(Icons.notifications_none_outlined)),
-            IconButton(
-                onPressed: () async {
-                  final prefs = await SharedPreferences.getInstance();
-                  prefs.clear();
-                  final route =
-                      MaterialPageRoute(builder: (_) => const LoginPage());
-                  Navigator.push(context, route);
-                },
-                icon: const Icon(Icons.login_rounded))
-          ],
-        ),
-        body: PageView(
-            physics: const NeverScrollableScrollPhysics(),
-            controller: _controller,
-            children: [
-              PageOnline(
-                widget: Container(
-                    margin: const EdgeInsets.symmetric(vertical: 10),
-                    child: SyncData()),
-              ),
-              const PageOffline(),
-            ]));
-  }
-}
-
-class PageOnline extends StatelessWidget {
-  const PageOnline({
-    super.key,
-    this.widget,
-  });
-
-  final Widget? widget;
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -107,11 +13,10 @@ class PageOnline extends StatelessWidget {
       child: ListView(
         physics: const BouncingScrollPhysics(),
         children: [
-          widget ?? const SizedBox(),
           GestureDetector(
             onTap: () {
               final route =
-                  MaterialPageRoute(builder: (_) => const StepperForm());
+                  MaterialPageRoute(builder: (_) => const StepperFormOffline());
               Navigator.push(context, route);
             },
             child: Container(
@@ -508,21 +413,5 @@ class PageOnline extends StatelessWidget {
         ],
       ),
     );
-  }
-}
-
-class CustomBotttomNavigation extends StatelessWidget {
-  const CustomBotttomNavigation({
-    super.key,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return BottomNavigationBar(items: const [
-      BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Inicio'),
-      BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Perfil'),
-      BottomNavigationBarItem(
-          icon: Icon(Icons.settings), label: 'Configuración'),
-    ]);
   }
 }

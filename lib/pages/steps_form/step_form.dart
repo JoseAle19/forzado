@@ -196,7 +196,8 @@ class _StepperFormState extends State<StepperForm> {
                   }
                 } else {
                   CustomModal modal = CustomModal();
-                  modal.showModal(context, 'Completa todos los campos');
+                  modal.showModal(context, 'Completa todos los campos',
+                      Colors.redAccent, false);
                 }
               },
               child: AnimatedContainer(
