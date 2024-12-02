@@ -82,7 +82,7 @@ class _HomeState extends State<Home> {
             controller: _controller,
             children: const [
               PageOnline(
-                title: 'Online',
+                title: 'sincronizar informacion',
               ),
               PageOnline(
                 title: 'Offline',

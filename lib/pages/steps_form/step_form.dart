@@ -176,7 +176,9 @@ class _StepperFormState extends State<StepperForm> {
 
                         if (response.statusCode == 200) {
                           final route = MaterialPageRoute(
-                              builder: (_) => CongratulationAnimation());
+                              builder: (_) => CongratulationAnimation(
+                                    page: const StepperForm(),
+                                  ));
                           Navigator.pushReplacement(context, route);
                           // setState(() {
                           //   isFetching = false;

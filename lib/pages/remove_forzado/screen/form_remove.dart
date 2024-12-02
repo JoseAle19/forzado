@@ -6,6 +6,7 @@ import 'package:forzado/core/urls.dart';
 import 'package:forzado/pages/home_page.dart';
 import 'package:forzado/models/form/forzado/request_forced_forzado.dart';
 import 'package:forzado/models/remove_forzado/model_list_remove.dart';
+import 'package:forzado/pages/steps_form/congratulation.dart';
 import 'package:forzado/services/api_client.dart';
 import 'package:forzado/services/service_three.dart';
 import 'package:forzado/widgets/custom_dropdown_three.dart';
@@ -69,7 +70,10 @@ class _FormRemoveForzadoState extends State<FormRemoveForzado> {
       if (response.statusCode == 200) {
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => const Home()),
+          MaterialPageRoute(
+              builder: (context) => CongratulationAnimation(
+                    page: const Home(),
+                  )),
         );
       } else {
         print(response.body);

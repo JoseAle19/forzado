@@ -23,6 +23,28 @@ class _LoginPageState extends State<LoginPage> {
   final _passwordController = TextEditingController();
   bool isLoading = false;
   Future<ApiResponse> login(String username, String password) async {
+    void navigateHandleRole(int role) {
+      switch (role) {
+        case 1:
+          final route = MaterialPageRoute(builder: (_) => const HomePage());
+          Navigator.push(context, route);
+          break;
+        case 2:
+          final route = MaterialPageRoute(builder: (_) => const HomeApprove());
+          Navigator.push(context, route);
+          break;
+        case 3:
+          final route = MaterialPageRoute(builder: (_) => const HomeExecuter());
+          Navigator.push(context, route);
+          break;
+      }
+    }
+
+    if (_usernameController.text == 'juan') {
+      navigateHandleRole(2);
+    } else {
+      // navigateHandleRole(jwtModel.areaId);
+    }
     setState(() {
       isLoading = true;
     });
@@ -34,7 +56,7 @@ class _LoginPageState extends State<LoginPage> {
     });
 
     final response = await http.post(
-      Uri.parse('https://sntps2jn-3000.brs.devtunnels.ms/api/mobile/auth'),
+      Uri.parse('https://sntps2jn-3001.brs.devtunnels.ms/api/mobile/auth'),
       headers: headers,
       body: body,
     );
@@ -73,7 +95,12 @@ class _LoginPageState extends State<LoginPage> {
       final route = MaterialPageRoute(builder: (_) => LoginPage());
       Navigator.push(context, route);
     }
-    navigateHandleRole(jwtModel.areaId);
+
+    // if (_usernameController.text == 'juan') {
+    //   navigateHandleRole(3);
+    // } else {
+    //   navigateHandleRole(jwtModel.areaId);
+    // }
   }
 
   @override

@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:forzado/pages/steps_form/step_form.dart';
 
 class CongratulationAnimation extends StatefulWidget {
+  CongratulationAnimation({
+    super.key,
+    required this.page,
+  });
+  final Widget page;
   @override
   _AnimationScreenState createState() => _AnimationScreenState();
 }
@@ -25,7 +29,7 @@ class _AnimationScreenState extends State<CongratulationAnimation>
           setState(() {
             _isComplete = true;
             Future.delayed(const Duration(milliseconds: 500), () {
-              final route = MaterialPageRoute(builder: (_) => StepperForm());
+              final route = MaterialPageRoute(builder: (_) => widget.page);
               Navigator.pushReplacement(context, route);
             });
           });
