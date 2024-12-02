@@ -39,6 +39,7 @@ dependencies:
   jwt_decoder: ^2.0.1
   provider: ^6.1.2
   shared_preferences: ^2.3.3
+  intl: ^0.20.1
 
 dev_dependencies:
   build_runner: ^2.4.13
