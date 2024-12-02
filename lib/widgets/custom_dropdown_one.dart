@@ -4,14 +4,15 @@ import 'package:forzado/services/service_one.dart';
 
 // ignore: must_be_immutable
 class CustomDropDownButtonOne extends StatefulWidget {
-  CustomDropDownButtonOne(
-      {super.key,
-      required this.descriptionField,
-      required this.hintText,
-      this.service,
-      required this.endPoint,
-      required this.currentValue,
-      required this.onChanged});
+  CustomDropDownButtonOne({
+    super.key,
+    required this.descriptionField,
+    required this.hintText,
+    this.service,
+    required this.endPoint,
+    required this.currentValue,
+    required this.onChanged,
+  });
 
   final String descriptionField;
   final String hintText;
@@ -36,10 +37,18 @@ class _CustomDropDownButtonState extends State<CustomDropDownButtonOne> {
   }
 
   Future<void> _loadCentros() async {
-    final result = await _futureModel;
-    setState(() {
-      items = result.values;
-    });
+    try {
+      final result = await _futureModel;
+      if (!mounted) return;
+      setState(() {
+        items = result.values;
+      });
+    } catch (e) {
+      if (mounted) {
+        // Puedes manejar errores aquí si es necesario
+        print('Error loading data: $e');
+      }
+    }
   }
 
   @override
@@ -97,12 +106,8 @@ class _CustomDropDownButtonState extends State<CustomDropDownButtonOne> {
                         ),
                       ));
                 }).toList(),
-                validator: (value) {
-                  if (value!.isEmpty) {
-                    return 'Selecciona una opción';
-                  }
-                  return null;
-                },
+                validator: (value) =>
+                    value == null ? 'Seleccione una opción válida' : null,
                 onChanged: (value) {
                   setState(() {
                     widget.onChanged(

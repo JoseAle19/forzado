@@ -98,13 +98,12 @@ class Datum {
         usuarioCreacion: json["usuarioCreacion"] ?? 'no información',
         fechaCreacion: DateTime.parse(json["fechaCreacion"]),
         usuarioModificacion: json["usuarioModificacion"] ?? 'no información',
-        fechaModificacion:
-            DateTime.parse(json["fechaModificacion"]),
+        fechaModificacion: DateTime.parse(json["fechaModificacion"]),
         subareaCodigo: json["subareaCodigo"] ?? 'no información',
         subareaDescripcion: json["subareaDescripcion"] ?? 'no información',
-        disciplinaDescripcion: json["disciplinaDescripcion"] ?? 'no información',
-        turnoDescripcion:
-            turnoDescripcionValues.map[json["turnoDescripcion"]],
+        disciplinaDescripcion:
+            json["disciplinaDescripcion"] ?? 'no información',
+        turnoDescripcion: turnoDescripcionValues.map[json["turnoDescripcion"]],
         motivoRechazoDescripcion:
             json["motivoRechazoDescripcion"] ?? 'no información',
         tipoForzadoDescripcion:
