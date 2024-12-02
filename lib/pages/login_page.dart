@@ -22,6 +22,7 @@ class _LoginPageState extends State<LoginPage> {
   final _usernameController = TextEditingController();
   final _passwordController = TextEditingController();
   bool isLoading = false;
+
   Future<ApiResponse> login(String username, String password) async {
     void navigateHandleRole(int role) {
       switch (role) {
@@ -30,18 +31,18 @@ class _LoginPageState extends State<LoginPage> {
           Navigator.push(context, route);
           break;
         case 2:
-          final route = MaterialPageRoute(builder: (_) => const HomeApprove());
+          final route = MaterialPageRoute(builder: (_) => const HomeApprove(title: 'Home Aprobador',));
           Navigator.push(context, route);
           break;
         case 3:
-          final route = MaterialPageRoute(builder: (_) => const HomeExecuter());
+          final route = MaterialPageRoute(builder: (_) => const HomeExecuter(title: 'Home Ejecutador'));
           Navigator.push(context, route);
           break;
       }
     }
 
     if (_usernameController.text == 'juan') {
-      navigateHandleRole(2);
+      navigateHandleRole(3);
     } else {
       // navigateHandleRole(jwtModel.areaId);
     }
@@ -78,11 +79,11 @@ class _LoginPageState extends State<LoginPage> {
           Navigator.push(context, route);
           break;
         case 2:
-          final route = MaterialPageRoute(builder: (_) => const HomeApprove());
+          final route = MaterialPageRoute(builder: (_) => const HomeApprove(title: 'Home Aprobador',));
           Navigator.push(context, route);
           break;
         case 3:
-          final route = MaterialPageRoute(builder: (_) => const HomeExecuter());
+          final route = MaterialPageRoute(builder: (_) => const HomeExecuter(title: 'Home Ejecutador'));
           Navigator.push(context, route);
           break;
       }

@@ -1,21 +1,22 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
+import 'package:forzado/pages/ejecutor/screen/approve_forzado.dart';
+import 'package:forzado/pages/home_page.dart';
 import 'package:forzado/pages/login_page.dart';
 import 'package:forzado/pages/remove_forzado/screen/home_page.dart';
-import 'package:forzado/pages/steps_form/step_form.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class HomeExecuter extends StatelessWidget {
-  const HomeExecuter({super.key});
+  const HomeExecuter({super.key, required this.title});
 
+  final String title;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      bottomNavigationBar: CustomBotttomNavigation(),
+      bottomNavigationBar: const CustomBotttomNavigation(),
       appBar: AppBar(
         automaticallyImplyLeading: false,
-        title: Text(
-          'Hola ejecutor',
+        title: const Text(
+          'Hola Jose',
           style: TextStyle(fontFamily: 'noto', fontWeight: FontWeight.bold),
         ),
         actions: [
@@ -37,10 +38,11 @@ class HomeExecuter extends StatelessWidget {
         child: ListView(
           physics: const BouncingScrollPhysics(),
           children: [
+            Text(title),
             GestureDetector(
               onTap: () {
                 final route =
-                    MaterialPageRoute(builder: (_) => const StepperForm());
+                    MaterialPageRoute(builder: (_) => const Approveforzado());
                 Navigator.push(context, route);
               },
               child: Container(
@@ -57,16 +59,28 @@ class HomeExecuter extends StatelessWidget {
                     ],
                     color: const Color(0xff639777),
                     borderRadius: BorderRadius.circular(10)),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                child: const Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    SvgPicture.asset('assets/svgs/bank.svg'),
-                    const SizedBox(
-                      height: 5,
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Icon(
+                          Icons.account_balance,
+                          color: Colors.white,
+                        ),
+                        SizedBox(
+                          height: 5,
+                        ),
+                        Text(
+                          'Alta de Forzado',
+                          style: TextStyle(color: Colors.white),
+                        )
+                      ],
                     ),
-                    const Text(
-                      'Solicitar Forzado',
-                      style: TextStyle(color: Colors.white),
+                    Icon(
+                      Icons.done_all,
+                      color: Colors.white,
                     )
                   ],
                 ),
@@ -93,16 +107,29 @@ class HomeExecuter extends StatelessWidget {
                     ],
                     color: const Color(0xff8B280A),
                     borderRadius: BorderRadius.circular(10)),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                child: const Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    SvgPicture.asset('assets/svgs/bank.svg'),
-                    const SizedBox(
-                      height: 5,
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Icon(
+                          Icons.account_balance,
+                          color: Colors.white,
+                        ),
+                        // SvgPicture.asset('assets/svgs/bank.svg'),
+                        SizedBox(
+                          height: 5,
+                        ),
+                        Text(
+                          'Baja Forzado',
+                          style: TextStyle(color: Colors.white),
+                        )
+                      ],
                     ),
-                    const Text(
-                      'Baja Forzado',
-                      style: TextStyle(color: Colors.white),
+                    Icon(
+                      Icons.remove_circle,
+                      color: Colors.white,
                     )
                   ],
                 ),
@@ -438,21 +465,5 @@ class HomeExecuter extends StatelessWidget {
         ),
       ),
     );
-  }
-}
-
-class CustomBotttomNavigation extends StatelessWidget {
-  const CustomBotttomNavigation({
-    super.key,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return BottomNavigationBar(items: const [
-      BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Inicio'),
-      BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Perfil'),
-      BottomNavigationBarItem(
-          icon: Icon(Icons.settings), label: 'Configuración'),
-    ]);
   }
 }

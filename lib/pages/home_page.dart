@@ -1,6 +1,5 @@
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:forzado/pages/login_page.dart';
 import 'package:forzado/pages/remove_forzado/screen/home_page.dart';
 import 'package:forzado/pages/steps_form/step_form.dart';
@@ -126,14 +125,17 @@ class PageOnline extends StatelessWidget {
                   ],
                   color: const Color(0xff639777),
                   borderRadius: BorderRadius.circular(10)),
-              child: Column(
+              child: const Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  SvgPicture.asset('assets/svgs/bank.svg'),
-                  const SizedBox(
+                  Icon(
+                    Icons.account_balance,
+                    color: Colors.white,
+                  ),
+                  SizedBox(
                     height: 5,
                   ),
-                  const Text(
+                  Text(
                     'Solicitar Forzado',
                     style: TextStyle(color: Colors.white),
                   )
@@ -162,14 +164,17 @@ class PageOnline extends StatelessWidget {
                   ],
                   color: const Color(0xff8B280A),
                   borderRadius: BorderRadius.circular(10)),
-              child: Column(
+              child: const Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  SvgPicture.asset('assets/svgs/bank.svg'),
-                  const SizedBox(
+                  Icon(
+                    Icons.account_balance,
+                    color: Colors.white,
+                  ),
+                  SizedBox(
                     height: 5,
                   ),
-                  const Text(
+                  Text(
                     'Baja Forzado',
                     style: TextStyle(color: Colors.white),
                   )
