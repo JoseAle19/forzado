@@ -29,7 +29,7 @@ void main() async {
   await Hive.openBox<AdapterThree>('Aprobador');
   await Hive.openBox<AdapterThree>('Ejecutor');
 
-  await Hive.openBox<ForzadoAdapter>('forzado');
+  
 
   runApp(const MyApp());
 }

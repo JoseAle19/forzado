@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:forzado/pages/remove_forzado/screen/home_page.dart';
+import 'package:forzado/pages/solicitante/offline/datatable%20_forzados.dart';
 import 'package:forzado/pages/steps_form/stepper_form.dart';
 
 class PageOffline extends StatelessWidget {
@@ -51,7 +51,7 @@ class PageOffline extends StatelessWidget {
           GestureDetector(
             onTap: () {
               final route =
-                  MaterialPageRoute(builder: (_) => const HomePageRemove());
+                  MaterialPageRoute(builder: (_) => const ForzadosDataTable());
               Navigator.push(context, route);
             },
             child: Container(

@@ -33,13 +33,31 @@ class ForzadoAdapter extends TypeAdapter<Forzado> {
       ejecutor: fields[13] as String?,
       autorizacion: fields[14] as String?,
       tipoDeForzado: fields[15] as String?,
+      interlock: fields[16] as String?,
+      tagPrefijoDescription: fields[17] as String?,
+      tagCentroDescription: fields[18] as String?,
+      descripcionDescription: fields[19] as String?,
+      disciplinaDescription: fields[20] as String?,
+      turnoDescription: fields[21] as String?,
+      iterlockSeguridadDescription: fields[22] as String?,
+      responsableDescription: fields[23] as String?,
+      riesgoADescription: fields[24] as String?,
+      probabilidadDescription: fields[25] as String?,
+      impactoDescription: fields[26] as String?,
+      riesgoDescription: fields[27] as String?,
+      solicitanteDescription: fields[28] as String?,
+      aprobadorDescription: fields[29] as String?,
+      ejecutorDescription: fields[30] as String?,
+      autorizacionDescription: fields[31] as String?,
+      tipoDeForzadoDescription: fields[32] as String?,
+      interlockDescription: fields[33] as String?,
     );
   }
 
   @override
   void write(BinaryWriter writer, Forzado obj) {
     writer
-      ..writeByte(16)
+      ..writeByte(34)
       ..writeByte(0)
       ..write(obj.tagPrefijo)
       ..writeByte(1)
@@ -71,7 +89,43 @@ class ForzadoAdapter extends TypeAdapter<Forzado> {
       ..writeByte(14)
       ..write(obj.autorizacion)
       ..writeByte(15)
-      ..write(obj.tipoDeForzado);
+      ..write(obj.tipoDeForzado)
+      ..writeByte(16)
+      ..write(obj.interlock)
+      ..writeByte(17)
+      ..write(obj.tagPrefijoDescription)
+      ..writeByte(18)
+      ..write(obj.tagCentroDescription)
+      ..writeByte(19)
+      ..write(obj.descripcionDescription)
+      ..writeByte(20)
+      ..write(obj.disciplinaDescription)
+      ..writeByte(21)
+      ..write(obj.turnoDescription)
+      ..writeByte(22)
+      ..write(obj.iterlockSeguridadDescription)
+      ..writeByte(23)
+      ..write(obj.responsableDescription)
+      ..writeByte(24)
+      ..write(obj.riesgoADescription)
+      ..writeByte(25)
+      ..write(obj.probabilidadDescription)
+      ..writeByte(26)
+      ..write(obj.impactoDescription)
+      ..writeByte(27)
+      ..write(obj.riesgoDescription)
+      ..writeByte(28)
+      ..write(obj.solicitanteDescription)
+      ..writeByte(29)
+      ..write(obj.aprobadorDescription)
+      ..writeByte(30)
+      ..write(obj.ejecutorDescription)
+      ..writeByte(31)
+      ..write(obj.autorizacionDescription)
+      ..writeByte(32)
+      ..write(obj.tipoDeForzadoDescription)
+      ..writeByte(33)
+      ..write(obj.interlockDescription);
   }
 
   @override

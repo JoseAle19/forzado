@@ -32,8 +32,10 @@ class _LoginPageState extends State<LoginPage> {
 
     final headers = {'Content-Type': 'application/json'};
     final body = jsonEncode({
-      "username": username,
-      "password": password,
+      "username": 'useruseruser',
+      "password": 'yourPasswordHere1',
+      // "username": username,
+      // "password": password,
     });
 
     final response = await http.post(

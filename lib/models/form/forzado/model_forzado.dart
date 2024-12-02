@@ -79,4 +79,27 @@ class InsertQueryParameters {
       tipoForzado: map['tipoForzado'] ?? '',
     );
   }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'tagPrefijo': tagPrefijo,
+      'tagCentro': tagCentro,
+      'tagSubfijo': tagSubfijo,
+      'descripcion': descripcion,
+      'disciplina': disciplina,
+      'turno': turno,
+      'interlockSeguridad': interlockSeguridad,
+      'responsable': responsable,
+      'riesgo': riesgo,
+      'probabilidad': probabilidad,
+      'impacto': impacto,
+      'solicitante': solicitante,
+      'aprobador': aprobador,
+      'ejecutor': ejecutor,
+      'autorizacion': autorizacion,
+      'tipoForzado': tipoForzado,
+    };
+  }
 }
+
+

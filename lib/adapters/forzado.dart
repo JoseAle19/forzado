@@ -51,6 +51,58 @@ class Forzado extends HiveObject {
 
   @HiveField(15)
   String? tipoDeForzado;
+  @HiveField(16)
+  String? interlock;
+  // Descripciones
+  @HiveField(17)
+  String? tagPrefijoDescription;
+
+  @HiveField(18)
+  String? tagCentroDescription;
+
+  @HiveField(19)
+  String? descripcionDescription;
+
+  @HiveField(20)
+  String? disciplinaDescription;
+
+  @HiveField(21)
+  String? turnoDescription;
+
+  @HiveField(22)
+  String? iterlockSeguridadDescription;
+
+  @HiveField(23)
+  String? responsableDescription;
+
+  @HiveField(24)
+  String? riesgoADescription;
+
+  @HiveField(25)
+  String? probabilidadDescription;
+
+  @HiveField(26)
+  String? impactoDescription;
+
+  @HiveField(27)
+  String? riesgoDescription;
+
+  @HiveField(28)
+  String? solicitanteDescription;
+
+  @HiveField(29)
+  String? aprobadorDescription;
+
+  @HiveField(30)
+  String? ejecutorDescription;
+
+  @HiveField(31)
+  String? autorizacionDescription;
+
+  @HiveField(32)
+  String? tipoDeForzadoDescription;
+  @HiveField(33)
+  String? interlockDescription;
 
   Forzado({
     this.tagPrefijo,
@@ -69,5 +121,23 @@ class Forzado extends HiveObject {
     this.ejecutor,
     this.autorizacion,
     this.tipoDeForzado,
+    this.interlock,
+    this.tagPrefijoDescription,
+    this.tagCentroDescription,
+    this.descripcionDescription,
+    this.disciplinaDescription,
+    this.turnoDescription,
+    this.iterlockSeguridadDescription,
+    this.responsableDescription,
+    this.riesgoADescription,
+    this.probabilidadDescription,
+    this.impactoDescription,
+    this.riesgoDescription,
+    this.solicitanteDescription,
+    this.aprobadorDescription,
+    this.ejecutorDescription,
+    this.autorizacionDescription,
+    this.tipoDeForzadoDescription,
+    this.interlockDescription,
   });
 }

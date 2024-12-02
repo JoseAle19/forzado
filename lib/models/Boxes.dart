@@ -10,5 +10,6 @@ class HiveBoxes {
   static const String responsable = 'Responsable';
   static const String solicitante = 'Solicitante';
   static const String aprobador = 'Aprobador';
-  static const String ejecutor = 'Ejecutor';
+static const String ejecutor = 'Ejecutor';
+  static const String forzado = 'forzado';
 }

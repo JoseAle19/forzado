@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:forzado/adapters/adapter_one.dart';
+import 'package:forzado/adapters/adapter_three.dart';
 import 'package:hive/hive.dart';
 
 // ignore: must_be_immutable
-class CustomDropDownButtonOneOff extends StatefulWidget {
-  CustomDropDownButtonOneOff({
+class CustomDropDownButtonThreeOff extends StatefulWidget {
+  CustomDropDownButtonThreeOff({
     super.key,
     required this.descriptionField,
     required this.hintText,
@@ -15,28 +15,30 @@ class CustomDropDownButtonOneOff extends StatefulWidget {
 
   final String descriptionField;
   final String hintText;
-  AdapterOne currentValue;
-  final ValueChanged<AdapterOne> onChanged;
+  AdapterThree currentValue;
+  final ValueChanged<AdapterThree> onChanged;
   final String box;
   @override
-  State<CustomDropDownButtonOneOff> createState() =>
+  State<CustomDropDownButtonThreeOff> createState() =>
       _CustomDropDownButtonState();
 }
 
-class _CustomDropDownButtonState extends State<CustomDropDownButtonOneOff> {
-  late Box<AdapterOne> _tagPrefijoBox;
-  late List<AdapterOne> items = [];
+class _CustomDropDownButtonState extends State<CustomDropDownButtonThreeOff> {
+  late Box<AdapterThree> boxAdapterThree;
+  late List<AdapterThree> items = [];
 
   @override
   void initState() {
     super.initState();
-    _tagPrefijoBox = Hive.box<AdapterOne>(widget.box);
+    boxAdapterThree = Hive.box<AdapterThree>(widget.box);
+
     _loadDataFromHive();
+    print(items);
   }
 
   void _loadDataFromHive() {
     setState(() {
-      items = _tagPrefijoBox.values.toList();
+      items = boxAdapterThree.values.toList();
     });
   }
 
@@ -52,8 +54,10 @@ class _CustomDropDownButtonState extends State<CustomDropDownButtonOneOff> {
         items.isEmpty
             ? const Text(
                 'No hay información disponible. Por favor, contacta a soporte.')
-            : DropdownButtonFormField<AdapterOne>(
-                value: widget.currentValue.descripcion.isEmpty ?null: widget.currentValue,
+            : DropdownButtonFormField<AdapterThree>(
+                value: widget.currentValue.nombre.isEmpty
+                    ? null
+                    : widget.currentValue,
                 hint: SizedBox(
                     width: MediaQuery.of(context).size.width * 0.7,
                     child: Text(
@@ -61,13 +65,13 @@ class _CustomDropDownButtonState extends State<CustomDropDownButtonOneOff> {
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
                     )),
-                items: items.map((AdapterOne item) {
-                  return DropdownMenuItem<AdapterOne>(
+                items: items.map((AdapterThree item) {
+                  return DropdownMenuItem<AdapterThree>(
                       value: item,
                       child: SizedBox(
                         width: 200,
                         child: Text(
-                          item.descripcion,
+                          item.nombre,
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                           style: const TextStyle(fontSize: 12),
