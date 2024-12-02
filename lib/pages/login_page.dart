@@ -7,6 +7,7 @@ import 'package:forzado/models/jwt_model.dart';
 import 'package:forzado/models/login.dart';
 import 'package:forzado/pages/aprobador/home_approve.dart';
 import 'package:forzado/pages/ejecutor/home_executer.dart';
+import 'package:forzado/pages/home_page.dart';
 import 'package:http/http.dart' as http;
 import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -24,28 +25,7 @@ class _LoginPageState extends State<LoginPage> {
   bool isLoading = false;
 
   Future<ApiResponse> login(String username, String password) async {
-    void navigateHandleRole(int role) {
-      switch (role) {
-        case 1:
-          final route = MaterialPageRoute(builder: (_) => const HomePage());
-          Navigator.push(context, route);
-          break;
-        case 2:
-          final route = MaterialPageRoute(builder: (_) => const HomeApprove(title: 'Home Aprobador',));
-          Navigator.push(context, route);
-          break;
-        case 3:
-          final route = MaterialPageRoute(builder: (_) => const HomeExecuter(title: 'Home Ejecutador'));
-          Navigator.push(context, route);
-          break;
-      }
-    }
 
-    if (_usernameController.text == 'juan') {
-      navigateHandleRole(3);
-    } else {
-      // navigateHandleRole(jwtModel.areaId);
-    }
     setState(() {
       isLoading = true;
     });
@@ -75,7 +55,7 @@ class _LoginPageState extends State<LoginPage> {
     void navigateHandleRole(int role) {
       switch (role) {
         case 1:
-          final route = MaterialPageRoute(builder: (_) => const HomePage());
+          final route = MaterialPageRoute(builder: (_) => const Home());
           Navigator.push(context, route);
           break;
         case 2:
@@ -96,12 +76,7 @@ class _LoginPageState extends State<LoginPage> {
       final route = MaterialPageRoute(builder: (_) => LoginPage());
       Navigator.push(context, route);
     }
-
-    // if (_usernameController.text == 'juan') {
-    //   navigateHandleRole(3);
-    // } else {
-    //   navigateHandleRole(jwtModel.areaId);
-    // }
+    navigateHandleRole(jwtModel.areaId);
   }
 
   @override

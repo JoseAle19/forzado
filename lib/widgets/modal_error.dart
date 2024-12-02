@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 
 class CustomModal {
-  void showModal(BuildContext context, String error) {
+  void showModal(
+      BuildContext context, String error, Color? color, bool? success) {
     print(error);
     final snackBar = SnackBar(
       content: Row(
         children: [
-          const Icon(
-            Icons.error,
+          Icon(
+            success == false ? Icons.error : Icons.check,
             color: Colors.white,
           ),
           const SizedBox(width: 10),
@@ -17,7 +18,7 @@ class CustomModal {
           ),
         ],
       ),
-      backgroundColor: Colors.red,
+      backgroundColor: color,
       duration: const Duration(seconds: 3), // Duración de la notificación
     );
 
