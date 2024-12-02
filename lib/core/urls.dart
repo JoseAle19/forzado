@@ -24,5 +24,6 @@ class AppUrl {
 
 // Endpoitn de alta de forzado
   static const String postAddForzado = "/api/solicitudes/alta";
+  static const String postForcedForzado = "/api/solicitudes/baja";
   static const String getListForzados = "/api/solicitudes/alta";
 }

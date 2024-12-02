@@ -85,26 +85,29 @@ class Datum {
   });
 
   factory Datum.fromJson(Map<String, dynamic> json) => Datum(
-        id: json["id"] ?? 'no información',
+        id: json["id"],
         nombre: json["nombre"] ?? 'no información',
         area: json["area"] ?? 'no información',
         solicitante: json["solicitante"] ?? 'no información',
         estado: json["estado"] ?? 'no información',
-        fecha: DateTime.parse(json["fecha"]),
+        fecha: json["fecha"] != null ? DateTime.parse(json["fecha"]) : null,
         descripcion: json["descripcion"] ?? 'no información',
         estadoSolicitud: json["estadoSolicitud"] ?? 'no información',
-        fechaRealizacion: json["fechaRealizacion"] ?? 'no información',
-        fechaCierre: json["fechaCierre"] ?? 'no información',
+        fechaRealizacion: json["fechaRealizacion"],
+        fechaCierre: json["fechaCierre"],
         usuarioCreacion: json["usuarioCreacion"] ?? 'no información',
-        fechaCreacion: DateTime.parse(json["fechaCreacion"]),
+        fechaCreacion: json["fechaCreacion"] != null
+            ? DateTime.parse(json["fechaCreacion"])
+            : null,
         usuarioModificacion: json["usuarioModificacion"] ?? 'no información',
-        fechaModificacion:
-            DateTime.parse(json["fechaModificacion"]),
+        fechaModificacion: json["fechaModificacion"] != null
+            ? DateTime.parse(json["fechaModificacion"])
+            : null,
         subareaCodigo: json["subareaCodigo"] ?? 'no información',
         subareaDescripcion: json["subareaDescripcion"] ?? 'no información',
-        disciplinaDescripcion: json["disciplinaDescripcion"] ?? 'no información',
-        turnoDescripcion:
-            turnoDescripcionValues.map[json["turnoDescripcion"]],
+        disciplinaDescripcion:
+            json["disciplinaDescripcion"] ?? 'no información',
+        turnoDescripcion: turnoDescripcionValues.map[json["turnoDescripcion"]],
         motivoRechazoDescripcion:
             json["motivoRechazoDescripcion"] ?? 'no información',
         tipoForzadoDescripcion:
@@ -112,9 +115,9 @@ class Datum {
         tagCentroCodigo: json["tagCentroCodigo"] ?? 'no información',
         tagCentroDescripcion: json["tagCentroDescripcion"] ?? 'no información',
         responsableNombre:
-            responsableNombreValues.map[json["responsableNombre"]]!,
+            responsableNombreValues.map[json["responsableNombre"]],
         riesgoDescripcion:
-            riesgoDescripcionValues.map[json["riesgoDescripcion"]]!,
+            riesgoDescripcionValues.map[json["riesgoDescripcion"]],
       );
 
   Map<String, dynamic> toJson() => {
@@ -157,13 +160,16 @@ enum RiesgoDescripcion { EQUIPOS, PERSONAS }
 
 final riesgoDescripcionValues = EnumValues({
   "EQUIPOS": RiesgoDescripcion.EQUIPOS,
-  "PERSONAS": RiesgoDescripcion.PERSONAS
+  "PERSONAS": RiesgoDescripcion.PERSONAS,
 });
 
-enum TipoForzadoDescripcion { HARDWARE }
+enum TipoForzadoDescripcion {
+  HARDWARE,
+}
 
-final tipoForzadoDescripcionValues =
-    EnumValues({"HARDWARE": TipoForzadoDescripcion.HARDWARE});
+final tipoForzadoDescripcionValues = EnumValues({
+  "HARDWARE": TipoForzadoDescripcion.HARDWARE,
+});
 
 enum TurnoDescripcion { A, B }
 

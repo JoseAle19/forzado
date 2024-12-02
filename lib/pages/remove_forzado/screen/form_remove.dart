@@ -1,6 +1,10 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:forzado/core/app_styles.dart';
 import 'package:forzado/core/urls.dart';
+import 'package:forzado/pages/home_page.dart';
+import 'package:forzado/models/form/forzado/request_forced_forzado.dart';
 import 'package:forzado/models/remove_forzado/model_list_remove.dart';
 import 'package:forzado/services/api_client.dart';
 import 'package:forzado/services/service_three.dart';
@@ -46,6 +50,34 @@ class _FormRemoveForzadoState extends State<FormRemoveForzado> {
           break;
       }
     });
+  }
+
+  Future<void> sendRequestForcedForzado() async {
+    FormRemoveForzadoQueryParameters data = FormRemoveForzadoQueryParameters(
+      solicitanteRetiro: currentStateapplicant,
+      aprobadorRetiro: currentStateapprover,
+      ejecutorRetiro: currentStateexecutor,
+      observaciones: currentValueDescription,
+      id: widget.detailForzado.id.toString(),
+    );
+
+    try {
+      ApiClient client = ApiClient();
+      final response = await client.post(
+          AppUrl.postForcedForzado, json.encode(data.toJson()));
+
+      if (response.statusCode == 200) {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const Home()),
+        );
+      } else {
+        print(response.body);
+        print('Error en la solicitud: ${response.statusCode}');
+      }
+    } catch (e) {
+      print('Error en la conexión: $e');
+    }
   }
 
   @override
@@ -114,20 +146,22 @@ class _FormRemoveForzadoState extends State<FormRemoveForzado> {
                     const InputDecoration(hintText: 'Agregue una descripción'),
               )
             ]),
-            const SizedBox(
-              height: 20,
-            ),
-            Container(
+            const Spacer(),
+            GestureDetector(
+              onTap: () => sendRequestForcedForzado(),
+              child: Container(
                 decoration: BoxDecoration(
-                    color: Colors.red.shade700,
+                    color: Colors.red.shade900,
                     borderRadius: BorderRadius.circular(20)),
                 padding: const EdgeInsets.all(10),
-                margin: const EdgeInsets.symmetric(vertical: 20),
                 child: const Center(
-                    child: Text( 'Finalizar',
-                  style: AppStyles.textStyle,
-                )),
+                  child: Text(
+                    'Finalizar',
+                    style: AppStyles.textStyle,
+                  ),
+                ),
               ),
+            ),
           ],
         ),
       ),

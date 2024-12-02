@@ -49,7 +49,19 @@ class _HomePageRemoveState extends State<HomePageRemove> {
       body: Padding(
         padding: const EdgeInsets.all(20),
         child: FutureBuilder<ModelListRemove>(
-          future: _listServiceRemove.getDataByEndpoint(AppUrl.getListForzados),
+          future:
+              _listServiceRemove.getDataByEndpoint(AppUrl.getListForzados).then(
+            (value) {
+              List<Datum> data = value.data
+                  .where((element) => element.estado == 'ejecutado-alta')
+                  .toList();
+              return ModelListRemove(
+                success: value.success,
+                message: value.message,
+                data: data,
+              );
+            },
+          ),
           builder:
               (BuildContext context, AsyncSnapshot<ModelListRemove> snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
@@ -66,12 +78,8 @@ class _HomePageRemoveState extends State<HomePageRemove> {
 
             final List<Datum> data = snapshot.data!.data;
             listData = data;
-            return Column(
-              children: [
-                Expanded(
-                  child: ListForzado(data: data),
-                ),
-              ],
+            return Expanded(
+              child: ListForzado(data: data),
             );
           },
         ),
