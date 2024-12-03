@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:forzado/pages/ejecutor/screen/executor.dart';
+import 'package:forzado/pages/ejecutor/forzados_executer.dart';
 import 'package:forzado/pages/home_page.dart';
 import 'package:forzado/pages/login_page.dart';
-import 'package:forzado/pages/solicitante/online/screen/home_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class HomeApprove extends StatelessWidget {
-  const HomeApprove({super.key});
+class HomeExecuter extends StatelessWidget {
+  const HomeExecuter({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -40,7 +39,7 @@ class HomeApprove extends StatelessWidget {
             GestureDetector(
               onTap: () {
                 final route =
-                    MaterialPageRoute(builder: (_) => const Approveforzado());
+                    MaterialPageRoute(builder: (_) =>   const ListExecuterForzado(isExecuterAlta: true,));
                 Navigator.push(context, route);
               },
               child: Container(
@@ -86,9 +85,9 @@ class HomeApprove extends StatelessWidget {
             ),
             GestureDetector(
               onTap: () {
-                // final route =
-                //     MaterialPageRoute(builder: (_) => const HomePageRemove());
-                // Navigator.push(context, route);
+                final route =
+                    MaterialPageRoute(builder: (_) => const ListExecuterForzado(isExecuterAlta: false,));
+                Navigator.push(context, route);
               },
               child: Container(
                 margin: const EdgeInsets.only(top: 20),

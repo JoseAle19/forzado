@@ -14,11 +14,11 @@ class HomePageRemove extends StatefulWidget {
 }
 
 class _HomePageRemoveState extends State<HomePageRemove> {
-  late List<Datum> listData;
+  late List<ForzadoM> listData;
 
   @override
   Widget build(BuildContext context) {
-    final ListServiceRemove _listServiceRemove = ListServiceRemove(ApiClient());
+    final ListServiceForzados _ListServiceForzados = ListServiceForzados(ApiClient());
 
     return Scaffold(
       appBar: AppBar(
@@ -48,14 +48,14 @@ class _HomePageRemoveState extends State<HomePageRemove> {
       ),
       body: Padding(
         padding: const EdgeInsets.all(20),
-        child: FutureBuilder<ModelListRemove>(
+        child: FutureBuilder<ModelListForzados>(
           future:
-              _listServiceRemove.getDataByEndpoint(AppUrl.getListForzados).then(
+              _ListServiceForzados.getDataByEndpoint(AppUrl.getListForzados).then(
             (value) {
-              List<Datum> data = value.data
+              List<ForzadoM> data = value.data
                   .where((element) => element.estado == 'ejecutado-alta')
                   .toList();
-              return ModelListRemove(
+              return ModelListForzados(
                 success: value.success,
                 message: value.message,
                 data: data,
@@ -63,7 +63,7 @@ class _HomePageRemoveState extends State<HomePageRemove> {
             },
           ),
           builder:
-              (BuildContext context, AsyncSnapshot<ModelListRemove> snapshot) {
+              (BuildContext context, AsyncSnapshot<ModelListForzados> snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
               return const Center(child: CircularProgressIndicator());
             }
@@ -76,7 +76,7 @@ class _HomePageRemoveState extends State<HomePageRemove> {
               return const Center(child: Text('No hay datos'));
             }
 
-            final List<Datum> data = snapshot.data!.data;
+            final List<ForzadoM> data = snapshot.data!.data;
             listData = data;
             return Expanded(
               child: ListForzado(data: data),

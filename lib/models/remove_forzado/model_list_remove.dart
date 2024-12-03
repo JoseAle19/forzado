@@ -1,27 +1,27 @@
 import 'dart:convert';
 
-ModelListRemove modelListRemoveFromJson(String str) =>
-    ModelListRemove.fromJson(json.decode(str));
+ModelListForzados ModelListForzadosFromJson(String str) =>
+    ModelListForzados.fromJson(json.decode(str));
 
-String modelListRemoveToJson(ModelListRemove data) =>
+String ModelListForzadosToJson(ModelListForzados data) =>
     json.encode(data.toJson());
 
-class ModelListRemove {
+class ModelListForzados {
   final bool success;
   final String message;
-  final List<Datum> data;
+  final List<ForzadoM> data;
 
-  ModelListRemove({
+  ModelListForzados({
     required this.success,
     required this.message,
     required this.data,
   });
 
-  factory ModelListRemove.fromJson(Map<String, dynamic> json) =>
-      ModelListRemove(
+  factory ModelListForzados.fromJson(Map<String, dynamic> json) =>
+      ModelListForzados(
         success: json["success"],
         message: json["message"],
-        data: List<Datum>.from(json["data"].map((x) => Datum.fromJson(x))),
+        data: List<ForzadoM>.from(json["data"].map((x) => ForzadoM.fromJson(x))),
       );
 
   Map<String, dynamic> toJson() => {
@@ -31,7 +31,7 @@ class ModelListRemove {
       };
 }
 
-class Datum {
+class ForzadoM {
   final int? id;
   final String nombre;
   final String? area;
@@ -57,7 +57,7 @@ class Datum {
   final ResponsableNombre? responsableNombre;
   final RiesgoDescripcion? riesgoDescripcion;
 
-  Datum({
+  ForzadoM({
     this.id,
     required this.nombre,
     this.area,
@@ -84,7 +84,7 @@ class Datum {
     this.riesgoDescripcion,
   });
 
-  factory Datum.fromJson(Map<String, dynamic> json) => Datum(
+  factory ForzadoM.fromJson(Map<String, dynamic> json) => ForzadoM(
         id: json["id"],
         nombre: json["nombre"] ?? 'no información',
         area: json["area"] ?? 'no información',

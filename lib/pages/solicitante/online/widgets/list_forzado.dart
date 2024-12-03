@@ -8,9 +8,9 @@ class ListForzado extends StatelessWidget {
     required this.data,
   });
 
-  final List<Datum> data;
+  final List<ForzadoM> data;
 
-  void navigateDetailForzado(BuildContext context, Datum item) {
+  void navigateDetailForzado(BuildContext context, ForzadoM item) {
     Navigator.push(
       context,
       MaterialPageRoute(

@@ -14,7 +14,7 @@ import 'package:forzado/widgets/custom_dropdown_three.dart';
 // ignore: must_be_immutable
 class FormRemoveForzado extends StatefulWidget {
   const FormRemoveForzado({super.key, required this.detailForzado});
-  final Datum detailForzado;
+  final ForzadoM detailForzado;
 
   @override
   State<FormRemoveForzado> createState() => _FormRemoveForzadoState();

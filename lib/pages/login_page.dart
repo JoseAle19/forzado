@@ -4,8 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:forzado/core/app_colors.dart';
 import 'package:forzado/models/jwt_model.dart';
 import 'package:forzado/models/login.dart';
-import 'package:forzado/pages/aprobador/home_approve.dart';
-import 'package:forzado/pages/ejecutor/home_executer.dart';
+import 'package:forzado/pages/ejecutor/home_executor.dart';
 import 'package:forzado/pages/home_page.dart';
 import 'package:http/http.dart' as http;
 import 'package:jwt_decoder/jwt_decoder.dart';
@@ -24,6 +23,17 @@ class _LoginPageState extends State<LoginPage> {
   bool isLoading = false;
 
   Future<ApiResponse> login(String username, String password) async {
+    if (username != 'useruseruser') {
+      switch (username) {
+        case 'ejecutor':
+          final route = MaterialPageRoute(builder: (_) => const HomeExecuter());
+          Navigator.push(context, route);
+          return ApiResponse.fromJson(json.decode('{"success: false, message: json["Hola ejecutor"]"}'));
+        case 'aprobador':
+        // final route = MaterialPageRoute(builder: (_) => const HomeExecutor());
+      }
+
+    }
     setState(() {
       isLoading = true;
     });
@@ -35,7 +45,7 @@ class _LoginPageState extends State<LoginPage> {
       // "username": username,
       // "password": password,
     });
-
+ 
     final response = await http.post(
       Uri.parse('https://sntps2jn-3001.brs.devtunnels.ms/api/mobile/auth'),
       headers: headers,
@@ -53,19 +63,19 @@ class _LoginPageState extends State<LoginPage> {
     JwtModel jwtModel = JwtModel.fromJson(decodedToken);
 
     void navigateHandleRole(int role) {
-      switch (2) {
+      switch (role) {
         case 1:
           final route = MaterialPageRoute(builder: (_) => const Home());
           Navigator.push(context, route);
           break;
         case 2:
-          final route = MaterialPageRoute(builder: (_) => const HomeApprove());
+          final route = MaterialPageRoute(builder: (_) => const HomeExecuter());
           Navigator.push(context, route);
           break;
         case 3:
-          final route = MaterialPageRoute(
-              builder: (_) => const HomeExecuter(title: 'Home Ejecutador'));
-          Navigator.push(context, route);
+          // final route = MaterialPageRoute(
+          //     builder: (_) => const HomeExecuter(title: 'Home Ejecutador'));
+          // Navigator.push(context, route);
           break;
       }
     }
