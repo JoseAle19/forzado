@@ -103,6 +103,8 @@ class Forzado extends HiveObject {
   String? tipoDeForzadoDescription;
   @HiveField(33)
   String? interlockDescription;
+  @HiveField(34)
+  String? status;
 
   Forzado({
     this.tagPrefijo,
@@ -139,5 +141,6 @@ class Forzado extends HiveObject {
     this.autorizacionDescription,
     this.tipoDeForzadoDescription,
     this.interlockDescription,
+    this.status,
   });
 }

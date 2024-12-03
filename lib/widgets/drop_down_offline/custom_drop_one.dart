@@ -53,7 +53,9 @@ class _CustomDropDownButtonState extends State<CustomDropDownButtonOneOff> {
             ? const Text(
                 'No hay información disponible. Por favor, contacta a soporte.')
             : DropdownButtonFormField<AdapterOne>(
-                value: widget.currentValue.descripcion.isEmpty ?null: widget.currentValue,
+                value: widget.currentValue.descripcion.isEmpty
+                    ? null
+                    : widget.currentValue,
                 hint: SizedBox(
                     width: MediaQuery.of(context).size.width * 0.7,
                     child: Text(

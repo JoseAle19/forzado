@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:forzado/pages/ejecutor/screen/approve_forzado.dart';
+import 'package:forzado/pages/ejecutor/screen/executor.dart';
 import 'package:forzado/pages/home_page.dart';
 import 'package:forzado/pages/login_page.dart';
-import 'package:forzado/pages/remove_forzado/screen/home_page.dart';
+import 'package:forzado/pages/solicitante/online/screen/home_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class HomeExecuter extends StatelessWidget {

@@ -28,6 +28,7 @@ enum ValuesType {
 }
 
 class _FormRemoveForzadoState extends State<FormRemoveForzado> {
+  bool isFetching = false;
   String currentStateapplicant = '';
   String currentStateapprover = '';
   String currentStateexecutor = '';
@@ -63,6 +64,9 @@ class _FormRemoveForzadoState extends State<FormRemoveForzado> {
     );
 
     try {
+      setState(() {
+        isFetching = true;
+      });
       ApiClient client = ApiClient();
       final response = await client.post(
           AppUrl.postForcedForzado, json.encode(data.toJson()));
@@ -81,6 +85,10 @@ class _FormRemoveForzadoState extends State<FormRemoveForzado> {
       }
     } catch (e) {
       print('Error en la conexión: $e');
+    } finally {
+      setState(() {
+        isFetching = false;
+      });
     }
   }
 
@@ -151,21 +159,26 @@ class _FormRemoveForzadoState extends State<FormRemoveForzado> {
               )
             ]),
             const Spacer(),
-            GestureDetector(
-              onTap: () => sendRequestForcedForzado(),
-              child: Container(
-                decoration: BoxDecoration(
-                    color: Colors.red.shade900,
-                    borderRadius: BorderRadius.circular(20)),
-                padding: const EdgeInsets.all(10),
-                child: const Center(
-                  child: Text(
-                    'Finalizar',
-                    style: AppStyles.textStyle,
+            isFetching
+                ? const CircularProgressIndicator() // Mostrar loader mientras `isFetching` es `true`
+                : GestureDetector(
+                    onTap: () {
+                      if (!isFetching) sendRequestForcedForzado();
+                    },
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: Colors.red.shade900,
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      padding: const EdgeInsets.all(10),
+                      child: const Center(
+                        child: Text(
+                          'Finalizar',
+                          style: AppStyles.textStyle,
+                        ),
+                      ),
+                    ),
                   ),
-                ),
-              ),
-            ),
           ],
         ),
       ),

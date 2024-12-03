@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:forzado/models/remove_forzado/model_list_remove.dart';
-import 'package:forzado/pages/remove_forzado/screen/form_remove.dart';
+import 'package:forzado/pages/solicitante/online/screen/form_remove.dart';
 
 class CustomSearchDelegate extends SearchDelegate<String> {
   final List<Datum> searchList;

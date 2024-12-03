@@ -51,13 +51,14 @@ class ForzadoAdapter extends TypeAdapter<Forzado> {
       autorizacionDescription: fields[31] as String?,
       tipoDeForzadoDescription: fields[32] as String?,
       interlockDescription: fields[33] as String?,
+      status: fields[34] as String?,
     );
   }
 
   @override
   void write(BinaryWriter writer, Forzado obj) {
     writer
-      ..writeByte(34)
+      ..writeByte(35)
       ..writeByte(0)
       ..write(obj.tagPrefijo)
       ..writeByte(1)
@@ -125,7 +126,9 @@ class ForzadoAdapter extends TypeAdapter<Forzado> {
       ..writeByte(32)
       ..write(obj.tipoDeForzadoDescription)
       ..writeByte(33)
-      ..write(obj.interlockDescription);
+      ..write(obj.interlockDescription)
+      ..writeByte(34)
+      ..write(obj.status);
   }
 
   @override

@@ -20,33 +20,33 @@ class StepperFormOffline extends StatefulWidget {
 
 class _StepperFormOfflineState extends State<StepperFormOffline> {
   // first screen
-  AdapterOne currentValueTagPrefijo = AdapterOne(id: 0, codigo: '0', descripcion: '') ;
-  AdapterOne currentValueTagCentro =  AdapterOne(id: 0, codigo: '0', descripcion: '');
+  AdapterOne currentValueTagPrefijo =
+      AdapterOne(id: 0, codigo: '0', descripcion: '');
+  AdapterOne currentValueTagCentro =
+      AdapterOne(id: 0, codigo: '0', descripcion: '');
   String currentValueDescription = '';
 
   AdapterTwo currentValueTagDisciplina = AdapterTwo(id: 1, descripcion: '');
-  AdapterTwo currentValueSlot = AdapterTwo(id: 1, descripcion: '') ;
+  AdapterTwo currentValueSlot = AdapterTwo(id: 1, descripcion: '');
   // second pantalla
-  AdapterTwo currentValueSegurity =  AdapterTwo(id: 1, descripcion: '');
-  AdapterThree currentValueResponsability =  AdapterThree(id:0, nombre: '');
-  AdapterTwo currentValueRisk =  AdapterTwo(id: 1, descripcion: '');
-  AdapterTwo currentValueProbability =  AdapterTwo(id: 1, descripcion: '');
-  AdapterTwo currentValueImpact =  AdapterTwo(id: 1, descripcion: '');
+  AdapterTwo currentValueSegurity = AdapterTwo(id: 1, descripcion: '');
+  AdapterThree currentValueResponsability = AdapterThree(id: 0, nombre: '');
+  AdapterTwo currentValueRisk = AdapterTwo(id: 1, descripcion: '');
+  AdapterTwo currentValueProbability = AdapterTwo(id: 1, descripcion: '');
+  AdapterTwo currentValueImpact = AdapterTwo(id: 1, descripcion: '');
   // third screen
-  AdapterThree currentValueapplicant =  AdapterThree(id:0, nombre: '');
-  AdapterThree currentValueapprover =  AdapterThree(id:0, nombre: '');
-  AdapterThree currentValueexecutor =  AdapterThree(id:0, nombre: '');
-  AdapterTwo currentValueForzado =  AdapterTwo(id: 1, descripcion: '');
-  String currentValueInterlock =  '';
-
- 
+  AdapterThree currentValueapplicant = AdapterThree(id: 0, nombre: '');
+  AdapterThree currentValueapprover = AdapterThree(id: 0, nombre: '');
+  AdapterThree currentValueexecutor = AdapterThree(id: 0, nombre: '');
+  AdapterTwo currentValueForzado = AdapterTwo(id: 1, descripcion: '');
+  String currentValueInterlock = '';
 
   int _currentStep = 0;
   String? selectedValue;
 
 // Jose: valor para validar si esta o no haciendo la peticion
   bool isFetching = false;
-  void _updateCurrentValue(ValueType valueType ,  dynamic newValue) {
+  void _updateCurrentValue(ValueType valueType, dynamic newValue) {
     setState(() {
       switch (valueType) {
         case ValueType.tagPrefijo:
@@ -116,23 +116,21 @@ class _StepperFormOfflineState extends State<StepperFormOffline> {
                         details.onStepContinue!();
                       } else {
                         await saveData(
-                          currentValueTagPrefijo,
-                          currentValueTagCentro,
-                          currentValueDescription,
-                          currentValueTagDisciplina,
-                          currentValueSlot,
-                          currentValueSegurity,
-                          currentValueResponsability,
-                          currentValueRisk,
-                          currentValueProbability,
-                          currentValueImpact,
-                          currentValueapplicant,
-                          currentValueapprover,
-                          currentValueexecutor,
-                          currentValueForzado,
-                          currentValueInterlock
-                          
-                        );
+                            currentValueTagPrefijo,
+                            currentValueTagCentro,
+                            currentValueDescription,
+                            currentValueTagDisciplina,
+                            currentValueSlot,
+                            currentValueSegurity,
+                            currentValueResponsability,
+                            currentValueRisk,
+                            currentValueProbability,
+                            currentValueImpact,
+                            currentValueapplicant,
+                            currentValueapprover,
+                            currentValueexecutor,
+                            currentValueForzado,
+                            currentValueInterlock);
                       }
                     },
                     child: Container(
@@ -205,7 +203,7 @@ class _StepperFormOfflineState extends State<StepperFormOffline> {
                                       const Text('Descripción *'),
                                       TextFormField(
                                         initialValue: currentValueDescription,
-                                        onChanged: (value){
+                                        onChanged: (value) {
                                           setState(() {
                                             currentValueDescription = value;
                                           });
@@ -391,61 +389,62 @@ class _StepperFormOfflineState extends State<StepperFormOffline> {
   }
 
   Future<void> saveData(
-      AdapterOne prefijo,
-      AdapterOne centro,
-      String descripcion,
-      AdapterTwo disciplina,
-      AdapterTwo turno,
-      AdapterTwo seguridad,
-      AdapterThree responsable,
-      AdapterTwo riesgo,
-      AdapterTwo probabilidad,
-      AdapterTwo impacto,
-      AdapterThree solicitante,
-      AdapterThree aprobador,
-      AdapterThree ejecutor,
-      AdapterTwo forzado,
-      String interlock,) async {
+    AdapterOne prefijo,
+    AdapterOne centro,
+    String descripcion,
+    AdapterTwo disciplina,
+    AdapterTwo turno,
+    AdapterTwo seguridad,
+    AdapterThree responsable,
+    AdapterTwo riesgo,
+    AdapterTwo probabilidad,
+    AdapterTwo impacto,
+    AdapterThree solicitante,
+    AdapterThree aprobador,
+    AdapterThree ejecutor,
+    AdapterTwo forzado,
+    String interlock,
+  ) async {
     late Box<Forzado> box;
     try {
       // Abrir la caja
       box = await Hive.openBox<Forzado>('forzado');
       final data = Forzado(
-        tagPrefijo: prefijo.codigo,
-        tagCentro: centro.codigo,
-        descripcion: descripcion,
-        disciplina: disciplina.id.toString(),
-        turno: turno.id.toString(),
-        iterlockSeguridad: seguridad.id.toString(),
-        responsable: responsable.id.toString(),
-        riesgo: riesgo.id.toString(),
-        riesgoA: riesgo.id.toString(),
-        probabilidad: probabilidad.id.toString(),
-        impacto: impacto.id.toString(),
-        solicitante: solicitante.id.toString(),
-        aprobador: aprobador.id.toString(),
-        ejecutor: ejecutor.id.toString(),
-        autorizacion: '1',
-        tipoDeForzado: forzado.id.toString(),
-        interlock: interlock,
-        tagPrefijoDescription: prefijo.descripcion,
-        tagCentroDescription: prefijo.descripcion,
-        descripcionDescription: descripcion,
-        disciplinaDescription: disciplina.descripcion,
-        turnoDescription: turno.descripcion,
-        iterlockSeguridadDescription: interlock,
-        responsableDescription: responsable.nombre,
-        riesgoADescription: riesgo.descripcion,
-        probabilidadDescription: probabilidad.descripcion,
-        impactoDescription: impacto.descripcion,
-        riesgoDescription: riesgo.descripcion,
-        solicitanteDescription: solicitante.nombre,
-        aprobadorDescription: aprobador.nombre,
-        ejecutorDescription: ejecutor.nombre,
-        autorizacionDescription: 'Hardcodeado',
-        tipoDeForzadoDescription: forzado.descripcion,
-        interlockDescription: interlock,
-      );
+          tagPrefijo: prefijo.id.toString(),
+          tagCentro: centro.id.toString(),
+          descripcion: descripcion,
+          disciplina: disciplina.id.toString(),
+          turno: turno.id.toString(),
+          iterlockSeguridad: seguridad.id.toString(),
+          responsable: responsable.id.toString(),
+          riesgo: riesgo.id.toString(),
+          riesgoA: riesgo.id.toString(),
+          probabilidad: probabilidad.id.toString(),
+          impacto: impacto.id.toString(),
+          solicitante: solicitante.id.toString(),
+          aprobador: aprobador.id.toString(),
+          ejecutor: ejecutor.id.toString(),
+          autorizacion: '1',
+          tipoDeForzado: forzado.id.toString(),
+          interlock: interlock,
+          tagPrefijoDescription: prefijo.descripcion,
+          tagCentroDescription: prefijo.descripcion,
+          descripcionDescription: descripcion,
+          disciplinaDescription: disciplina.descripcion,
+          turnoDescription: turno.descripcion,
+          iterlockSeguridadDescription: interlock,
+          responsableDescription: responsable.nombre,
+          riesgoADescription: riesgo.descripcion,
+          probabilidadDescription: probabilidad.descripcion,
+          impactoDescription: impacto.descripcion,
+          riesgoDescription: riesgo.descripcion,
+          solicitanteDescription: solicitante.nombre,
+          aprobadorDescription: aprobador.nombre,
+          ejecutorDescription: ejecutor.nombre,
+          autorizacionDescription: 'Hardcodeado',
+          tipoDeForzadoDescription: forzado.descripcion,
+          interlockDescription: interlock,
+          status: 'pendiente-alta');
       // Guardar los datos en la caja
       await box.add(data);
       print('Forzado guardado correctamente');

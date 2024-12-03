@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:forzado/models/remove_forzado/model_list_remove.dart';
 import 'package:forzado/pages/home_page.dart';
-import 'package:forzado/pages/remove_forzado/widgets/text_info.dart';
+import 'package:forzado/pages/solicitante/online/widgets/text_info.dart';
 import 'package:intl/intl.dart';
 
 class DetailApproveForzado extends StatelessWidget {
@@ -90,8 +90,7 @@ class DetailApproveForzado extends StatelessWidget {
                 detailForzado.disciplinaDescripcion ?? 'No hay información',
           ),
           TextInfo(
-              title: 'Turno',
-              description:'${detailForzado.turnoDescripcion}'),
+              title: 'Turno', description: '${detailForzado.turnoDescripcion}'),
         ]),
       ),
     );

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:forzado/models/remove_forzado/model_list_remove.dart';
-import 'package:forzado/pages/remove_forzado/screen/form_remove.dart';
+import 'package:forzado/pages/solicitante/online/screen/form_remove.dart';
 
 class CustomSearchExecuter extends SearchDelegate<String> {
   final List<Datum> searchList;
@@ -29,8 +29,8 @@ class CustomSearchExecuter extends SearchDelegate<String> {
   @override
   Widget buildResults(BuildContext context) {
     final List<Datum> searchResults = searchList
-        .where(
-            (item) => item.descripcion!.toLowerCase().contains(query.toLowerCase()))
+        .where((item) =>
+            item.descripcion!.toLowerCase().contains(query.toLowerCase()))
         .toList();
     return ListView.builder(
         itemCount: searchResults.length,

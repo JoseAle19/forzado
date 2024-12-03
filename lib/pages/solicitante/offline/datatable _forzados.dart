@@ -1,3 +1,5 @@
+// ignore_for_file: avoid_print
+
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
@@ -17,7 +19,7 @@ class ForzadosDataTable extends StatefulWidget {
 
 class _ForzadosDataTableState extends State<ForzadosDataTable> {
   List<Forzado> listForzado = [];
-
+  bool isSync = false;
   void verInformacion(BuildContext context, Forzado forzado) {
     showDialog(
       context: context,
@@ -112,14 +114,15 @@ class _ForzadosDataTableState extends State<ForzadosDataTable> {
 
   void sincronizarInformacion() async {
     try {
+      setState(() {
+        isSync = true;
+      });
       for (var i = 0; i < listForzado.length; i++) {
         Forzado forzado = listForzado[i];
 
-print(forzado.descripcion);
-
         final data = InsertQueryParameters(
-            tagPrefijo: '1',
-            tagCentro: forzado.tagCentro!,
+            tagPrefijo: forzado.tagPrefijo!.toString(),
+            tagCentro: forzado.tagCentro.toString(),
             tagSubfijo: 'Subfijo',
             descripcion: forzado.descripcion!,
             disciplina: forzado.disciplina!,
@@ -135,28 +138,32 @@ print(forzado.descripcion);
             autorizacion: '1',
             tipoForzado: forzado.tipoDeForzado!);
 
-        // final transformedMap =
-        //     data.toJson().map((key, value) => MapEntry(key, value.toString()));
+        final transformedMap =
+            data.toJson().map((key, value) => MapEntry(key, value.toString()));
 
-        // final jsonString = jsonEncode(transformedMap);
-        //     print(jsonString);
-        // ApiClient client = new ApiClient();
-        // final response = await client.post(AppUrl.postAddForzado, jsonString);
+        final jsonString = jsonEncode(transformedMap);
 
-        // if (response.statusCode == 200) {
-        //   print('Respuesta exitosa: ${response.body}');
-        // } else {
-        //   print(response.body);
-        //   print('Error en la solicitud: ${response.statusCode}');
-        // }
+        ApiClient client = new ApiClient();
+        final response = await client.post(AppUrl.postAddForzado, jsonString);
+
+        if (response.statusCode == 200) {
+          print('Respuesta exitosa');
+        } else {
+          print(response.body);
+          print('Error en la solicitud: ${response.statusCode}');
+        }
       }
+      deleteForzadoBox();
 
-      final box = Hive.box(HiveBoxes.forzado);
-      await box.clear();
-
-    print('Datos ');
+      setState(() {
+        isSync = false;
+      });
     } catch (e) {
       print('Error al guardar: $e');
+    } finally {
+      setState(() {
+        isSync = false;
+      });
     }
   }
 
@@ -183,90 +190,129 @@ print(forzado.descripcion);
     }
   }
 
+  Future<void> deleteForzadoBox() async {
+    try {
+      // Abrir la caja
+      var box = await Hive.openBox<Forzado>(HiveBoxes.forzado);
+
+      // Limpiar la caja
+      await box.clear();
+
+      // Actualizar el estado de la lista
+      setState(() {
+        listForzado.clear(); // Vacía la lista local
+      });
+
+      print('Caja limpiada y lista actualizada.');
+    } catch (e) {
+      print('Error al eliminar elementos de la caja: $e');
+    } finally {
+      // Cerrar la caja
+      try {
+        if (Hive.isBoxOpen(HiveBoxes.forzado)) {
+          await Hive.box(HiveBoxes.forzado).close();
+        }
+      } catch (e) {
+        print('Error al cerrar la caja: $e');
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        actions: [
+          IconButton(
+            onPressed: sincronizarInformacion,
+            icon: const Icon(Icons.sync),
+          )
+        ],
         title: Text('Tabla de Forzados'),
       ),
-      body: listForzado.isEmpty
-          ? Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Icon(
-                    Icons.info_outline,
-                    size: 80,
-                    color: Colors.grey,
+      body: Stack(
+        children: [
+          // Contenido principal
+          listForzado.isEmpty
+              ? Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Icon(
+                        Icons.info_outline,
+                        size: 80,
+                        color: Colors.grey,
+                      ),
+                      const SizedBox(height: 16),
+                      Text(
+                        'No hay forzados que sincronizar',
+                        style: TextStyle(
+                          fontSize: 18,
+                          color: Colors.grey[600],
+                          fontWeight: FontWeight.bold,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                    ],
                   ),
-                  const SizedBox(height: 16),
-                  Text(
-                    'No hay forzados agregados',
-                    style: TextStyle(
-                      fontSize: 18,
-                      color: Colors.grey[600],
-                      fontWeight: FontWeight.bold,
+                )
+              : ListView.builder(
+                  itemCount: listForzado.length,
+                  itemBuilder: (context, index) {
+                    final forzado = listForzado[index];
+                    return Card(
+                      margin: const EdgeInsets.symmetric(
+                          vertical: 8, horizontal: 16),
+                      child: ListTile(
+                        title: Text(
+                          forzado.descripcion ?? 'Sin descripción',
+                          style: const TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                        subtitle: Text('Centro: ${forzado.tagCentro ?? 'N/A'}'),
+                        trailing: Wrap(
+                          spacing: 8, // Espaciado entre botones
+                          children: [
+                            IconButton(
+                              icon:
+                                  Icon(Icons.info_outline, color: Colors.blue),
+                              tooltip: 'Ver información',
+                              onPressed: () => verInformacion(context, forzado),
+                            ),
+                            IconButton(
+                              icon: Icon(Icons.delete, color: Colors.red),
+                              tooltip: 'Eliminar',
+                              onPressed: () => deleteForzadoBox(),
+                            ),
+                          ],
+                        ),
+                      ),
+                    );
+                  },
+                ),
+          // Indicador de carga
+          if (isSync)
+            Container(
+              color: Colors.black.withOpacity(0.5), // Fondo semitransparente
+              child: Center(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const CircularProgressIndicator(),
+                    const SizedBox(height: 16),
+                    Text(
+                      'Sincronizando información...',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
-                    textAlign: TextAlign.center,
-                  ),
-                ],
+                  ],
+                ),
               ),
-            )
-          : ListView.builder(
-              itemCount: listForzado.length,
-              itemBuilder: (context, index) {
-                final forzado = listForzado[index];
-                return Card(
-                  margin:
-                      const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-                  child: ListTile(
-                    title: Text(
-                      forzado.descripcion ?? 'Sin descripción',
-                      style: const TextStyle(fontWeight: FontWeight.bold),
-                    ),
-                    subtitle: Text('Centro: ${forzado.tagCentro ?? 'N/A'}'),
-                    trailing: Wrap(
-                      spacing: 8, // Espaciado entre botones
-                      children: [
-                        IconButton(
-                          icon: Icon(Icons.info_outline, color: Colors.blue),
-                          tooltip: 'Ver información',
-                          onPressed: () => verInformacion(context, forzado),
-                        ),
-                        IconButton(
-                          icon: Icon(Icons.sync, color: Colors.green),
-                          tooltip: 'Sincronizar información',
-                          onPressed: () => sincronizarInformacion(),
-                        ),
-                      ],
-                    ),
-                  ),
-                );
-              },
             ),
+        ],
+      ),
     );
-  }
-
-  String formatInsertQueryParameters(InsertQueryParameters params) {
-    return '''
-InsertQueryParameters(
-  tagPrefijo: ${params.tagPrefijo},
-  tagCentro: ${params.tagCentro},
-  tagSubfijo: ${params.tagSubfijo},
-  descripcion: ${params.descripcion},
-  disciplina: ${params.disciplina},
-  turno: ${params.turno},
-  interlockSeguridad: ${params.interlockSeguridad},
-  responsable: ${params.responsable},
-  riesgo: ${params.riesgo},
-  probabilidad: ${params.probabilidad},
-  impacto: ${params.impacto},
-  solicitante: ${params.solicitante},
-  aprobador: ${params.aprobador},
-  ejecutor: ${params.ejecutor},
-  autorizacion: ${params.autorizacion},
-  tipoForzado: ${params.tipoForzado}
-)
-  ''';
   }
 }

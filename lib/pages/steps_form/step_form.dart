@@ -19,6 +19,7 @@ class StepperForm extends StatefulWidget {
   @override
   State<StepperForm> createState() => _StepperFormState();
 }
+
 enum ValueType {
   tagPrefijo,
   tagCentro,
@@ -54,58 +55,57 @@ class _StepperFormState extends State<StepperForm> {
   String currentStateapprover = '';
   String currentStateexecutor = '';
   String currentStateForzado = '';
- 
+
   int _currentState = 0;
 
-void _updateCurrentValue(ValueType valueType, String newValue) {
-  setState(() {
-    switch (valueType) {
-      case ValueType.tagPrefijo:
-        currentValueTagPrefijo = newValue;
-        break;
-      case ValueType.tagCentro:
-        currentValueTagCentro = newValue;
-        break;
-      case ValueType.description:
-        currentValueDescription = newValue;
-        break;
-      case ValueType.tagDisciplina:
-        currentValueTagDisciplina = newValue;
-        break;
-      case ValueType.slot:
-        currentValueSlot = newValue;
-        break;
-      case ValueType.segurity:
-        currentValueSegurity = newValue;
-        break;
-      case ValueType.responsability:
-        currentStateResponsability = newValue;
-        break;
-      case ValueType.risk:
-        currentStateRisk = newValue;
-        break;
-      case ValueType.probability:
-        currentStateProbability = newValue;
-        break;
-      case ValueType.impact:
-        currentStateImpact = newValue;
-        break;
-      case ValueType.applicant:
-        currentStateapplicant = newValue;
-        break;
-      case ValueType.approver:
-        currentStateapprover = newValue;
-        break;
-      case ValueType.executor:
-        currentStateexecutor = newValue;
-        break;
-      case ValueType.forzado:
-        currentStateForzado = newValue;
-        break;
-    }
-  });
-}
-
+  void _updateCurrentValue(ValueType valueType, String newValue) {
+    setState(() {
+      switch (valueType) {
+        case ValueType.tagPrefijo:
+          currentValueTagPrefijo = newValue;
+          break;
+        case ValueType.tagCentro:
+          currentValueTagCentro = newValue;
+          break;
+        case ValueType.description:
+          currentValueDescription = newValue;
+          break;
+        case ValueType.tagDisciplina:
+          currentValueTagDisciplina = newValue;
+          break;
+        case ValueType.slot:
+          currentValueSlot = newValue;
+          break;
+        case ValueType.segurity:
+          currentValueSegurity = newValue;
+          break;
+        case ValueType.responsability:
+          currentStateResponsability = newValue;
+          break;
+        case ValueType.risk:
+          currentStateRisk = newValue;
+          break;
+        case ValueType.probability:
+          currentStateProbability = newValue;
+          break;
+        case ValueType.impact:
+          currentStateImpact = newValue;
+          break;
+        case ValueType.applicant:
+          currentStateapplicant = newValue;
+          break;
+        case ValueType.approver:
+          currentStateapprover = newValue;
+          break;
+        case ValueType.executor:
+          currentStateexecutor = newValue;
+          break;
+        case ValueType.forzado:
+          currentStateForzado = newValue;
+          break;
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -193,7 +193,8 @@ void _updateCurrentValue(ValueType valueType, String newValue) {
                           shrinkWrap: true,
                           children: [
                             CustomDropDownButtonOne(
-                              onChanged: (value) => _updateCurrentValue(ValueType.tagPrefijo, value ),
+                                onChanged: (value) => _updateCurrentValue(
+                                    ValueType.tagPrefijo, value),
                                 currentValue: currentValueTagPrefijo,
                                 service: serviceOne,
                                 descriptionField:
@@ -201,7 +202,8 @@ void _updateCurrentValue(ValueType valueType, String newValue) {
                                 hintText: 'Prefijo del Tag o Sub Área',
                                 endPoint: AppUrl.gettagPrefijo1),
                             CustomDropDownButtonOne(
-                            onChanged: (value) => _updateCurrentValue(ValueType.tagCentro, value ),
+                                onChanged: (value) => _updateCurrentValue(
+                                    ValueType.tagCentro, value),
                                 currentValue: currentValueTagCentro,
                                 service: serviceOne,
                                 descriptionField: 'Tag (Centro) *',
@@ -216,8 +218,9 @@ void _updateCurrentValue(ValueType valueType, String newValue) {
                                   const Text('Descripción *'),
                                   TextFormField(
                                     initialValue: currentValueDescription,
-                                    onChanged: (value) => _updateCurrentValue(ValueType.description, value ),
-                                     maxLength: 100,
+                                    onChanged: (value) => _updateCurrentValue(
+                                        ValueType.description, value),
+                                    maxLength: 100,
                                     maxLines: 2,
                                     decoration: const InputDecoration(
                                         hintText: 'Agregue una descripción'),
@@ -226,14 +229,16 @@ void _updateCurrentValue(ValueType valueType, String newValue) {
                               ),
                             ),
                             CustomDropDownButtonTwo(
-                                onChanged: (value) => _updateCurrentValue(ValueType.tagDisciplina, value ),
+                                onChanged: (value) => _updateCurrentValue(
+                                    ValueType.tagDisciplina, value),
                                 currentValue: currentValueTagDisciplina,
                                 service: serviceTwo,
                                 descriptionField: 'Disciplina *',
                                 hintText: 'Disciplina que solicita el Forzado',
                                 endPoint: AppUrl.getTagDisciplina2),
                             CustomDropDownButtonTwo(
-                                onChanged: (value) => _updateCurrentValue(ValueType.slot, value ),
+                                onChanged: (value) =>
+                                    _updateCurrentValue(ValueType.slot, value),
                                 currentValue: currentValueSlot,
                                 service: serviceTwo,
                                 descriptionField: 'Turno *',
@@ -277,28 +282,32 @@ void _updateCurrentValue(ValueType valueType, String newValue) {
                       ],
                     ),
                     CustomDropDownButtonThree(
-                        onChanged: (value) => _updateCurrentValue(ValueType.responsability, value ),
+                        onChanged: (value) => _updateCurrentValue(
+                            ValueType.responsability, value),
                         currentValue: currentStateResponsability,
                         service: serviceThree,
                         descriptionField: 'Responsable *',
                         hintText: 'Seleccione Gerencia Responsable del Forzado',
                         endPoint: AppUrl.getResponsable3),
                     CustomDropDownButtonTwo(
-                        onChanged: (value) => _updateCurrentValue(ValueType.risk, value ),
+                        onChanged: (value) =>
+                            _updateCurrentValue(ValueType.risk, value),
                         currentValue: currentStateRisk,
                         service: serviceTwo,
                         descriptionField: 'Riesgo A *',
                         hintText: 'Riesgo',
                         endPoint: AppUrl.getRiesgoA2),
                     CustomDropDownButtonTwo(
-                        onChanged: (value) => _updateCurrentValue(ValueType.probability, value ),
+                        onChanged: (value) =>
+                            _updateCurrentValue(ValueType.probability, value),
                         currentValue: currentStateProbability,
                         service: serviceTwo,
                         descriptionField: 'Probabilidad *',
                         hintText: 'Categoria de Consecuencias',
                         endPoint: AppUrl.getProbabilidad2),
                     CustomDropDownButtonTwo(
-                        onChanged: (value) => _updateCurrentValue(ValueType.impact, value ),
+                        onChanged: (value) =>
+                            _updateCurrentValue(ValueType.impact, value),
                         currentValue: currentStateImpact,
                         service: serviceTwo,
                         descriptionField: 'Impacto *',
@@ -317,28 +326,32 @@ void _updateCurrentValue(ValueType valueType, String newValue) {
                   shrinkWrap: true,
                   children: [
                     CustomDropDownButtonThree(
-                        onChanged: (value) => _updateCurrentValue(ValueType.applicant, value ),
+                        onChanged: (value) =>
+                            _updateCurrentValue(ValueType.applicant, value),
                         currentValue: currentStateapplicant,
                         service: serviceThree,
                         descriptionField: 'Solicitante (AN) *',
                         hintText: 'Seleccione Solicitante del Forzado',
                         endPoint: AppUrl.getSolicitantes3),
                     CustomDropDownButtonThree(
-                        onChanged: (value) => _updateCurrentValue(ValueType.approver, value ),
+                        onChanged: (value) =>
+                            _updateCurrentValue(ValueType.approver, value),
                         currentValue: currentStateapprover,
                         service: serviceThree,
                         descriptionField: 'Aprobador *',
                         hintText: 'Seleccione Aprobador del Forzado',
                         endPoint: AppUrl.getAprobadores),
                     CustomDropDownButtonThree(
-                        onChanged: (value) => _updateCurrentValue(ValueType.executor, value ),
+                        onChanged: (value) =>
+                            _updateCurrentValue(ValueType.executor, value),
                         currentValue: currentStateexecutor,
                         service: serviceThree,
                         descriptionField: 'Ejecutor *',
                         hintText: 'Seleccione Ejecutor',
                         endPoint: AppUrl.getEjecutor),
                     CustomDropDownButtonTwo(
-                        onChanged: (value) => _updateCurrentValue(ValueType.forzado, value ),
+                        onChanged: (value) =>
+                            _updateCurrentValue(ValueType.forzado, value),
                         currentValue: currentStateForzado,
                         service: serviceTwo,
                         descriptionField: 'Tipo de Forzado *',

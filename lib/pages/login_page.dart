@@ -2,7 +2,6 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:forzado/core/app_colors.dart';
-import 'package:forzado/home_page.dart';
 import 'package:forzado/models/jwt_model.dart';
 import 'package:forzado/models/login.dart';
 import 'package:forzado/pages/aprobador/home_approve.dart';
@@ -25,7 +24,6 @@ class _LoginPageState extends State<LoginPage> {
   bool isLoading = false;
 
   Future<ApiResponse> login(String username, String password) async {
-
     setState(() {
       isLoading = true;
     });
@@ -55,17 +53,18 @@ class _LoginPageState extends State<LoginPage> {
     JwtModel jwtModel = JwtModel.fromJson(decodedToken);
 
     void navigateHandleRole(int role) {
-      switch (role) {
+      switch (2) {
         case 1:
           final route = MaterialPageRoute(builder: (_) => const Home());
           Navigator.push(context, route);
           break;
         case 2:
-          final route = MaterialPageRoute(builder: (_) => const HomeApprove(title: 'Home Aprobador',));
+          final route = MaterialPageRoute(builder: (_) => const HomeApprove());
           Navigator.push(context, route);
           break;
         case 3:
-          final route = MaterialPageRoute(builder: (_) => const HomeExecuter(title: 'Home Ejecutador'));
+          final route = MaterialPageRoute(
+              builder: (_) => const HomeExecuter(title: 'Home Ejecutador'));
           Navigator.push(context, route);
           break;
       }

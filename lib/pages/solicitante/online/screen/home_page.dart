@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:forzado/core/urls.dart';
 import 'package:forzado/models/remove_forzado/model_list_remove.dart';
-import 'package:forzado/pages/remove_forzado/widgets/custom_search_delegate.dart';
-import 'package:forzado/pages/remove_forzado/widgets/list_forzado.dart';
+import 'package:forzado/pages/solicitante/online/widgets/custom_search_delegate.dart';
+import 'package:forzado/pages/solicitante/online/widgets/list_forzado.dart';
 import 'package:forzado/services/api_client.dart';
 import 'package:forzado/services/remove_forzado/list_service_remove.dart';
 

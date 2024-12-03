@@ -1,8 +1,10 @@
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:forzado/pages/login_page.dart';
 import 'package:forzado/pages/page_offline.dart';
-import 'package:forzado/pages/remove_forzado/screen/home_page.dart';
+import 'package:forzado/pages/solicitante/offline/datatable%20_forzados.dart';
+import 'package:forzado/pages/solicitante/online/screen/home_page.dart';
 import 'package:forzado/pages/steps_form/step_form.dart';
 import 'package:forzado/widgets/sync.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -62,24 +64,30 @@ class _HomeState extends State<Home> {
           automaticallyImplyLeading: false,
           title: Text(
             'Hola ${user}',
-            style: TextStyle(fontFamily: 'noto', fontWeight: FontWeight.bold),
+            style: const TextStyle(
+                fontFamily: 'noto', fontWeight: FontWeight.bold),
           ),
           actions: [
-            const IconButton(
-                onPressed: null, icon: Icon(Icons.notifications_none_outlined)),
-            IconButton(
-                onPressed: () async {
-                  final prefs = await SharedPreferences.getInstance();
-                  prefs.clear();
-                  final route =
-                      MaterialPageRoute(builder: (_) => const LoginPage());
-                  Navigator.push(context, route);
-                },
-                icon: const Icon(Icons.login_rounded))
+            isConnected
+                ? IconButton(
+                    onPressed: () async {
+                      final prefs = await SharedPreferences.getInstance();
+                      prefs.clear();
+                      final route =
+                          MaterialPageRoute(builder: (_) => const LoginPage());
+                      Navigator.push(context, route);
+                    },
+                    icon: const Icon(Icons.login_rounded))
+                : const SizedBox(),
+            const Icon(
+              Icons.wifi_off,
+              size: 30,
+              color: Colors.red,
+            ),
           ],
         ),
         body: PageView(
-            // physics: const NeverScrollableScrollPhysics(),
+            physics: const NeverScrollableScrollPhysics(),
             controller: _controller,
             children: [
               PageOnline(
@@ -178,6 +186,39 @@ class PageOnline extends StatelessWidget {
                   ),
                   Text(
                     'Baja Forzado',
+                    style: TextStyle(color: Colors.white),
+                  )
+                ],
+              ),
+            ),
+          ),
+          GestureDetector(
+            onTap: () {
+              final route =
+                  MaterialPageRoute(builder: (_) => const ForzadosDataTable());
+              Navigator.push(context, route);
+            },
+            child: Container(
+              margin: const EdgeInsets.only(top: 20),
+              padding: const EdgeInsets.all(20),
+              width: double.infinity,
+              decoration: BoxDecoration(boxShadow: const [
+                BoxShadow(
+                  color: Colors.black26,
+                  spreadRadius: 2.0,
+                  blurRadius: 5.0,
+                  offset: Offset(-2.0, 0),
+                ),
+              ], color: Colors.blue, borderRadius: BorderRadius.circular(10)),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  SvgPicture.asset('assets/svgs/bank.svg'),
+                  const SizedBox(
+                    height: 5,
+                  ),
+                  const Text(
+                    'Baja Forzado (Campo)',
                     style: TextStyle(color: Colors.white),
                   )
                 ],
