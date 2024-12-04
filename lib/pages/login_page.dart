@@ -24,15 +24,22 @@ class _LoginPageState extends State<LoginPage> {
   bool isLoading = false;
 
   Future<ApiResponse> login(String username, String password) async {
+    final prefs = await SharedPreferences.getInstance();
     if (username != 'useruseruser') {
       switch (username) {
         case 'ejecutor':
           final route = MaterialPageRoute(builder: (_) => const HomeExecuter());
+
+          await prefs.setBool('logged', true);
+          await prefs.setString('username', 'ejecutor');
           Navigator.push(context, route);
           return ApiResponse.fromJson2(
               json.decode('{"success": false, "message": "Hola ejecutor"}'));
         case 'aprobador':
           final route = MaterialPageRoute(builder: (_) => const HomeApprove());
+              await prefs.setBool('logged', true);
+    await prefs.setString('username', 'ejecutor');
+
           Navigator.push(context, route);
           return ApiResponse.fromJson2(
               json.decode('{"success": false, "message": "Hola Aprobador"}'));
@@ -151,10 +158,15 @@ class _LoginPageState extends State<LoginPage> {
                                 _usernameController.text,
                                 _passwordController.text);
                             if (res.success) {
-                              decodeAndSaveData(res);
-                              // final route = MaterialPageRoute(
-                              //     builder: (_) => const Home());
-                              // Navigator.push(context, route);
+                              final prefs = await  SharedPreferences.getInstance();
+                              
+                                  await prefs.setBool('logged', true);
+                                    await prefs.setString('username', 'soli');
+
+                              // decodeAndSaveData(res);
+                              final route = MaterialPageRoute(
+                                  builder: (_) => const Home());
+                              Navigator.push(context, route);
                             } else {
                               ScaffoldMessenger.of(context).showSnackBar(
                                   SnackBar(content: Text(res.message!)));

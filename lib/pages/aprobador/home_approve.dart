@@ -24,7 +24,7 @@ class HomeApprove extends StatelessWidget {
           IconButton(
               onPressed: () async {
                 final prefs = await SharedPreferences.getInstance();
-                prefs.clear();
+                 await prefs.remove('logged');
                 final route =
                     MaterialPageRoute(builder: (_) => const LoginPage());
                 Navigator.push(context, route);
