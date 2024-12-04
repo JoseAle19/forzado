@@ -8,22 +8,20 @@ import 'package:forzado/services/remove_forzado/list_service_remove.dart';
 
 class ListExecuterForzado extends StatelessWidget {
   const ListExecuterForzado({super.key, required this.isExecuterAlta});
-final bool isExecuterAlta;
+  final bool isExecuterAlta;
   @override
   Widget build(BuildContext context) {
     final ListServiceForzados _listServiceForzados =
         ListServiceForzados(ApiClient());
 
-
-  
-
-
     return Scaffold(
       appBar: AppBar(
-        leading: IconButton(onPressed: (){
-          final route = MaterialPageRoute(builder: (_)=>HomeExecuter());
-          Navigator.push(context, route);
-        }, icon: Icon(Icons.arrow_back_ios_new)),
+        leading: IconButton(
+            onPressed: () {
+              final route = MaterialPageRoute(builder: (_) => HomeExecuter());
+              Navigator.push(context, route);
+            },
+            icon: Icon(Icons.arrow_back_ios_new)),
         title: Text('Listado de Forzados'),
         actions: [
           IconButton(
@@ -35,18 +33,19 @@ final bool isExecuterAlta;
         ],
       ),
       body: FutureBuilder<ModelListForzados>(
-        future: _listServiceForzados.getDataByEndpoint(AppUrl.getListForzados).then(
-            (value) {
-              List<ForzadoM> data = value.data
-                  .where((element) => element.estado == 'aprobado-alta')
-                  .toList();
-              return ModelListForzados(
-                success: value.success,
-                message: value.message,
-                data: data,
-              );
-            },
-          ),
+        future:
+            _listServiceForzados.getDataByEndpoint(AppUrl.getListForzados).then(
+          (value) {
+            List<ForzadoM> data = value.data
+                .where((element) => element.estado == 'aprobado-alta')
+                .toList();
+            return ModelListForzados(
+              success: value.success,
+              message: value.message,
+              data: data,
+            );
+          },
+        ),
         builder:
             (BuildContext context, AsyncSnapshot<ModelListForzados> snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
@@ -58,6 +57,9 @@ final bool isExecuterAlta;
           if (snapshot.data == null) {
             return Text('No hay datos disponibles');
           }
+          // if (snapshot.data!.data.isEmpty) {
+          //   return
+          // }
 
           ModelListForzados data = snapshot.data!;
           return ListView.separated(
@@ -68,38 +70,41 @@ final bool isExecuterAlta;
             itemBuilder: (BuildContext context, int index) {
               ForzadoM forzado = snapshot.data!.data[index];
               return Card(
-      margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-      elevation: 5,
-      child: ListTile(
-        contentPadding: const EdgeInsets.all(10),
-        leading: CircleAvatar(
-          child: Text(forzado.nombre.substring(0, 1)),
-          backgroundColor: Colors.blueAccent,
-          foregroundColor: Colors.white,
-        ),
-        title: Text(
-          forzado.id.toString(),
-          style: const TextStyle(
-            fontWeight: FontWeight.bold,
-            fontSize: 16,
-          ),
-        ),
-        subtitle: Text(
-          "Área: ${forzado.area ?? 'No especificada'}\n"
-          "Solicitante: ${forzado.solicitante ?? 'No especificado'}\n"
-          "Estado: ${forzado.estado ?? 'No especificado'}",
-          style: const TextStyle(fontSize: 14),
-        ),
-        trailing: IconButton(onPressed: (){
-           Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => DetailForzadoScreen(forzado: forzado, isExecuterAlta: isExecuterAlta,),
-              ));
-          
-        }, icon: const Icon(Icons.arrow_forward_ios))
-      ),
-    );
+                margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                elevation: 5,
+                child: ListTile(
+                    contentPadding: const EdgeInsets.all(10),
+                    leading: CircleAvatar(
+                      child: Text(forzado.nombre.substring(0, 1)),
+                      backgroundColor: Colors.blueAccent,
+                      foregroundColor: Colors.white,
+                    ),
+                    title: Text(
+                      forzado.id.toString(),
+                      style: const TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16,
+                      ),
+                    ),
+                    subtitle: Text(
+                      "Área: ${forzado.area ?? 'No especificada'}\n"
+                      "Solicitante: ${forzado.solicitante ?? 'No especificado'}\n"
+                      "Estado: ${forzado.estado ?? 'No especificado'}",
+                      style: const TextStyle(fontSize: 14),
+                    ),
+                    trailing: IconButton(
+                        onPressed: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => DetailForzadoScreen(
+                                  forzado: forzado,
+                                  isExecuterAlta: isExecuterAlta,
+                                ),
+                              ));
+                        },
+                        icon: const Icon(Icons.arrow_forward_ios))),
+              );
             },
           );
         },

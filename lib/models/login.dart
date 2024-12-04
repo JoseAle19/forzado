@@ -11,4 +11,11 @@ class ApiResponse {
     }
     return ApiResponse(success: false, message: json["message"]);
   }
+
+  factory ApiResponse.fromJson2(Map<String, dynamic> json) {
+    return ApiResponse(
+      success: json['success'],
+      message: json['message'],
+    );
+  }
 }

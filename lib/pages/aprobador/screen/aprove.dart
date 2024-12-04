@@ -1,19 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:forzado/core/urls.dart';
 import 'package:forzado/models/remove_forzado/model_list_remove.dart';
-import 'package:forzado/pages/solicitante/online/widgets/custom_search_delegate.dart';
-import 'package:forzado/pages/solicitante/online/widgets/list_forzado.dart';
+import 'package:forzado/pages/aprobador/home_approve.dart';
+import 'package:forzado/pages/aprobador/widgets/custom_search_delegate.dart';
+import 'package:forzado/pages/aprobador/widgets/list_forzado.dart';
 import 'package:forzado/services/api_client.dart';
 import 'package:forzado/services/remove_forzado/list_service_remove.dart';
 
-class HomePageRemove extends StatefulWidget {
-  const HomePageRemove({super.key});
-
+class Approveforzado extends StatefulWidget {
+  const Approveforzado({super.key, required this.isAlta});
+  final bool isAlta;
   @override
-  State<HomePageRemove> createState() => _HomePageRemoveState();
+  State<Approveforzado> createState() => _ApproveforzadoState();
 }
 
-class _HomePageRemoveState extends State<HomePageRemove> {
+class _ApproveforzadoState extends State<Approveforzado> {
   late List<ForzadoM> listData;
 
   @override
@@ -23,14 +24,16 @@ class _HomePageRemoveState extends State<HomePageRemove> {
 
     return Scaffold(
       appBar: AppBar(
+        elevation: 0,
         actions: [
           IconButton(
             onPressed: () async {
               await showSearch(
                 context: context,
-                delegate: listData.isEmpty
-                    ? CustomSearchDelegate(searchList: [])
-                    : CustomSearchDelegate(searchList: listData),
+                delegate: CustomSearchExecuter(
+                    searchList: listData
+                        .where((element) => element.estado == 'pendiente-alta')
+                        .toList()),
               );
             },
             icon: const Icon(Icons.search),
@@ -38,12 +41,14 @@ class _HomePageRemoveState extends State<HomePageRemove> {
         ],
         leading: IconButton(
           onPressed: () {
-            Navigator.pop(context);
+            final newRoute =
+                MaterialPageRoute(builder: (_) => const HomeApprove());
+            Navigator.pushReplacement(context, newRoute);
           },
           icon: const Icon(Icons.arrow_back_ios),
         ),
         title: const Text(
-          'Forzados - ejecutado alta ',
+          'Forzados - Pendiente alta',
           style: TextStyle(fontFamily: 'noto', fontSize: 15),
         ),
       ),
@@ -54,7 +59,7 @@ class _HomePageRemoveState extends State<HomePageRemove> {
               .then(
             (value) {
               List<ForzadoM> data = value.data
-                  .where((element) => element.estado == 'ejecutado-alta')
+                  .where((element) => element.estado == 'pendiente-alta')
                   .toList();
               return ModelListForzados(
                 success: value.success,
@@ -80,7 +85,10 @@ class _HomePageRemoveState extends State<HomePageRemove> {
             final List<ForzadoM> data = snapshot.data!.data;
             listData = data;
             return Expanded(
-              child: ListForzado(data: data),
+              child: ListApproveForzado(
+                data: data,
+                isAlta: widget.isAlta,
+              ),
             );
           },
         ),

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:forzado/core/app_colors.dart';
 import 'package:forzado/models/jwt_model.dart';
 import 'package:forzado/models/login.dart';
+import 'package:forzado/pages/aprobador/home_approve.dart';
 import 'package:forzado/pages/ejecutor/home_executor.dart';
 import 'package:forzado/pages/home_page.dart';
 import 'package:http/http.dart' as http;
@@ -28,11 +29,14 @@ class _LoginPageState extends State<LoginPage> {
         case 'ejecutor':
           final route = MaterialPageRoute(builder: (_) => const HomeExecuter());
           Navigator.push(context, route);
-          return ApiResponse.fromJson(json.decode('{"success: false, message: json["Hola ejecutor"]"}'));
+          return ApiResponse.fromJson2(
+              json.decode('{"success": false, "message": "Hola ejecutor"}'));
         case 'aprobador':
-        // final route = MaterialPageRoute(builder: (_) => const HomeExecutor());
+          final route = MaterialPageRoute(builder: (_) => const HomeApprove());
+          Navigator.push(context, route);
+          return ApiResponse.fromJson2(
+              json.decode('{"success": false, "message": "Hola Aprobador"}'));
       }
-
     }
     setState(() {
       isLoading = true;
@@ -45,7 +49,7 @@ class _LoginPageState extends State<LoginPage> {
       // "username": username,
       // "password": password,
     });
- 
+
     final response = await http.post(
       Uri.parse('https://sntps2jn-3001.brs.devtunnels.ms/api/mobile/auth'),
       headers: headers,

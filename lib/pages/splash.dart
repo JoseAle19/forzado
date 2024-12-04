@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:forzado/core/app_colors.dart';
-import 'package:forzado/pages/ejecutor/home_executor.dart';
+import 'package:forzado/pages/home_page.dart';
 import 'package:forzado/pages/login_page.dart';
- import 'package:forzado/pages/onboardig.dart';
+import 'package:forzado/pages/onboardig.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -22,9 +22,7 @@ class _SplashScreenState extends State<SplashScreen> {
     Widget nextPage;
 
     if (hasAcceptedOnboarding == true) {
-      nextPage = isUserLoggedIn == true
-          ? const LoginPage()
-          : const LoginPage();
+      nextPage = isUserLoggedIn == true ? const Home() : const Home();
     } else {
       nextPage = const OnBoardigpage();
     }

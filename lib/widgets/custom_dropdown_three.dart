@@ -87,7 +87,7 @@ class _CustomDropDownButtonState extends State<CustomDropDownButtonThree> {
             return DropdownButtonFormField(
                 value: widget.currentValue.isEmpty ? null : widget.currentValue,
                 hint: SizedBox(
-                    width: MediaQuery.of(context).size.width * 0.7,
+                    width: MediaQuery.of(context).size.width * 0.5,
                     child: Text(
                       widget.hintText,
                       maxLines: 2,

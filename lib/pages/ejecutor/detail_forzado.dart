@@ -9,7 +9,8 @@ import 'package:forzado/services/api_client.dart';
 import 'package:forzado/widgets/modal_error.dart';
 
 class DetailForzadoScreen extends StatefulWidget {
-  const DetailForzadoScreen({super.key, required this.forzado, required this.isExecuterAlta});
+  const DetailForzadoScreen(
+      {super.key, required this.forzado, required this.isExecuterAlta});
   final ForzadoM forzado;
   final bool isExecuterAlta;
   @override
@@ -127,14 +128,15 @@ class _DetailForzadoScreenState extends State<DetailForzadoScreen> {
 
               // Indicador de carga
               if (isFetching)
-               const  Center(
+                const Center(
                   child: CircularProgressIndicator(),
                 )
               else
                 Center(
                   child: GestureDetector(
                     onTap: () async {
-                      await handleExecution(widget.forzado.id.toString(), widget.isExecuterAlta);
+                      await handleExecution(
+                          widget.forzado.id.toString(), widget.isExecuterAlta);
                     },
                     child: Container(
                       padding: const EdgeInsets.symmetric(
@@ -166,7 +168,7 @@ class _DetailForzadoScreenState extends State<DetailForzadoScreen> {
       isFetching = true;
     });
 
-    int result = await executerAlta(id,iisExecuterAlta);
+    int result = await executerAlta(id, iisExecuterAlta);
 
     setState(() {
       isFetching = false;
@@ -175,7 +177,10 @@ class _DetailForzadoScreenState extends State<DetailForzadoScreen> {
     if (result == 0) {
       modal.showModal(context, 'Ejecutado', Colors.green, true);
       final route = MaterialPageRoute(
-          builder: (_) => CongratulationAnimation(page:ListExecuterForzado(isExecuterAlta: iisExecuterAlta ==true?true:false,)));
+          builder: (_) => CongratulationAnimation(
+                  page: ListExecuterForzado(
+                isExecuterAlta: iisExecuterAlta == true ? true : false,
+              )));
       Navigator.pushReplacement(context, route);
     } else {
       modal.showModal(
@@ -187,7 +192,9 @@ class _DetailForzadoScreenState extends State<DetailForzadoScreen> {
     ApiClient client = ApiClient();
     final Map<String, dynamic> body = {'id': id};
     try {
-      final res = await client.post(isAlta ?AppUrl.postEjecutarAlta: AppUrl.postEjecutarBaja , jsonEncode(body));
+      final res = await client.post(
+          isAlta ? AppUrl.postEjecutarAlta : AppUrl.postEjecutarBaja,
+          jsonEncode(body));
       print(res.body);
       return 0;
     } catch (e) {

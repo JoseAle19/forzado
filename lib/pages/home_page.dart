@@ -79,15 +79,17 @@ class _HomeState extends State<Home> {
                     },
                     icon: const Icon(Icons.login_rounded))
                 : const SizedBox(),
-            const Icon(
-              Icons.wifi_off,
-              size: 30,
-              color: Colors.red,
-            ),
+            isConnected
+                ? const SizedBox()
+                : const Icon(
+                    Icons.wifi_off,
+                    size: 30,
+                    color: Colors.red,
+                  ),
           ],
         ),
         body: PageView(
-            physics: const NeverScrollableScrollPhysics(),
+            // physics: const NeverScrollableScrollPhysics(),
             controller: _controller,
             children: [
               PageOnline(
@@ -146,7 +148,7 @@ class PageOnline extends StatelessWidget {
                     height: 5,
                   ),
                   Text(
-                    'Solicitar Forzado',
+                    'Alta Forzado',
                     style: TextStyle(color: Colors.white),
                   )
                 ],

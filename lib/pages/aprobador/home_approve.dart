@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:forzado/pages/ejecutor/forzados_executer.dart';
+import 'package:forzado/pages/aprobador/screen/aprove.dart';
+import 'package:forzado/pages/aprobador/screen/shutdown_forzado.dart';
 import 'package:forzado/pages/home_page.dart';
 import 'package:forzado/pages/login_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class HomeExecuter extends StatelessWidget {
-  const HomeExecuter({super.key});
+class HomeApprove extends StatelessWidget {
+  const HomeApprove({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -39,8 +40,8 @@ class HomeExecuter extends StatelessWidget {
             GestureDetector(
               onTap: () {
                 final route = MaterialPageRoute(
-                    builder: (_) => const ListExecuterForzado(
-                          isExecuterAlta: true,
+                    builder: (_) => const Approveforzado(
+                          isAlta: true,
                         ));
                 Navigator.push(context, route);
               },
@@ -78,7 +79,7 @@ class HomeExecuter extends StatelessWidget {
                       ],
                     ),
                     Icon(
-                      Icons.play_circle_filled,
+                      Icons.done_all,
                       color: Colors.white,
                     )
                   ],
@@ -88,8 +89,8 @@ class HomeExecuter extends StatelessWidget {
             GestureDetector(
               onTap: () {
                 final route = MaterialPageRoute(
-                    builder: (_) => const ListExecuterForzado(
-                          isExecuterAlta: false,
+                    builder: (_) => const ShutdownForzado(
+                          isAlta: false,
                         ));
                 Navigator.push(context, route);
               },
@@ -129,7 +130,7 @@ class HomeExecuter extends StatelessWidget {
                       ],
                     ),
                     Icon(
-                      Icons.play_circle_filled,
+                      Icons.remove_circle,
                       color: Colors.white,
                     )
                   ],

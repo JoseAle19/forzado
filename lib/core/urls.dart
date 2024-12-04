@@ -27,9 +27,13 @@ class AppUrl {
   static const String postForcedForzado = "/api/solicitudes/baja";
   static const String getListForzados = "/api/solicitudes/alta";
 
+  static const String postEjecutarAlta = "/api/solicitudes/alta/ejecutar";
+  static const String postEjecutarBaja = "/api/solicitudes/baja/ejecutar";
 
-  static const String postEjecutarAlta= "/api/solicitudes/alta/ejecutar";
-  static const String postEjecutarBaja= "/api/solicitudes/baja/ejecutar";
+  static const String getMotivoRechazo = "/api/maestras/motivo-rechazo";
+
+  static const String getAltaRechazar = "/api/solicitudes/alta/rechazar";
+  static const String getBajaAprobar = "/api/solicitudes/baja/aprobar";
 }
 
 

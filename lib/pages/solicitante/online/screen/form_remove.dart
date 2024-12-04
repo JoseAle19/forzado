@@ -105,48 +105,44 @@ class _FormRemoveForzadoState extends State<FormRemoveForzado> {
       ),
       body: Padding(
         padding: const EdgeInsets.all(20),
-        child: Column(
-          children: [
-            CustomDropDownButtonThree(
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              CustomDropDownButtonThree(
                 service: serviceThree,
                 descriptionField: 'Solicitante Retiro *',
                 hintText: 'Seleccione Solicitante Retiro',
                 endPoint: AppUrl.getSolicitantes3,
                 currentValue: currentStateapplicant,
                 onChanged: (value) =>
-                    _updateCurrentValue(ValuesType.applicant, value)),
-            const SizedBox(
-              height: 10,
-            ),
-            CustomDropDownButtonThree(
+                    _updateCurrentValue(ValuesType.applicant, value),
+              ),
+              const SizedBox(height: 10),
+              CustomDropDownButtonThree(
                 onChanged: (value) =>
                     _updateCurrentValue(ValuesType.approver, value),
                 currentValue: currentStateapprover,
                 service: serviceThree,
                 descriptionField: 'Aprobador Retiro (AN)*',
                 hintText: 'Seleccione Aprobador',
-                endPoint: AppUrl.getAprobadores),
-            const SizedBox(
-              height: 10,
-            ),
-            CustomDropDownButtonThree(
+                endPoint: AppUrl.getAprobadores,
+              ),
+              const SizedBox(height: 10),
+              CustomDropDownButtonThree(
                 onChanged: (value) =>
                     _updateCurrentValue(ValuesType.executor, value),
                 currentValue: currentStateexecutor,
                 service: serviceThree,
                 descriptionField: 'Ejecutor del Retiro*',
                 hintText: 'Seleccione Ejecutor del Retiro',
-                endPoint: AppUrl.getEjecutor),
-            const SizedBox(
-              height: 20,
-            ),
-            Column(children: [
-              const SizedBox(
-                width: double.infinity,
-                child: Text(
-                  'Observaciones',
-                  style: TextStyle(fontFamily: 'Hoto Sans'),
-                ),
+                endPoint: AppUrl.getEjecutor,
+              ),
+              const SizedBox(height: 20),
+              const Text(
+                'Observaciones',
+                style: TextStyle(fontFamily: 'Hoto Sans'),
               ),
               TextFormField(
                 initialValue: currentValueDescription,
@@ -154,32 +150,40 @@ class _FormRemoveForzadoState extends State<FormRemoveForzado> {
                     _updateCurrentValue(ValuesType.description, value),
                 maxLength: 100,
                 maxLines: 2,
-                decoration:
-                    const InputDecoration(hintText: 'Agregue una descripción'),
-              )
-            ]),
-            const Spacer(),
-            isFetching
-                ? const CircularProgressIndicator() // Mostrar loader mientras `isFetching` es `true`
-                : GestureDetector(
-                    onTap: () {
-                      if (!isFetching) sendRequestForcedForzado();
-                    },
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: Colors.red.shade900,
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      padding: const EdgeInsets.all(10),
-                      child: const Center(
-                        child: Text(
-                          'Finalizar',
-                          style: AppStyles.textStyle,
+                decoration: const InputDecoration(
+                  hintText: 'Agregue una descripción',
+                  border: OutlineInputBorder(),
+                ),
+              ),
+              const SizedBox(height: 20),
+              isFetching
+                  ? const Center(
+                      child: CircularProgressIndicator(),
+                    )
+                  : GestureDetector(
+                      onTap: () {
+                        if (!isFetching) sendRequestForcedForzado();
+                      },
+                      child: Container(
+                        width: double.infinity,
+                        decoration: BoxDecoration(
+                          color: Colors.red.shade900,
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        padding: const EdgeInsets.all(15),
+                        child: const Center(
+                          child: Text(
+                            'Finalizar',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
                         ),
                       ),
                     ),
-                  ),
-          ],
+            ],
+          ),
         ),
       ),
     );
