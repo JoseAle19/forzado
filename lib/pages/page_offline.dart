@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:forzado/pages/solicitante/offline/datatable%20_forzados.dart';
-import 'package:forzado/pages/steps_form/stepper_form.dart';
+import 'package:forzado/pages/solicitante/offline/stepper_form.dart';
 
 class PageOffline extends StatelessWidget {
   const PageOffline({super.key});

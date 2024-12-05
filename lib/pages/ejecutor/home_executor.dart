@@ -1,7 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:forzado/core/urls.dart';
+import 'package:forzado/models/remove_forzado/model_list_remove.dart';
 import 'package:forzado/pages/ejecutor/forzados_executer.dart';
 import 'package:forzado/pages/home_page.dart';
 import 'package:forzado/pages/login_page.dart';
+import 'package:forzado/services/api_client.dart';
+import 'package:forzado/services/remove_forzado/list_service_remove.dart';
+import 'package:forzado/widgets/cards.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class HomeExecuter extends StatelessWidget {
@@ -9,6 +14,9 @@ class HomeExecuter extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final ListServiceForzados _ListServiceForzados =
+        ListServiceForzados(ApiClient());
+
     return Scaffold(
       bottomNavigationBar: const CustomBotttomNavigation(),
       appBar: AppBar(
@@ -23,7 +31,7 @@ class HomeExecuter extends StatelessWidget {
           IconButton(
               onPressed: () async {
                 final prefs = await SharedPreferences.getInstance();
-                 await prefs.remove('logged');
+                await prefs.remove('logged');
                 final route =
                     MaterialPageRoute(builder: (_) => const LoginPage());
                 Navigator.push(context, route);
@@ -142,325 +150,19 @@ class HomeExecuter extends StatelessWidget {
               color: const Color(0xffD9D9D9),
               width: double.infinity,
             ),
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Expanded(
-                  child: Container(
-                    margin: const EdgeInsets.only(top: 20, right: 5),
-                    padding: const EdgeInsets.symmetric(
-                        vertical: 40, horizontal: 20),
-                    decoration: BoxDecoration(
-                        boxShadow: const [
-                          BoxShadow(
-                            color: Colors.black26,
-                            spreadRadius: 2.0,
-                            blurRadius: 5.0,
-                            offset: Offset(-2.0, 0),
-                          ),
-                        ],
-                        color: const Color(0xffCA811A),
-                        borderRadius: BorderRadius.circular(10)),
-                    child: const Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'Pendientes Alta',
-                          style: TextStyle(color: Colors.white),
-                        ),
-                        SizedBox(
-                          height: 5,
-                        ),
-                        Text(
-                          '12',
-                          style: TextStyle(
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 22),
-                        )
-                      ],
-                    ),
-                  ),
-                ),
-                Expanded(
-                  child: Container(
-                    margin: const EdgeInsets.only(top: 20, left: 5),
-                    padding: const EdgeInsets.symmetric(
-                        vertical: 40, horizontal: 20),
-                    decoration: BoxDecoration(
-                        boxShadow: const [
-                          BoxShadow(
-                            color: Colors.black26,
-                            spreadRadius: 2.0,
-                            blurRadius: 5.0,
-                            offset: Offset(-2.0, 0),
-                          ),
-                        ],
-                        color: const Color(0xff3D8566),
-                        borderRadius: BorderRadius.circular(10)),
-                    child: const Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'Pendientes Baja',
-                          style: TextStyle(color: Colors.white),
-                        ),
-                        SizedBox(
-                          height: 5,
-                        ),
-                        Text(
-                          '4',
-                          style: TextStyle(
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 22),
-                        )
-                      ],
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Expanded(
-                  child: Container(
-                    margin: const EdgeInsets.only(top: 20, right: 5),
-                    padding: const EdgeInsets.symmetric(
-                        vertical: 40, horizontal: 20),
-                    decoration: BoxDecoration(
-                        boxShadow: const [
-                          BoxShadow(
-                            color: Colors.black26,
-                            spreadRadius: 2.0,
-                            blurRadius: 5.0,
-                            offset: Offset(-2.0, 0),
-                          ),
-                        ],
-                        color: const Color(0xffCA811A),
-                        borderRadius: BorderRadius.circular(10)),
-                    child: const Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'Aprobado Alta',
-                          style: TextStyle(color: Colors.white),
-                        ),
-                        SizedBox(
-                          height: 5,
-                        ),
-                        Text(
-                          '12',
-                          style: TextStyle(
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 22),
-                        )
-                      ],
-                    ),
-                  ),
-                ),
-                Expanded(
-                  child: Container(
-                    margin: const EdgeInsets.only(top: 20, left: 5),
-                    padding: const EdgeInsets.symmetric(
-                        vertical: 40, horizontal: 20),
-                    decoration: BoxDecoration(
-                        boxShadow: const [
-                          BoxShadow(
-                            color: Colors.black26,
-                            spreadRadius: 2.0,
-                            blurRadius: 5.0,
-                            offset: Offset(-2.0, 0),
-                          ),
-                        ],
-                        color: const Color(0xff3D8566),
-                        borderRadius: BorderRadius.circular(10)),
-                    child: const Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'Aprobado Baja',
-                          style: TextStyle(color: Colors.white),
-                        ),
-                        SizedBox(
-                          height: 5,
-                        ),
-                        Text(
-                          '4',
-                          style: TextStyle(
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 22),
-                        )
-                      ],
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Expanded(
-                  child: Container(
-                    margin: const EdgeInsets.only(top: 20, right: 5),
-                    padding: const EdgeInsets.symmetric(
-                        vertical: 40, horizontal: 20),
-                    decoration: BoxDecoration(
-                        boxShadow: const [
-                          BoxShadow(
-                            color: Colors.black26,
-                            spreadRadius: 2.0,
-                            blurRadius: 5.0,
-                            offset: Offset(-2.0, 0),
-                          ),
-                        ],
-                        color: const Color(0xffCA811A),
-                        borderRadius: BorderRadius.circular(10)),
-                    child: const Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'Ejecutado Alta',
-                          style: TextStyle(color: Colors.white),
-                        ),
-                        SizedBox(
-                          height: 5,
-                        ),
-                        Text(
-                          '12',
-                          style: TextStyle(
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 22),
-                        )
-                      ],
-                    ),
-                  ),
-                ),
-                Expanded(
-                  child: Container(
-                    margin: const EdgeInsets.only(top: 20, left: 5),
-                    padding: const EdgeInsets.symmetric(
-                        vertical: 40, horizontal: 20),
-                    decoration: BoxDecoration(
-                        boxShadow: const [
-                          BoxShadow(
-                            color: Colors.black26,
-                            spreadRadius: 2.0,
-                            blurRadius: 5.0,
-                            offset: Offset(-2.0, 0),
-                          ),
-                        ],
-                        color: const Color(0xff3D8566),
-                        borderRadius: BorderRadius.circular(10)),
-                    child: const Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'Finalizados',
-                          style: TextStyle(color: Colors.white),
-                        ),
-                        SizedBox(
-                          height: 5,
-                        ),
-                        Text(
-                          '4',
-                          style: TextStyle(
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 22),
-                        )
-                      ],
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Expanded(
-                  child: Container(
-                    margin: const EdgeInsets.only(top: 20, right: 5),
-                    padding: const EdgeInsets.symmetric(
-                        vertical: 40, horizontal: 20),
-                    decoration: BoxDecoration(
-                        boxShadow: const [
-                          BoxShadow(
-                            color: Colors.black26,
-                            spreadRadius: 2.0,
-                            blurRadius: 5.0,
-                            offset: Offset(-2.0, 0),
-                          ),
-                        ],
-                        color: const Color(0xffCA811A),
-                        borderRadius: BorderRadius.circular(10)),
-                    child: const Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'Rechazado Alta',
-                          style: TextStyle(color: Colors.white),
-                        ),
-                        SizedBox(
-                          height: 5,
-                        ),
-                        Text(
-                          '12',
-                          style: TextStyle(
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 22),
-                        )
-                      ],
-                    ),
-                  ),
-                ),
-                Expanded(
-                  child: Container(
-                    margin: const EdgeInsets.only(top: 20, left: 5),
-                    padding: const EdgeInsets.symmetric(
-                        vertical: 40, horizontal: 20),
-                    decoration: BoxDecoration(
-                        boxShadow: const [
-                          BoxShadow(
-                            color: Colors.black26,
-                            spreadRadius: 2.0,
-                            blurRadius: 5.0,
-                            offset: Offset(-2.0, 0),
-                          ),
-                        ],
-                        color: const Color(0xff3D8566),
-                        borderRadius: BorderRadius.circular(10)),
-                    child: const Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'Rechazado Baja',
-                          style: TextStyle(color: Colors.white),
-                        ),
-                        SizedBox(
-                          height: 5,
-                        ),
-                        Text(
-                          '4',
-                          style: TextStyle(
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 22),
-                        )
-                      ],
-                    ),
-                  ),
-                ),
-              ],
+            FutureBuilder<ModelListForzados>(
+              future: _ListServiceForzados.getDataByEndpoint(
+                  AppUrl.getListForzados),
+              builder: (BuildContext context,
+                  AsyncSnapshot<ModelListForzados> snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(
+                    child: CircularProgressIndicator(),
+                  );
+                }
+                ModelListForzados data = snapshot.data!;
+                return CardsDashBoard(data: data);
+              },
             ),
           ],
         ),

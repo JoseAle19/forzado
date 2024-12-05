@@ -1,18 +1,14 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:forzado/core/urls.dart';
-import 'package:forzado/models/model_two.dart';
 import 'package:forzado/models/remove_forzado/model_list_remove.dart';
 import 'package:forzado/pages/aprobador/home_approve.dart';
-import 'package:forzado/pages/aprobador/screen/aprove.dart';
 import 'package:forzado/pages/solicitante/online/widgets/text_info.dart';
 import 'package:forzado/pages/steps_form/congratulation.dart';
 import 'package:forzado/services/api_client.dart';
 import 'package:forzado/services/service_three.dart';
 import 'package:forzado/services/service_two.dart';
-import 'package:forzado/widgets/custom_dropdown_three.dart';
 import 'package:forzado/widgets/custom_dropdown_two.dart';
 import 'package:forzado/widgets/modal_error.dart';
 import 'package:intl/intl.dart';
@@ -30,6 +26,7 @@ class _DetailApproveForzadoState extends State<DetailApproveForzado> {
   String currentStateapplicant = '';
   String currentStateapprover = '';
   String currentStateejecutor = '';
+  // ignore: unused_field, prefer_final_fields
   TextEditingController _controllerDes = TextEditingController();
   String currentValue = '';
   bool isFetching = false;
@@ -77,7 +74,7 @@ class _DetailApproveForzadoState extends State<DetailApproveForzado> {
 
   Future<int> executerDecline(String id) async {
     CustomModal modal = CustomModal();
-    if (currentValue.isEmpty && widget.isAlta) {
+    if (currentValue.isEmpty) {
       modal.showModal(context, 'Selecciona un motivo', Colors.red, false);
       return 0;
     }
@@ -353,75 +350,75 @@ class _DetailApproveForzadoState extends State<DetailApproveForzado> {
               )
             : ElevatedButton(
                 onPressed: () {
-                  widget.isAlta
-                      ? showDialog(
-                          context: context,
-                          builder: (BuildContext context) {
-                            ServiceTwo serviceTwo = ServiceTwo(ApiClient());
-                            return AlertDialog(
-                              title: const Text(
-                                'Selecciona un Motivo',
-                                style: TextStyle(fontWeight: FontWeight.bold),
-                              ),
-                              content: Column(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  CustomDropDownButtonTwo(
-                                    service: serviceTwo,
-                                    descriptionField: 'Motivos de la baja',
-                                    hintText: 'Selecciona un motivo de baja',
-                                    endPoint: AppUrl.getMotivoRechazo,
-                                    currentValue: currentValue,
-                                    onChanged: (value) {
-                                      setState(() {
-                                        currentValue = value;
-                                      });
-                                    },
-                                  ),
-                                ],
-                              ),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(15),
-                              ),
-                              actionsAlignment: MainAxisAlignment.spaceBetween,
-                              actions: [
-                                isFetching
-                                    ? const Padding(
-                                        padding: EdgeInsets.all(8.0),
-                                        child: Center(
-                                            child: CircularProgressIndicator()),
-                                      )
-                                    : TextButton(
-                                        onPressed: () {
-                                          executerDecline(widget
-                                              .detailForzado.id
-                                              .toString());
-                                        },
-                                        style: TextButton.styleFrom(
-                                          foregroundColor: Colors.white,
-                                          backgroundColor: Colors.red,
-                                          padding: const EdgeInsets.symmetric(
-                                              horizontal: 20),
-                                        ),
-                                        child: const Text('Realizar Rechazo'),
-                                      ),
-                                TextButton(
+                  showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      ServiceTwo serviceTwo = ServiceTwo(ApiClient());
+                      return AlertDialog(
+                        title: const Text(
+                          'Selecciona un Motivo',
+                          style: TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                        content: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            CustomDropDownButtonTwo(
+                              service: serviceTwo,
+                              descriptionField: 'Motivos de la baja',
+                              hintText: 'Selecciona un motivo de baja',
+                              endPoint: AppUrl.getMotivoRechazo,
+                              currentValue: currentValue,
+                              onChanged: (value) {
+                                setState(() {
+                                  currentValue = value;
+                                });
+                              },
+                            ),
+                          ],
+                        ),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(15),
+                        ),
+                        actionsAlignment: MainAxisAlignment.spaceBetween,
+                        actions: [
+                          isFetching
+                              ? const Padding(
+                                  padding: EdgeInsets.all(8.0),
+                                  child: Center(
+                                      child: CircularProgressIndicator()),
+                                )
+                              : TextButton(
                                   onPressed: () {
-                                    Navigator.of(context).pop();
+                                    executerDecline(
+                                        widget.detailForzado.id.toString());
                                   },
                                   style: TextButton.styleFrom(
                                     foregroundColor: Colors.white,
-                                    backgroundColor: Colors.grey,
+                                    backgroundColor:
+                                        isFetching ? Colors.orange : Colors.red,
                                     padding: const EdgeInsets.symmetric(
                                         horizontal: 20),
                                   ),
-                                  child: const Text('Cancelar'),
+                                  child: Text(isFetching
+                                      ? 'Procesando'
+                                      : 'Realizar Rechazo'),
                                 ),
-                              ],
-                            );
-                          },
-                        )
-                      : executerDecline(widget.detailForzado.id.toString());
+                          TextButton(
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                            },
+                            style: TextButton.styleFrom(
+                              foregroundColor: Colors.white,
+                              backgroundColor: Colors.grey,
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 20),
+                            ),
+                            child: const Text('Cancelar'),
+                          ),
+                        ],
+                      );
+                    },
+                  );
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color(0xff920000),

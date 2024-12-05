@@ -1,11 +1,16 @@
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:forzado/core/urls.dart';
+import 'package:forzado/models/remove_forzado/model_list_remove.dart';
 import 'package:forzado/pages/login_page.dart';
 import 'package:forzado/pages/page_offline.dart';
 import 'package:forzado/pages/solicitante/offline/datatable%20_forzados.dart';
 import 'package:forzado/pages/solicitante/online/screen/home_page.dart';
 import 'package:forzado/pages/steps_form/step_form.dart';
+import 'package:forzado/services/api_client.dart';
+import 'package:forzado/services/remove_forzado/list_service_remove.dart';
+import 'package:forzado/widgets/cards.dart';
 import 'package:forzado/widgets/sync.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -72,7 +77,7 @@ class _HomeState extends State<Home> {
                 ? IconButton(
                     onPressed: () async {
                       final prefs = await SharedPreferences.getInstance();
-                       await prefs.remove('logged');
+                      await prefs.remove('logged');
                       final route =
                           MaterialPageRoute(builder: (_) => const LoginPage());
                       Navigator.push(context, route);
@@ -111,450 +116,144 @@ class PageOnline extends StatelessWidget {
   final Widget? widget;
   @override
   Widget build(BuildContext context) {
+    final ListServiceForzados _ListServiceForzados =
+        ListServiceForzados(ApiClient());
+
     return Padding(
       padding: const EdgeInsets.all(8.0),
-      child: ListView(
-        physics: const BouncingScrollPhysics(),
-        children: [
-          widget ?? const SizedBox(),
-          GestureDetector(
-            onTap: () {
-              final route =
-                  MaterialPageRoute(builder: (_) => const StepperForm());
-              Navigator.push(context, route);
-            },
-            child: Container(
-              padding: const EdgeInsets.all(20),
-              width: double.infinity,
-              decoration: BoxDecoration(
-                  boxShadow: const [
-                    BoxShadow(
-                      color: Colors.black26,
-                      spreadRadius: 2.0,
-                      blurRadius: 5.0,
-                      offset: Offset(-2.0, 0),
-                    ),
-                  ],
-                  color: const Color(0xff639777),
-                  borderRadius: BorderRadius.circular(10)),
-              child: const Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Icon(
-                    Icons.account_balance,
-                    color: Colors.white,
-                  ),
-                  SizedBox(
-                    height: 5,
-                  ),
-                  Text(
-                    'Alta Forzado',
-                    style: TextStyle(color: Colors.white),
-                  )
-                ],
-              ),
-            ),
-          ),
-          GestureDetector(
-            onTap: () {
-              final route =
-                  MaterialPageRoute(builder: (_) => const HomePageRemove());
-              Navigator.push(context, route);
-            },
-            child: Container(
-              margin: const EdgeInsets.only(top: 20),
-              padding: const EdgeInsets.all(20),
-              width: double.infinity,
-              decoration: BoxDecoration(
-                  boxShadow: const [
-                    BoxShadow(
-                      color: Colors.black26,
-                      spreadRadius: 2.0,
-                      blurRadius: 5.0,
-                      offset: Offset(-2.0, 0),
-                    ),
-                  ],
-                  color: const Color(0xff8B280A),
-                  borderRadius: BorderRadius.circular(10)),
-              child: const Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Icon(
-                    Icons.account_balance,
-                    color: Colors.white,
-                  ),
-                  SizedBox(
-                    height: 5,
-                  ),
-                  Text(
-                    'Baja Forzado',
-                    style: TextStyle(color: Colors.white),
-                  )
-                ],
-              ),
-            ),
-          ),
-          GestureDetector(
-            onTap: () {
-              final route =
-                  MaterialPageRoute(builder: (_) => const ForzadosDataTable());
-              Navigator.push(context, route);
-            },
-            child: Container(
-              margin: const EdgeInsets.only(top: 20),
-              padding: const EdgeInsets.all(20),
-              width: double.infinity,
-              decoration: BoxDecoration(boxShadow: const [
-                BoxShadow(
-                  color: Colors.black26,
-                  spreadRadius: 2.0,
-                  blurRadius: 5.0,
-                  offset: Offset(-2.0, 0),
-                ),
-              ], color: Colors.blue, borderRadius: BorderRadius.circular(10)),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  SvgPicture.asset('assets/svgs/bank.svg'),
-                  const SizedBox(
-                    height: 5,
-                  ),
-                  const Text(
-                    'Baja Forzado (Campo)',
-                    style: TextStyle(color: Colors.white),
-                  )
-                ],
-              ),
-            ),
-          ),
-          Container(
-            margin: const EdgeInsets.symmetric(vertical: 40),
-            height: 20,
-            color: const Color(0xffD9D9D9),
+      child: ListView(physics: const BouncingScrollPhysics(), children: [
+        widget ?? const SizedBox(),
+        GestureDetector(
+          onTap: () {
+            final route =
+                MaterialPageRoute(builder: (_) => const StepperForm());
+            Navigator.push(context, route);
+          },
+          child: Container(
+            padding: const EdgeInsets.all(20),
             width: double.infinity,
+            decoration: BoxDecoration(
+                boxShadow: const [
+                  BoxShadow(
+                    color: Colors.black26,
+                    spreadRadius: 2.0,
+                    blurRadius: 5.0,
+                    offset: Offset(-2.0, 0),
+                  ),
+                ],
+                color: const Color(0xff639777),
+                borderRadius: BorderRadius.circular(10)),
+            child: const Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Icon(
+                  Icons.account_balance,
+                  color: Colors.white,
+                ),
+                SizedBox(
+                  height: 5,
+                ),
+                Text(
+                  'Alta Forzado',
+                  style: TextStyle(color: Colors.white),
+                )
+              ],
+            ),
           ),
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Expanded(
-                child: Container(
-                  margin: const EdgeInsets.only(top: 20, right: 5),
-                  padding:
-                      const EdgeInsets.symmetric(vertical: 40, horizontal: 20),
-                  decoration: BoxDecoration(
-                      boxShadow: const [
-                        BoxShadow(
-                          color: Colors.black26,
-                          spreadRadius: 2.0,
-                          blurRadius: 5.0,
-                          offset: Offset(-2.0, 0),
-                        ),
-                      ],
-                      color: const Color(0xffCA811A),
-                      borderRadius: BorderRadius.circular(10)),
-                  child: const Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Pendientes Alta',
-                        style: TextStyle(color: Colors.white),
-                      ),
-                      SizedBox(
-                        height: 5,
-                      ),
-                      Text(
-                        '12',
-                        style: TextStyle(
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 22),
-                      )
-                    ],
+        ),
+        GestureDetector(
+          onTap: () {
+            final route =
+                MaterialPageRoute(builder: (_) => const HomePageRemove());
+            Navigator.push(context, route);
+          },
+          child: Container(
+            margin: const EdgeInsets.only(top: 20),
+            padding: const EdgeInsets.all(20),
+            width: double.infinity,
+            decoration: BoxDecoration(
+                boxShadow: const [
+                  BoxShadow(
+                    color: Colors.black26,
+                    spreadRadius: 2.0,
+                    blurRadius: 5.0,
+                    offset: Offset(-2.0, 0),
                   ),
+                ],
+                color: const Color(0xff8B280A),
+                borderRadius: BorderRadius.circular(10)),
+            child: const Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Icon(
+                  Icons.account_balance,
+                  color: Colors.white,
                 ),
-              ),
-              Expanded(
-                child: Container(
-                  margin: const EdgeInsets.only(top: 20, left: 5),
-                  padding:
-                      const EdgeInsets.symmetric(vertical: 40, horizontal: 20),
-                  decoration: BoxDecoration(
-                      boxShadow: const [
-                        BoxShadow(
-                          color: Colors.black26,
-                          spreadRadius: 2.0,
-                          blurRadius: 5.0,
-                          offset: Offset(-2.0, 0),
-                        ),
-                      ],
-                      color: const Color(0xff3D8566),
-                      borderRadius: BorderRadius.circular(10)),
-                  child: const Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Pendientes Baja',
-                        style: TextStyle(color: Colors.white),
-                      ),
-                      SizedBox(
-                        height: 5,
-                      ),
-                      Text(
-                        '4',
-                        style: TextStyle(
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 22),
-                      )
-                    ],
-                  ),
+                SizedBox(
+                  height: 5,
                 ),
-              ),
-            ],
+                Text(
+                  'Baja Forzado',
+                  style: TextStyle(color: Colors.white),
+                )
+              ],
+            ),
           ),
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Expanded(
-                child: Container(
-                  margin: const EdgeInsets.only(top: 20, right: 5),
-                  padding:
-                      const EdgeInsets.symmetric(vertical: 40, horizontal: 20),
-                  decoration: BoxDecoration(
-                      boxShadow: const [
-                        BoxShadow(
-                          color: Colors.black26,
-                          spreadRadius: 2.0,
-                          blurRadius: 5.0,
-                          offset: Offset(-2.0, 0),
-                        ),
-                      ],
-                      color: const Color(0xffCA811A),
-                      borderRadius: BorderRadius.circular(10)),
-                  child: const Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Aprobado Alta',
-                        style: TextStyle(color: Colors.white),
-                      ),
-                      SizedBox(
-                        height: 5,
-                      ),
-                      Text(
-                        '12',
-                        style: TextStyle(
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 22),
-                      )
-                    ],
-                  ),
-                ),
+        ),
+        GestureDetector(
+          onTap: () {
+            final route =
+                MaterialPageRoute(builder: (_) => const ForzadosDataTable());
+            Navigator.push(context, route);
+          },
+          child: Container(
+            margin: const EdgeInsets.only(top: 20),
+            padding: const EdgeInsets.all(20),
+            width: double.infinity,
+            decoration: BoxDecoration(boxShadow: const [
+              BoxShadow(
+                color: Colors.black26,
+                spreadRadius: 2.0,
+                blurRadius: 5.0,
+                offset: Offset(-2.0, 0),
               ),
-              Expanded(
-                child: Container(
-                  margin: const EdgeInsets.only(top: 20, left: 5),
-                  padding:
-                      const EdgeInsets.symmetric(vertical: 40, horizontal: 20),
-                  decoration: BoxDecoration(
-                      boxShadow: const [
-                        BoxShadow(
-                          color: Colors.black26,
-                          spreadRadius: 2.0,
-                          blurRadius: 5.0,
-                          offset: Offset(-2.0, 0),
-                        ),
-                      ],
-                      color: const Color(0xff3D8566),
-                      borderRadius: BorderRadius.circular(10)),
-                  child: const Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Aprobado Baja',
-                        style: TextStyle(color: Colors.white),
-                      ),
-                      SizedBox(
-                        height: 5,
-                      ),
-                      Text(
-                        '4',
-                        style: TextStyle(
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 22),
-                      )
-                    ],
-                  ),
+            ], color: Colors.blue, borderRadius: BorderRadius.circular(10)),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                SvgPicture.asset('assets/svgs/bank.svg'),
+                const SizedBox(
+                  height: 5,
                 ),
-              ),
-            ],
+                const Text(
+                  'Baja Forzado (Campo)',
+                  style: TextStyle(color: Colors.white),
+                )
+              ],
+            ),
           ),
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Expanded(
-                child: Container(
-                  margin: const EdgeInsets.only(top: 20, right: 5),
-                  padding:
-                      const EdgeInsets.symmetric(vertical: 40, horizontal: 20),
-                  decoration: BoxDecoration(
-                      boxShadow: const [
-                        BoxShadow(
-                          color: Colors.black26,
-                          spreadRadius: 2.0,
-                          blurRadius: 5.0,
-                          offset: Offset(-2.0, 0),
-                        ),
-                      ],
-                      color: const Color(0xffCA811A),
-                      borderRadius: BorderRadius.circular(10)),
-                  child: const Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Ejecutado Alta',
-                        style: TextStyle(color: Colors.white),
-                      ),
-                      SizedBox(
-                        height: 5,
-                      ),
-                      Text(
-                        '12',
-                        style: TextStyle(
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 22),
-                      )
-                    ],
-                  ),
-                ),
-              ),
-              Expanded(
-                child: Container(
-                  margin: const EdgeInsets.only(top: 20, left: 5),
-                  padding:
-                      const EdgeInsets.symmetric(vertical: 40, horizontal: 20),
-                  decoration: BoxDecoration(
-                      boxShadow: const [
-                        BoxShadow(
-                          color: Colors.black26,
-                          spreadRadius: 2.0,
-                          blurRadius: 5.0,
-                          offset: Offset(-2.0, 0),
-                        ),
-                      ],
-                      color: const Color(0xff3D8566),
-                      borderRadius: BorderRadius.circular(10)),
-                  child: const Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Finalizados',
-                        style: TextStyle(color: Colors.white),
-                      ),
-                      SizedBox(
-                        height: 5,
-                      ),
-                      Text(
-                        '4',
-                        style: TextStyle(
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 22),
-                      )
-                    ],
-                  ),
-                ),
-              ),
-            ],
-          ),
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Expanded(
-                child: Container(
-                  margin: const EdgeInsets.only(top: 20, right: 5),
-                  padding:
-                      const EdgeInsets.symmetric(vertical: 40, horizontal: 20),
-                  decoration: BoxDecoration(
-                      boxShadow: const [
-                        BoxShadow(
-                          color: Colors.black26,
-                          spreadRadius: 2.0,
-                          blurRadius: 5.0,
-                          offset: Offset(-2.0, 0),
-                        ),
-                      ],
-                      color: const Color(0xffCA811A),
-                      borderRadius: BorderRadius.circular(10)),
-                  child: const Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Rechazado Alta',
-                        style: TextStyle(color: Colors.white),
-                      ),
-                      SizedBox(
-                        height: 5,
-                      ),
-                      Text(
-                        '12',
-                        style: TextStyle(
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 22),
-                      )
-                    ],
-                  ),
-                ),
-              ),
-              Expanded(
-                child: Container(
-                  margin: const EdgeInsets.only(top: 20, left: 5),
-                  padding:
-                      const EdgeInsets.symmetric(vertical: 40, horizontal: 20),
-                  decoration: BoxDecoration(
-                      boxShadow: const [
-                        BoxShadow(
-                          color: Colors.black26,
-                          spreadRadius: 2.0,
-                          blurRadius: 5.0,
-                          offset: Offset(-2.0, 0),
-                        ),
-                      ],
-                      color: const Color(0xff3D8566),
-                      borderRadius: BorderRadius.circular(10)),
-                  child: const Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Rechazado Baja',
-                        style: TextStyle(color: Colors.white),
-                      ),
-                      SizedBox(
-                        height: 5,
-                      ),
-                      Text(
-                        '4',
-                        style: TextStyle(
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 22),
-                      )
-                    ],
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ],
-      ),
+        ),
+        Container(
+          margin: const EdgeInsets.symmetric(vertical: 40),
+          height: 20,
+          color: const Color(0xffD9D9D9),
+          width: double.infinity,
+        ),
+        FutureBuilder<ModelListForzados>(
+          future:
+              _ListServiceForzados.getDataByEndpoint(AppUrl.getListForzados),
+          builder: (BuildContext context,
+              AsyncSnapshot<ModelListForzados> snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(
+                child: CircularProgressIndicator(),
+              );
+            }
+            ModelListForzados data = snapshot.data!;
+            return CardsDashBoard(data: data);
+          },
+        ),
+      ]),
     );
   }
 }

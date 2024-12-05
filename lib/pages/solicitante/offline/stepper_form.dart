@@ -9,6 +9,7 @@ import 'package:forzado/pages/steps_form/step_form.dart';
 import 'package:forzado/widgets/drop_down_offline/custom_drop_one.dart';
 import 'package:forzado/widgets/drop_down_offline/custom_drop_three.dart';
 import 'package:forzado/widgets/drop_down_offline/custom_drop_two.dart';
+import 'package:forzado/widgets/modal_error.dart';
 import 'package:hive_flutter/adapters.dart';
 
 class StepperFormOffline extends StatefulWidget {
@@ -19,27 +20,27 @@ class StepperFormOffline extends StatefulWidget {
 }
 
 class _StepperFormOfflineState extends State<StepperFormOffline> {
-  // first screen
+  // first step
   AdapterOne currentValueTagPrefijo =
       AdapterOne(id: 0, codigo: '0', descripcion: '');
   AdapterOne currentValueTagCentro =
       AdapterOne(id: 0, codigo: '0', descripcion: '');
   String currentValueDescription = '';
-
   AdapterTwo currentValueTagDisciplina = AdapterTwo(id: 1, descripcion: '');
   AdapterTwo currentValueSlot = AdapterTwo(id: 1, descripcion: '');
-  // second pantalla
+
+  // second step
   AdapterTwo currentValueSegurity = AdapterTwo(id: 1, descripcion: '');
   AdapterThree currentValueResponsability = AdapterThree(id: 0, nombre: '');
   AdapterTwo currentValueRisk = AdapterTwo(id: 1, descripcion: '');
   AdapterTwo currentValueProbability = AdapterTwo(id: 1, descripcion: '');
   AdapterTwo currentValueImpact = AdapterTwo(id: 1, descripcion: '');
-  // third screen
+  String currentValueInterlock = '';
+  // third step
   AdapterThree currentValueapplicant = AdapterThree(id: 0, nombre: '');
   AdapterThree currentValueapprover = AdapterThree(id: 0, nombre: '');
   AdapterThree currentValueexecutor = AdapterThree(id: 0, nombre: '');
   AdapterTwo currentValueForzado = AdapterTwo(id: 1, descripcion: '');
-  String currentValueInterlock = '';
 
   int _currentStep = 0;
   String? selectedValue;
@@ -108,14 +109,55 @@ class _StepperFormOfflineState extends State<StepperFormOffline> {
             Expanded(
               child: Stepper(
                 controlsBuilder: (context, details) {
-                  bool validation = details.currentStep != 2 ? true : false;
+                  // Método para validar campos por paso
+                  bool isStepValid(int currentStep) {
+                    switch (currentStep) {
+                      case 0:
+                        return [
+                          currentValueTagPrefijo.descripcion,
+                          currentValueTagCentro.descripcion,
+                          currentValueTagDisciplina.descripcion,
+                          currentValueSlot.descripcion,
+                          currentValueDescription,
+                        ].every((field) => field.isNotEmpty);
+                      case 1:
+                        return [
+                          currentValueResponsability.nombre,
+                          currentValueRisk.descripcion,
+                          currentValueProbability.descripcion,
+                          currentValueImpact.descripcion,
+                          currentValueInterlock,
+                        ].every((field) => field.isNotEmpty);
+                      case 2:
+                        return [
+                          currentValueapplicant.nombre,
+                          currentValueapprover.nombre,
+                          currentValueexecutor.nombre,
+                          currentValueForzado.descripcion,
+                        ].every((field) => field.isNotEmpty);
+                      default:
+                        return false;
+                    }
+                  }
+
+                  void showErrorModal(BuildContext context, String message) {
+                    CustomModal modal = CustomModal();
+                    modal.showModal(context, message, Colors.red, false);
+                  }
+
+                  bool isFinalStep = details.currentStep == 2;
+                  bool validation = isStepValid(details.currentStep);
 
                   return GestureDetector(
                     onTap: () async {
                       if (validation) {
-                        details.onStepContinue!();
-                      } else {
-                        await saveData(
+                        if (isFinalStep) {
+                          if (!isStepValid(details.currentStep)) {
+                            showErrorModal(
+                                context, 'Completa todos los campos');
+                            return;
+                          }
+                          await saveData(
                             currentValueTagPrefijo,
                             currentValueTagCentro,
                             currentValueDescription,
@@ -130,22 +172,30 @@ class _StepperFormOfflineState extends State<StepperFormOffline> {
                             currentValueapprover,
                             currentValueexecutor,
                             currentValueForzado,
-                            currentValueInterlock);
+                            currentValueInterlock,
+                          );
+                        } else {
+                          details.onStepContinue!();
+                        }
+                      } else {
+                        showErrorModal(context, 'Completa todos los campos');
                       }
                     },
                     child: Container(
                       decoration: BoxDecoration(
-                          color: validation
-                              ? const Color(0xff009283)
-                              : const Color(0xff21378C),
-                          borderRadius: BorderRadius.circular(20)),
+                        color: validation
+                            ? const Color(0xff009283)
+                            : const Color(0xff21378C),
+                        borderRadius: BorderRadius.circular(20),
+                      ),
                       padding: const EdgeInsets.all(10),
                       margin: const EdgeInsets.symmetric(vertical: 20),
                       child: Center(
-                          child: Text(
-                        validation ? 'Continuar' : 'Finalizar',
-                        style: AppStyles.textStyle,
-                      )),
+                        child: Text(
+                          isFinalStep ? 'Finalizar' : 'Continuar',
+                          style: AppStyles.textStyle,
+                        ),
+                      ),
                     ),
                   );
                 },
@@ -167,76 +217,65 @@ class _StepperFormOfflineState extends State<StepperFormOffline> {
                 },
                 steps: [
                   Step(
-                    title: SizedBox(),
+                    title: _currentStep == 0
+                        ? const Text('Tag  y Subfijo')
+                        : const SizedBox(),
                     content: SingleChildScrollView(
                       child: Column(
                         children: [
-                          SizedBox(
-                            width: double.infinity,
-                            child: ListView(
-                              shrinkWrap: true,
+                          CustomDropDownButtonOneOff(
+                            box: HiveBoxes.tagPrefijo,
+                            descriptionField: 'Tag (Prefijo) * ',
+                            hintText: 'Prefijo del Tag o Sub Área',
+                            currentValue: currentValueTagPrefijo,
+                            onChanged: (value) => _updateCurrentValue(
+                                ValueType.tagPrefijo, value),
+                          ),
+                          CustomDropDownButtonOneOff(
+                            box: HiveBoxes.tagCentro,
+                            descriptionField: 'Tag (Centro) *',
+                            hintText:
+                                'Parte Central  del Tag Asoc. al instrumento o Equipo',
+                            currentValue: currentValueTagCentro,
+                            onChanged: (value) =>
+                                _updateCurrentValue(ValueType.tagCentro, value),
+                          ),
+                          Container(
+                            margin: const EdgeInsets.symmetric(vertical: 20),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                CustomDropDownButtonOneOff(
-                                  box: HiveBoxes.tagPrefijo,
-                                  descriptionField: 'Tag (Prefijo) * ',
-                                  hintText: 'Prefijo del Tag o Sub Área',
-                                  currentValue: currentValueTagPrefijo,
-                                  onChanged: (value) => _updateCurrentValue(
-                                      ValueType.tagPrefijo, value),
-                                ),
-                                CustomDropDownButtonOneOff(
-                                  box: HiveBoxes.tagCentro,
-                                  descriptionField: 'Tag (Centro) *',
-                                  hintText:
-                                      'Parte Central  del Tag Asoc. al instrumento o Equipo',
-                                  currentValue: currentValueTagCentro,
-                                  onChanged: (value) => _updateCurrentValue(
-                                      ValueType.tagCentro, value),
-                                ),
-                                Container(
-                                  margin:
-                                      const EdgeInsets.symmetric(vertical: 20),
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      const Text('Descripción *'),
-                                      TextFormField(
-                                        initialValue: currentValueDescription,
-                                        onChanged: (value) {
-                                          setState(() {
-                                            currentValueDescription = value;
-                                          });
-                                        },
-                                        maxLength: 100,
-                                        maxLines: 2,
-                                        decoration: const InputDecoration(
-                                            hintText:
-                                                'Agregue una descripción'),
-                                      )
-                                    ],
-                                  ),
-                                ),
-                                CustomDropDownButtonTwoOff(
-                                  box: HiveBoxes.disciplina,
-                                  descriptionField: 'Disciplina *',
-                                  hintText:
-                                      'Disciplina que solicita el Forzado',
-                                  currentValue: currentValueTagDisciplina,
-                                  onChanged: (value) => _updateCurrentValue(
-                                      ValueType.tagDisciplina, value),
-                                ),
-                                CustomDropDownButtonTwoOff(
-                                  box: HiveBoxes.turno,
-                                  descriptionField: 'Turno *',
-                                  hintText:
-                                      'Disciplina que solicita el Forzado',
-                                  currentValue: currentValueSlot,
-                                  onChanged: (value) => _updateCurrentValue(
-                                      ValueType.slot, value),
-                                ),
+                                const Text('Descripción *'),
+                                TextFormField(
+                                  initialValue: currentValueDescription,
+                                  onChanged: (value) {
+                                    setState(() {
+                                      currentValueDescription = value;
+                                    });
+                                  },
+                                  maxLength: 100,
+                                  maxLines: 2,
+                                  decoration: const InputDecoration(
+                                      hintText: 'Agregue una descripción'),
+                                )
                               ],
                             ),
+                          ),
+                          CustomDropDownButtonTwoOff(
+                            box: HiveBoxes.disciplina,
+                            descriptionField: 'Disciplina *',
+                            hintText: 'Disciplina que solicita el Forzado',
+                            currentValue: currentValueTagDisciplina,
+                            onChanged: (value) => _updateCurrentValue(
+                                ValueType.tagDisciplina, value),
+                          ),
+                          CustomDropDownButtonTwoOff(
+                            box: HiveBoxes.turno,
+                            descriptionField: 'Turno *',
+                            hintText: 'Disciplina que solicita el Forzado',
+                            currentValue: currentValueSlot,
+                            onChanged: (value) =>
+                                _updateCurrentValue(ValueType.slot, value),
                           ),
                         ],
                       ),
@@ -447,7 +486,8 @@ class _StepperFormOfflineState extends State<StepperFormOffline> {
           status: 'pendiente-alta');
       // Guardar los datos en la caja
       await box.add(data);
-      print('Forzado guardado correctamente');
+      CustomModal modal = CustomModal();
+      modal.showModal(context, 'Forzado agregado', Colors.blue, true);
     } catch (e) {
       print('Error abriendo caja: $e');
       return;
