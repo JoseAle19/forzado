@@ -23,17 +23,11 @@ class _SplashScreenState extends State<SplashScreen> {
 
     Widget nextPage;
 
-    final user = prefs.getString('username') ?? 'usuario';
+    final String? user = prefs.getString('username') ?? 'usuario';
+    final int? rol = prefs.getInt('rol');
     if (hasAcceptedOnboarding == true) {
-      nextPage = isUserLoggedIn == true
-          ? (user == 'ejecutor'
-              ? HomeExecuter()
-              : user == 'aprobador'
-                  ? const HomeApprove()
-                  : user == 'soli'
-                      ? Home()
-                      : LoginPage())
-          : LoginPage();
+      nextPage =
+          isUserLoggedIn == true ? navigateHandleRole(rol ?? 10) : LoginPage();
     } else {
       nextPage = const OnBoardigpage();
     }
@@ -44,6 +38,22 @@ class _SplashScreenState extends State<SplashScreen> {
         MaterialPageRoute(builder: (_) => nextPage),
       );
     });
+  }
+
+  Widget navigateHandleRole(int role) {
+    switch (role) {
+      case 4:
+      case 7:
+        return const HomeExecuter();
+      case 3:
+      case 6:
+        return const HomeApprove();
+      case 2:
+      case 5:
+        return const Home();
+      default:
+        return LoginPage();
+    }
   }
 
   @override

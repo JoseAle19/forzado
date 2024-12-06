@@ -32,6 +32,9 @@ class HomeExecuter extends StatelessWidget {
               onPressed: () async {
                 final prefs = await SharedPreferences.getInstance();
                 await prefs.remove('logged');
+                await prefs.remove('username');
+                await prefs.remove('iduser');
+                await prefs.remove('flag');
                 final route =
                     MaterialPageRoute(builder: (_) => const LoginPage());
                 Navigator.push(context, route);

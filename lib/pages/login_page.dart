@@ -24,112 +24,186 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   final _usernameController = TextEditingController();
   final _passwordController = TextEditingController();
+  final _controllerPass = TextEditingController();
   bool isLoading = false;
   bool isFirstLogIn = false;
-Future<ApiResponse> login(String username, String password) async {
-  final prefs = await SharedPreferences.getInstance();
+  Future<ApiResponse> login(String username, String password) async {
+    final prefs = await SharedPreferences.getInstance();
 
-  try {
-     setState(() {
-      isLoading = true;
-    });
+    try {
+      setState(() {
+        isLoading = true;
+      });
 
-    final headers = {'Content-Type': 'application/json'};
-    final body = jsonEncode({
-      "username": username,
-      "password": password,
-    });
+      final headers = {'Content-Type': 'application/json'};
+      final body = jsonEncode({
+        "username": username,
+        "password": password,
+      });
 
-    // Enviamos la solicitud POST
-    final response = await http.post(
-      Uri.parse('https://sntps2jn-3001.brs.devtunnels.ms/api/mobile/auth'),
-      headers: headers,
-      body: body,
-    );
+      // Enviamos la solicitud POST
+      final response = await http.post(
+        Uri.parse('https://sntps2jn-3001.brs.devtunnels.ms/api/mobile/auth'),
+        headers: headers,
+        body: body,
+      );
 
-    setState(() {
-      isLoading = false;
-    });
+      setState(() {
+        isLoading = false;
+      });
 
-     if (response.statusCode == 200) {
-       Map<String, dynamic> decodedToken = JwtDecoder.decode(response.body);
-    JwtModel jwtModel = JwtModel.fromJson(decodedToken);
+      if (response.statusCode == 200) {
+        Map<String, dynamic> decodedToken = JwtDecoder.decode(response.body);
+        JwtModel jwtModel = JwtModel.fromJson(decodedToken);
 
-    getUserByEmail(jwtModel.email);
+        getUserByEmail(jwtModel.email);
 
-       return ApiResponse.fromJson(json.decode(response.body));
-    } else {
-       final errorMessage =
-          'Error en el servidor: ${response.statusCode} - ${response.reasonPhrase}';
-      print(errorMessage);
+        return ApiResponse.fromJson(json.decode(response.body));
+      } else if (response.statusCode == 500) {
+        final errorMessage = 'Ocurrio un error, porfavor contacte a soporte';
+        return ApiResponse.error(message: errorMessage);
+      } else {
+        final errorMessage = 'Usuario o contraseña invalidos';
+        return ApiResponse.error(message: errorMessage);
+      }
+    } catch (error) {
+      setState(() {
+        isLoading = false;
+      });
+
+      final errorMessage = 'Error de red o de conexión: $error';
       return ApiResponse.error(message: errorMessage);
     }
-  } catch (error) {
-     setState(() {
-      isLoading = false;
-    });
-
-    final errorMessage = 'Error de red o de conexión: $error';
-    print(errorMessage);
-    return ApiResponse.error(message: errorMessage);
-  }
-}
-
-
-  void decodeAndSaveData(ApiResponse res) async {
-     Map<String, dynamic> decodedToken = JwtDecoder.decode(res.token!);
-    JwtModel jwtModel = JwtModel.fromJson(decodedToken);
-
- 
-
-
-    bool hasExpired = JwtDecoder.isExpired(res.token!);
-    if (hasExpired) {
-      final route = MaterialPageRoute(builder: (_) => LoginPage());
-      Navigator.push(context, route);
-    }
-    navigateHandleRole(jwtModel.areaId);
   }
 
-   void navigateHandleRole(int role) {
-      switch (role) {
-        case 1:
-          final route = MaterialPageRoute(builder: (_) => const Home());
-          Navigator.push(context, route);
-          break;
-        case 2:
-          final route = MaterialPageRoute(builder: (_) => const HomeExecuter());
-          Navigator.push(context, route);
-          break;
-        case 3:
-          final route = MaterialPageRoute(builder: (_) => const HomeApprove());
-          Navigator.push(context, route);
-          break;
-      }
-    }
+  void decodeAndSaveData(name, rol, idUser, flag) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('logged', true);
+    await prefs.setInt('rol', rol);
+    await prefs.setString('username', name);
+    await prefs.setInt('iduser', idUser);
+    await prefs.setInt('flag', flag);
+  }
 
-    Future<ApiResponseDetailUser> getUserByEmail(String email) async {
-      CustomModal modal = CustomModal();
-      try {
-        final res = await ApiClient().post('/api/usuarios/por-correo', {
-          'email': email,
+  Future<ApiResponseDetailUser> getUserByEmail(String email) async {
+    CustomModal modal = CustomModal();
+    try {
+      setState(() {
+        isLoading = true;
+      });
+      final res = await ApiClient().post(
+          '/api/usuarios/por-correo',
+          jsonEncode({
+            'email': email,
+          }));
+
+      if (res.statusCode == 200) {
+        setState(() {
+          isLoading = false;
         });
+        ApiResponseDetailUser user = apiResponseDetailUserFromJson(res.body);
+        print('Estado del user ${user.flagNuevoIngreso}');
+        if (user.flagNuevoIngreso == 1) {
+          setState(() {
+            isLoading = false;
+          });
+          showDialog(
+            context: context,
+            builder: (context) {
+              return AlertDialog(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                title: const Text(
+                  'Establece una contraseña',
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 18,
+                  ),
+                ),
+                content: SingleChildScrollView(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const Text(
+                        'Introduce una nueva contraseña para continuar:',
+                        style: TextStyle(fontSize: 14),
+                      ),
+                      const SizedBox(height: 20),
+                      TextFormField(
+                        controller: _controllerPass,
+                        obscureText: true,
+                        decoration: InputDecoration(
+                          labelText: 'Contraseña',
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          prefixIcon: Icon(Icons.lock),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                actions: [
+                  TextButton(
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                    child: const Text(
+                      'Cancelar',
+                      style: TextStyle(color: Colors.red),
+                    ),
+                  ),
+                  ElevatedButton(
+                    onPressed: () async {
+                      final newPassword = _controllerPass.text;
+                      if (newPassword.isNotEmpty) {
+                        print('peticionnnnnn');
+                        try {
+                          final res = await ApiClient().post(
+                            '/api/usuarios/reiniciar-contrasena',
+                            jsonEncode({
+                              'id': user.id,
+                              'password': newPassword.trim(),
+                            }),
+                          );
+                          print('goood soli ${res.body}');
+                          decodeAndSaveData(
+                            user.name,
+                            user.role,
+                            user.id,
+                            user.flagNuevoIngreso,
+                          );
+                          navigateHandleRole(user.role);
 
-        if (res.statusCode == 200) {
-          modal.showModal(context, 'Bienvenido', Colors.green, true);
-          return ApiResponseDetailUser.fromJson(jsonDecode(res.body));
+                          Navigator.of(context).pop();
+                        } catch (e) {
+                          modal.showModal(context, 'Error en la solicitud',
+                              Colors.red, false);
+                          print('Error: $e');
+                        }
+                      } else {
+                        modal.showModal(
+                            context, 'Campos requeridos', Colors.red, false);
+                        print('El campo de contraseña está vacío.');
+                      }
+                    },
+                    child: const Text('Actualizar'),
+                  ),
+                ],
+              );
+            },
+          );
         } else {
-          modal.showModal(context, 'Ocurrio un error', Colors.red, false);
-          return ApiResponseDetailUser(
-              id: 0,
-              name: '',
-              area: '',
-              role: 000,
-              flagNuevoIngreso: 000,
-              jwt: '');
+          modal.showModal(context, 'Bienvenido', Colors.green, true);
+
+          decodeAndSaveData(
+              user.name, user.role, user.id, user.flagNuevoIngreso);
+          navigateHandleRole(user.role);
         }
-      } catch (e) {
-        modal.showModal(context, 'Ocurrio un error interno', Colors.red, false);
+        return ApiResponseDetailUser.fromJson(jsonDecode(res.body));
+      } else {
+        modal.showModal(context, 'Ocurrio un error', Colors.red, false);
         return ApiResponseDetailUser(
             id: 0,
             name: '',
@@ -138,7 +212,45 @@ Future<ApiResponse> login(String username, String password) async {
             flagNuevoIngreso: 000,
             jwt: '');
       }
+    } catch (e) {
+      modal.showModal(context, 'Ocurrio un error interno', Colors.red, false);
+      return ApiResponseDetailUser(
+          id: 0, name: '', area: '', role: 000, flagNuevoIngreso: 000, jwt: '');
+    } finally {
+      setState(() {
+        isLoading = false;
+      });
     }
+  }
+
+  void navigateHandleRole(int role) {
+    switch (role) {
+      case 4:
+        final route = MaterialPageRoute(builder: (_) => const HomeExecuter());
+        Navigator.push(context, route);
+        break;
+      case 7:
+        final route = MaterialPageRoute(builder: (_) => const HomeExecuter());
+        Navigator.push(context, route);
+        break;
+      case 3:
+        final route = MaterialPageRoute(builder: (_) => const HomeApprove());
+        Navigator.push(context, route);
+        break;
+      case 6:
+        final route = MaterialPageRoute(builder: (_) => const HomeApprove());
+        Navigator.push(context, route);
+        break;
+      case 2:
+        final route = MaterialPageRoute(builder: (_) => const Home());
+        Navigator.push(context, route);
+        break;
+      case 5:
+        final route = MaterialPageRoute(builder: (_) => const Home());
+        Navigator.push(context, route);
+        break;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -181,7 +293,7 @@ Future<ApiResponse> login(String username, String password) async {
                               hintText: 'Ingrese su usuario'),
                         ),
                         TextFormField(
-                          obscureText: true,
+                          // obscureText: true,
                           keyboardType: TextInputType.text,
                           controller: _passwordController,
                           cursorColor: AppColors.primaryColor,
@@ -196,12 +308,7 @@ Future<ApiResponse> login(String username, String password) async {
                             ApiResponse res = await login(
                                 _usernameController.text,
                                 _passwordController.text);
-                            if (res.success) {
-                              decodeAndSaveData(res);
-                              final route = MaterialPageRoute(
-                                  builder: (_) => const Home());
-                              Navigator.push(context, route);
-                            } else {
+                            if (!res.success) {
                               ScaffoldMessenger.of(context).showSnackBar(
                                   SnackBar(content: Text(res.message!)));
                             }
