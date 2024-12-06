@@ -18,4 +18,7 @@ class ApiResponse {
       message: json['message'],
     );
   }
+  factory ApiResponse.error({required String message}) {
+    return ApiResponse(success: false, message: message);
+  }  
 }

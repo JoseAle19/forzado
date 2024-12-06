@@ -4,9 +4,12 @@ import 'package:flutter/material.dart';
 import 'package:forzado/core/app_colors.dart';
 import 'package:forzado/models/jwt_model.dart';
 import 'package:forzado/models/login.dart';
+import 'package:forzado/models/model_user_detail.dart';
 import 'package:forzado/pages/aprobador/home_approve.dart';
 import 'package:forzado/pages/ejecutor/home_executor.dart';
 import 'package:forzado/pages/home_page.dart';
+import 'package:forzado/services/api_client.dart';
+import 'package:forzado/widgets/modal_error.dart';
 import 'package:http/http.dart' as http;
 import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -22,58 +25,73 @@ class _LoginPageState extends State<LoginPage> {
   final _usernameController = TextEditingController();
   final _passwordController = TextEditingController();
   bool isLoading = false;
+  bool isFirstLogIn = false;
+Future<ApiResponse> login(String username, String password) async {
+  final prefs = await SharedPreferences.getInstance();
 
-  Future<ApiResponse> login(String username, String password) async {
-    final prefs = await SharedPreferences.getInstance();
-    if (username != 'useruseruser') {
-      switch (username) {
-        case 'ejecutor':
-          final route = MaterialPageRoute(builder: (_) => const HomeExecuter());
-
-          await prefs.setBool('logged', true);
-          await prefs.setString('username', 'ejecutor');
-          Navigator.push(context, route);
-          return ApiResponse.fromJson2(
-              json.decode('{"success": false, "message": "Hola ejecutor"}'));
-        case 'aprobador':
-          final route = MaterialPageRoute(builder: (_) => const HomeApprove());
-              await prefs.setBool('logged', true);
-    await prefs.setString('username', 'ejecutor');
-
-          Navigator.push(context, route);
-          return ApiResponse.fromJson2(
-              json.decode('{"success": false, "message": "Hola Aprobador"}'));
-      }
-    }
-    setState(() {
+  try {
+     setState(() {
       isLoading = true;
     });
 
     final headers = {'Content-Type': 'application/json'};
     final body = jsonEncode({
-      "username": 'useruseruser',
-      "password": 'yourPasswordHere1',
-      // "username": username,
-      // "password": password,
+      "username": username,
+      "password": password,
     });
 
+    // Enviamos la solicitud POST
     final response = await http.post(
       Uri.parse('https://sntps2jn-3001.brs.devtunnels.ms/api/mobile/auth'),
       headers: headers,
       body: body,
     );
+
     setState(() {
       isLoading = false;
     });
-    return ApiResponse.fromJson(json.decode(response.body));
-  }
 
-  void decodeAndSaveData(ApiResponse res) async {
-    final prefs = await SharedPreferences.getInstance();
-    Map<String, dynamic> decodedToken = JwtDecoder.decode(res.token!);
+     if (response.statusCode == 200) {
+       Map<String, dynamic> decodedToken = JwtDecoder.decode(response.body);
     JwtModel jwtModel = JwtModel.fromJson(decodedToken);
 
-    void navigateHandleRole(int role) {
+    getUserByEmail(jwtModel.email);
+
+       return ApiResponse.fromJson(json.decode(response.body));
+    } else {
+       final errorMessage =
+          'Error en el servidor: ${response.statusCode} - ${response.reasonPhrase}';
+      print(errorMessage);
+      return ApiResponse.error(message: errorMessage);
+    }
+  } catch (error) {
+     setState(() {
+      isLoading = false;
+    });
+
+    final errorMessage = 'Error de red o de conexión: $error';
+    print(errorMessage);
+    return ApiResponse.error(message: errorMessage);
+  }
+}
+
+
+  void decodeAndSaveData(ApiResponse res) async {
+     Map<String, dynamic> decodedToken = JwtDecoder.decode(res.token!);
+    JwtModel jwtModel = JwtModel.fromJson(decodedToken);
+
+ 
+
+
+    bool hasExpired = JwtDecoder.isExpired(res.token!);
+    if (hasExpired) {
+      final route = MaterialPageRoute(builder: (_) => LoginPage());
+      Navigator.push(context, route);
+    }
+    navigateHandleRole(jwtModel.areaId);
+  }
+
+   void navigateHandleRole(int role) {
       switch (role) {
         case 1:
           final route = MaterialPageRoute(builder: (_) => const Home());
@@ -84,22 +102,43 @@ class _LoginPageState extends State<LoginPage> {
           Navigator.push(context, route);
           break;
         case 3:
-          // final route = MaterialPageRoute(
-          //     builder: (_) => const HomeExecuter(title: 'Home Ejecutador'));
-          // Navigator.push(context, route);
+          final route = MaterialPageRoute(builder: (_) => const HomeApprove());
+          Navigator.push(context, route);
           break;
       }
     }
 
-    prefs.setBool('logged', true);
-    prefs.setString('username', jwtModel.name);
-    bool hasExpired = JwtDecoder.isExpired(res.token!);
-    if (hasExpired) {
-      final route = MaterialPageRoute(builder: (_) => LoginPage());
-      Navigator.push(context, route);
+    Future<ApiResponseDetailUser> getUserByEmail(String email) async {
+      CustomModal modal = CustomModal();
+      try {
+        final res = await ApiClient().post('/api/usuarios/por-correo', {
+          'email': email,
+        });
+
+        if (res.statusCode == 200) {
+          modal.showModal(context, 'Bienvenido', Colors.green, true);
+          return ApiResponseDetailUser.fromJson(jsonDecode(res.body));
+        } else {
+          modal.showModal(context, 'Ocurrio un error', Colors.red, false);
+          return ApiResponseDetailUser(
+              id: 0,
+              name: '',
+              area: '',
+              role: 000,
+              flagNuevoIngreso: 000,
+              jwt: '');
+        }
+      } catch (e) {
+        modal.showModal(context, 'Ocurrio un error interno', Colors.red, false);
+        return ApiResponseDetailUser(
+            id: 0,
+            name: '',
+            area: '',
+            role: 000,
+            flagNuevoIngreso: 000,
+            jwt: '');
+      }
     }
-    navigateHandleRole(jwtModel.areaId);
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -158,12 +197,7 @@ class _LoginPageState extends State<LoginPage> {
                                 _usernameController.text,
                                 _passwordController.text);
                             if (res.success) {
-                              final prefs = await  SharedPreferences.getInstance();
-                              
-                                  await prefs.setBool('logged', true);
-                                    await prefs.setString('username', 'soli');
-
-                              // decodeAndSaveData(res);
+                              decodeAndSaveData(res);
                               final route = MaterialPageRoute(
                                   builder: (_) => const Home());
                               Navigator.push(context, route);
