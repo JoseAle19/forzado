@@ -26,19 +26,20 @@ class HomeApprove extends StatelessWidget {
       appBar: AppBar(
         automaticallyImplyLeading: false,
         title: Consumer<AuthProvider>(
-            builder: (context, value, child) =>   Text(
-            'Hola ${value.user.name }',
-            style: const  TextStyle(fontFamily: 'noto', fontWeight: FontWeight.bold),
+          builder: (context, value, child) => Text(
+            'Hola ${value.user?.name}',
+            style: const TextStyle(
+                fontFamily: 'noto', fontWeight: FontWeight.bold),
           ),
-         ),
+        ),
         actions: [
           const IconButton(
               onPressed: null, icon: Icon(Icons.notifications_none_outlined)),
           IconButton(
               onPressed: () async {
-                                  await  PreferencesHelper().clear();
+                await PreferencesHelper().clear();
 
-                 final route =
+                final route =
                     MaterialPageRoute(builder: (_) => const LoginPage());
                 Navigator.push(context, route);
               },

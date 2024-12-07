@@ -19,12 +19,11 @@ class SplashScreen extends StatefulWidget {
 class _SplashScreenState extends State<SplashScreen> {
   void _nextPage() async {
     final prefs = await SharedPreferences.getInstance();
-
     final bool? hasAcceptedOnboarding = prefs.getBool('aceptOm');
     final bool? isUserLoggedIn = prefs.getBool('logged');
     final int? rol = prefs.getInt('rol');
+
     Widget nextPage;
-    print(rol);
     if (hasAcceptedOnboarding == true) {
       nextPage =
           isUserLoggedIn == true ? navigateHandleRole(rol ?? 10) : LoginPage();

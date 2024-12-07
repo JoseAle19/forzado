@@ -72,8 +72,8 @@ class _HomeState extends State<Home> {
         appBar: AppBar(
           automaticallyImplyLeading: false,
           title: Consumer<AuthProvider>(
-                builder: (context, value, child) => Text(
-              'Hola ${value.user.name}',
+            builder: (context, value, child) => Text(
+              'Hola ${value.user?.name}',
               style: const TextStyle(
                   fontFamily: 'noto', fontWeight: FontWeight.bold),
             ),
@@ -82,7 +82,7 @@ class _HomeState extends State<Home> {
             isConnected
                 ? IconButton(
                     onPressed: () async {
-                     await  PreferencesHelper().clear();
+                      await PreferencesHelper().clear();
                       final route =
                           MaterialPageRoute(builder: (_) => const LoginPage());
                       Navigator.push(context, route);

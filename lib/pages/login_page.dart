@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:forzado/core/app_colors.dart';
 import 'package:forzado/core/utils/preferences_helper.dart';
+import 'package:forzado/data/provider/auth_provider.dart';
 import 'package:forzado/models/jwt_model.dart';
 import 'package:forzado/models/login.dart';
 import 'package:forzado/models/model_user_detail.dart';
@@ -13,7 +14,7 @@ import 'package:forzado/services/api_client.dart';
 import 'package:forzado/widgets/modal_error.dart';
 import 'package:http/http.dart' as http;
 import 'package:jwt_decoder/jwt_decoder.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:provider/provider.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -29,8 +30,6 @@ class _LoginPageState extends State<LoginPage> {
   bool isLoading = false;
   bool isFirstLogIn = false;
   Future<ApiResponse> login(String username, String password) async {
-    final prefs = await SharedPreferences.getInstance();
-
     try {
       setState(() {
         isLoading = true;
@@ -42,7 +41,6 @@ class _LoginPageState extends State<LoginPage> {
         "password": password,
       });
 
-      // Enviamos la solicitud POST
       final response = await http.post(
         Uri.parse('https://sntps2jn-3001.brs.devtunnels.ms/api/mobile/auth'),
         headers: headers,
@@ -77,12 +75,6 @@ class _LoginPageState extends State<LoginPage> {
     }
   }
 
-  void decodeAndSaveData(name, rol, idUser, flag, user) async {
-
-    await PreferencesHelper().setUser(user);
-
-  }
-
   Future<ApiResponseDetailUser> getUserByEmail(String email) async {
     CustomModal modal = CustomModal();
     try {
@@ -100,7 +92,6 @@ class _LoginPageState extends State<LoginPage> {
           isLoading = false;
         });
         ApiResponseDetailUser user = apiResponseDetailUserFromJson(res.body);
-        print('Estado del user ${user.flagNuevoIngreso}');
         if (user.flagNuevoIngreso == 1) {
           setState(() {
             isLoading = false;
@@ -176,14 +167,7 @@ class _LoginPageState extends State<LoginPage> {
                                     );
 
                                     if (res.statusCode == 200) {
-                                      Navigator.of(context).pop();
-                                      decodeAndSaveData(
-                                        user.name,
-                                        user.role,
-                                        user.id,
-                                        user.flagNuevoIngreso,
-                                        user
-                                      );
+                                      await PreferencesHelper().setUser(user);
                                       navigateHandleRole(user.role);
 
                                       modal.showModal(
@@ -223,11 +207,17 @@ class _LoginPageState extends State<LoginPage> {
             },
           );
         } else {
-          modal.showModal(context, 'Bienvenido', Colors.green, true);
+          try {
+            await PreferencesHelper().setUser(user);
 
-          decodeAndSaveData(
-              user.name, user.role, user.id, user.flagNuevoIngreso, user);
-          navigateHandleRole(user.role);
+            await Provider.of<AuthProvider>(context, listen: false)
+                .checkSession();
+            modal.showModal(context, 'Bienvenido', Colors.green, true);
+
+            navigateHandleRole(user.role);
+          } catch (e) {
+            print('error al navegar  ${e}');
+          }
         }
         return ApiResponseDetailUser.fromJson(jsonDecode(res.body));
       } else {

@@ -10,7 +10,6 @@ import 'package:hive_flutter/adapters.dart';
 import 'package:provider/provider.dart';
 
 void main() async {
-
   WidgetsFlutterBinding.ensureInitialized();
   await PreferencesHelper().init();
   await Hive.initFlutter();
@@ -35,8 +34,6 @@ void main() async {
   await Hive.openBox<AdapterThree>('Aprobador');
   await Hive.openBox<AdapterThree>('Ejecutor');
 
-  
-
   runApp(const MyApp());
 }
 
@@ -45,13 +42,14 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MultiProvider
-    (
+    return MultiProvider(
       providers: [
-                ChangeNotifierProvider(create: (_) => AuthProvider()..checkSession()),
+        ChangeNotifierProvider(create: (_) => AuthProvider()..checkSession()),
       ],
       child: const MaterialApp(
-          debugShowCheckedModeBanner: false, title: 'Forzados', home: HomePage()),
+          debugShowCheckedModeBanner: false,
+          title: 'Forzados',
+          home: HomePage()),
     );
   }
 }
