@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:forzado/core/urls.dart';
+import 'package:forzado/core/utils/preferences_helper.dart';
+import 'package:forzado/data/provider/auth_provider.dart';
 import 'package:forzado/models/remove_forzado/model_list_remove.dart';
 import 'package:forzado/pages/aprobador/screen/aprove-list.dart';
 import 'package:forzado/pages/aprobador/screen/shutdown_forzado.dart';
@@ -8,6 +10,7 @@ import 'package:forzado/pages/login_page.dart';
 import 'package:forzado/services/api_client.dart';
 import 'package:forzado/services/remove_forzado/list_service_remove.dart';
 import 'package:forzado/widgets/cards.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class HomeApprove extends StatelessWidget {
@@ -22,21 +25,20 @@ class HomeApprove extends StatelessWidget {
       bottomNavigationBar: const CustomBotttomNavigation(),
       appBar: AppBar(
         automaticallyImplyLeading: false,
-        title: const Text(
-          'Hola aprobador',
-          style: TextStyle(fontFamily: 'noto', fontWeight: FontWeight.bold),
-        ),
+        title: Consumer<AuthProvider>(
+            builder: (context, value, child) =>   Text(
+            'Hola ${value.user.name }',
+            style: const  TextStyle(fontFamily: 'noto', fontWeight: FontWeight.bold),
+          ),
+         ),
         actions: [
           const IconButton(
               onPressed: null, icon: Icon(Icons.notifications_none_outlined)),
           IconButton(
               onPressed: () async {
-                final prefs = await SharedPreferences.getInstance();
-                await prefs.remove('logged');
-                await prefs.remove('username');
-                await prefs.remove('iduser');
-                await prefs.remove('flag');
-                final route =
+                                  await  PreferencesHelper().clear();
+
+                 final route =
                     MaterialPageRoute(builder: (_) => const LoginPage());
                 Navigator.push(context, route);
               },

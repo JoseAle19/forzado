@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:forzado/core/app_colors.dart';
+import 'package:forzado/core/utils/preferences_helper.dart';
 import 'package:forzado/models/jwt_model.dart';
 import 'package:forzado/models/login.dart';
 import 'package:forzado/models/model_user_detail.dart';
@@ -76,13 +77,10 @@ class _LoginPageState extends State<LoginPage> {
     }
   }
 
-  void decodeAndSaveData(name, rol, idUser, flag) async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setBool('logged', true);
-    await prefs.setInt('rol', rol);
-    await prefs.setString('username', name);
-    await prefs.setInt('iduser', idUser);
-    await prefs.setInt('flag', flag);
+  void decodeAndSaveData(name, rol, idUser, flag, user) async {
+
+    await PreferencesHelper().setUser(user);
+
   }
 
   Future<ApiResponseDetailUser> getUserByEmail(String email) async {
@@ -110,87 +108,117 @@ class _LoginPageState extends State<LoginPage> {
           showDialog(
             context: context,
             builder: (context) {
-              return AlertDialog(
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                title: const Text(
-                  'Establece una contraseña',
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 18,
-                  ),
-                ),
-                content: SingleChildScrollView(
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      const Text(
-                        'Introduce una nueva contraseña para continuar:',
-                        style: TextStyle(fontSize: 14),
+              return StatefulBuilder(
+                builder: (BuildContext context, setState) {
+                  bool isFetchPass = false;
+                  return AlertDialog(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    title: const Text(
+                      'Establece una contraseña',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 18,
                       ),
-                      const SizedBox(height: 20),
-                      TextFormField(
-                        controller: _controllerPass,
-                        obscureText: true,
-                        decoration: InputDecoration(
-                          labelText: 'Contraseña',
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(12),
+                    ),
+                    content: SingleChildScrollView(
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          const Text(
+                            'Introduce una nueva contraseña para continuar:',
+                            style: TextStyle(fontSize: 14),
                           ),
-                          prefixIcon: Icon(Icons.lock),
+                          const SizedBox(height: 20),
+                          TextFormField(
+                            controller: _controllerPass,
+                            obscureText: true,
+                            decoration: InputDecoration(
+                              labelText: 'Contraseña',
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              prefixIcon: Icon(Icons.lock),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    actions: [
+                      TextButton(
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                        child: const Text(
+                          'Cancelar',
+                          style: TextStyle(color: Colors.red),
                         ),
                       ),
-                    ],
-                  ),
-                ),
-                actions: [
-                  TextButton(
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                    },
-                    child: const Text(
-                      'Cancelar',
-                      style: TextStyle(color: Colors.red),
-                    ),
-                  ),
-                  ElevatedButton(
-                    onPressed: () async {
-                      final newPassword = _controllerPass.text;
-                      if (newPassword.isNotEmpty) {
-                        print('peticionnnnnn');
-                        try {
-                          final res = await ApiClient().post(
-                            '/api/usuarios/reiniciar-contrasena',
-                            jsonEncode({
-                              'id': user.id,
-                              'password': newPassword.trim(),
-                            }),
-                          );
-                          print('goood soli ${res.body}');
-                          decodeAndSaveData(
-                            user.name,
-                            user.role,
-                            user.id,
-                            user.flagNuevoIngreso,
-                          );
-                          navigateHandleRole(user.role);
+                      isFetchPass == true
+                          ? const Center(
+                              child: CircularProgressIndicator(),
+                            )
+                          : ElevatedButton(
+                              onPressed: () async {
+                                final newPassword = _controllerPass.text;
+                                if (newPassword.isNotEmpty) {
+                                  setState(() {
+                                    isFetchPass = true;
+                                  });
+                                  try {
+                                    final res = await ApiClient().put(
+                                      '/api/usuarios/reiniciar-contrasena',
+                                      jsonEncode({
+                                        'id': user.id,
+                                        'password': newPassword.trim(),
+                                      }),
+                                    );
 
-                          Navigator.of(context).pop();
-                        } catch (e) {
-                          modal.showModal(context, 'Error en la solicitud',
-                              Colors.red, false);
-                          print('Error: $e');
-                        }
-                      } else {
-                        modal.showModal(
-                            context, 'Campos requeridos', Colors.red, false);
-                        print('El campo de contraseña está vacío.');
-                      }
-                    },
-                    child: const Text('Actualizar'),
-                  ),
-                ],
+                                    if (res.statusCode == 200) {
+                                      Navigator.of(context).pop();
+                                      decodeAndSaveData(
+                                        user.name,
+                                        user.role,
+                                        user.id,
+                                        user.flagNuevoIngreso,
+                                        user
+                                      );
+                                      navigateHandleRole(user.role);
+
+                                      modal.showModal(
+                                          context,
+                                          'Hola ${user.name}',
+                                          Colors.blue,
+                                          true);
+                                    } else {
+                                      print('Error: ${res.body}');
+                                      modal.showModal(context,
+                                          'Ocurrio un error', Colors.red, true);
+                                    }
+                                  } catch (e) {
+                                    print('Error: $e');
+                                    modal.showModal(
+                                        context,
+                                        'Error en la solicitud',
+                                        Colors.red,
+                                        false);
+                                  } finally {
+                                    setState(() {
+                                      isFetchPass = false;
+                                    });
+                                  }
+                                } else {
+                                  modal.showModal(context, 'Campos requeridos',
+                                      Colors.red, false);
+                                  print('El campo de contraseña está vacío.');
+                                }
+                              },
+                              child: const Text('Actualizar'),
+                            ),
+                    ],
+                  );
+                },
               );
             },
           );
@@ -198,7 +226,7 @@ class _LoginPageState extends State<LoginPage> {
           modal.showModal(context, 'Bienvenido', Colors.green, true);
 
           decodeAndSaveData(
-              user.name, user.role, user.id, user.flagNuevoIngreso);
+              user.name, user.role, user.id, user.flagNuevoIngreso, user);
           navigateHandleRole(user.role);
         }
         return ApiResponseDetailUser.fromJson(jsonDecode(res.body));
@@ -227,27 +255,27 @@ class _LoginPageState extends State<LoginPage> {
     switch (role) {
       case 4:
         final route = MaterialPageRoute(builder: (_) => const HomeExecuter());
-        Navigator.push(context, route);
+        Navigator.pushReplacement(context, route);
         break;
       case 7:
         final route = MaterialPageRoute(builder: (_) => const HomeExecuter());
-        Navigator.push(context, route);
+        Navigator.pushReplacement(context, route);
         break;
       case 3:
         final route = MaterialPageRoute(builder: (_) => const HomeApprove());
-        Navigator.push(context, route);
+        Navigator.pushReplacement(context, route);
         break;
       case 6:
         final route = MaterialPageRoute(builder: (_) => const HomeApprove());
-        Navigator.push(context, route);
+        Navigator.pushReplacement(context, route);
         break;
       case 2:
         final route = MaterialPageRoute(builder: (_) => const Home());
-        Navigator.push(context, route);
+        Navigator.pushReplacement(context, route);
         break;
       case 5:
         final route = MaterialPageRoute(builder: (_) => const Home());
-        Navigator.push(context, route);
+        Navigator.pushReplacement(context, route);
         break;
     }
   }

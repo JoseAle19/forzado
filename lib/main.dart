@@ -3,10 +3,16 @@ import 'package:forzado/adapters/adapter_one.dart';
 import 'package:forzado/adapters/adapter_three.dart';
 import 'package:forzado/adapters/adapter_two.dart';
 import 'package:forzado/adapters/forzado.dart';
+import 'package:forzado/core/utils/preferences_helper.dart';
+import 'package:forzado/data/provider/auth_provider.dart';
 import 'package:forzado/home_page.dart';
 import 'package:hive_flutter/adapters.dart';
+import 'package:provider/provider.dart';
 
 void main() async {
+
+  WidgetsFlutterBinding.ensureInitialized();
+  await PreferencesHelper().init();
   await Hive.initFlutter();
   Hive.registerAdapter(AdapterOneAdapter());
   Hive.registerAdapter(AdapterTwoAdapter());
@@ -39,7 +45,13 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
-        debugShowCheckedModeBanner: false, title: 'Forzados', home: HomePage());
+    return MultiProvider
+    (
+      providers: [
+                ChangeNotifierProvider(create: (_) => AuthProvider()..checkSession()),
+      ],
+      child: const MaterialApp(
+          debugShowCheckedModeBanner: false, title: 'Forzados', home: HomePage()),
+    );
   }
 }

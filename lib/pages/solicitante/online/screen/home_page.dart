@@ -54,7 +54,7 @@ class _HomePageRemoveState extends State<HomePageRemove> {
               .then(
             (value) {
               List<ForzadoM> data = value.data
-                  .where((element) => element.estado == 'ejecutado-alta')
+                  .where((element) => element.estado!.toLowerCase() == 'ejecutado-alta')
                   .toList();
               return ModelListForzados(
                 success: value.success,

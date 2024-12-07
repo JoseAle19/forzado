@@ -23,8 +23,8 @@ class CardsDashBoard extends StatelessWidget {
       };
 
       for (var item in lista) {
-        if (item.estado != null && contador.containsKey(item.estado)) {
-          contador[item.estado!] = (contador[item.estado!] ?? 0) + 1;
+        if (item.estado != null && contador.containsKey(item.estado!.toLowerCase())) {
+          contador[item.estado!.toLowerCase()] = (contador[item.estado!.toLowerCase()] ?? 0) + 1;
         }
       }
 
@@ -35,8 +35,7 @@ class CardsDashBoard extends StatelessWidget {
 
     // Mostrar los resultados
     conteoEstados.forEach((estado, cantidad) {
-      print('$estado: $cantidad');
-    });
+     });
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [

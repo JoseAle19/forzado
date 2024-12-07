@@ -338,7 +338,7 @@ class _DetailApproveForzadoState extends State<DetailApproveForzado> {
             backgroundColor: const Color(0xff009283),
             padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 15),
           ),
-          child: const Text(
+          child: isFetching? const Center(child: CircularProgressIndicator(),) : const Text(
             'Aprobar',
             style: TextStyle(fontSize: 18, color: Colors.white),
           ),

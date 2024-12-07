@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:forzado/core/app_colors.dart';
+import 'package:forzado/data/provider/auth_provider.dart';
 import 'package:forzado/pages/aprobador/home_approve.dart';
 import 'package:forzado/pages/ejecutor/home_executor.dart';
 import 'package:forzado/pages/home_page.dart';
 import 'package:forzado/pages/login_page.dart';
 import 'package:forzado/pages/onboardig.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -20,11 +22,9 @@ class _SplashScreenState extends State<SplashScreen> {
 
     final bool? hasAcceptedOnboarding = prefs.getBool('aceptOm');
     final bool? isUserLoggedIn = prefs.getBool('logged');
-
-    Widget nextPage;
-
-    final String? user = prefs.getString('username') ?? 'usuario';
     final int? rol = prefs.getInt('rol');
+    Widget nextPage;
+    print(rol);
     if (hasAcceptedOnboarding == true) {
       nextPage =
           isUserLoggedIn == true ? navigateHandleRole(rol ?? 10) : LoginPage();

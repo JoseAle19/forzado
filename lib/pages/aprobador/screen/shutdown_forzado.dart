@@ -32,7 +32,7 @@ class _ApproveforzadoState extends State<ShutdownForzado> {
                 context: context,
                 delegate: CustomSearchExecuter(
                     searchList: listData
-                        .where((element) => element.estado == 'Pendiente-baja')
+                        .where((element) => element.estado!.toLowerCase() == 'Pendiente-baja')
                         .toList()),
               );
             },

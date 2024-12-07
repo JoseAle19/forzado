@@ -264,9 +264,10 @@ class _StepperFormState extends State<StepperForm> {
                                 children: [
                                   const Text('Descripción *'),
                                   TextFormField(
+                                     
                                     initialValue: currentValueDescription,
                                     onChanged: (value) => _updateCurrentValue(
-                                        ValueType.description, value),
+                                        ValueType.description, value.toUpperCase()),
                                     maxLength: 100,
                                     maxLines: 2,
                                     decoration: const InputDecoration(

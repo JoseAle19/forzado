@@ -32,7 +32,7 @@ class _ApproveforzadoState extends State<Approveforzado> {
                 context: context,
                 delegate: CustomSearchExecuter(
                     searchList: listData
-                        .where((element) => element.estado == 'pendiente-alta')
+                        .where((element) => element.estado!.toLowerCase() == 'pendiente-alta')
                         .toList()),
               );
             },
@@ -59,7 +59,7 @@ class _ApproveforzadoState extends State<Approveforzado> {
               .then(
             (value) {
               List<ForzadoM> data = value.data
-                  .where((element) => element.estado == 'pendiente-alta')
+                  .where((element) => element.estado!.toLowerCase() == 'pendiente-alta')
                   .toList();
               return ModelListForzados(
                 success: value.success,

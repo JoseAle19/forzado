@@ -12,6 +12,11 @@ class ApiClient {
     return http.post(url, body: body, headers: _headers());
   }
 
+
+  Future<http.Response> put(String endpoint, dynamic body) async {
+    final url = Uri.parse('${AppUrl.url}$endpoint');
+    return http.put(url, body: body, headers: _headers());
+  } 
   Map<String, String> _headers() {
     return {'Content-Type': 'application/json'};
   }
