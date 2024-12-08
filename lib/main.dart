@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:forzado/adapters/adapter_forzados.dart';
 import 'package:forzado/adapters/adapter_one.dart';
 import 'package:forzado/adapters/adapter_three.dart';
 import 'package:forzado/adapters/adapter_two.dart';
@@ -17,6 +18,7 @@ void main() async {
   Hive.registerAdapter(AdapterTwoAdapter());
   Hive.registerAdapter(AdapterThreeAdapter());
   Hive.registerAdapter(ForzadoAdapter());
+  Hive.registerAdapter(ForzadosAdapter());
 
   // Abre las cajas para cada modelo
   await Hive.openBox<AdapterOne>('TagPrefijo');

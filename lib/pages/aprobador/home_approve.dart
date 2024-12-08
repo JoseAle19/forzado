@@ -167,6 +167,11 @@ class HomeApprove extends StatelessWidget {
                     child: CircularProgressIndicator(),
                   );
                 }
+                if (snapshot.data!.data.isEmpty) {
+                  return const Center(
+                    child: Text('No hay forzados pendientes'),
+                  );
+                }
                 ModelListForzados data = snapshot.data!;
                 return CardsDashBoard(data: data);
               },

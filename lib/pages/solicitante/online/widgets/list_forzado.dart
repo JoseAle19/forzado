@@ -26,60 +26,80 @@ class ListForzado extends StatelessWidget {
     return ListView.separated(
       itemBuilder: (context, index) {
         final item = data[index];
-        return Padding(
-          padding: const EdgeInsets.all(10),
-          child: Row(
-            children: [
-              Container(
-                width: 100,
-                height: 100,
-                color: const Color(0xFF009283),
-              ),
-              const SizedBox(width: 16),
-              Expanded(
-                child: Column(
-                  mainAxisSize: MainAxisSize.max,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      item.estado ?? '',
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.w500,
-                      ),
+        return Card(
+          elevation: 4, // Sombra para la tarjeta
+          margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: Padding(
+            padding:
+                const EdgeInsets.all(16), // Espaciado interno de la tarjeta
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                // ID representado en un círculo
+                CircleAvatar(
+                  radius: 30,
+                  backgroundColor: Colors.blue.shade100,
+                  child: Text(
+                    '${item.id}',
+                    style: const TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.blue,
                     ),
-                    Text(
-                      item.descripcion ?? '',
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(
-                        fontSize: 18,
+                  ),
+                ),
+                const SizedBox(width: 16),
+                // Contenido del texto
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // Título principal (id)
+                      Text(
+                        'ID: ${item.id}',
+                        style: const TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          color: Color(0xFF333333),
+                        ),
                       ),
-                    ),
-                  ],
+                      const SizedBox(height: 4),
+                      // Descripción
+                      Text(
+                        item.descripcion ?? 'Descripción no disponible',
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                        style: const TextStyle(
+                          fontSize: 14,
+                          color: Color(0xFF666666),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-              const SizedBox(width: 16),
-              IconButton(
-                onPressed: () {
-                  navigateDetailForzado(context, item);
-                },
-                icon: const Icon(
-                  Icons.arrow_right_alt_sharp,
-                  size: 30,
+                const SizedBox(width: 8),
+                // Botón para acciones
+                IconButton(
+                  onPressed: () {
+                    // Aquí puedes definir la acción
+                  },
+                  icon: const Icon(
+                    Icons.arrow_forward_ios,
+                    color: Colors.blue,
+                    size: 20,
+                  ),
+                  splashRadius: 20,
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         );
       },
       separatorBuilder: (context, index) {
-        return const Divider(
-          height: 1,
-          color: Colors.black,
-        );
+        return const SizedBox(height: 8); // Espacio vertical entre elementos
       },
       itemCount: data.length,
     );

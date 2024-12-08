@@ -9,6 +9,7 @@ import 'package:forzado/models/remove_forzado/model_list_remove.dart';
 import 'package:forzado/pages/login_page.dart';
 import 'package:forzado/pages/page_offline.dart';
 import 'package:forzado/pages/solicitante/offline/datatable%20_forzados.dart';
+import 'package:forzado/pages/solicitante/offline/screens/bajas_forzado_offline.dart';
 import 'package:forzado/pages/solicitante/online/screen/home_page.dart';
 import 'package:forzado/pages/steps_form/step_form.dart';
 import 'package:forzado/services/api_client.dart';
@@ -38,6 +39,7 @@ class _HomeState extends State<Home> {
 
   void _iniciarVerificacion() async {
     await verifyConnection();
+    print(isConnected);
     _controller.jumpToPage(isConnected ? 0 : 1);
   }
 
@@ -205,6 +207,23 @@ class PageOnline extends StatelessWidget {
             ),
           ),
         ),
+        Container(
+          margin: const EdgeInsets.only(top: 40),
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          height: 40,
+          color: const Color(0xffD9D9D9),
+          width: double.infinity,
+          alignment: Alignment.center,
+          child: const Text(
+            'Acciones hechas sin conexión a internet',
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.w500,
+              color: Colors.black87,
+            ),
+            textAlign: TextAlign.center,
+          ),
+        ),
         GestureDetector(
           onTap: () {
             final route =
@@ -231,7 +250,40 @@ class PageOnline extends StatelessWidget {
                   height: 5,
                 ),
                 const Text(
-                  'Baja Forzado (Campo)',
+                  'Altas Forzado (Campo)',
+                  style: TextStyle(color: Colors.white),
+                )
+              ],
+            ),
+          ),
+        ),
+        GestureDetector(
+          onTap: () {
+            final route =
+                MaterialPageRoute(builder: (_) => const BajasForzadoOffline());
+            Navigator.push(context, route);
+          },
+          child: Container(
+            margin: const EdgeInsets.only(top: 20),
+            padding: const EdgeInsets.all(20),
+            width: double.infinity,
+            decoration: BoxDecoration(boxShadow: const [
+              BoxShadow(
+                color: Colors.black26,
+                spreadRadius: 2.0,
+                blurRadius: 5.0,
+                offset: Offset(-2.0, 0),
+              ),
+            ], color: Colors.orange, borderRadius: BorderRadius.circular(10)),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                SvgPicture.asset('assets/svgs/bank.svg'),
+                const SizedBox(
+                  height: 5,
+                ),
+                const Text(
+                  'Bajas Forzado (Campo)',
                   style: TextStyle(color: Colors.white),
                 )
               ],

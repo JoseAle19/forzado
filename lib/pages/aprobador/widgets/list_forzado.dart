@@ -28,58 +28,72 @@ class ListApproveForzado extends StatelessWidget {
       itemBuilder: (context, index) {
         final item = data[index];
         return Padding(
-          padding: const EdgeInsets.all(10),
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
           child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Container(
-                width: 100,
-                height: 100,
-                color: const Color(0xFF009283),
+              // Indicador circular para el ID
+              CircleAvatar(
+                radius: 30,
+                backgroundColor: const Color(0xFF009283),
+                child: Text(
+                  item.id.toString(),
+                  style: const TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                  ),
+                ),
               ),
               const SizedBox(width: 16),
+              // Contenido textual
               Expanded(
                 child: Column(
-                  mainAxisSize: MainAxisSize.max,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    // Nombre del elemento
                     Text(
-                      item.id.toString(),
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
+                      item.nombre ?? 'Nombre no disponible',
                       style: const TextStyle(
                         fontSize: 18,
-                        fontWeight: FontWeight.w500,
+                        fontWeight: FontWeight.w600,
+                        color: Color(0xFF333333),
                       ),
                     ),
+                    const SizedBox(height: 4),
+                    // ID del elemento como subtítulo
                     Text(
-                      item.nombre ?? '',
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
+                      'ID: ${item.id}',
                       style: const TextStyle(
-                        fontSize: 18,
+                        fontSize: 14,
+                        color: Color(0xFF666666),
                       ),
                     ),
                   ],
                 ),
               ),
-              const SizedBox(width: 16),
+              // Icono de acción
               IconButton(
                 onPressed: () {
                   navigateDetailsApproveForzado(context, item, isAlta);
                 },
                 icon: const Icon(
-                  Icons.arrow_right_alt_sharp,
-                  size: 30,
+                  Icons.arrow_forward_ios,
+                  size: 20,
+                  color: Color(0xFF009283),
                 ),
+                splashRadius: 20,
               ),
             ],
           ),
         );
       },
       separatorBuilder: (context, index) {
-        return const Divider(
-          height: 1,
-          color: Colors.black,
+        return Divider(
+          thickness: 1,
+          color: Colors.grey.shade300,
+          indent: 12,
+          endIndent: 12,
         );
       },
       itemCount: data.length,

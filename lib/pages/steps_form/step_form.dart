@@ -185,9 +185,10 @@ class _StepperFormState extends State<StepperForm> {
                           });
                         } else {}
                       } catch (e) {
-                                          CustomModal modal = CustomModal();
-                  modal.showModal(context, 'Contacte a soporte',
-                      Colors.redAccent, false);
+                        print(e);
+                        CustomModal modal = CustomModal();
+                        modal.showModal(context, 'Contacte a soporte',
+                            Colors.redAccent, false);
 
                         setState(() {
                           isFetching = false;
@@ -218,7 +219,7 @@ class _StepperFormState extends State<StepperForm> {
                     child: Text(
                   validation
                       ? 'Continuar'
-                      : isFetching==true
+                      : isFetching == true
                           ? 'Espera'
                           : 'Finalizar',
                   style: AppStyles.textStyle,
@@ -264,10 +265,10 @@ class _StepperFormState extends State<StepperForm> {
                                 children: [
                                   const Text('Descripción *'),
                                   TextFormField(
-                                     
                                     initialValue: currentValueDescription,
                                     onChanged: (value) => _updateCurrentValue(
-                                        ValueType.description, value.toUpperCase()),
+                                        ValueType.description,
+                                        value.toUpperCase()),
                                     maxLength: 100,
                                     maxLines: 2,
                                     decoration: const InputDecoration(

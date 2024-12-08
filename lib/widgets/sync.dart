@@ -1,10 +1,16 @@
+import 'dart:convert';
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:forzado/adapters/adapter_forzados.dart';
 import 'package:forzado/adapters/adapter_one.dart';
 import 'package:forzado/adapters/adapter_three.dart';
 import 'package:forzado/adapters/adapter_two.dart';
 import 'package:forzado/core/urls.dart';
+import 'package:forzado/services/api_client.dart';
 import 'package:forzado/services/manager.dart';
 import 'package:forzado/widgets/modal_error.dart';
+import 'package:hive_flutter/adapters.dart';
 
 class SyncData extends StatefulWidget {
   @override
@@ -43,6 +49,66 @@ class _SyncDataState extends State<SyncData> {
         'Aprobador', AppUrl.getAprobadores);
     await dataManager.fetchAndFillBox<AdapterThree>(
         'Ejecutor', AppUrl.getEjecutor);
+    await getForzados(context);
+  }
+
+// Funcion para llenar todos los forzados hive
+  Future<void> getForzados(BuildContext context) async {
+    CustomModal modal = CustomModal();
+
+    try {
+      final res = await ApiClient().get(AppUrl.getListForzados);
+      if (res.statusCode >= 200 && res.statusCode < 300) {
+        final decodedJson = json.decode(res.body);
+
+        if (decodedJson is Map<String, dynamic> &&
+            decodedJson['data'] is List) {
+          List<dynamic> dataList = decodedJson['data'];
+          // await fillAllBoxe();
+          List<Forzados> forzadosList = dataList.map((item) {
+            return Forzados.fromJson(item);
+          }).toList();
+          await saveForzadoHive(forzadosList);
+        }
+      } else {
+        modal.showModal(
+          context,
+          'Error desde el servidor: ${res.statusCode} - ${res.reasonPhrase}',
+          Colors.red,
+          false,
+        );
+      }
+    } on SocketException {
+      modal.showModal(
+        context,
+        'No hay conexión a internet. Por favor, verifique su conexión.',
+        Colors.blue,
+        false,
+      );
+    } on FormatException {
+      modal.showModal(
+        context,
+        'La respuesta del servidor no tiene el formato esperado.',
+        Colors.purple,
+        false,
+      );
+    } catch (e) {
+      modal.showModal(
+        context,
+        'Ocurrió un error interno: ${e.toString()}, contacte a soporte.',
+        Colors.orange,
+        false,
+      );
+    }
+  }
+
+  Future<void> saveForzadoHive(List<Forzados> list) async {
+    final forzadosAlta = list.where((forzado) {
+      return forzado.estado.toLowerCase() == 'ejecutado-alta';
+    }).toList();
+    var box = await Hive.openBox<Forzados>('Forzados');
+    await box.clear();
+    await box.addAll(forzadosAlta);
   }
 
   @override
@@ -90,7 +156,7 @@ class _SyncDataState extends State<SyncData> {
                   setState(() {
                     synchronizing = true;
                   });
-                  await fillAllBoxes();
+                  await getForzados(context);
                   setState(() {
                     synchronizing = true;
                   });

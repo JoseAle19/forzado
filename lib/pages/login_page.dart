@@ -29,6 +29,7 @@ class _LoginPageState extends State<LoginPage> {
   final _controllerPass = TextEditingController();
   bool isLoading = false;
   bool isFirstLogIn = false;
+  bool viewPassword = true;
   Future<ApiResponse> login(String username, String password) async {
     try {
       setState(() {
@@ -231,6 +232,7 @@ class _LoginPageState extends State<LoginPage> {
             jwt: '');
       }
     } catch (e) {
+      print(e);
       modal.showModal(context, 'Ocurrio un error interno', Colors.red, false);
       return ApiResponseDetailUser(
           id: 0, name: '', area: '', role: 000, flagNuevoIngreso: 000, jwt: '');
@@ -311,11 +313,23 @@ class _LoginPageState extends State<LoginPage> {
                               hintText: 'Ingrese su usuario'),
                         ),
                         TextFormField(
-                          // obscureText: true,
+                          obscureText: viewPassword,
                           keyboardType: TextInputType.text,
                           controller: _passwordController,
                           cursorColor: AppColors.primaryColor,
                           decoration: InputDecoration(
+                              suffixIcon: IconButton(
+                                onPressed: () {
+                                  setState(() {
+                                    viewPassword = !viewPassword;
+                                  });
+                                },
+                                icon: Icon(
+                                  !viewPassword
+                                      ? Icons.visibility
+                                      : Icons.visibility_off,
+                                ),
+                              ),
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(50),
                               ),
