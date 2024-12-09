@@ -24,7 +24,7 @@ class HomeExecuter extends StatelessWidget {
         automaticallyImplyLeading: false,
         title: Consumer<AuthProvider>(
           builder: (context, value, child) => Text(
-            'Hola ${value.user}',
+            'Hola ${value.user!.name}',
             style: const TextStyle(
                 fontFamily: 'noto', fontWeight: FontWeight.bold),
           ),

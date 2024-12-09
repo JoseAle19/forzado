@@ -19,7 +19,7 @@ class ListExecuterForzado extends StatelessWidget {
         leading: IconButton(
             onPressed: () {
               final route = MaterialPageRoute(builder: (_) => HomeExecuter());
-              Navigator.push(context, route);
+              Navigator.pushReplacement(context, route);
             },
             icon: Icon(Icons.arrow_back_ios_new)),
         title: Text('Listado de Forzados'),
@@ -33,11 +33,10 @@ class ListExecuterForzado extends StatelessWidget {
         ],
       ),
       body: FutureBuilder<ModelListForzados>(
-        future:
-            _listServiceForzados.getDataByEndpoint(AppUrl.getListForzados).then(
+        future: _listServiceForzados.getDataByEndpoint(AppUrl.getListForzados).then(
           (value) {
             List<ForzadoM> data = value.data
-                .where((element) => element.estado == 'aprobado-alta')
+                .where((element) => element.estado!.toLowerCase() == 'aprobado-alta')
                 .toList();
             return ModelListForzados(
               success: value.success,
@@ -48,53 +47,104 @@ class ListExecuterForzado extends StatelessWidget {
         ),
         builder:
             (BuildContext context, AsyncSnapshot<ModelListForzados> snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
+         if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
           }
-          if (snapshot.hasError) {
-            return Text('Ocurrio un error, contacte a soporte');
-          }
-          if (snapshot.data == null) {
-            return Text('No hay datos disponibles');
-          }
-          // if (snapshot.data!.data.isEmpty) {
-          //   return
-          // }
 
-          ModelListForzados data = snapshot.data!;
-          return ListView.separated(
-            itemCount: data.data.length,
+          if (snapshot.data!.data.isEmpty) {
+            return Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(
+                    Icons.hourglass_empty,
+                    size: 80,
+                    color: Colors.grey.shade400,
+                  ),
+                  const SizedBox(height: 16),
+                  Text(
+                    'No tienes forzados disponibles',
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.grey.shade700,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    'Los forzados con estado aprobado alta \nestán en proceso. Por favor, espera.',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontSize: 16,
+                      color: Colors.grey.shade600,
+                    ),
+                  ),
+                ],
+              ),
+            );
+          }
+           
+       return ListView.separated(
+            itemCount: snapshot.data!.data.length,
             separatorBuilder: (BuildContext context, int index) {
-              return const Divider();
+              return const SizedBox.shrink();
             },
             itemBuilder: (BuildContext context, int index) {
               ForzadoM forzado = snapshot.data!.data[index];
               return Card(
-                margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                elevation: 5,
-                child: ListTile(
-                    contentPadding: const EdgeInsets.all(10),
-                    leading: CircleAvatar(
-                      child: Text(forzado.nombre.substring(0, 1)),
-                      backgroundColor: Colors.blueAccent,
-                      foregroundColor: Colors.white,
-                    ),
-                    title: Text(
-                      forzado.id.toString(),
-                      style: const TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 16,
+                elevation: 4,
+                margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      CircleAvatar(
+                        radius: 30,
+                        backgroundColor: Colors.blue.shade100,
+                        child: Text(
+                          '${forzado.id}',
+                          style: const TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.blue,
+                          ),
+                        ),
                       ),
-                    ),
-                    subtitle: Text(
-                      "Área: ${forzado.area ?? 'No especificada'}\n"
-                      "Solicitante: ${forzado.solicitante ?? 'No especificado'}\n"
-                      "Estado: ${forzado.estado ?? 'No especificado'}",
-                      style: const TextStyle(fontSize: 14),
-                    ),
-                    trailing: IconButton(
+                      const SizedBox(width: 16),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'ID: ${forzado.id}',
+                              style: const TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                                color: Color(0xFF333333),
+                              ),
+                            ),
+                            const SizedBox(height: 4),
+                            // Descripción
+                            Text(
+                              forzado.estado ??"Sin estado",
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
+                              style: const TextStyle(
+                                fontSize: 14,
+                                color: Color(0xFF666666),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      IconButton(
                         onPressed: () {
-                          Navigator.push(
+                              Navigator.push(
                               context,
                               MaterialPageRoute(
                                 builder: (context) => DetailForzadoScreen(
@@ -103,10 +153,20 @@ class ListExecuterForzado extends StatelessWidget {
                                 ),
                               ));
                         },
-                        icon: const Icon(Icons.arrow_forward_ios))),
+                        icon: const Icon(
+                          Icons.arrow_forward_ios,
+                          color: Colors.blue,
+                          size: 20,
+                        ),
+                        splashRadius: 20,
+                      ),
+                    ],
+                  ),
+                ),
               );
             },
           );
+     
         },
       ),
     );

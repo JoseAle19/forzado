@@ -19,6 +19,7 @@ class ForzadosDataTable extends StatefulWidget {
 
 class _ForzadosDataTableState extends State<ForzadosDataTable> {
   List<Forzado> listForzado = [];
+  bool isLoading = false;
   bool isSync = false;
   void verInformacion(BuildContext context, Forzado forzado) {
     showDialog(
@@ -175,6 +176,9 @@ class _ForzadosDataTableState extends State<ForzadosDataTable> {
 
   void loadForzados() async {
     late Box<Forzado> box;
+    setState(() {
+      isLoading = true;
+    });
     try {
       box = await Hive.openBox(HiveBoxes.forzado);
       setState(() {
@@ -183,7 +187,10 @@ class _ForzadosDataTableState extends State<ForzadosDataTable> {
     } catch (e) {
       print('Error al guardar: $e');
     } finally {
-      // Cerrar la caja
+      setState(() {
+      isLoading = false
+      ;        
+      });
       if (box.isOpen) {
         await box.close();
       }
@@ -192,23 +199,17 @@ class _ForzadosDataTableState extends State<ForzadosDataTable> {
 
   Future<void> deleteForzadoBox() async {
     try {
-      // Abrir la caja
-      var box = await Hive.openBox<Forzado>(HiveBoxes.forzado);
+       var box = await Hive.openBox<Forzado>(HiveBoxes.forzado);
 
-      // Limpiar la caja
-      await box.clear();
+       await box.clear();
 
-      // Actualizar el estado de la lista
-      setState(() {
-        listForzado.clear(); // Vacía la lista local
+       setState(() {
+        listForzado.clear();  
       });
 
-      print('Caja limpiada y lista actualizada.');
-    } catch (e) {
-      print('Error al eliminar elementos de la caja: $e');
-    } finally {
-      // Cerrar la caja
-      try {
+     } catch (e) {
+     } finally {
+       try {
         if (Hive.isBoxOpen(HiveBoxes.forzado)) {
           await Hive.box(HiveBoxes.forzado).close();
         }
@@ -228,12 +229,11 @@ class _ForzadosDataTableState extends State<ForzadosDataTable> {
             icon: const Icon(Icons.sync),
           )
         ],
-        title: Text('Tabla de Forzados'),
+        title: const  Text('Forzados offline'),
       ),
       body: Stack(
         children: [
-          // Contenido principal
-          listForzado.isEmpty
+        isLoading?const Center(child:  CircularProgressIndicator(),)   :listForzado.isEmpty
               ? Center(
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -274,15 +274,11 @@ class _ForzadosDataTableState extends State<ForzadosDataTable> {
                           children: [
                             IconButton(
                               icon:
-                                  Icon(Icons.info_outline, color: Colors.blue),
+                                  const Icon(Icons.info_outline, color: Colors.blue),
                               tooltip: 'Ver información',
                               onPressed: () => verInformacion(context, forzado),
                             ),
-                            IconButton(
-                              icon: Icon(Icons.delete, color: Colors.red),
-                              tooltip: 'Eliminar',
-                              onPressed: () => deleteForzadoBox(),
-                            ),
+                          
                           ],
                         ),
                       ),
@@ -293,12 +289,12 @@ class _ForzadosDataTableState extends State<ForzadosDataTable> {
           if (isSync)
             Container(
               color: Colors.black.withOpacity(0.5), // Fondo semitransparente
-              child: Center(
+              child: const Center(
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    const CircularProgressIndicator(),
-                    const SizedBox(height: 16),
+                     CircularProgressIndicator(),
+                     SizedBox(height: 16),
                     Text(
                       'Sincronizando información...',
                       style: TextStyle(

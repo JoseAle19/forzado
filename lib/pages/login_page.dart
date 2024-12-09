@@ -31,6 +31,10 @@ class _LoginPageState extends State<LoginPage> {
   bool isFirstLogIn = false;
   bool viewPassword = true;
   Future<ApiResponse> login(String username, String password) async {
+    if (username.isEmpty || password.isEmpty) {
+      const errorMessage = 'Completa todos los campos';
+      return ApiResponse.error(message: errorMessage);
+    }
     try {
       setState(() {
         isLoading = true;
@@ -60,7 +64,7 @@ class _LoginPageState extends State<LoginPage> {
 
         return ApiResponse.fromJson(json.decode(response.body));
       } else if (response.statusCode == 500) {
-        final errorMessage = 'Ocurrio un error, porfavor contacte a soporte';
+        final errorMessage = 'Error interno del servidor';
         return ApiResponse.error(message: errorMessage);
       } else {
         final errorMessage = 'Usuario o contraseña invalidos';
@@ -98,6 +102,8 @@ class _LoginPageState extends State<LoginPage> {
             isLoading = false;
           });
           bool isFetchPass = false;
+          bool viewPasswordTwo = true;
+         RegExp regExp = RegExp(r'^[a-zA-Z0-9]{1,8}$');
           showDialog(
             context: context,
             builder: (context) {
@@ -125,35 +131,70 @@ class _LoginPageState extends State<LoginPage> {
                           const SizedBox(height: 20),
                           TextFormField(
                             controller: _controllerPass,
-                            obscureText: true,
+                            obscureText: viewPasswordTwo,
                             decoration: InputDecoration(
+                              suffixIcon: IconButton(
+                                onPressed: () {
+                                  setState(() {
+                                    viewPasswordTwo = !viewPasswordTwo;
+                                  });
+                                },
+                                icon: Icon(
+                                  !viewPasswordTwo
+                                      ? Icons.visibility
+                                      : Icons.visibility_off,
+                                ),
+                              ),
                               labelText: 'Contraseña',
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(12),
                               ),
-                              prefixIcon: Icon(Icons.lock),
+                              prefixIcon: const  Icon(Icons.lock),
                             ),
+                          ),
+                          const Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children:   [
+                              Text(
+                                  'La contraseña debe cumplir con los siguientes requisitos:'),
+                              SizedBox(height: 5),
+                              Text('1. Debe tener exactamente 8 caracteres.'),
+                              Text(
+                                  '2. Solo permite letras mayúsculas, letras minúsculas y números.'),
+                              Text(
+                                  '3. No se permiten caracteres especiales ni la letra "ñ".'),
+                            ],
                           ),
                         ],
                       ),
                     ),
                     actions: [
-                      TextButton(
-                        onPressed: () {
-                          Navigator.of(context).pop();
-                        },
-                        child: const Text(
-                          'Cancelar',
-                          style: TextStyle(color: Colors.red),
-                        ),
-                      ),
+                      !isFetchPass
+                          ? TextButton(
+                              onPressed: () {
+                                Navigator.of(context).pop();
+                              },
+                              child: const Text(
+                                'Cancelar',
+                                style: TextStyle(color: Colors.red),
+                              ),
+                            )
+                          : const SizedBox.shrink(),
                       isFetchPass == true
                           ? const Center(
                               child: CircularProgressIndicator(),
                             )
                           : ElevatedButton(
                               onPressed: () async {
+
                                 final newPassword = _controllerPass.text;
+                                  if(regExp.hasMatch(newPassword)){
+                                    modal.showModal(context, 'Contraseña invalida', Colors.red, false);
+                                    return;
+                                  };
+                                
+
+                                  // Si hace mat
                                 if (newPassword.isNotEmpty) {
                                   setState(() {
                                     isFetchPass = true;
