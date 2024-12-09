@@ -27,18 +27,16 @@ class ListForzado extends StatelessWidget {
       itemBuilder: (context, index) {
         final item = data[index];
         return Card(
-          elevation: 4, // Sombra para la tarjeta
+          elevation: 4,
           margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12),
           ),
           child: Padding(
-            padding:
-                const EdgeInsets.all(16), // Espaciado interno de la tarjeta
+            padding: const EdgeInsets.all(16),
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                // ID representado en un círculo
                 CircleAvatar(
                   radius: 30,
                   backgroundColor: Colors.blue.shade100,
@@ -52,12 +50,10 @@ class ListForzado extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(width: 16),
-                // Contenido del texto
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      // Título principal (id)
                       Text(
                         'ID: ${item.id}',
                         style: const TextStyle(
@@ -81,10 +77,9 @@ class ListForzado extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(width: 8),
-                // Botón para acciones
                 IconButton(
                   onPressed: () {
-                    // Aquí puedes definir la acción
+                    navigateDetailForzado(context, item);
                   },
                   icon: const Icon(
                     Icons.arrow_forward_ios,

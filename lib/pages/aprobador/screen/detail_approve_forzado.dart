@@ -7,7 +7,6 @@ import 'package:forzado/pages/aprobador/home_approve.dart';
 import 'package:forzado/pages/solicitante/online/widgets/text_info.dart';
 import 'package:forzado/pages/steps_form/congratulation.dart';
 import 'package:forzado/services/api_client.dart';
-import 'package:forzado/services/service_three.dart';
 import 'package:forzado/services/service_two.dart';
 import 'package:forzado/widgets/custom_dropdown_two.dart';
 import 'package:forzado/widgets/modal_error.dart';
@@ -123,9 +122,6 @@ class _DetailApproveForzadoState extends State<DetailApproveForzado> {
 
   @override
   Widget build(BuildContext context) {
-    ServiceTwo serviceTwo = ServiceTwo(ApiClient());
-    ServiceThree serviceThree = ServiceThree(ApiClient());
-
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: true,
@@ -338,10 +334,14 @@ class _DetailApproveForzadoState extends State<DetailApproveForzado> {
             backgroundColor: const Color(0xff009283),
             padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 15),
           ),
-          child: isFetching? const Center(child: CircularProgressIndicator(),) : const Text(
-            'Aprobar',
-            style: TextStyle(fontSize: 18, color: Colors.white),
-          ),
+          child: isFetching
+              ? const Center(
+                  child: CircularProgressIndicator(),
+                )
+              : const Text(
+                  'Aprobar',
+                  style: TextStyle(fontSize: 18, color: Colors.white),
+                ),
         ),
         widget.isAlta == false && isFetching
             ? const Padding(

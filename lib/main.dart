@@ -4,6 +4,7 @@ import 'package:forzado/adapters/adapter_one.dart';
 import 'package:forzado/adapters/adapter_three.dart';
 import 'package:forzado/adapters/adapter_two.dart';
 import 'package:forzado/adapters/forzado.dart';
+import 'package:forzado/adapters/forzado_baja.dart';
 import 'package:forzado/core/utils/preferences_helper.dart';
 import 'package:forzado/data/provider/auth_provider.dart';
 import 'package:forzado/home_page.dart';
@@ -19,6 +20,7 @@ void main() async {
   Hive.registerAdapter(AdapterThreeAdapter());
   Hive.registerAdapter(ForzadoAdapter());
   Hive.registerAdapter(ForzadosAdapter());
+  Hive.registerAdapter(ForzadoBajaAdapter());
 
   // Abre las cajas para cada modelo
   await Hive.openBox<AdapterOne>('TagPrefijo');
@@ -35,6 +37,7 @@ void main() async {
   await Hive.openBox<AdapterThree>('Solicitante');
   await Hive.openBox<AdapterThree>('Aprobador');
   await Hive.openBox<AdapterThree>('Ejecutor');
+  await Hive.openBox<ForzadoBaja>('forzadoBajaBox');
 
   runApp(const MyApp());
 }

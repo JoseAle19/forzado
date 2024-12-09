@@ -97,12 +97,12 @@ class _LoginPageState extends State<LoginPage> {
           setState(() {
             isLoading = false;
           });
+          bool isFetchPass = false;
           showDialog(
             context: context,
             builder: (context) {
               return StatefulBuilder(
                 builder: (BuildContext context, setState) {
-                  bool isFetchPass = false;
                   return AlertDialog(
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(20),

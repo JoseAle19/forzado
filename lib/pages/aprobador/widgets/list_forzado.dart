@@ -53,7 +53,7 @@ class ListApproveForzado extends StatelessWidget {
                   children: [
                     // Nombre del elemento
                     Text(
-                      item.nombre ?? 'Nombre no disponible',
+                      item.nombre,
                       style: const TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.w600,

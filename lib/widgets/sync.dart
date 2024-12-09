@@ -156,7 +156,7 @@ class _SyncDataState extends State<SyncData> {
                   setState(() {
                     synchronizing = true;
                   });
-                  await getForzados(context);
+                  await fillAllBoxes();
                   setState(() {
                     synchronizing = true;
                   });

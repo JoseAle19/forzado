@@ -11,7 +11,6 @@ import 'package:forzado/services/api_client.dart';
 import 'package:forzado/services/remove_forzado/list_service_remove.dart';
 import 'package:forzado/widgets/cards.dart';
 import 'package:provider/provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class HomeApprove extends StatelessWidget {
   const HomeApprove({super.key});
@@ -169,7 +168,7 @@ class HomeApprove extends StatelessWidget {
                 }
                 if (snapshot.data!.data.isEmpty) {
                   return const Center(
-                    child: Text('No hay forzados pendientes'),
+                    child: Text('Sin información '),
                   );
                 }
                 ModelListForzados data = snapshot.data!;

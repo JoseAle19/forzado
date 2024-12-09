@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:forzado/pages/solicitante/offline/datatable%20_forzados.dart';
-import 'package:forzado/pages/solicitante/offline/screens/bajas_forzado_offline.dart';
 import 'package:forzado/pages/solicitante/offline/screens/list_forzados_ejecutado_alta.dart';
 import 'package:forzado/pages/solicitante/offline/stepper_form.dart';
 
@@ -53,7 +51,7 @@ class PageOffline extends StatelessWidget {
           GestureDetector(
             onTap: () {
               final route = MaterialPageRoute(
-                  builder: (_) => const BajasForzadoOffline());
+                  builder: (_) => const ListForzadosEjecutadoAlta());
               Navigator.push(context, route);
             },
             child: Container(
