@@ -102,7 +102,7 @@ class _HomeState extends State<Home> {
           ],
         ),
         body: PageView(
-            // physics: const NeverScrollableScrollPhysics(),
+            physics: const NeverScrollableScrollPhysics(),
             controller: _controller,
             children: [
               PageOnline(

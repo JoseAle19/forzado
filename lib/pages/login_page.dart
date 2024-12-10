@@ -103,7 +103,7 @@ class _LoginPageState extends State<LoginPage> {
           });
           bool isFetchPass = false;
           bool viewPasswordTwo = true;
-         RegExp regExp = RegExp(r'^[a-zA-Z0-9]{1,8}$');
+          String errorMessage = '';
           showDialog(
             context: context,
             builder: (context) {
@@ -129,7 +129,7 @@ class _LoginPageState extends State<LoginPage> {
                             style: TextStyle(fontSize: 14),
                           ),
                           const SizedBox(height: 20),
-                          TextFormField(
+                          TextField(
                             controller: _controllerPass,
                             obscureText: viewPasswordTwo,
                             decoration: InputDecoration(
@@ -146,25 +146,36 @@ class _LoginPageState extends State<LoginPage> {
                                 ),
                               ),
                               labelText: 'Contraseña',
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                              prefixIcon: const  Icon(Icons.lock),
+                              border: const OutlineInputBorder(),
                             ),
+                            onChanged: (value) {
+                              setState(() {
+                                if (value.isEmpty) {
+                                  errorMessage =
+                                      'La contraseña no puede estar vacía.';
+                                } else if (value.length < 8) {
+                                  errorMessage =
+                                      'La contraseña debe tener minimo 8 caracteres.';
+                                } else if (!RegExp(r'^[a-zA-Z0-9]+$')
+                                    .hasMatch(value)) {
+                                  errorMessage =
+                                      'La contraseña solo puede contener letras y números.';
+                                } else {
+                                  errorMessage = '';
+                                }
+                              });
+                            },
                           ),
-                          const Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children:   [
-                              Text(
-                                  'La contraseña debe cumplir con los siguientes requisitos:'),
-                              SizedBox(height: 5),
-                              Text('1. Debe tener exactamente 8 caracteres.'),
-                              Text(
-                                  '2. Solo permite letras mayúsculas, letras minúsculas y números.'),
-                              Text(
-                                  '3. No se permiten caracteres especiales ni la letra "ñ".'),
-                            ],
-                          ),
+                          Center(
+                            child: Text(
+                              errorMessage.isNotEmpty ? errorMessage : '',
+                              style: const TextStyle(
+                                  color: Colors.red, fontSize: 10),
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
+                              textAlign: TextAlign.center,
+                            ),
+                          )
                         ],
                       ),
                     ),
@@ -173,6 +184,9 @@ class _LoginPageState extends State<LoginPage> {
                           ? TextButton(
                               onPressed: () {
                                 Navigator.of(context).pop();
+                                setState(() {
+                                  _controllerPass.text = '';
+                                });
                               },
                               child: const Text(
                                 'Cancelar',
@@ -185,16 +199,18 @@ class _LoginPageState extends State<LoginPage> {
                               child: CircularProgressIndicator(),
                             )
                           : ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                  backgroundColor:
+                                      _controllerPass.text.isNotEmpty &&
+                                              errorMessage.isEmpty
+                                          ? Colors.blue
+                                          : Colors.grey),
                               onPressed: () async {
+                                if (_controllerPass.text.isEmpty &&
+                                    errorMessage.isNotEmpty) return;
 
                                 final newPassword = _controllerPass.text;
-                                  if(regExp.hasMatch(newPassword)){
-                                    modal.showModal(context, 'Contraseña invalida', Colors.red, false);
-                                    return;
-                                  };
-                                
-
-                                  // Si hace mat
+                                // Si hace mat
                                 if (newPassword.isNotEmpty) {
                                   setState(() {
                                     isFetchPass = true;
@@ -240,7 +256,14 @@ class _LoginPageState extends State<LoginPage> {
                                   print('El campo de contraseña está vacío.');
                                 }
                               },
-                              child: const Text('Actualizar'),
+                              child: Text(
+                                'Actualizar',
+                                style: TextStyle(
+                                    color: _controllerPass.text.isNotEmpty &&
+                                            errorMessage.isEmpty
+                                        ? Colors.white
+                                        : Colors.black),
+                              ),
                             ),
                     ],
                   );
