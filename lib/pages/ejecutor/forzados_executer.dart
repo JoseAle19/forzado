@@ -9,6 +9,7 @@ import 'package:forzado/services/remove_forzado/list_service_remove.dart';
 class ListExecuterForzado extends StatelessWidget {
   const ListExecuterForzado({super.key, required this.isExecuterAlta});
   final bool isExecuterAlta;
+
   @override
   Widget build(BuildContext context) {
     final ListServiceForzados _listServiceForzados =
@@ -19,7 +20,7 @@ class ListExecuterForzado extends StatelessWidget {
         leading: IconButton(
             onPressed: () {
               final route = MaterialPageRoute(builder: (_) => HomeExecuter());
-              Navigator.pushReplacement(context, route);
+              Navigator.pushAndRemoveUntil(context, route,(r)=>false);
             },
             icon: Icon(Icons.arrow_back_ios_new)),
         title: Text('Listado de Forzados'),

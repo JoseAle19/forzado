@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:forzado/core/urls.dart';
 import 'package:forzado/core/utils/preferences_helper.dart';
@@ -157,25 +159,48 @@ class HomeApprove extends StatelessWidget {
               width: double.infinity,
             ),
             FutureBuilder<ModelListForzados>(
-              future: _ListServiceForzados.getDataByEndpoint(
-                  AppUrl.getListForzados),
-              builder: (BuildContext context,
-                  AsyncSnapshot<ModelListForzados> snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const Center(
-                    child: CircularProgressIndicator(),
-                  );
-                }
+          future:
+              _ListServiceForzados.getDataByEndpoint(AppUrl.getListForzados),
+          builder: (BuildContext context,
+              AsyncSnapshot<ModelListForzados> snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(
+                child: CircularProgressIndicator(),
+              );
+            } else if (snapshot.hasError) {
+              String errorMessage;
+              if (snapshot.error is SocketException) {
+                errorMessage =
+                    "No hay conexión a Internet. Por favor, verifica tu conexión.";
+              } else if (snapshot.error is HttpException) {
+                errorMessage =
+                    "Hubo un problema con el servidor. Intenta nuevamente más tarde.";
+              } else {
+                errorMessage = "Ocurrió un error inesperado";
+              }
 
-                if (snapshot.data!.data.isEmpty) {
-                  return const Center(
-                    child: Text('Sin información '),
-                  );
-                }
-                ModelListForzados data = snapshot.data!;
-                return CardsDashBoard(data: data);
-              },
-            ),
+              return Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Icon(Icons.error, color: Colors.red, size: 50),
+                  const SizedBox(height: 10),
+                  Text(errorMessage, textAlign: TextAlign.center),
+                  const SizedBox(height: 20),
+                  ElevatedButton(
+                    onPressed: () => _ListServiceForzados.getDataByEndpoint(
+                        AppUrl.getListForzados),
+                    child: const Text('Reintentar'),
+                  ),
+                ],
+              );
+            } else if (snapshot.hasData) {
+              ModelListForzados data = snapshot.data!;
+              return CardsDashBoard(data: data);
+            } else {
+              return const Text("No data available");
+            }
+          },
+        ),
           ],
         ),
       ),

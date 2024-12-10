@@ -9,6 +9,7 @@ import 'package:forzado/core/utils/preferences_helper.dart';
 import 'package:forzado/data/provider/auth_provider.dart';
 import 'package:forzado/home_page.dart';
 import 'package:hive_flutter/adapters.dart';
+import 'package:intl/date_symbol_data_local.dart';
 import 'package:provider/provider.dart';
 
 void main() async {
@@ -38,7 +39,7 @@ void main() async {
   await Hive.openBox<AdapterThree>('Aprobador');
   await Hive.openBox<AdapterThree>('Ejecutor');
   await Hive.openBox<ForzadoBaja>('forzadoBajaBox');
-
+  await initializeDateFormatting('es_ES', null);
   runApp(const MyApp());
 }
 

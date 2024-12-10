@@ -30,7 +30,7 @@ class _AnimationScreenState extends State<CongratulationAnimation>
             _isComplete = true;
             Future.delayed(const Duration(milliseconds: 500), () {
               final route = MaterialPageRoute(builder: (_) => widget.page);
-              Navigator.pushReplacement(context, route);
+              Navigator.pushAndRemoveUntil(context, route, (route) => false);
             });
           });
         }

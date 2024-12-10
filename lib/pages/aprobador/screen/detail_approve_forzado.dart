@@ -60,7 +60,7 @@ class _DetailApproveForzadoState extends State<DetailApproveForzado> {
             (route) => false);
       } else {
         CustomModal modal = CustomModal();
-        modal.showModal(context, 'Ocurrio un erro', Colors.red, false);
+        modal.showModal(context, 'Ocurrio un error', Colors.red, false);
       }
       return 0;
     } catch (e) {
