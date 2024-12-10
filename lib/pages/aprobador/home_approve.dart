@@ -40,7 +40,7 @@ class HomeApprove extends StatelessWidget {
 
                 final route =
                     MaterialPageRoute(builder: (_) => const LoginPage());
-                Navigator.push(context, route);
+                Navigator.pushAndRemoveUntil(context, route, (route) => false);
               },
               icon: Icon(Icons.login_rounded))
         ],
@@ -166,6 +166,7 @@ class HomeApprove extends StatelessWidget {
                     child: CircularProgressIndicator(),
                   );
                 }
+
                 if (snapshot.data!.data.isEmpty) {
                   return const Center(
                     child: Text('Sin información '),

@@ -43,7 +43,29 @@ class _StepperFormOfflineState extends State<StepperFormOffline> {
   AdapterTwo currentValueForzado = AdapterTwo(id: 1, descripcion: '');
 
   int _currentStep = 0;
-  String? selectedValue;
+
+// Para resetear todos los vlores
+
+  void reset() {
+    setState(() {
+      currentValueTagPrefijo = AdapterOne(id: 0, codigo: '0', descripcion: '');
+      currentValueTagCentro = AdapterOne(id: 0, codigo: '0', descripcion: '');
+      currentValueDescription = '';
+      currentValueTagDisciplina = AdapterTwo(id: 1, descripcion: '');
+      currentValueSlot = AdapterTwo(id: 1, descripcion: '');
+      currentValueSegurity = AdapterTwo(id: 1, descripcion: '');
+      currentValueResponsability = AdapterThree(id: 0, nombre: '');
+      currentValueRisk = AdapterTwo(id: 1, descripcion: '');
+      currentValueProbability = AdapterTwo(id: 1, descripcion: '');
+      currentValueImpact = AdapterTwo(id: 1, descripcion: '');
+      currentValueInterlock = '';
+      currentValueapplicant = AdapterThree(id: 0, nombre: '');
+      currentValueapprover = AdapterThree(id: 0, nombre: '');
+      currentValueexecutor = AdapterThree(id: 0, nombre: '');
+      currentValueForzado = AdapterTwo(id: 1, descripcion: '');
+      _currentStep = 0;
+    });
+  }
 
 // Jose: valor para validar si esta o no haciendo la peticion
   bool isFetching = false;
@@ -486,6 +508,7 @@ class _StepperFormOfflineState extends State<StepperFormOffline> {
           status: 'pendiente-alta');
       // Guardar los datos en la caja
       await box.add(data);
+      reset();
       CustomModal modal = CustomModal();
       modal.showModal(context, 'Forzado agregado', Colors.blue, true);
     } catch (e) {

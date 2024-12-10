@@ -45,20 +45,22 @@ class _DetailApproveForzadoState extends State<DetailApproveForzado> {
       setState(() {
         isFetching = true;
       });
-      final res =
-          await client.post('/api/solicitudes/alta/aprobar', jsonEncode(body));
+
+      String isStateReque = widget.isAlta ? 'alta' : 'baja';
+      final res = await client.post(
+          '/api/solicitudes/${isStateReque}/aprobar', jsonEncode(body));
       if (res.statusCode == 200) {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-              builder: (context) => CongratulationAnimation(
-                  page: widget.isAlta
-                      ? const HomeApprove()
-                      : const HomeApprove())),
-        );
+        Navigator.pushAndRemoveUntil(
+            context,
+            MaterialPageRoute(
+                builder: (context) => CongratulationAnimation(
+                    page: widget.isAlta
+                        ? const HomeApprove()
+                        : const HomeApprove())),
+            (route) => false);
       } else {
-        print(res.body);
-        print('Error en la solicitud: ${res.statusCode}');
+        CustomModal modal = CustomModal();
+        modal.showModal(context, 'Ocurrio un erro', Colors.red, false);
       }
       return 0;
     } catch (e) {
@@ -83,28 +85,24 @@ class _DetailApproveForzadoState extends State<DetailApproveForzado> {
       'id': id,
       'observaciones': currentValue.isEmpty
     };
-
-    final Map<String, dynamic> bodyB = {
-      'id': id,
-    };
+    String isStateReque = widget.isAlta ? 'alta' : 'baja';
 
     try {
-      setState(() {
-        isFetching = true;
-      });
-      final res = await client.post('/api/solicitudes/alta/rechazar',
-          jsonEncode(widget.isAlta ? bodyA : bodyB));
+      final res = await client.post(
+          '/api/solicitudes/${isStateReque}/rechazar', jsonEncode(bodyA));
+
+      print('respuesta de la peticion ${res.body}');
       if (res.statusCode == 200) {
         print(res.body);
         modal.showModal(context, 'Operacion exitosa', Colors.green, true);
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-              builder: (context) => CongratulationAnimation(
-                  page: widget.isAlta
-                      ? const HomeApprove()
-                      : const HomeApprove())),
-        );
+        Navigator.pushAndRemoveUntil(
+            context,
+            MaterialPageRoute(
+                builder: (context) => CongratulationAnimation(
+                    page: widget.isAlta
+                        ? const HomeApprove()
+                        : const HomeApprove())),
+            (route) => false);
       } else {
         print(res.body);
         print('Error en la solicitud: ${res.statusCode}');
@@ -322,115 +320,124 @@ class _DetailApproveForzadoState extends State<DetailApproveForzado> {
   }
 
   Widget _buildActionButtons() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-      children: [
-        ElevatedButton(
-          onPressed: () {
-            if (isFetching) return;
-            executerAlta(widget.detailForzado.id.toString());
-          },
-          style: ElevatedButton.styleFrom(
-            backgroundColor: const Color(0xff009283),
-            padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 15),
-          ),
-          child: isFetching
-              ? const Center(
-                  child: CircularProgressIndicator(),
-                )
-              : const Text(
-                  'Aprobar',
-                  style: TextStyle(fontSize: 18, color: Colors.white),
-                ),
-        ),
-        widget.isAlta == false && isFetching
-            ? const Padding(
-                padding: EdgeInsets.all(8.0),
-                child: Center(child: CircularProgressIndicator()),
-              )
-            : ElevatedButton(
+    return isFetching
+        ? const Center(
+            child: CircularProgressIndicator(),
+          )
+        : Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              ElevatedButton(
                 onPressed: () {
-                  showDialog(
-                    context: context,
-                    builder: (BuildContext context) {
-                      ServiceTwo serviceTwo = ServiceTwo(ApiClient());
-                      return AlertDialog(
-                        title: const Text(
-                          'Selecciona un Motivo',
-                          style: TextStyle(fontWeight: FontWeight.bold),
-                        ),
-                        content: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            CustomDropDownButtonTwo(
-                              service: serviceTwo,
-                              descriptionField: 'Motivos de la baja',
-                              hintText: 'Selecciona un motivo de baja',
-                              endPoint: AppUrl.getMotivoRechazo,
-                              currentValue: currentValue,
-                              onChanged: (value) {
-                                setState(() {
-                                  currentValue = value;
-                                });
-                              },
-                            ),
-                          ],
-                        ),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(15),
-                        ),
-                        actionsAlignment: MainAxisAlignment.spaceBetween,
-                        actions: [
-                          isFetching
-                              ? const Padding(
-                                  padding: EdgeInsets.all(8.0),
-                                  child: Center(
-                                      child: CircularProgressIndicator()),
-                                )
-                              : TextButton(
-                                  onPressed: () {
-                                    executerDecline(
-                                        widget.detailForzado.id.toString());
-                                  },
-                                  style: TextButton.styleFrom(
-                                    foregroundColor: Colors.white,
-                                    backgroundColor:
-                                        isFetching ? Colors.orange : Colors.red,
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 20),
-                                  ),
-                                  child: Text(isFetching
-                                      ? 'Procesando'
-                                      : 'Realizar Rechazo'),
-                                ),
-                          TextButton(
-                            onPressed: () {
-                              Navigator.of(context).pop();
-                            },
-                            style: TextButton.styleFrom(
-                              foregroundColor: Colors.white,
-                              backgroundColor: Colors.grey,
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 20),
-                            ),
-                            child: const Text('Cancelar'),
-                          ),
-                        ],
-                      );
-                    },
-                  );
+                  if (isFetching) return;
+                  executerAlta(widget.detailForzado.id.toString());
                 },
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xff920000),
+                  backgroundColor: const Color(0xff009283),
                   padding:
                       const EdgeInsets.symmetric(horizontal: 30, vertical: 15),
                 ),
                 child: const Text(
-                  'Rechazar',
+                  'Aprobar',
                   style: TextStyle(fontSize: 18, color: Colors.white),
                 ),
               ),
-      ],
-    );
+              widget.isAlta == false && isFetching
+                  ? const Padding(
+                      padding: EdgeInsets.all(8.0),
+                      child: Center(child: CircularProgressIndicator()),
+                    )
+                  : ElevatedButton(
+                      onPressed: () {
+                        showDialog(
+                          context: context,
+                          builder: (BuildContext context) {
+                            bool isFetch = false;
+                            ServiceTwo serviceTwo = ServiceTwo(ApiClient());
+                            return StatefulBuilder(
+                              builder: (context, setState) {
+                                return AlertDialog(
+                                  title: const Text(
+                                    'Selecciona un Motivo',
+                                    style:
+                                        TextStyle(fontWeight: FontWeight.bold),
+                                  ),
+                                  content: Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      CustomDropDownButtonTwo(
+                                        service: serviceTwo,
+                                        descriptionField: 'Motivos de la baja',
+                                        hintText:
+                                            'Selecciona un motivo de baja',
+                                        endPoint: AppUrl.getMotivoRechazo,
+                                        currentValue: currentValue,
+                                        onChanged: (value) {
+                                          setState(() {
+                                            currentValue = value;
+                                          });
+                                        },
+                                      ),
+                                    ],
+                                  ),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(15),
+                                  ),
+                                  actionsAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  actions: [
+                                    TextButton(
+                                      onPressed: () async {
+                                        setState(() {
+                                          isFetch = true;
+                                        });
+                                        await executerDecline(
+                                            widget.detailForzado.id.toString());
+                                        setState(() {
+                                          isFetch = false;
+                                        });
+                                      },
+                                      style: TextButton.styleFrom(
+                                        foregroundColor: Colors.white,
+                                        backgroundColor: isFetching
+                                            ? Colors.orange
+                                            : Colors.red,
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 20),
+                                      ),
+                                      child: Text(
+                                          isFetch ? 'Procesando' : 'Rechazar'),
+                                    ),
+                                    TextButton(
+                                      onPressed: () {
+                                        Navigator.of(context).pop();
+                                      },
+                                      style: TextButton.styleFrom(
+                                        foregroundColor: Colors.white,
+                                        backgroundColor: Colors.grey,
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 20),
+                                      ),
+                                      child: const Text('Cancelar'),
+                                    ),
+                                  ],
+                                );
+                              },
+                            );
+                          },
+                        );
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xff920000),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 30, vertical: 15),
+                      ),
+                      child: const Text(
+                        'Rechazar',
+                        style: TextStyle(fontSize: 18, color: Colors.white),
+                      ),
+                    ),
+            ],
+          );
   }
 }

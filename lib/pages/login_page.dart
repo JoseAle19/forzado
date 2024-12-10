@@ -277,6 +277,7 @@ class _LoginPageState extends State<LoginPage> {
 
             await Provider.of<AuthProvider>(context, listen: false)
                 .checkSession();
+            print(user.role);
             modal.showModal(context, 'Bienvenido', Colors.green, true);
 
             navigateHandleRole(user.role);

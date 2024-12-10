@@ -32,7 +32,9 @@ class _ApproveforzadoState extends State<ShutdownForzado> {
                 context: context,
                 delegate: CustomSearchExecuter(
                     searchList: listData
-                        .where((element) => element.estado!.toLowerCase() == 'Pendiente-baja')
+                        .where((element) =>
+                            element.estado!.toLowerCase() == 'pendiente-baja' ||
+                            element.estado!.toLowerCase() == 'Pendiente-alta')
                         .toList()),
               );
             },
@@ -47,7 +49,7 @@ class _ApproveforzadoState extends State<ShutdownForzado> {
           icon: const Icon(Icons.arrow_back_ios),
         ),
         title: const Text(
-          'Forzados - Pendiente baja',
+          'Forzados - Pendiente alta/baja',
           style: TextStyle(fontFamily: 'noto', fontSize: 15),
         ),
       ),
@@ -58,7 +60,9 @@ class _ApproveforzadoState extends State<ShutdownForzado> {
               .then(
             (value) {
               List<ForzadoM> data = value.data
-                  .where((element) => element.estado == 'pendiente-baja')
+                  .where((element) =>
+                      element.estado!.toLowerCase() == 'pendiente-baja' ||
+                      element.estado!.toLowerCase() == 'pendiente-alta')
                   .toList();
               return ModelListForzados(
                 success: value.success,
