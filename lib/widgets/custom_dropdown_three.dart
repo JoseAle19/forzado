@@ -100,7 +100,7 @@ class _CustomDropDownButtonState extends State<CustomDropDownButtonThree> {
                         width: 200,
                         child: Text(
                           item.nombre,
-                          maxLines: 1,
+                          maxLines: 2,
                           overflow: TextOverflow.ellipsis,
                           style: const TextStyle(fontSize: 12),
                         ),

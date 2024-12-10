@@ -37,8 +37,9 @@ class ListExecuterForzado extends StatelessWidget {
         future: _listServiceForzados.getDataByEndpoint(AppUrl.getListForzados).then(
           (value) {
             List<ForzadoM> data = value.data
-                .where((element) => element.estado!.toLowerCase() == 'aprobado-alta')
-                .toList();
+               .where((element) => 
+  element.estado?.toLowerCase() == (isExecuterAlta ? 'aprobado-alta' : 'aprobado-baja')
+).toList();
             return ModelListForzados(
               success: value.success,
               message: value.message,
