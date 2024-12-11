@@ -33,4 +33,8 @@ class ApiClient {
   Map<String, String> _headers() {
     return {'Content-Type': 'application/json'};
   }
+
+  void close() {
+    http.Client().close();
+  }
 }

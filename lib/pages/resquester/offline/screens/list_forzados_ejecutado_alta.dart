@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:forzado/adapters/adapter_forzados.dart';
-import 'package:forzado/pages/solicitante/offline/screens/form_baja_forzado.dart';
+import 'package:forzado/pages/resquester/offline/screens/form_baja_forzado.dart';
 import 'package:hive_flutter/adapters.dart';
 
 class ListForzadosEjecutadoAlta extends StatelessWidget {

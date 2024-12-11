@@ -3,12 +3,12 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:forzado/core/urls.dart';
 import 'package:forzado/core/utils/preferences_helper.dart';
-import 'package:forzado/data/provider/auth_provider.dart';
+import 'package:forzado/data/providers/auth_provider.dart';
 import 'package:forzado/models/remove_forzado/model_list_remove.dart';
 import 'package:forzado/pages/aprobador/screen/aprove-list.dart';
 import 'package:forzado/pages/aprobador/screen/shutdown_forzado.dart';
-import 'package:forzado/pages/home_page.dart';
-import 'package:forzado/pages/login_page.dart';
+import 'package:forzado/pages/resquester/online/home_requester.dart';
+import 'package:forzado/pages/auth/login_page.dart';
 import 'package:forzado/services/api_client.dart';
 import 'package:forzado/services/remove_forzado/list_service_remove.dart';
 import 'package:forzado/widgets/cards.dart';
@@ -159,48 +159,48 @@ class HomeApprove extends StatelessWidget {
               width: double.infinity,
             ),
             FutureBuilder<ModelListForzados>(
-          future:
-              _ListServiceForzados.getDataByEndpoint(AppUrl.getListForzados),
-          builder: (BuildContext context,
-              AsyncSnapshot<ModelListForzados> snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return const Center(
-                child: CircularProgressIndicator(),
-              );
-            } else if (snapshot.hasError) {
-              String errorMessage;
-              if (snapshot.error is SocketException) {
-                errorMessage =
-                    "No hay conexión a Internet. Por favor, verifica tu conexión.";
-              } else if (snapshot.error is HttpException) {
-                errorMessage =
-                    "Hubo un problema con el servidor. Intenta nuevamente más tarde.";
-              } else {
-                errorMessage = "Ocurrió un error inesperado";
-              }
+              future: _ListServiceForzados.getDataByEndpoint(
+                  AppUrl.getListForzados),
+              builder: (BuildContext context,
+                  AsyncSnapshot<ModelListForzados> snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(
+                    child: CircularProgressIndicator(),
+                  );
+                } else if (snapshot.hasError) {
+                  String errorMessage;
+                  if (snapshot.error is SocketException) {
+                    errorMessage =
+                        "No hay conexión a Internet. Por favor, verifica tu conexión.";
+                  } else if (snapshot.error is HttpException) {
+                    errorMessage =
+                        "Hubo un problema con el servidor. Intenta nuevamente más tarde.";
+                  } else {
+                    errorMessage = "Ocurrió un error inesperado";
+                  }
 
-              return Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Icon(Icons.error, color: Colors.red, size: 50),
-                  const SizedBox(height: 10),
-                  Text(errorMessage, textAlign: TextAlign.center),
-                  const SizedBox(height: 20),
-                  ElevatedButton(
-                    onPressed: () => _ListServiceForzados.getDataByEndpoint(
-                        AppUrl.getListForzados),
-                    child: const Text('Reintentar'),
-                  ),
-                ],
-              );
-            } else if (snapshot.hasData) {
-              ModelListForzados data = snapshot.data!;
-              return CardsDashBoard(data: data);
-            } else {
-              return const Text("No data available");
-            }
-          },
-        ),
+                  return Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Icon(Icons.error, color: Colors.red, size: 50),
+                      const SizedBox(height: 10),
+                      Text(errorMessage, textAlign: TextAlign.center),
+                      const SizedBox(height: 20),
+                      ElevatedButton(
+                        onPressed: () => _ListServiceForzados.getDataByEndpoint(
+                            AppUrl.getListForzados),
+                        child: const Text('Reintentar'),
+                      ),
+                    ],
+                  );
+                } else if (snapshot.hasData) {
+                  ModelListForzados data = snapshot.data!;
+                  return CardsDashBoard(data: data);
+                } else {
+                  return const Text("No data available");
+                }
+              },
+            ),
           ],
         ),
       ),

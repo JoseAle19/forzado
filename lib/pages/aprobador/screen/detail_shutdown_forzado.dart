@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:forzado/models/remove_forzado/model_list_remove.dart';
-import 'package:forzado/pages/solicitante/online/widgets/text_info.dart';
+import 'package:forzado/pages/resquester/online/widgets/text_info.dart';
 import 'package:intl/intl.dart';
 
 class DetailShutdownForzado extends StatelessWidget {

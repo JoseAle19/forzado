@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:forzado/models/remove_forzado/model_list_remove.dart';
-import 'package:forzado/pages/solicitante/online/screen/form_remove.dart';
+import 'package:forzado/pages/resquester/online/screen/form_remove.dart';
 
 class CustomSearchExecuter extends SearchDelegate<String> {
   final List<ForzadoM> searchList;

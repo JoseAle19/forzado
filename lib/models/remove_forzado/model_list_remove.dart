@@ -21,7 +21,8 @@ class ModelListForzados {
       ModelListForzados(
         success: json["success"],
         message: json["message"],
-        data: List<ForzadoM>.from(json["data"].map((x) => ForzadoM.fromJson(x))),
+        data:
+            List<ForzadoM>.from(json["data"].map((x) => ForzadoM.fromJson(x))),
       );
 
   Map<String, dynamic> toJson() => {
@@ -29,6 +30,9 @@ class ModelListForzados {
         "message": message,
         "data": List<dynamic>.from(data.map((x) => x.toJson())),
       };
+  factory ModelListForzados.error({required String message}) {
+    return ModelListForzados(success: false, message: message, data: []);
+  }
 }
 
 class ForzadoM {
@@ -100,11 +104,9 @@ class ForzadoM {
             ? DateTime.parse(json["fechaCreacion"])
             : null,
         usuarioModificacion: json["usuarioModificacion"] ?? 'no información',
-
         fechaModificacion: json["fechaModificacion"] != null
             ? DateTime.parse(json["fechaModificacion"])
             : null,
-
         subareaCodigo: json["subareaCodigo"] ?? 'no información',
         subareaDescripcion: json["subareaDescripcion"] ?? 'no información',
         disciplinaDescripcion:

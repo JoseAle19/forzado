@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:forzado/pages/splash.dart';
+import 'package:forzado/pages/splash/splash.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
@@ -7,7 +7,7 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const Scaffold(
-      body: Center(child: SplashScreen()),
+      body: Center(child: Splash()),
     );
   }
 }

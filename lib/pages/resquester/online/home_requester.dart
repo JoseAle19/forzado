@@ -1,24 +1,21 @@
-import 'dart:io';
-
-import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:forzado/core/urls.dart';
 import 'package:forzado/core/utils/preferences_helper.dart';
-import 'package:forzado/data/provider/auth_provider.dart';
+import 'package:forzado/data/providers/auth_provider.dart';
+import 'package:forzado/data/providers/requester_provider.dart';
 import 'package:forzado/models/remove_forzado/model_list_remove.dart';
-import 'package:forzado/pages/login_page.dart';
-import 'package:forzado/pages/page_offline.dart';
-import 'package:forzado/pages/solicitante/offline/datatable%20_forzados.dart';
-import 'package:forzado/pages/solicitante/offline/screens/bajas_forzado_offline.dart';
-import 'package:forzado/pages/solicitante/online/screen/home_page.dart';
+import 'package:forzado/pages/auth/login_page.dart';
+import 'package:forzado/pages/resquester/offline/datatable%20_forzados.dart';
+import 'package:forzado/pages/resquester/offline/page_offline.dart';
+import 'package:forzado/pages/resquester/offline/screens/bajas_forzado_offline.dart';
+import 'package:forzado/pages/resquester/online/screen/home_page.dart';
 import 'package:forzado/pages/steps_form/step_form.dart';
 import 'package:forzado/services/api_client.dart';
 import 'package:forzado/services/remove_forzado/list_service_remove.dart';
 import 'package:forzado/widgets/cards.dart';
 import 'package:forzado/widgets/sync.dart';
 import 'package:provider/provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -28,46 +25,6 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-  bool isConnected = false;
-  PageController _controller = PageController();
-  String user = '';
-  @override
-  void initState() {
-    getData();
-    _iniciarVerificacion();
-    super.initState();
-  }
-
-  void _iniciarVerificacion() async {
-    await verifyConnection();
-    print(isConnected);
-    _controller.jumpToPage(isConnected ? 0 : 1);
-  }
-
-  Future<void> verifyConnection() async {
-    final List<ConnectivityResult> connectivityResult =
-        await (Connectivity().checkConnectivity());
-    setState(() {
-      if (connectivityResult.contains(ConnectivityResult.wifi) ||
-          connectivityResult.contains(ConnectivityResult.mobile)) {
-        isConnected = true;
-      } else {
-        isConnected = false;
-      }
-    });
-  }
-
-  void disposePageController() {
-    _controller.dispose();
-  }
-
-  void getData() async {
-    final prefs = await SharedPreferences.getInstance();
-    setState(() {
-      user = prefs.getString('username') ?? 'usuario';
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -82,28 +39,30 @@ class _HomeState extends State<Home> {
             ),
           ),
           actions: [
-            isConnected
-                ? IconButton(
-                    onPressed: () async {
-                      await PreferencesHelper().clear();
-                      final route =
-                          MaterialPageRoute(builder: (_) => const LoginPage());
-                      Navigator.push(context, route);
-                    },
-                    icon: const Icon(Icons.login_rounded))
-                : const SizedBox(),
-            isConnected
-                ? const SizedBox()
-                : const Icon(
-                    Icons.wifi_off,
-                    size: 30,
-                    color: Colors.red,
-                  ),
+            Consumer<RequesterHomeProvider>(
+              builder: (context, value, child) {
+                return value.isConnected
+                    ? IconButton(
+                        onPressed: () async {
+                          await PreferencesHelper().clear();
+                          final route = MaterialPageRoute(
+                              builder: (_) => const LoginPage());
+                          Navigator.push(context, route);
+                        },
+                        icon: const Icon(Icons.login_rounded))
+                    : const Icon(
+                        Icons.wifi_off,
+                        size: 30,
+                        color: Colors.red,
+                      );
+              },
+            )
           ],
         ),
-        body: PageView(
+        body: Consumer<RequesterHomeProvider>(builder: (context, value, child) {
+          return PageView(
             physics: const NeverScrollableScrollPhysics(),
-            controller: _controller,
+            controller: value.pageController,
             children: [
               PageOnline(
                 widget: Container(
@@ -111,7 +70,9 @@ class _HomeState extends State<Home> {
                     child: SyncData()),
               ),
               const PageOffline(),
-            ]));
+            ],
+          );
+        }));
   }
 }
 
@@ -307,39 +268,40 @@ class PageOnline extends StatelessWidget {
                 child: CircularProgressIndicator(),
               );
             } else if (snapshot.hasError) {
-              String errorMessage;
-              if (snapshot.error is SocketException) {
-                errorMessage =
-                    "No hay conexión a Internet. Por favor, verifica tu conexión.";
-              } else if (snapshot.error is HttpException) {
-                errorMessage =
-                    "Hubo un problema con el servidor. Intenta nuevamente más tarde.";
-              } else {
-                errorMessage = "Ocurrió un error inesperado";
-              }
-
+              // Manejando errores si el Future falla
+              String errorMessage = snapshot.error.toString();
               return Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   const Icon(Icons.error, color: Colors.red, size: 50),
                   const SizedBox(height: 10),
-                  Text(errorMessage, textAlign: TextAlign.center),
+                  Text(
+                    errorMessage,
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(color: Colors.red, fontSize: 16),
+                  ),
                   const SizedBox(height: 20),
                   ElevatedButton(
-                    onPressed: () => _ListServiceForzados.getDataByEndpoint(
-                        AppUrl.getListForzados),
+                    onPressed: () {},
                     child: const Text('Reintentar'),
                   ),
                 ],
               );
-            } else if (snapshot.hasData) {
+            } else if (snapshot.hasData && snapshot.data != null) {
+              // Manejando datos si el Future retorna correctamente
               ModelListForzados data = snapshot.data!;
               return CardsDashBoard(data: data);
             } else {
-              return const Text("No data available");
+              // Caso en que no hay datos disponibles
+              return const Center(
+                child: Text(
+                  "No hay datos disponibles.",
+                  style: TextStyle(fontSize: 16),
+                ),
+              );
             }
           },
-        ),
+        )
       ]),
     );
   }

@@ -3,7 +3,7 @@ import 'package:forzado/adapters/adapter_forzados.dart';
 import 'package:forzado/adapters/adapter_three.dart';
 import 'package:forzado/adapters/forzado_baja.dart';
 import 'package:forzado/models/Boxes.dart';
-import 'package:forzado/pages/solicitante/offline/screens/list_forzados_ejecutado_alta.dart';
+import 'package:forzado/pages/resquester/offline/screens/list_forzados_ejecutado_alta.dart';
 import 'package:forzado/pages/steps_form/congratulation.dart';
 import 'package:forzado/pages/steps_form/step_form.dart';
 import 'package:forzado/widgets/drop_down_offline/custom_drop_three.dart';

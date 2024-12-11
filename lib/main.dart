@@ -6,7 +6,9 @@ import 'package:forzado/adapters/adapter_two.dart';
 import 'package:forzado/adapters/forzado.dart';
 import 'package:forzado/adapters/forzado_baja.dart';
 import 'package:forzado/core/utils/preferences_helper.dart';
-import 'package:forzado/data/provider/auth_provider.dart';
+import 'package:forzado/data/providers/auth_provider.dart';
+import 'package:forzado/data/providers/requester_provider.dart';
+import 'package:forzado/data/providers/splash_provider.dart';
 import 'package:forzado/home_page.dart';
 import 'package:hive_flutter/adapters.dart';
 import 'package:intl/date_symbol_data_local.dart';
@@ -51,6 +53,8 @@ class MyApp extends StatelessWidget {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => AuthProvider()..checkSession()),
+        ChangeNotifierProvider(create: (_) => SplashProvider()),
+        ChangeNotifierProvider(create: (_) => RequesterHomeProvider()),
       ],
       child: const MaterialApp(
           debugShowCheckedModeBanner: false,

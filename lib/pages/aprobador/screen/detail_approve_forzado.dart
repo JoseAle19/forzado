@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:forzado/core/urls.dart';
 import 'package:forzado/models/remove_forzado/model_list_remove.dart';
 import 'package:forzado/pages/aprobador/home_approve.dart';
-import 'package:forzado/pages/solicitante/online/widgets/text_info.dart';
+import 'package:forzado/pages/resquester/online/widgets/text_info.dart';
 import 'package:forzado/pages/steps_form/congratulation.dart';
 import 'package:forzado/services/api_client.dart';
 import 'package:forzado/services/service_two.dart';

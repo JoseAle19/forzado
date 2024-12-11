@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:forzado/core/app_colors.dart';
 import 'package:forzado/models/onboarding%20.dart';
-import 'package:forzado/pages/login_page.dart';
+import 'package:forzado/pages/auth/login_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class OnBoardigpage extends StatefulWidget {
