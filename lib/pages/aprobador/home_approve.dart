@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:forzado/core/urls.dart';
 import 'package:forzado/core/utils/preferences_helper.dart';
-import 'package:forzado/data/providers/auth_provider.dart';
+import 'package:forzado/data/providers/auth/auth_provider.dart';
 import 'package:forzado/models/remove_forzado/model_list_remove.dart';
 import 'package:forzado/pages/aprobador/screen/aprove-list.dart';
 import 'package:forzado/pages/aprobador/screen/shutdown_forzado.dart';

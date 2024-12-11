@@ -15,6 +15,7 @@ class ApiResponseDetailUser {
     final int role;
     final int flagNuevoIngreso;
     final String jwt;
+    final String? message;
 
     ApiResponseDetailUser({
         required this.id,
@@ -23,6 +24,7 @@ class ApiResponseDetailUser {
         required this.role,
         required this.flagNuevoIngreso,
         required this.jwt,
+        this.message
     });
 
     factory ApiResponseDetailUser.fromJson(Map<String, dynamic> json) => ApiResponseDetailUser(
@@ -42,4 +44,7 @@ class ApiResponseDetailUser {
         "flagNuevoIngreso": flagNuevoIngreso,
         "jwt": jwt,
     };
-}
+factory ApiResponseDetailUser.error({required String message}) {
+    return ApiResponseDetailUser( message: message, id: 1, flagNuevoIngreso: 0, area: '',jwt: '',name: '',role: 000000);
+  } 
+  }

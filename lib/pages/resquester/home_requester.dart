@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:forzado/core/utils/preferences_helper.dart';
-import 'package:forzado/data/providers/auth_provider.dart';
+import 'package:forzado/data/providers/auth/auth_provider.dart';
 import 'package:forzado/data/providers/requester_provider.dart';
 import 'package:forzado/pages/auth/login_page.dart';
 import 'package:forzado/pages/resquester/offline/page_offline.dart';

@@ -21,4 +21,7 @@ class ApiResponse {
   factory ApiResponse.error({required String message}) {
     return ApiResponse(success: false, message: message);
   }  
+  factory ApiResponse.success({required String message}) {
+    return ApiResponse(success: false, message: message);
+  }  
 }
