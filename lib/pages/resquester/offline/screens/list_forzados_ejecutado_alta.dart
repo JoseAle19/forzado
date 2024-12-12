@@ -4,12 +4,6 @@ import 'package:forzado/pages/resquester/offline/screens/form_baja_forzado.dart'
 import 'package:hive_flutter/adapters.dart';
 
 class ListForzadosEjecutadoAlta extends StatelessWidget {
-  const ListForzadosEjecutadoAlta({super.key});
-  Future<List<Forzados>> getForzadosOffline() async {
-    var box = await Hive.openBox<Forzados>('Forzados');
-    return box.values.toList();
-  }
-
   void navigateDetailForzado(BuildContext context, Forzados item) {
     Navigator.push(
       context,
@@ -23,57 +17,28 @@ class ListForzadosEjecutadoAlta extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var box = Hive.box<Forzados>('Forzados');
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Baja de forzado'),
       ),
-      body: FutureBuilder(
-        future: getForzadosOffline(),
-        builder:
-            (BuildContext context, AsyncSnapshot<List<Forzados>> snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
-          }
-
-          if (snapshot.data!.isEmpty) {
-            return Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(
-                    Icons.hourglass_empty,
-                    size: 80,
-                    color: Colors.grey.shade400,
-                  ),
-                  const SizedBox(height: 16),
-                  Text(
-                    'No tienes forzados disponibles',
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.grey.shade700,
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    'Los forzados con estado ejecutado alta \nestán en proceso. Por favor, espera.',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      fontSize: 16,
-                      color: Colors.grey.shade600,
-                    ),
-                  ),
-                ],
-              ),
+      body: ValueListenableBuilder(
+        valueListenable: box.listenable(),
+        builder: (BuildContext context, dynamic value, Widget? child) {
+          final forzados = box.values.toList();
+          if (forzados.isEmpty) {
+            return const Center(
+              child: Text('Sin informacion'),
             );
           }
           return ListView.separated(
-            itemCount: snapshot.data!.length,
+            itemCount: forzados.length,
             separatorBuilder: (BuildContext context, int index) {
               return const SizedBox.shrink();
             },
             itemBuilder: (BuildContext context, int index) {
-              Forzados forzado = snapshot.data![index];
+              Forzados forzado = forzados[index];
               return Card(
                 elevation: 4,
                 margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),

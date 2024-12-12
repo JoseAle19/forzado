@@ -32,62 +32,70 @@ class AuthProvider with ChangeNotifier {
     _user = PreferencesHelper().getUser();
     notifyListeners();
   }
-Future<ApiResponse> login(BuildContext context) async {
-  final username = usernameController.text.trim();
-  final password = passwordController.text.trim();
-  CustomModal modal  =   CustomModal();
-  if (username.isEmpty || password.isEmpty) {
-    return ApiResponse.error(message: 'Completa todos los campos');
-  }
 
-  isLoading = true;
-  notifyListeners();
-
-  try {
-    final headers = {'Content-Type': 'application/json'};
-    final body = jsonEncode({
-      "username": username,
-      "password": password,
-    });
-
-    final response = await http
-        .post(
-          Uri.parse('https://sntps2jn-3002.brs.devtunnels.ms/api/mobile/auth'),
-          headers: headers,
-          body: body,
-        )
-        .timeout(const Duration(seconds: 10)); // Timeout de 10 segundos
-
-    isLoading = false;
-    notifyListeners();
-
-    if (response.statusCode == 200) {
-      final decodedToken = JwtDecoder.decode(response.body);
-      final jwtModel = JwtModel.fromJson(decodedToken);
-      await getUserByEmail(jwtModel.email, context);
-      return ApiResponse.success(message: 'Ahora validar rol');
-    } else if (response.statusCode == 500) {
-      modal.showModal(context, 'Error interno del servidor', Colors.red, false);
-      return ApiResponse.error(message: 'Error interno del servidor');
-    } else {
-            modal.showModal(context, 'Usuario o contraseña inválidos', Colors.red, false);
-
-      return ApiResponse.error(message: 'Usuario o contraseña inválidos');
+  Future<ApiResponse> login(BuildContext context) async {
+    final username = usernameController.text.trim();
+    final password = passwordController.text.trim();
+    CustomModal modal = CustomModal();
+    if (username.isEmpty || password.isEmpty) {
+      return ApiResponse.error(message: 'Completa todos los campos');
     }
-  } on TimeoutException {
-            modal.showModal(context, 'Excedió el tiempo de espera. Intente nuevamente.', Colors.orange, false);
 
-    isLoading = false;
+    isLoading = true;
     notifyListeners();
-    return ApiResponse.error(message: 'La solicitud excedió el tiempo de espera. Intente nuevamente.');
-  } catch (e) {
-        modal.showModal(context, 'Error de red o conexión', Colors.orange, false);
-    isLoading = false;
-    notifyListeners();
-    return ApiResponse.error(message: 'Error de red o conexión: $e');
+
+    try {
+      final headers = {'Content-Type': 'application/json'};
+      final body = jsonEncode({
+        "username": username,
+        "password": password,
+      });
+
+      final response = await http
+          .post(
+            Uri.parse(
+                'https://sntps2jn-3001.brs.devtunnels.ms/api/mobile/auth'),
+            headers: headers,
+            body: body,
+          )
+          .timeout(const Duration(seconds: 10)); // Timeout de 10 segundos
+
+      isLoading = false;
+      notifyListeners();
+
+      if (response.statusCode == 200) {
+        final decodedToken = JwtDecoder.decode(response.body);
+        final jwtModel = JwtModel.fromJson(decodedToken);
+        await getUserByEmail(jwtModel.email, context);
+        return ApiResponse.success(message: 'Ahora validar rol');
+      } else if (response.statusCode == 500) {
+        modal.showModal(
+            context, 'Error interno del servidor', Colors.red, false);
+        return ApiResponse.error(message: 'Error interno del servidor');
+      } else {
+        modal.showModal(
+            context, 'Usuario o contraseña inválidos', Colors.red, false);
+
+        return ApiResponse.error(message: 'Usuario o contraseña inválidos');
+      }
+    } on TimeoutException {
+      modal.showModal(
+          context,
+          'Excedió el tiempo de espera. Intente nuevamente.',
+          Colors.orange,
+          false);
+      isLoading = false;
+      notifyListeners();
+      return ApiResponse.error(
+          message:
+              'La solicitud excedió el tiempo de espera. Intente nuevamente.');
+    } catch (e) {
+      modal.showModal(context, 'Error de red o conexión', Colors.orange, false);
+      isLoading = false;
+      notifyListeners();
+      return ApiResponse.error(message: 'Error de red o conexión: $e');
+    }
   }
-}
-
 
   Future<ApiResponseDetailUser> getUserByEmail(
       String email, BuildContext context) async {
@@ -110,7 +118,6 @@ Future<ApiResponse> login(BuildContext context) async {
           showAboutDialog(context: context);
           return user;
         } else {
-          // Usuario existente
           await PreferencesHelper().setUser(user);
           await Provider.of<AuthProvider>(context, listen: false)
               .checkSession();
@@ -119,13 +126,11 @@ Future<ApiResponse> login(BuildContext context) async {
           return user;
         }
       } else {
-        // Error de respuesta de servidor (e.g., 400, 404, etc.)
         return ApiResponseDetailUser.error(
           message: 'Error al obtener usuario: ${res.statusCode}',
         );
       }
     } catch (e) {
-      // Error en la solicitud (e.g., conexión fallida)
       isLoading = false;
       notifyListeners();
       return ApiResponseDetailUser.error(message: 'Ocurrió un error: $e');

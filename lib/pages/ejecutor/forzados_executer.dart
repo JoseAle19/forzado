@@ -20,7 +20,7 @@ class ListExecuterForzado extends StatelessWidget {
         leading: IconButton(
             onPressed: () {
               final route = MaterialPageRoute(builder: (_) => HomeExecuter());
-              Navigator.pushAndRemoveUntil(context, route,(r)=>false);
+              Navigator.pushAndRemoveUntil(context, route, (r) => false);
             },
             icon: Icon(Icons.arrow_back_ios_new)),
         title: Text('Listado de Forzados'),
@@ -34,12 +34,14 @@ class ListExecuterForzado extends StatelessWidget {
         ],
       ),
       body: FutureBuilder<ModelListForzados>(
-        future: _listServiceForzados.getDataByEndpoint(AppUrl.getListForzados).then(
+        future:
+            _listServiceForzados.getDataByEndpoint(AppUrl.getListForzados).then(
           (value) {
             List<ForzadoM> data = value.data
-               .where((element) => 
-  element.estado?.toLowerCase() == (isExecuterAlta ? 'aprobado-alta' : 'aprobado-baja')
-).toList();
+                .where((element) =>
+                    element.estado?.toLowerCase() ==
+                    (isExecuterAlta ? 'aprobado-alta' : 'aprobado-baja'))
+                .toList();
             return ModelListForzados(
               success: value.success,
               message: value.message,
@@ -49,11 +51,12 @@ class ListExecuterForzado extends StatelessWidget {
         ),
         builder:
             (BuildContext context, AsyncSnapshot<ModelListForzados> snapshot) {
-         if (snapshot.connectionState == ConnectionState.waiting) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
           }
 
           if (snapshot.data!.data.isEmpty) {
+            String state = isExecuterAlta ? 'alta' : 'baja';
             return Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -74,7 +77,7 @@ class ListExecuterForzado extends StatelessWidget {
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    'Los forzados con estado aprobado alta \nestán en proceso. Por favor, espera.',
+                    'Los forzados con estado aprobado ${state} \nestán en proceso. Por favor, espera.',
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       fontSize: 16,
@@ -85,8 +88,8 @@ class ListExecuterForzado extends StatelessWidget {
               ),
             );
           }
-           
-       return ListView.separated(
+
+          return ListView.separated(
             itemCount: snapshot.data!.data.length,
             separatorBuilder: (BuildContext context, int index) {
               return const SizedBox.shrink();
@@ -132,7 +135,7 @@ class ListExecuterForzado extends StatelessWidget {
                             const SizedBox(height: 4),
                             // Descripción
                             Text(
-                              forzado.estado ??"Sin estado",
+                              forzado.estado ?? "Sin estado",
                               maxLines: 2,
                               overflow: TextOverflow.ellipsis,
                               style: const TextStyle(
@@ -146,7 +149,7 @@ class ListExecuterForzado extends StatelessWidget {
                       const SizedBox(width: 8),
                       IconButton(
                         onPressed: () {
-                              Navigator.push(
+                          Navigator.push(
                               context,
                               MaterialPageRoute(
                                 builder: (context) => DetailForzadoScreen(
@@ -168,7 +171,6 @@ class ListExecuterForzado extends StatelessWidget {
               );
             },
           );
-     
         },
       ),
     );

@@ -20,7 +20,6 @@ class _AnimationScreenState extends State<CongratulationAnimation>
   void initState() {
     super.initState();
 
-    // Inicializar AnimationController
     _controller = AnimationController(
       duration: const Duration(seconds: 2),
       vsync: this,
@@ -29,8 +28,8 @@ class _AnimationScreenState extends State<CongratulationAnimation>
           setState(() {
             _isComplete = true;
             Future.delayed(const Duration(milliseconds: 500), () {
-              final route = MaterialPageRoute(builder: (_) => widget.page);
-              Navigator.pushAndRemoveUntil(context, route, (route) => false);
+              // ignore: use_build_context_synchronously
+              Navigator.pop(context);
             });
           });
         }

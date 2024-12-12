@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:forzado/core/configs/theme/app_colors.dart';
 import 'package:forzado/models/remove_forzado/model_list_remove.dart';
 
 class CardsDashBoard extends StatelessWidget {
@@ -23,8 +24,10 @@ class CardsDashBoard extends StatelessWidget {
       };
 
       for (var item in lista) {
-        if (item.estado != null && contador.containsKey(item.estado!.toLowerCase())) {
-          contador[item.estado!.toLowerCase()] = (contador[item.estado!.toLowerCase()] ?? 0) + 1;
+        if (item.estado != null &&
+            contador.containsKey(item.estado!.toLowerCase())) {
+          contador[item.estado!.toLowerCase()] =
+              (contador[item.estado!.toLowerCase()] ?? 0) + 1;
         }
       }
 
@@ -34,8 +37,7 @@ class CardsDashBoard extends StatelessWidget {
     Map<String, int> conteoEstados = contarEstadosExactos(list);
 
     // Mostrar los resultados
-    conteoEstados.forEach((estado, cantidad) {
-     });
+    conteoEstados.forEach((estado, cantidad) {});
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
@@ -45,7 +47,7 @@ class CardsDashBoard extends StatelessWidget {
               child: DashboardCard(
                 title: "Pendiente Alta",
                 count: conteoEstados["pendiente-alta"] ?? 0,
-                color: Color(0xfffef2cd),
+                color: AppColors.earringColor,
               ),
             ),
             SizedBox(width: 16),
@@ -53,7 +55,7 @@ class CardsDashBoard extends StatelessWidget {
               child: DashboardCard(
                 title: "Pendiente Baja",
                 count: conteoEstados["pendiente-baja"] ?? 0,
-                color: Color(0xfffef2cd),
+                color: AppColors.earringColor,
               ),
             ),
           ],
@@ -65,7 +67,7 @@ class CardsDashBoard extends StatelessWidget {
               child: DashboardCard(
                 title: "Aprobado Alta",
                 count: conteoEstados["aprobado-alta"] ?? 0,
-                color: Color(0xffd1f1da),
+                color: AppColors.approvedColor,
               ),
             ),
             SizedBox(width: 16),
@@ -73,7 +75,7 @@ class CardsDashBoard extends StatelessWidget {
               child: DashboardCard(
                 title: "Aprobado Baja",
                 count: conteoEstados["aprobado-baja"] ?? 0,
-                color: Color(0xffd1f1da),
+                color: AppColors.approvedColor,
               ),
             ),
           ],
@@ -85,7 +87,7 @@ class CardsDashBoard extends StatelessWidget {
               child: DashboardCard(
                 title: "Ejecutado Alta",
                 count: conteoEstados["ejecutado-alta"] ?? 0,
-                color: Color(0xffd9e7fd),
+                color: AppColors.executedColor,
               ),
             ),
             SizedBox(width: 16),
@@ -93,7 +95,7 @@ class CardsDashBoard extends StatelessWidget {
               child: DashboardCard(
                 title: "Finalizado",
                 count: conteoEstados["finalizado"] ?? 0,
-                color: Color(0xfff2f2f2),
+                color: AppColors.finalizedColor,
               ),
             ),
           ],
@@ -105,7 +107,7 @@ class CardsDashBoard extends StatelessWidget {
               child: DashboardCard(
                 title: "Rechazado Alta",
                 count: conteoEstados["rechazado-alta"] ?? 0,
-                color: Color(0xfffbdad7),
+                color: AppColors.refusedColor,
               ),
             ),
             SizedBox(width: 16),
@@ -113,7 +115,7 @@ class CardsDashBoard extends StatelessWidget {
               child: DashboardCard(
                 title: "Rechazado Baja",
                 count: conteoEstados["rechazado-baja"] ?? 0,
-                color: Color(0xfffbdad7),
+                color: AppColors.refusedColor,
               ),
             ),
           ],

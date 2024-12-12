@@ -3,7 +3,8 @@ import 'package:flutter/material.dart';
 class CustomModal {
   void showModal(
       BuildContext context, String error, Color? color, bool? success) {
-     final snackBar = SnackBar(
+    final snackBar = SnackBar(
+      behavior: SnackBarBehavior.floating,
       content: Row(
         children: [
           Icon(
@@ -11,11 +12,13 @@ class CustomModal {
             color: Colors.white,
           ),
           const SizedBox(width: 10),
-          Text(
-            error,
-            style: const TextStyle(color: Colors.white),
-            maxLines: 2,
-            overflow: TextOverflow.ellipsis,
+          Expanded(
+            child: Text(
+              error,
+              style: const TextStyle(color: Colors.white),
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+            ),
           ),
         ],
       ),

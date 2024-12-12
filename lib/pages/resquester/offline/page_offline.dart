@@ -53,7 +53,7 @@ class PageOffline extends StatelessWidget {
           GestureDetector(
             onTap: () {
               final route = MaterialPageRoute(
-                  builder: (_) => const ListForzadosEjecutadoAlta());
+                  builder: (_) => ListForzadosEjecutadoAlta());
               Navigator.push(context, route);
             },
             child: Container(

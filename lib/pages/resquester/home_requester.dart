@@ -52,7 +52,7 @@ class _HomeState extends State<Home> {
         ),
         body: Consumer<RequesterHomeProvider>(builder: (context, value, child) {
           return PageView(
-            physics: const NeverScrollableScrollPhysics(),
+            // physics: const NeverScrollableScrollPhysics(),
             controller: value.pageController,
             children: [
               PageOnline(
@@ -66,7 +66,6 @@ class _HomeState extends State<Home> {
         }));
   }
 }
-
 
 class CustomBotttomNavigation extends StatelessWidget {
   const CustomBotttomNavigation({

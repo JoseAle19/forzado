@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:forzado/adapters/adapter_forzados.dart';
 import 'package:forzado/adapters/adapter_three.dart';
 import 'package:forzado/adapters/forzado_baja.dart';
+import 'package:forzado/data/providers/offline/list_forzados_ejecutados_provider.dart';
 import 'package:forzado/models/Boxes.dart';
 import 'package:forzado/pages/resquester/offline/screens/list_forzados_ejecutado_alta.dart';
 import 'package:forzado/pages/steps_form/congratulation.dart';
@@ -9,6 +10,7 @@ import 'package:forzado/pages/steps_form/step_form.dart';
 import 'package:forzado/widgets/drop_down_offline/custom_drop_three.dart';
 import 'package:forzado/widgets/modal_error.dart';
 import 'package:hive_flutter/adapters.dart';
+import 'package:provider/provider.dart';
 
 class FormBajaForzado extends StatefulWidget {
   const FormBajaForzado({super.key, required this.detailForzado});
@@ -48,7 +50,6 @@ class _FormBajaForzadoState extends State<FormBajaForzado> {
   Future<void> saveForzadoHive(List<Forzados> list) async {
     var box = await Hive.openBox<Forzados>('Forzados');
     if (list.isEmpty) {
-      print('La lista esta vacia');
       await box.clear();
       return;
     }
@@ -58,6 +59,7 @@ class _FormBajaForzadoState extends State<FormBajaForzado> {
 
   @override
   Widget build(BuildContext context) {
+    final provider = Provider.of<ListForzadosEjecutadosProvider>(context);
     return Scaffold(
       appBar: AppBar(
         title: Text('Id Forzado: ${widget.detailForzado.id}'),
@@ -138,13 +140,16 @@ class _FormBajaForzadoState extends State<FormBajaForzado> {
 
                   final forzadosUpdate =
                       boxForzadosEjecutados.values.where((forzado) {
-                    return forzado.id != widget.detailForzado.id;
+                    return forzado.id.toString() !=
+                        widget.detailForzado.id.toString();
                   }).toList();
+                  // Para refrescar la lista de los forzados
                   saveForzadoHive(forzadosUpdate);
+                  provider.cargarForzados();
                   await box.add(newForzadoBaja);
                   final newRoute = MaterialPageRoute(
                       builder: (context) => CongratulationAnimation(
-                          page: const ListForzadosEjecutadoAlta()));
+                          page: ListForzadosEjecutadoAlta()));
                   Navigator.pushReplacement(context, newRoute);
                 },
                 child: Container(
