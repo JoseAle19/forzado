@@ -1,126 +1,136 @@
 import 'package:flutter/material.dart';
 import 'package:forzado/core/configs/theme/app_colors.dart';
-import 'package:forzado/models/remove_forzado/model_list_remove.dart';
+import 'package:forzado/data/providers/forzados/forzados_provider.dart';
+import 'package:provider/provider.dart';
 
 class CardsDashBoard extends StatelessWidget {
-  const CardsDashBoard({super.key, required this.data});
-  final ModelListForzados data;
+  const CardsDashBoard({
+    super.key,
+  });
 
   // List<>
   @override
   Widget build(BuildContext context) {
-    List<ForzadoM> list = data.data;
-
-    Map<String, int> contarEstadosExactos(List<ForzadoM> lista) {
-      Map<String, int> contador = {
-        "pendiente-alta": 0,
-        "pendiente-baja": 0,
-        "aprobado-alta": 0,
-        "aprobado-baja": 0,
-        "ejecutado-alta": 0,
-        "finalizado": 0,
-        "rechazado-alta": 0,
-        "rechazado-baja": 0,
-      };
-
-      for (var item in lista) {
-        if (item.estado != null &&
-            contador.containsKey(item.estado!.toLowerCase())) {
-          contador[item.estado!.toLowerCase()] =
-              (contador[item.estado!.toLowerCase()] ?? 0) + 1;
-        }
-      }
-
-      return contador;
-    }
-
-    Map<String, int> conteoEstados = contarEstadosExactos(list);
-
     // Mostrar los resultados
-    conteoEstados.forEach((estado, cantidad) {});
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        Row(
-          children: [
-            Expanded(
-              child: DashboardCard(
-                title: "Pendiente Alta",
-                count: conteoEstados["pendiente-alta"] ?? 0,
-                color: AppColors.earringColor,
-              ),
+    return Consumer<ForzadosProvider>(
+      builder: (context, value, child) {
+        if (value.isFetch) {
+          return const Center(
+            child: CircularProgressIndicator(),
+          );
+        }
+
+        if (value.errorMessage != null) {
+          // Mostrar el mensaje de error
+          return Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Icon(Icons.error, color: Colors.red, size: 50),
+                const SizedBox(height: 10),
+                Text(
+                  value.errorMessage!,
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(color: Colors.red, fontSize: 16),
+                ),
+                const SizedBox(height: 20),
+                ElevatedButton(
+                  onPressed: () {
+                    // Reintenta la solicitud
+                    value.fetchHighPending();
+                  },
+                  child: const Text("Reintentar"),
+                ),
+              ],
             ),
-            SizedBox(width: 16),
-            Expanded(
-              child: DashboardCard(
-                title: "Pendiente Baja",
-                count: conteoEstados["pendiente-baja"] ?? 0,
-                color: AppColors.earringColor,
-              ),
+          );
+        }
+
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Row(
+              children: [
+                Expanded(
+                  child: DashboardCard(
+                    title: "Pendiente Alta",
+                    count: value.pendingHighCount,
+                    color: AppColors.earringColor,
+                  ),
+                ),
+                SizedBox(width: 16),
+                Expanded(
+                  child: DashboardCard(
+                    title: "Pendiente Baja",
+                    count: value.pendingLowCount,
+                    color: AppColors.earringColor,
+                  ),
+                ),
+              ],
+            ),
+            SizedBox(height: 16),
+            Row(
+              children: [
+                Expanded(
+                  child: DashboardCard(
+                    title: "Aprobado Alta",
+                    count: value.approvedHighCount,
+                    color: AppColors.approvedColor,
+                  ),
+                ),
+                SizedBox(width: 16),
+                Expanded(
+                  child: DashboardCard(
+                    title: "Aprobado Baja",
+                    count: value.approvedLowCount,
+                    color: AppColors.approvedColor,
+                  ),
+                ),
+              ],
+            ),
+            SizedBox(height: 16),
+            Row(
+              children: [
+                Expanded(
+                  child: DashboardCard(
+                    title: "Ejecutado Alta",
+                    count: value.executedHighCount,
+                    color: AppColors.executedColor,
+                  ),
+                ),
+                SizedBox(width: 16),
+                Expanded(
+                  child: DashboardCard(
+                    title: "Finalizado",
+                    count: value.finalizedCount,
+                    color: AppColors.finalizedColor,
+                  ),
+                ),
+              ],
+            ),
+            SizedBox(height: 16),
+            Row(
+              children: [
+                Expanded(
+                  child: DashboardCard(
+                    title: "Rechazado Alta",
+                    count: value.rejectedHighCount,
+                    color: AppColors.refusedColor,
+                  ),
+                ),
+                SizedBox(width: 16),
+                Expanded(
+                  child: DashboardCard(
+                    title: "Rechazado Baja",
+                    count: value.rejectedLowCount,
+                    color: AppColors.refusedColor,
+                  ),
+                ),
+              ],
             ),
           ],
-        ),
-        SizedBox(height: 16),
-        Row(
-          children: [
-            Expanded(
-              child: DashboardCard(
-                title: "Aprobado Alta",
-                count: conteoEstados["aprobado-alta"] ?? 0,
-                color: AppColors.approvedColor,
-              ),
-            ),
-            SizedBox(width: 16),
-            Expanded(
-              child: DashboardCard(
-                title: "Aprobado Baja",
-                count: conteoEstados["aprobado-baja"] ?? 0,
-                color: AppColors.approvedColor,
-              ),
-            ),
-          ],
-        ),
-        SizedBox(height: 16),
-        Row(
-          children: [
-            Expanded(
-              child: DashboardCard(
-                title: "Ejecutado Alta",
-                count: conteoEstados["ejecutado-alta"] ?? 0,
-                color: AppColors.executedColor,
-              ),
-            ),
-            SizedBox(width: 16),
-            Expanded(
-              child: DashboardCard(
-                title: "Finalizado",
-                count: conteoEstados["finalizado"] ?? 0,
-                color: AppColors.finalizedColor,
-              ),
-            ),
-          ],
-        ),
-        SizedBox(height: 16),
-        Row(
-          children: [
-            Expanded(
-              child: DashboardCard(
-                title: "Rechazado Alta",
-                count: conteoEstados["rechazado-alta"] ?? 0,
-                color: AppColors.refusedColor,
-              ),
-            ),
-            SizedBox(width: 16),
-            Expanded(
-              child: DashboardCard(
-                title: "Rechazado Baja",
-                count: conteoEstados["rechazado-baja"] ?? 0,
-                color: AppColors.refusedColor,
-              ),
-            ),
-          ],
-        ),
-      ],
+        );
+      },
     );
   }
 }

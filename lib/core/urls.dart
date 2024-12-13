@@ -34,6 +34,10 @@ class AppUrl {
 
   static const String getAltaRechazar = "/api/solicitudes/alta/rechazar";
   static const String getBajaAprobar = "/api/solicitudes/baja/aprobar";
+
+
+  static const String getForzadoByState = "/api/solicitudes/estado";
+
 }
 
 

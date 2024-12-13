@@ -155,49 +155,51 @@ class HomeExecuter extends StatelessWidget {
               color: const Color(0xffD9D9D9),
               width: double.infinity,
             ),
-            FutureBuilder<ModelListForzados>(
-              future: _ListServiceForzados.getDataByEndpoint(
-                  AppUrl.getListForzados),
-              builder: (BuildContext context,
-                  AsyncSnapshot<ModelListForzados> snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const Center(
-                    child: CircularProgressIndicator(),
-                  );
-                } else if (snapshot.hasError) {
-                  String errorMessage;
-                  if (snapshot.error is SocketException) {
-                    errorMessage =
-                        "No hay conexión a Internet. Por favor, verifica tu conexión.";
-                  } else if (snapshot.error is HttpException) {
-                    errorMessage =
-                        "Hubo un problema con el servidor. Intenta nuevamente más tarde.";
-                  } else {
-                    errorMessage = "Ocurrió un error inesperado";
-                  }
+            const CardsDashBoard()
 
-                  return Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const Icon(Icons.error, color: Colors.red, size: 50),
-                      const SizedBox(height: 10),
-                      Text(errorMessage, textAlign: TextAlign.center),
-                      const SizedBox(height: 20),
-                      ElevatedButton(
-                        onPressed: () => _ListServiceForzados.getDataByEndpoint(
-                            AppUrl.getListForzados),
-                        child: const Text('Reintentar'),
-                      ),
-                    ],
-                  );
-                } else if (snapshot.hasData) {
-                  ModelListForzados data = snapshot.data!;
-                  return CardsDashBoard(data: data);
-                } else {
-                  return const Text("No data available");
-                }
-              },
-            ),
+            // FutureBuilder<ModelListForzados>(
+            //   future: _ListServiceForzados.getDataByEndpoint(
+            //       AppUrl.getListForzados),
+            //   builder: (BuildContext context,
+            //       AsyncSnapshot<ModelListForzados> snapshot) {
+            //     if (snapshot.connectionState == ConnectionState.waiting) {
+            //       return const Center(
+            //         child: CircularProgressIndicator(),
+            //       );
+            //     } else if (snapshot.hasError) {
+            //       String errorMessage;
+            //       if (snapshot.error is SocketException) {
+            //         errorMessage =
+            //             "No hay conexión a Internet. Por favor, verifica tu conexión.";
+            //       } else if (snapshot.error is HttpException) {
+            //         errorMessage =
+            //             "Hubo un problema con el servidor. Intenta nuevamente más tarde.";
+            //       } else {
+            //         errorMessage = "Ocurrió un error inesperado";
+            //       }
+
+            //       return Column(
+            //         mainAxisAlignment: MainAxisAlignment.center,
+            //         children: [
+            //           const Icon(Icons.error, color: Colors.red, size: 50),
+            //           const SizedBox(height: 10),
+            //           Text(errorMessage, textAlign: TextAlign.center),
+            //           const SizedBox(height: 20),
+            //           ElevatedButton(
+            //             onPressed: () => _ListServiceForzados.getDataByEndpoint(
+            //                 AppUrl.getListForzados),
+            //             child: const Text('Reintentar'),
+            //           ),
+            //         ],
+            //       );
+            //     } else if (snapshot.hasData) {
+            //       ModelListForzados data = snapshot.data!;
+            //       return CardsDashBoard(data: data);
+            //     } else {
+            //       return const Text("No data available");
+            //     }
+            //   },
+            // ),
           ],
         ),
       ),

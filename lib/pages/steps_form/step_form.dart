@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:forzado/core/app_styles.dart';
 import 'package:forzado/core/urls.dart';
+import 'package:forzado/data/providers/forzados/forzados_provider.dart';
 import 'package:forzado/models/form/forzado/model_forzado.dart';
 import 'package:forzado/pages/resquester/home_requester.dart';
 import 'package:forzado/pages/steps_form/congratulation.dart';
@@ -14,6 +15,7 @@ import 'package:forzado/widgets/custom_dropdown_one.dart';
 import 'package:forzado/widgets/custom_dropdown_three.dart';
 import 'package:forzado/widgets/custom_dropdown_two.dart';
 import 'package:forzado/widgets/modal_error.dart';
+import 'package:provider/provider.dart';
 
 class StepperForm extends StatefulWidget {
   const StepperForm({super.key});
@@ -115,6 +117,7 @@ class _StepperFormState extends State<StepperForm> {
   String error = '';
   @override
   Widget build(BuildContext context) {
+    final forzadosProveider = Provider.of<ForzadosProvider>(context);
     ServiceOne serviceOne = ServiceOne(ApiClient());
     ServiceTwo serviceTwo = ServiceTwo(ApiClient());
     ServiceThree serviceThree = ServiceThree(ApiClient());
@@ -185,6 +188,7 @@ class _StepperFormState extends State<StepperForm> {
                             AppUrl.postAddForzado, json.encode(data.toMap()));
 
                         if (response.statusCode == 200) {
+                            forzadosProveider.fetchHighPending();
                           final route = MaterialPageRoute(
                               builder: (_) => CongratulationAnimation(
                                     page: const StepperForm(),
@@ -193,7 +197,18 @@ class _StepperFormState extends State<StepperForm> {
                           setState(() {
                             isFetching = false;
                           });
-                        } else {}
+                        } else {
+                          setState(() {
+                            error = 'Error al realizar la petición';
+                          });
+                          CustomModal modal = CustomModal();
+                          modal.showModal(context, 'Error al realizar la petición',
+                              Colors.redAccent, false);
+
+                          setState(() {
+                            isFetching = false;
+                          });
+                        }
                       } catch (e) {
                         print(e);
                         CustomModal modal = CustomModal();

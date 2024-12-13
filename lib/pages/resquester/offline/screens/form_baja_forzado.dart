@@ -146,7 +146,7 @@ class _FormBajaForzadoState extends State<FormBajaForzado> {
                   // Para refrescar la lista de los forzados
                   saveForzadoHive(forzadosUpdate);
                   provider.cargarForzados();
-                  await box.add(newForzadoBaja);
+                  await box.put(newForzadoBaja.id_forzado, newForzadoBaja);
                   final newRoute = MaterialPageRoute(
                       builder: (context) => CongratulationAnimation(
                           page: ListForzadosEjecutadoAlta()));

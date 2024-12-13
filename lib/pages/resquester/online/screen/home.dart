@@ -1,13 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:forzado/core/urls.dart';
-import 'package:forzado/models/remove_forzado/model_list_remove.dart';
 import 'package:forzado/pages/resquester/offline/datatable%20_forzados.dart';
 import 'package:forzado/pages/resquester/offline/screens/bajas_forzado_offline.dart';
 import 'package:forzado/pages/resquester/online/screen/home_page.dart';
 import 'package:forzado/pages/steps_form/step_form.dart';
-import 'package:forzado/services/api_client.dart';
-import 'package:forzado/services/remove_forzado/list_service_remove.dart';
 import 'package:forzado/widgets/cards.dart';
 
 
@@ -20,8 +16,7 @@ class PageOnline extends StatelessWidget {
   final Widget? widget;
   @override
   Widget build(BuildContext context) {
-    final ListServiceForzados _ListServiceForzados =
-        ListServiceForzados(ApiClient());
+    
 
     return Padding(
       padding: const EdgeInsets.all(8.0),
@@ -193,50 +188,53 @@ class PageOnline extends StatelessWidget {
           color: const Color(0xffD9D9D9),
           width: double.infinity,
         ),
-        FutureBuilder<ModelListForzados>(
-          future:
-              _ListServiceForzados.getDataByEndpoint(AppUrl.getListForzados),
-          builder: (BuildContext context,
-              AsyncSnapshot<ModelListForzados> snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return const Center(
-                child: CircularProgressIndicator(),
-              );
-            } else if (snapshot.hasError) {
-              // Manejando errores si el Future falla
-              String errorMessage = snapshot.error.toString();
-              return Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Icon(Icons.error, color: Colors.red, size: 50),
-                  const SizedBox(height: 10),
-                  Text(
-                    errorMessage,
-                    textAlign: TextAlign.center,
-                    style: const TextStyle(color: Colors.red, fontSize: 16),
-                  ),
-                  const SizedBox(height: 20),
-                  ElevatedButton(
-                    onPressed: () {},
-                    child: const Text('Reintentar'),
-                  ),
-                ],
-              );
-            } else if (snapshot.hasData && snapshot.data != null) {
-              // Manejando datos si el Future retorna correctamente
-              ModelListForzados data = snapshot.data!;
-              return CardsDashBoard(data: data);
-            } else {
-              // Caso en que no hay datos disponibles
-              return const Center(
-                child: Text(
-                  "No hay datos disponibles.",
-                  style: TextStyle(fontSize: 16),
-                ),
-              );
-            }
-          },
-        )
+
+const CardsDashBoard()
+
+        // FutureBuilder<ModelListForzados>(
+        //   future:
+        //       _ListServiceForzados.getDataByEndpoint(AppUrl.getListForzados),
+        //   builder: (BuildContext context,
+        //       AsyncSnapshot<ModelListForzados> snapshot) {
+        //     if (snapshot.connectionState == ConnectionState.waiting) {
+        //       return const Center(
+        //         child: CircularProgressIndicator(),
+        //       );
+        //     } else if (snapshot.hasError) {
+        //       // Manejando errores si el Future falla
+        //       String errorMessage = snapshot.error.toString();
+        //       return Column(
+        //         mainAxisAlignment: MainAxisAlignment.center,
+        //         children: [
+        //           const Icon(Icons.error, color: Colors.red, size: 50),
+        //           const SizedBox(height: 10),
+        //           Text(
+        //             errorMessage,
+        //             textAlign: TextAlign.center,
+        //             style: const TextStyle(color: Colors.red, fontSize: 16),
+        //           ),
+        //           const SizedBox(height: 20),
+        //           ElevatedButton(
+        //             onPressed: () {},
+        //             child: const Text('Reintentar'),
+        //           ),
+        //         ],
+        //       );
+        //     } else if (snapshot.hasData && snapshot.data != null) {
+        //       // Manejando datos si el Future retorna correctamente
+        //       ModelListForzados data = snapshot.data!;
+              // return CardsDashBoard(data: data);
+        //     } else {
+        //       // Caso en que no hay datos disponibles
+        //       return const Center(
+        //         child: Text(
+        //           "No hay datos disponibles.",
+        //           style: TextStyle(fontSize: 16),
+        //         ),
+        //       );
+        //     }
+        //   },
+        // )
       ]),
     );
   }
