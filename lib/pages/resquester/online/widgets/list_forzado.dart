@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:forzado/models/remove_forzado/model_list_remove.dart';
+import 'package:forzado/data/providers/forzados/forzados_provider.dart';
+import 'package:forzado/models/forzado/model_forzado.dart';
 import 'package:forzado/pages/resquester/online/screen/form_remove.dart';
+import 'package:provider/provider.dart';
 
 class ListForzado extends StatelessWidget {
   const ListForzado({
     super.key,
-    required this.data,
-  });
+   });
 
-  final List<ForzadoM> data;
-
-  void navigateDetailForzado(BuildContext context, ForzadoM item) {
+ 
+  void navigateDetailForzado(BuildContext context, ForzadoItem item) {
     Navigator.push(
       context,
       MaterialPageRoute(
@@ -23,9 +23,11 @@ class ListForzado extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+          final providerForzados = Provider.of<ForzadosProvider>(context);
+
     return ListView.separated(
       itemBuilder: (context, index) {
-        final item = data[index];
+        final item = providerForzados.forzados[index];
         return Card(
           elevation: 4,
           margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
@@ -96,7 +98,7 @@ class ListForzado extends StatelessWidget {
       separatorBuilder: (context, index) {
         return const SizedBox(height: 8); // Espacio vertical entre elementos
       },
-      itemCount: data.length,
+      itemCount: providerForzados.forzados.length,
     );
   }
 }

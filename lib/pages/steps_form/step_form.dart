@@ -188,7 +188,7 @@ class _StepperFormState extends State<StepperForm> {
                             AppUrl.postAddForzado, json.encode(data.toMap()));
 
                         if (response.statusCode == 200) {
-                            forzadosProveider.fetchHighPending();
+                            forzadosProveider.fetchCountForzados();
                           final route = MaterialPageRoute(
                               builder: (_) => CongratulationAnimation(
                                     page: const StepperForm(),

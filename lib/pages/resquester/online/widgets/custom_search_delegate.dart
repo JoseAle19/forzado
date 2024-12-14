@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:forzado/models/remove_forzado/model_list_remove.dart';
+import 'package:forzado/models/forzado/model_forzado.dart';
 import 'package:forzado/pages/resquester/online/screen/form_remove.dart';
 
 class CustomSearchDelegate extends SearchDelegate<String> {
-  final List<ForzadoM> searchList;
+  final List<ForzadoItem> searchList;
 
   CustomSearchDelegate({required this.searchList});
 
@@ -28,15 +28,15 @@ class CustomSearchDelegate extends SearchDelegate<String> {
 
   @override
   Widget buildResults(BuildContext context) {
-    final List<ForzadoM> searchResults = searchList
+    final List<ForzadoItem> searchResults = searchList
         .where(
-            (item) => item.nombre.toLowerCase().contains(query.toLowerCase()))
+            (item) => item.nombre!.toLowerCase().contains(query.toLowerCase()))
         .toList();
     return ListView.builder(
         itemCount: searchResults.length,
         itemBuilder: (context, index) {
           return ListTile(
-            title: Text(searchResults[index].nombre),
+            title: Text(searchResults[index].nombre??'N/A'),
             onTap: () => close(context, searchResults[index].id.toString()),
           );
         });
@@ -44,11 +44,11 @@ class CustomSearchDelegate extends SearchDelegate<String> {
 
   @override
   Widget buildSuggestions(BuildContext context) {
-    final List<ForzadoM> suggestionList = query.isEmpty
+    final List<ForzadoItem> suggestionList = query.isEmpty
         ? []
         : searchList
             .where((item) =>
-                item.nombre.toLowerCase().contains(query.toLowerCase()))
+                item.nombre!.toLowerCase().contains(query.toLowerCase()))
             .toList();
 
     return ListView.builder(
@@ -57,10 +57,10 @@ class CustomSearchDelegate extends SearchDelegate<String> {
         return ListTile(
           title: Hero(
               tag: suggestionList[i].id.toString(),
-              child: Text(suggestionList[i].nombre)),
+              child: Text(suggestionList[i].nombre??'N/A')),
           onTap: () {
-            ForzadoM removeForzado = suggestionList[i];
-            query = suggestionList[i].nombre;
+            ForzadoItem removeForzado = suggestionList[i];
+            query = suggestionList[i].nombre??'N/A';
             handleNavigate(context, removeForzado);
           },
         );
@@ -68,7 +68,7 @@ class CustomSearchDelegate extends SearchDelegate<String> {
     );
   }
 
-  void handleNavigate(BuildContext context, ForzadoM detailForzado) {
+  void handleNavigate(BuildContext context, ForzadoItem detailForzado) {
     final route = MaterialPageRoute(
         builder: (_) => FormRemoveForzado(
               detailForzado: detailForzado,
