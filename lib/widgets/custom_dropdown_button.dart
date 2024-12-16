@@ -1,58 +1,40 @@
 import 'package:flutter/material.dart';
-import 'package:forzado/core/abstract/drop_menu_item.dart';
+import 'package:forzado/core/abstract/dropdown_item.dart';
 
-class CustomDropDownButton<T extends DropDownItem> extends StatelessWidget {
-  final String descriptionField;
+class CustomDropdownButton<T extends DropDownItem> extends StatelessWidget {
   final String hintText;
   final List<T> items;
-  final String currentValue;
-  final ValueChanged<String?> onChanged;
+  final T? selectedItem;
+  final ValueChanged<T?> onChanged;
 
-  const CustomDropDownButton({
-    Key? key,
-    required this.descriptionField,
-    required this.hintText,
-    required this.items,
-    required this.currentValue,
-    required this.onChanged,
-  }) : super(key: key);
+  const CustomDropdownButton(
+      {super.key,
+      required this.hintText,
+      required this.items,
+      this.selectedItem,
+      required this.onChanged});
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const SizedBox(height: 20),
-        Text(descriptionField),
-        DropdownButtonFormField<String>(
-          value: currentValue.isEmpty ? null : currentValue,
-          hint: SizedBox(
-            width: MediaQuery.of(context).size.width * 0.7,
-            child: Text(
-              hintText,
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
-            ),
-          ),
-          items: items.map((item) {
-            return DropdownMenuItem(
-              value: item.id.toString(),
-              child: SizedBox(
-                width: 200,
-                child: Text(
-                  item.getLabel(),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(fontSize: 12),
-                ),
-              ),
-            );
-          }).toList(),
-          validator: (value) =>
-              value == null ? 'Seleccione una opción válida' : null,
-          onChanged: onChanged,
-        ),
-      ],
+    return DropdownButtonFormField<T>(
+      value: selectedItem??null,
+      hint: Text(hintText),
+      items: items.map((item) {
+        return DropdownMenuItem<T>(
+          value: item,
+          child: Text(item.getLabel()),
+        );
+      }).toList(),
+      onChanged: onChanged,
+      decoration: InputDecoration(
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
+        contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      ),
+      validator: (value) {
+        if (value == null){
+          return 'Selecciona una opcion';
+        }
+      },
     );
   }
 }

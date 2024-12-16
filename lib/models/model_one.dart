@@ -4,6 +4,8 @@
 
 import 'dart:convert';
 
+import 'package:forzado/core/abstract/dropdown_item.dart';
+
 ModelOne modelOneFromJson(String str) => ModelOne.fromJson(json.decode(str));
 
 String modelOneToJson(ModelOne data) => json.encode(data.toJson());
@@ -28,7 +30,7 @@ class ModelOne {
     };
 }
 
-class Value {
+class Value implements DropDownItem{
     final int id;
     final String codigo;
     final String descripcion;
@@ -38,6 +40,12 @@ class Value {
         required this.codigo,
         required this.descripcion,
     });
+
+  @override
+  String getLabel() => descripcion;
+
+  @override
+  int get idT => id;
 
     factory Value.fromJson(Map<String, dynamic> json) => Value(
         id: json["id"] ??000,

@@ -3,14 +3,17 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:forzado/core/app_styles.dart';
 import 'package:forzado/core/urls.dart';
+import 'package:forzado/data/providers/dropdown/dropdown_provider.dart';
 import 'package:forzado/data/providers/forzados/forzados_provider.dart';
 import 'package:forzado/models/form/forzado/model_forzado.dart';
+import 'package:forzado/models/model_one.dart' as modelone;
 import 'package:forzado/pages/resquester/home_requester.dart';
 import 'package:forzado/pages/steps_form/congratulation.dart';
 import 'package:forzado/services/api_client.dart';
 import 'package:forzado/services/service_one.dart';
 import 'package:forzado/services/service_three.dart';
 import 'package:forzado/services/service_two.dart';
+import 'package:forzado/widgets/custom_dropdown_button.dart';
 import 'package:forzado/widgets/custom_dropdown_one.dart';
 import 'package:forzado/widgets/custom_dropdown_three.dart';
 import 'package:forzado/widgets/custom_dropdown_two.dart';
@@ -118,6 +121,8 @@ class _StepperFormState extends State<StepperForm> {
   @override
   Widget build(BuildContext context) {
     final forzadosProveider = Provider.of<ForzadosProvider>(context);
+    final dropdownProvider =
+        Provider.of<DropDownValuesManagerProvider>(context);
     ServiceOne serviceOne = ServiceOne(ApiClient());
     ServiceTwo serviceTwo = ServiceTwo(ApiClient());
     ServiceThree serviceThree = ServiceThree(ApiClient());
@@ -127,8 +132,7 @@ class _StepperFormState extends State<StepperForm> {
         title: const Text('Alta Forzado'),
         leading: IconButton(
           onPressed: () {
-            final newRoute = MaterialPageRoute(builder: (_) => const Home());
-            Navigator.pushAndRemoveUntil(context, newRoute, (r) => false);
+             Navigator.pop(context);
           },
           icon: const Icon(Icons.arrow_back_ios),
         ),
@@ -188,7 +192,7 @@ class _StepperFormState extends State<StepperForm> {
                             AppUrl.postAddForzado, json.encode(data.toMap()));
 
                         if (response.statusCode == 200) {
-                            forzadosProveider.fetchCountForzados();
+                          forzadosProveider.fetchCountForzados();
                           final route = MaterialPageRoute(
                               builder: (_) => CongratulationAnimation(
                                     page: const StepperForm(),
@@ -202,8 +206,11 @@ class _StepperFormState extends State<StepperForm> {
                             error = 'Error al realizar la petición';
                           });
                           CustomModal modal = CustomModal();
-                          modal.showModal(context, 'Error al realizar la petición',
-                              Colors.redAccent, false);
+                          modal.showModal(
+                              context,
+                              'Error al realizar la petición',
+                              Colors.redAccent,
+                              false);
 
                           setState(() {
                             isFetching = false;
@@ -266,6 +273,16 @@ class _StepperFormState extends State<StepperForm> {
                         child: ListView(
                           shrinkWrap: true,
                           children: [
+                            CustomDropdownButton<modelone.Value>(
+                              hintText: 'Prefijo del Tag o Sub Área',
+                              items: dropdownProvider.listPrefijos,
+                              selectedItem:
+                                  dropdownProvider.currentValueTagPrefijo,
+                              onChanged: (value) {
+                                dropdownProvider.currentValueTagPrefijo =
+                                    value!;
+                              },
+                            ),
                             CustomDropDownButtonOne(
                                 onChanged: (value) => _updateCurrentValue(
                                     ValueType.tagPrefijo, value),
@@ -338,7 +355,9 @@ class _StepperFormState extends State<StepperForm> {
                         children: [
                           Text('Iterlock Seguridad *'),
                           DropdownButtonFormField(
-                            value: null,
+                            value: currentValueSegurity.isEmpty
+                                ? null
+                                : currentValueSegurity,
                             hint: const Text('Seleccione Interlock'),
                             items: const [
                               DropdownMenuItem(value: 'si', child: Text('Si')),
@@ -351,6 +370,9 @@ class _StepperFormState extends State<StepperForm> {
                               return '';
                             },
                             onChanged: (value) {
+                              setState(() {
+                                currentValueSegurity = value!;
+                              });
                               // Todo: rear logica despues
                             },
                           ),

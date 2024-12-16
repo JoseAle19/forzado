@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:forzado/core/utils/preferences_helper.dart';
 import 'package:forzado/data/providers/auth/auth_provider.dart';
+import 'package:forzado/data/providers/dropdown/dropdown_provider.dart';
 import 'package:forzado/data/providers/requester_provider.dart';
 import 'package:forzado/pages/auth/login_page.dart';
 import 'package:forzado/pages/resquester/offline/page_offline.dart';
@@ -16,17 +17,33 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
+
+@override
+void initState() {
+  super.initState();
+   WidgetsBinding.instance.addPostFrameCallback((_) {
+    Provider.of<DropDownValuesManagerProvider>(context, listen: false).getData();
+  });
+}
+
+
   @override
   Widget build(BuildContext context) {
+    final provider = Provider.of<DropDownValuesManagerProvider>(context);
     return Scaffold(
         bottomNavigationBar: const CustomBotttomNavigation(),
         appBar: AppBar(
           automaticallyImplyLeading: false,
           title: Consumer<AuthProvider>(
-            builder: (context, value, child) => Text(
-              'Hola ${value.user?.name}',
-              style: const TextStyle(
-                  fontFamily: 'noto', fontWeight: FontWeight.bold),
+            builder: (context, value, child) => GestureDetector(
+              onTap: (){
+                print(provider.currentValueTagPrefijo);
+              },
+              child: Text(
+                'Hola ${value.user?.name}',
+                style: const TextStyle(
+                    fontFamily: 'noto', fontWeight: FontWeight.bold),
+              ),
             ),
           ),
           actions: [

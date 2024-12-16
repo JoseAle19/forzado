@@ -39,11 +39,4 @@ class AppUrl {
   static const String getForzadoByState = "/api/solicitudes/estado";
 
 }
-
-
-
-
-// - /api/solicitudes/alta/aprobar
-// - /api/solicitudes/alta/ejecutar
-// - /api/solicitudes/baja/aprobar
-// - /api/solicitudes/baja/ejecutar
+ 

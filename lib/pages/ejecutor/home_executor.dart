@@ -1,15 +1,9 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
-import 'package:forzado/core/urls.dart';
 import 'package:forzado/core/utils/preferences_helper.dart';
 import 'package:forzado/data/providers/auth/auth_provider.dart';
-import 'package:forzado/models/remove_forzado/model_list_remove.dart';
+import 'package:forzado/pages/auth/login_page.dart';
 import 'package:forzado/pages/ejecutor/forzados_executer.dart';
 import 'package:forzado/pages/resquester/home_requester.dart';
-import 'package:forzado/pages/auth/login_page.dart';
-import 'package:forzado/services/api_client.dart';
-import 'package:forzado/services/remove_forzado/list_service_remove.dart';
 import 'package:forzado/widgets/cards.dart';
 import 'package:provider/provider.dart';
 
@@ -17,9 +11,7 @@ class HomeExecuter extends StatelessWidget {
   const HomeExecuter({super.key});
   @override
   Widget build(BuildContext context) {
-    final ListServiceForzados _ListServiceForzados =
-        ListServiceForzados(ApiClient());
-
+   
     return Scaffold(
       bottomNavigationBar: const CustomBotttomNavigation(),
       appBar: AppBar(

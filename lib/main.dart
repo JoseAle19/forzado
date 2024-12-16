@@ -8,6 +8,7 @@ import 'package:forzado/adapters/forzado_baja.dart';
 import 'package:forzado/core/utils/preferences_helper.dart';
 import 'package:forzado/data/providers/auth/auth_provider.dart';
 import 'package:forzado/data/providers/auth/password_provider.dart';
+import 'package:forzado/data/providers/dropdown/dropdown_provider.dart';
 import 'package:forzado/data/providers/forzados/forzados_provider.dart';
 import 'package:forzado/data/providers/offline/list_forzados_ejecutados_provider.dart';
 import 'package:forzado/data/providers/requester_provider.dart';
@@ -62,8 +63,9 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => RequesterHomeProvider()),
         ChangeNotifierProvider(create: (_) => PasswordProvider()),
         ChangeNotifierProvider(create: (_) => ListForzadosEjecutadosProvider()),
-        ChangeNotifierProvider(create: (_) => ForzadosProvider()..fetchCountForzados()),
-      ],
+        ChangeNotifierProvider(create: (_) => ForzadosProvider()..fetchCountForzados()),  
+        ChangeNotifierProvider(create: (_) => DropDownValuesManagerProvider()),  
+            ],
       child: const MaterialApp(
           debugShowCheckedModeBanner: false,
           title: 'Forzados',
