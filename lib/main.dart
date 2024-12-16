@@ -62,7 +62,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => RequesterHomeProvider()),
         ChangeNotifierProvider(create: (_) => PasswordProvider()),
         ChangeNotifierProvider(create: (_) => ListForzadosEjecutadosProvider()),
-        ChangeNotifierProvider(create: (_) => ForzadosProvider()..fetchHighPending()),
+        ChangeNotifierProvider(create: (_) => ForzadosProvider()..fetchCountForzados()),
       ],
       child: const MaterialApp(
           debugShowCheckedModeBanner: false,

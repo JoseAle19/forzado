@@ -50,14 +50,14 @@ class _DetailApproveForzadoState extends State<DetailApproveForzado> {
       final res = await client.post(
           '/api/solicitudes/${isStateReque}/aprobar', jsonEncode(body));
       if (res.statusCode == 200) {
-        Navigator.pushAndRemoveUntil(
-            context,
-            MaterialPageRoute(
-                builder: (context) => CongratulationAnimation(
-                    page: widget.isAlta
-                        ? const HomeApprove()
-                        : const HomeApprove())),
-            (route) => false);
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+              builder: (context) => CongratulationAnimation(
+                  page: widget.isAlta
+                      ? const HomeApprove()
+                      : const HomeApprove())),
+        );
       } else {
         CustomModal modal = CustomModal();
         modal.showModal(context, 'Ocurrio un error', Colors.red, false);

@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:forzado/core/urls.dart';
 import 'package:forzado/data/providers/forzados/forzados_provider.dart';
 import 'package:forzado/models/form/forzado/request_forced_forzado.dart';
-import 'package:forzado/models/remove_forzado/model_list_remove.dart';
+import 'package:forzado/models/forzado/model_forzado.dart';
 import 'package:forzado/pages/resquester/home_requester.dart';
 import 'package:forzado/pages/steps_form/congratulation.dart';
 import 'package:forzado/services/api_client.dart';
@@ -15,7 +15,7 @@ import 'package:provider/provider.dart';
 // ignore: must_be_immutable
 class FormRemoveForzado extends StatefulWidget {
   const FormRemoveForzado({super.key, required this.detailForzado});
-  final ForzadoM detailForzado;
+  final ForzadoItem detailForzado;
 
   @override
   State<FormRemoveForzado> createState() => _FormRemoveForzadoState();
@@ -165,7 +165,7 @@ class _FormRemoveForzadoState extends State<FormRemoveForzado> {
                   : GestureDetector(
                       onTap: () {
                         if (!isFetching) sendRequestForcedForzado();
-                        forzadosProvider.fetchHighPending();
+                        forzadosProvider.fetchCountForzados();
                       },
                       child: Container(
                         width: double.infinity,

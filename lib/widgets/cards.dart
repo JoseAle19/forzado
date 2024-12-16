@@ -37,7 +37,7 @@ class CardsDashBoard extends StatelessWidget {
                 ElevatedButton(
                   onPressed: () {
                     // Reintenta la solicitud
-                    value.fetchHighPending();
+                    value.fetchCountForzados();
                   },
                   child: const Text("Reintentar"),
                 ),

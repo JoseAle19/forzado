@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:forzado/core/urls.dart';
 import 'package:forzado/models/remove_forzado/model_list_remove.dart';
 import 'package:forzado/pages/aprobador/home_approve.dart';
-import 'package:forzado/pages/aprobador/widgets/custom_search_delegate.dart';
 import 'package:forzado/pages/aprobador/widgets/list_forzado.dart';
 import 'package:forzado/services/api_client.dart';
 import 'package:forzado/services/remove_forzado/list_service_remove.dart';
@@ -28,15 +27,15 @@ class _ApproveforzadoState extends State<ShutdownForzado> {
         actions: [
           IconButton(
             onPressed: () async {
-              await showSearch(
-                context: context,
-                delegate: CustomSearchExecuter(
-                    searchList: listData
-                        .where((element) =>
-                            element.estado!.toLowerCase() == 'pendiente-baja' ||
-                            element.estado!.toLowerCase() == 'Pendiente-alta')
-                        .toList()),
-              );
+              // await showSearch(
+              //   context: context,
+              //   delegate: CustomSearchExecuter(
+              //       searchList: listData
+              //           .where((element) =>
+              //               element.estado!.toLowerCase() == 'pendiente-baja' ||
+              //               element.estado!.toLowerCase() == 'Pendiente-alta')
+              //           .toList()),
+              // );
             },
             icon: const Icon(Icons.search),
           ),
