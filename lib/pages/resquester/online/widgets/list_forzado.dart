@@ -25,7 +25,14 @@ class ListForzado extends StatelessWidget {
   Widget build(BuildContext context) {
           final providerForzados = Provider.of<ForzadosProvider>(context);
 
-    return ListView.separated(
+    return 
+    providerForzados.forzados.isEmpty
+        ? const Center(
+            child: Text('No hay forzados'),
+          )
+        :
+    
+    ListView.separated(
       itemBuilder: (context, index) {
         final item = providerForzados.forzados[index];
         return Card(

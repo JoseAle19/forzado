@@ -6,6 +6,7 @@ import 'package:forzado/adapters/adapter_two.dart';
 import 'package:forzado/adapters/forzado.dart';
 import 'package:forzado/adapters/forzado_baja.dart';
 import 'package:forzado/core/utils/preferences_helper.dart';
+import 'package:forzado/data/providers/Stepper/stepper_provider.dart';
 import 'package:forzado/data/providers/auth/auth_provider.dart';
 import 'package:forzado/data/providers/auth/password_provider.dart';
 import 'package:forzado/data/providers/bottom/bottom_navigationbar_provider.dart';
@@ -67,6 +68,8 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => ForzadosProvider()..fetchCountForzados()),  
         ChangeNotifierProvider(create: (_) => DropDownValuesManagerProvider()),  
              ChangeNotifierProvider(create: (_) => BottomNavigationBarProvider()),  
+        ChangeNotifierProvider(create: (_) => DropDownValuesManagerProvider()),  
+             ChangeNotifierProvider(create: (_) => StepperProvider()),  
             ],
       child: const MaterialApp(
           debugShowCheckedModeBanner: false,

@@ -30,7 +30,7 @@ class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        // bottomNavigationBar: const CustomBotttomNavigation(),
+        bottomNavigationBar: const CustomBotttomNavigation(),
         appBar: AppBar(
           automaticallyImplyLeading: false,
           title: Consumer<AuthProvider>(
@@ -43,8 +43,7 @@ class _HomeState extends State<Home> {
           actions: [
             Consumer<RequesterHomeProvider>(
               builder: (context, value, child) {
-                print(value.isConnected);
-                return value.isConnected
+                 return value.isConnected
                     ? IconButton(
                         onPressed: () async {
                           await PreferencesHelper().clear();

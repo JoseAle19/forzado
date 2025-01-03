@@ -115,8 +115,7 @@ class AuthProvider with ChangeNotifier {
         '/api/usuarios/por-correo',
         jsonEncode({'email': email}),
       );
-      print(res.body);
-
+ 
       isLoading = false;
       notifyListeners();
 
@@ -130,9 +129,9 @@ class AuthProvider with ChangeNotifier {
 
           return user;
         } else {
-          await PreferencesHelper().setUser(user);
           await Provider.of<AuthProvider>(context, listen: false)
               .checkSession();
+          await PreferencesHelper().setUser(user);
 
           navigateHandleRole(user.role, context);
           return user;

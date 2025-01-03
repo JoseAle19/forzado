@@ -6,8 +6,7 @@ import 'package:forzado/data/providers/offline/list_forzados_ejecutados_provider
 import 'package:forzado/models/Boxes.dart';
 import 'package:forzado/pages/resquester/offline/screens/list_forzados_ejecutado_alta.dart';
 import 'package:forzado/pages/steps_form/congratulation.dart';
-import 'package:forzado/pages/steps_form/step_form.dart';
-import 'package:forzado/widgets/drop_down_offline/custom_drop_three.dart';
+ import 'package:forzado/widgets/drop_down_offline/custom_drop_three.dart';
 import 'package:forzado/widgets/modal_error.dart';
 import 'package:hive_flutter/adapters.dart';
 import 'package:provider/provider.dart';
@@ -18,6 +17,22 @@ class FormBajaForzado extends StatefulWidget {
 
   @override
   State<FormBajaForzado> createState() => _FormBajaForzadoState();
+}
+enum ValueType {
+  tagPrefijo,
+  tagCentro,
+  description,
+  tagDisciplina,
+  slot,
+  segurity,
+  responsability,
+  risk,
+  probability,
+  impact,
+  applicant,
+  approver,
+  executor,
+  forzado,
 }
 
 class _FormBajaForzadoState extends State<FormBajaForzado> {

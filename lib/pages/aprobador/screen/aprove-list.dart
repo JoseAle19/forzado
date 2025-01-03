@@ -27,24 +27,17 @@ class _ApproveforzadoState extends State<Approveforzado> {
         actions: [
           IconButton(
             onPressed: () async {
-              // await showSearch(
-              //   context: context,
-              //   delegate: CustomSearchExecuter(
-              //       searchList: listData
-              //           .where((element) =>
-              //               element.estado!.toLowerCase() == 'pendiente-alta' ||
-              //               element.estado!.toLowerCase() == 'pendiente-baja')
-              //           .toList()),
-              // );
+         
             },
             icon: const Icon(Icons.search),
           ),
         ],
         leading: IconButton(
           onPressed: () {
-            final newRoute =
-                MaterialPageRoute(builder: (_) => const HomeApprove());
-            Navigator.pushReplacement(context, newRoute);
+            // final newRoute =
+            //     MaterialPageRoute(builder: (_) => const HomeApprove());
+            // Navigator.pushReplacement(context, newRoute);
+            Navigator.pop(context);
           },
           icon: const Icon(Icons.arrow_back_ios),
         ),
@@ -75,8 +68,7 @@ class _ApproveforzadoState extends State<Approveforzado> {
             return const Center(child: CircularProgressIndicator());
           }
           if (snapshot.hasError) {
-            print(snapshot.error);
-            return const Center(
+             return const Center(
                 child: Text('Ocurrio un error, contacta a soporte'));
           }
           if (snapshot.data!.data.isEmpty) {

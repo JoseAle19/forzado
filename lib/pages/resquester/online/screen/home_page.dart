@@ -14,6 +14,16 @@ class HomePageRemove extends StatefulWidget {
 
 class _HomePageRemoveState extends State<HomePageRemove> {
   late List<ForzadoItem> listData;
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance!.addPostFrameCallback((_) {
+      Provider.of<ForzadosProvider>(context, listen: false)
+          .getFutureForzados('aprobador');
+          print('wenas');
+    });
+  }
+ 
 
   @override
   Widget build(BuildContext context) {
@@ -51,6 +61,7 @@ class _HomePageRemoveState extends State<HomePageRemove> {
           future: providerForzados.futureForzados,
           builder: (BuildContext context,
               AsyncSnapshot<List<ForzadoItem>> snapshot) {
+            print('snapshot: ${snapshot.data}');
             if (snapshot.connectionState == ConnectionState.waiting) {
               return const Center(
                 child: CircularProgressIndicator(),

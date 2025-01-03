@@ -5,8 +5,7 @@ import 'package:forzado/adapters/adapter_two.dart';
 import 'package:forzado/adapters/forzado.dart';
 import 'package:forzado/core/app_styles.dart';
 import 'package:forzado/models/Boxes.dart';
-import 'package:forzado/pages/steps_form/step_form.dart';
-import 'package:forzado/widgets/drop_down_offline/custom_drop_one.dart';
+ import 'package:forzado/widgets/drop_down_offline/custom_drop_one.dart';
 import 'package:forzado/widgets/drop_down_offline/custom_drop_three.dart';
 import 'package:forzado/widgets/drop_down_offline/custom_drop_two.dart';
 import 'package:forzado/widgets/modal_error.dart';
@@ -17,6 +16,23 @@ class StepperFormOffline extends StatefulWidget {
 
   @override
   State<StepperFormOffline> createState() => _StepperFormOfflineState();
+}
+
+enum ValueType {
+  tagPrefijo,
+  tagCentro,
+  description,
+  tagDisciplina,
+  slot,
+  segurity,
+  responsability,
+  risk,
+  probability,
+  impact,
+  applicant,
+  approver,
+  executor,
+  forzado,
 }
 
 class _StepperFormOfflineState extends State<StepperFormOffline> {

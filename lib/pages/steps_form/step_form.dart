@@ -33,8 +33,9 @@ class _StepperFormState extends State<StepperForm> {
         title: const Text('Alta Forzado'),
         leading: IconButton(
           onPressed: () {
+             dropdownProvider.clearValues();
             Navigator.pop(context);
-            
+
           },
           icon: const Icon(Icons.arrow_back_ios),
         ),
@@ -118,87 +119,85 @@ class _StepperFormState extends State<StepperForm> {
                   Step(
                       isActive: value.currentStep == 0,
                       title: const Text(''),
-                      content: Expanded(
-                        child: SizedBox(
-                          width: double.infinity,
-                          height: MediaQuery.of(context).size.height * .6,
-                          child: ListView(
-                            physics: const BouncingScrollPhysics(),
-                            shrinkWrap: true,
-                            children: [
-                              CustomDropdownButton<modelone.Value>(
-                                hintText: 'Prefijo del Tag o Sub Área',
-                                items: dropdownProvider.listPrefijos,
-                                selectedItem:
-                                    dropdownProvider.currentValueTagPrefijo,
-                                onChanged: (value) {
-                                  dropdownProvider.currentValueTagPrefijo =
-                                      value!;
-                                },
-                              ),
-                              CustomDropdownButton<modelone.Value>(
-                                hintText: 'Tag (centro) *:',
-                                items: dropdownProvider.listCentros,
-                                selectedItem:
-                                    dropdownProvider.currentValueTagCentro,
-                                onChanged: (value) {
-                                  dropdownProvider.currentValueTagCentro =
-                                      value!;
-                                },
-                              ),
-                              Container(
-                                margin:
-                                    const EdgeInsets.symmetric(vertical: 20),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    const Text('Descripción *'),
-                                    const SizedBox(
-                                      height: 5,
-                                    ),
-                                    TextFormField(
-                                      initialValue: dropdownProvider
-                                          .currentValueDescription,
-                                      onChanged: (value) => dropdownProvider
-                                          .currentValueDescription = value,
-                                      maxLength: 100,
-                                      maxLines: 2,
-                                      decoration: InputDecoration(
-                                        hintText: 'Agregue una descripción',
-                                        border: OutlineInputBorder(
-                                          borderSide: BorderSide(
-                                              color: Colors.grey.shade50),
-                                          borderRadius: const BorderRadius.all(
-                                              Radius.circular(10)),
-                                        ),
-                                        contentPadding:
-                                            const EdgeInsets.symmetric(
-                                                horizontal: 5, vertical: 15),
+                      content: SizedBox(
+                        width: double.infinity,
+                        height: MediaQuery.of(context).size.height * .6,
+                        child: ListView(
+                          physics: const BouncingScrollPhysics(),
+                          shrinkWrap: true,
+                          children: [
+                            CustomDropdownButton<modelone.Value>(
+                              hintText: 'Prefijo del Tag o Sub Área',
+                              items: dropdownProvider.listPrefijos,
+                              selectedItem:
+                                  dropdownProvider.currentValueTagPrefijo,
+                              onChanged: (value) {
+                                dropdownProvider.currentValueTagPrefijo =
+                                    value!;
+                              },
+                            ),
+                            CustomDropdownButton<modelone.Value>(
+                              hintText: 'Tag (centro) *:',
+                              items: dropdownProvider.listCentros,
+                              selectedItem:
+                                  dropdownProvider.currentValueTagCentro,
+                              onChanged: (value) {
+                                dropdownProvider.currentValueTagCentro =
+                                    value!;
+                              },
+                            ),
+                            Container(
+                              margin:
+                                  const EdgeInsets.symmetric(vertical: 20),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  const Text('Descripción *'),
+                                  const SizedBox(
+                                    height: 5,
+                                  ),
+                                  TextFormField(
+                                    initialValue: dropdownProvider
+                                        .currentValueDescription,
+                                    onChanged: (value) => dropdownProvider
+                                        .currentValueDescription = value,
+                                    maxLength: 100,
+                                    maxLines: 2,
+                                    decoration: InputDecoration(
+                                      hintText: 'Agregue una descripción',
+                                      border: OutlineInputBorder(
+                                        borderSide: BorderSide(
+                                            color: Colors.grey.shade50),
+                                        borderRadius: const BorderRadius.all(
+                                            Radius.circular(10)),
                                       ),
-                                    )
-                                  ],
-                                ),
+                                      contentPadding:
+                                          const EdgeInsets.symmetric(
+                                              horizontal: 5, vertical: 15),
+                                    ),
+                                  )
+                                ],
                               ),
-                              CustomDropdownButton<modelTwo.Value>(
-                                hintText: 'Disciplina *:',
-                                items: dropdownProvider.listDiciplinas,
-                                selectedItem:
-                                    dropdownProvider.currentValueTagDisciplina,
-                                onChanged: (value) {
-                                  dropdownProvider.currentValueTagDisciplina =
-                                      value!;
-                                },
-                              ),
-                              CustomDropdownButton<modelTwo.Value>(
-                                hintText: 'Turno *:',
-                                items: dropdownProvider.listTurnos,
-                                selectedItem: dropdownProvider.currentValueSlot,
-                                onChanged: (value) {
-                                  dropdownProvider.currentValueSlot = value!;
-                                },
-                              ),
-                            ],
-                          ),
+                            ),
+                            CustomDropdownButton<modelTwo.Value>(
+                              hintText: 'Disciplina *:',
+                              items: dropdownProvider.listDiciplinas,
+                              selectedItem:
+                                  dropdownProvider.currentValueTagDisciplina,
+                              onChanged: (value) {
+                                dropdownProvider.currentValueTagDisciplina =
+                                    value!;
+                              },
+                            ),
+                            CustomDropdownButton<modelTwo.Value>(
+                              hintText: 'Turno *:',
+                              items: dropdownProvider.listTurnos,
+                              selectedItem: dropdownProvider.currentValueSlot,
+                              onChanged: (value) {
+                                dropdownProvider.currentValueSlot = value!;
+                              },
+                            ),
+                          ],
                         ),
                       )),
                   Step(
@@ -275,13 +274,25 @@ class _StepperFormState extends State<StepperForm> {
                                 dropdownProvider.currentStateRisk = value!;
                               },
                             ),
-                            CustomDropdownButton<modelTwo.Value>(
-                              hintText: 'Riesgo *:',
-                              items: dropdownProvider.riskLevels,
-                              selectedItem: dropdownProvider.currentRisk,
-                              onChanged: (value) {
-                                dropdownProvider.currentStateRisk = value!;
-                              },
+                            Stack(
+                              children: [
+                                CustomDropdownButton<modelTwo.Value>(
+                                hintText: 'Riesgo *:',
+                                items: dropdownProvider.riskLevels,
+                                selectedItem: dropdownProvider.currentRisk,
+                                onChanged: (value) {
+                                  dropdownProvider.currentStateRisk = value!;
+                                },
+                              ),
+                              Positioned(
+                                top: 0,
+                                right: 0,
+                                  bottom: 0,
+                                  left: 0,
+                                child: Container(
+                                color: Colors.transparent,
+                              ))
+                              ],
                             ),
                             CustomDropdownButton<modelTwo.Value>(
                               hintText: 'Probabilidad *:',
@@ -309,7 +320,7 @@ class _StepperFormState extends State<StepperForm> {
                   Step(
                     isActive: value.currentStep == 2,
                     title: const Text(''),
-                    content: Container(
+                    content: SizedBox(
                       width: double.infinity,
                       child: ListView(
                         shrinkWrap: true,
