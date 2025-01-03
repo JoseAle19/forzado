@@ -34,14 +34,16 @@ class ModelThree {
 class Value implements DropDownItem {
   final int id;
   final String nombre;
+  final String apePaterno;
 
   Value({
     required this.id,
     required this.nombre,
+    required this.apePaterno,
   });
 
   @override
-  String getLabel() => nombre;
+  String getLabel() => nombre + ' ' + apePaterno;
 
   @override
   int get idT => id;
@@ -49,10 +51,12 @@ class Value implements DropDownItem {
   factory Value.fromJson(Map<String, dynamic> json) => Value(
         id: json["id"] ?? 0000,
         nombre: json["nombre"] ?? 'Sin informacion',
+        apePaterno: json["apePaterno"] ?? '',
       );
 
   Map<String, dynamic> toJson() => {
         "id": id,
         "nombre": nombre,
+        "apePaterno": apePaterno,
       };
 }

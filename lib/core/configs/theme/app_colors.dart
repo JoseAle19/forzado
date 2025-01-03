@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class AppColors {
-  static const primary = Color(0xff0030AE);
+  static const primary = Color(0xff1C3261);
   static const earringColor = Color(0xfffef2cd);
   static const approvedColor = Color(0xffd1f1da);
   static const refusedColor = Color(0xfffbdad7);

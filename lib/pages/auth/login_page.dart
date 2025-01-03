@@ -11,9 +11,6 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
- 
-
-
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
@@ -32,7 +29,7 @@ class _LoginPageState extends State<LoginPage> {
                             scale: 10,
                             alignment: Alignment.topLeft,
                             fit: BoxFit.cover,
-                            image: AssetImage('assets/login.png')),
+                            image: AssetImage('assets/bg-login.jpg')),
                         color: Colors.transparent,
                         borderRadius: BorderRadius.only(
                             bottomLeft: Radius.circular(100))),
@@ -49,7 +46,6 @@ class _LoginPageState extends State<LoginPage> {
                             controller: value.usernameController,
                             cursorColor: AppColors.primaryColor,
                             decoration: InputDecoration(
-                                // labelText: 'holas',
                                 border: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(50),
                                 ),
@@ -82,16 +78,10 @@ class _LoginPageState extends State<LoginPage> {
                               width: double.infinity,
                               decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(50),
-                                  gradient: const LinearGradient(
-                                      begin: Alignment.centerLeft,
-                                      end: Alignment.centerRight,
-                                      colors: [
-                                        Color(0xffB44002),
-                                        Color(0xffF57E3D)
-                                      ])),
+                                  color: AppColors.primaryColor),
                               padding: const EdgeInsets.symmetric(
                                 // horizontal: 60,
-                                vertical: 12,
+                                vertical: 6,
                               ),
                               child: const Text(
                                 'Siguiente',
@@ -117,7 +107,7 @@ class _LoginPageState extends State<LoginPage> {
                     color: const Color.fromARGB(184, 0, 0, 0),
                     child: const Center(
                       child: CircularProgressIndicator(
-                        color: AppColors.primaryColor,
+                        color: const Color(0xffc8a064),
                       ),
                     ))
                 : const SizedBox()

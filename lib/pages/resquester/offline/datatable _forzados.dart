@@ -137,7 +137,8 @@ class _ForzadosDataTableState extends State<ForzadosDataTable> {
             aprobador: forzado.aprobador!,
             ejecutor: forzado.ejecutor!,
             autorizacion: '1',
-            tipoForzado: forzado.tipoDeForzado!);
+            tipoForzado: forzado.tipoDeForzado!,
+            riesgoA: '');
 
         final transformedMap =
             data.toJson().map((key, value) => MapEntry(key, value.toString()));
@@ -188,8 +189,7 @@ class _ForzadosDataTableState extends State<ForzadosDataTable> {
       print('Error al guardar: $e');
     } finally {
       setState(() {
-      isLoading = false
-      ;        
+        isLoading = false;
       });
       if (box.isOpen) {
         await box.close();
@@ -199,17 +199,16 @@ class _ForzadosDataTableState extends State<ForzadosDataTable> {
 
   Future<void> deleteForzadoBox() async {
     try {
-       var box = await Hive.openBox<Forzado>(HiveBoxes.forzado);
+      var box = await Hive.openBox<Forzado>(HiveBoxes.forzado);
 
-       await box.clear();
+      await box.clear();
 
-       setState(() {
-        listForzado.clear();  
+      setState(() {
+        listForzado.clear();
       });
-
-     } catch (e) {
-     } finally {
-       try {
+    } catch (e) {
+    } finally {
+      try {
         if (Hive.isBoxOpen(HiveBoxes.forzado)) {
           await Hive.box(HiveBoxes.forzado).close();
         }
@@ -229,62 +228,68 @@ class _ForzadosDataTableState extends State<ForzadosDataTable> {
             icon: const Icon(Icons.sync),
           )
         ],
-        title: const  Text('Forzados offline'),
+        title: const Text('Forzados offline'),
       ),
       body: Stack(
         children: [
-        isLoading?const Center(child:  CircularProgressIndicator(),)   :listForzado.isEmpty
-              ? Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const Icon(
-                        Icons.info_outline,
-                        size: 80,
-                        color: Colors.grey,
-                      ),
-                      const SizedBox(height: 16),
-                      Text(
-                        'No hay forzados que sincronizar',
-                        style: TextStyle(
-                          fontSize: 18,
-                          color: Colors.grey[600],
-                          fontWeight: FontWeight.bold,
-                        ),
-                        textAlign: TextAlign.center,
-                      ),
-                    ],
-                  ),
+          isLoading
+              ? const Center(
+                  child: CircularProgressIndicator(),
                 )
-              : ListView.builder(
-                  itemCount: listForzado.length,
-                  itemBuilder: (context, index) {
-                    final forzado = listForzado[index];
-                    return Card(
-                      margin: const EdgeInsets.symmetric(
-                          vertical: 8, horizontal: 16),
-                      child: ListTile(
-                        title: Text(
-                          forzado.descripcion ?? 'Sin descripción',
-                          style: const TextStyle(fontWeight: FontWeight.bold),
-                        ),
-                        subtitle: Text('Centro: ${forzado.tagCentro ?? 'N/A'}'),
-                        trailing: Wrap(
-                          spacing: 8, // Espaciado entre botones
-                          children: [
-                            IconButton(
-                              icon:
-                                  const Icon(Icons.info_outline, color: Colors.blue),
-                              tooltip: 'Ver información',
-                              onPressed: () => verInformacion(context, forzado),
+              : listForzado.isEmpty
+                  ? Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const Icon(
+                            Icons.info_outline,
+                            size: 80,
+                            color: Colors.grey,
+                          ),
+                          const SizedBox(height: 16),
+                          Text(
+                            'No hay forzados que sincronizar',
+                            style: TextStyle(
+                              fontSize: 18,
+                              color: Colors.grey[600],
+                              fontWeight: FontWeight.bold,
                             ),
-                          
-                          ],
-                        ),
+                            textAlign: TextAlign.center,
+                          ),
+                        ],
                       ),
-                    );
-                  },
-                ),
+                    )
+                  : ListView.builder(
+                      itemCount: listForzado.length,
+                      itemBuilder: (context, index) {
+                        final forzado = listForzado[index];
+                        return Card(
+                          margin: const EdgeInsets.symmetric(
+                              vertical: 8, horizontal: 16),
+                          child: ListTile(
+                            title: Text(
+                              forzado.descripcion ?? 'Sin descripción',
+                              style:
+                                  const TextStyle(fontWeight: FontWeight.bold),
+                            ),
+                            subtitle:
+                                Text('Centro: ${forzado.tagCentro ?? 'N/A'}'),
+                            trailing: Wrap(
+                              spacing: 8, // Espaciado entre botones
+                              children: [
+                                IconButton(
+                                  icon: const Icon(Icons.info_outline,
+                                      color: Colors.blue),
+                                  tooltip: 'Ver información',
+                                  onPressed: () =>
+                                      verInformacion(context, forzado),
+                                ),
+                              ],
+                            ),
+                          ),
+                        );
+                      },
+                    ),
           // Indicador de carga
           if (isSync)
             Container(
@@ -293,8 +298,8 @@ class _ForzadosDataTableState extends State<ForzadosDataTable> {
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                     CircularProgressIndicator(),
-                     SizedBox(height: 16),
+                    CircularProgressIndicator(),
+                    SizedBox(height: 16),
                     Text(
                       'Sincronizando información...',
                       style: TextStyle(

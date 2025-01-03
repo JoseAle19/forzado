@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:forzado/core/configs/theme/app_colors.dart';
 
 class PasswordDialog extends StatelessWidget {
   final TextEditingController passwordController;
@@ -8,7 +9,7 @@ class PasswordDialog extends StatelessWidget {
   final VoidCallback onCancel;
   final VoidCallback onTogglePasswordView;
   final VoidCallback onUpdate;
-   final ValueChanged<String> onPasswordChanged;
+  final ValueChanged<String> onPasswordChanged;
 
   const PasswordDialog({
     Key? key,
@@ -85,15 +86,15 @@ class PasswordDialog extends StatelessWidget {
               ),
               ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: errorMessage.isEmpty &&
-                          passwordController.text.isNotEmpty
-                      ? Colors.blue
-                      : Colors.grey,
+                  backgroundColor:
+                      errorMessage.isEmpty && passwordController.text.isNotEmpty
+                          ? AppColors.primary
+                          : Colors.grey,
                 ),
-                onPressed: errorMessage.isEmpty &&
-                        passwordController.text.isNotEmpty
-                    ? onUpdate
-                    : null,
+                onPressed:
+                    errorMessage.isEmpty && passwordController.text.isNotEmpty
+                        ? onUpdate
+                        : null,
                 child: const Text(
                   'Actualizar',
                   style: TextStyle(color: Colors.white),

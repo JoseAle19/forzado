@@ -206,8 +206,8 @@ class _StepperFormOfflineState extends State<StepperFormOffline> {
                     child: Container(
                       decoration: BoxDecoration(
                         color: validation
-                            ? const Color(0xff009283)
-                            : const Color(0xff21378C),
+                            ? const Color(0xff001d39)
+                            : const Color(0xff001d39),
                         borderRadius: BorderRadius.circular(20),
                       ),
                       padding: const EdgeInsets.all(10),

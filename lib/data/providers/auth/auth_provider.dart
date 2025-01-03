@@ -22,15 +22,20 @@ class AuthProvider with ChangeNotifier {
   final passwordController = TextEditingController();
 
   bool isLoading = false;
-  bool isFirstLogIn = false;
+  bool _viewModalSync = true;
   bool viewPassword = true;
 
   ApiResponseDetailUser? _user; // _user ahora es opcional
   ApiResponseDetailUser? get user => _user;
-
+  bool get viewModalSync => _viewModalSync;
   Future<void> checkSession() async {
     _user = PreferencesHelper().getUser();
     notifyListeners();
+  }
+
+  void resetData() {
+    usernameController.clear();
+    passwordController.clear();
   }
 
   Future<ApiResponse> login(BuildContext context) async {
@@ -54,7 +59,7 @@ class AuthProvider with ChangeNotifier {
       final response = await http
           .post(
             Uri.parse(
-                'https://sntps2jn-3001.brs.devtunnels.ms/api/mobile/auth'),
+                'https://sntps2jn-3002.brs.devtunnels.ms/api/mobile/auth'),
             headers: headers,
             body: body,
           )
@@ -62,21 +67,24 @@ class AuthProvider with ChangeNotifier {
 
       isLoading = false;
       notifyListeners();
-
       if (response.statusCode == 200) {
+        resetData();
         final decodedToken = JwtDecoder.decode(response.body);
         final jwtModel = JwtModel.fromJson(decodedToken);
         await getUserByEmail(jwtModel.email, context);
-        return ApiResponse.success(message: 'Ahora validar rol');
+        return ApiResponse.success(message: 'Validando datos');
       } else if (response.statusCode == 500) {
         modal.showModal(
             context, 'Error interno del servidor', Colors.red, false);
         return ApiResponse.error(message: 'Error interno del servidor');
-      } else {
+      } else if (response.statusCode == 401) {
         modal.showModal(
             context, 'Usuario o contraseña inválidos', Colors.red, false);
-
         return ApiResponse.error(message: 'Usuario o contraseña inválidos');
+      } else {
+        modal.showModal(
+            context, 'Ocurrió un error inesperado', Colors.red, false);
+        return ApiResponse.error(message: 'Ocurrió un error inesperado');
       }
     } on TimeoutException {
       modal.showModal(
@@ -93,7 +101,7 @@ class AuthProvider with ChangeNotifier {
       modal.showModal(context, 'Error de red o conexión', Colors.orange, false);
       isLoading = false;
       notifyListeners();
-      return ApiResponse.error(message: 'Error de red o conexión: $e');
+      return ApiResponse.error(message: 'Error de red o conexión');
     }
   }
 
@@ -107,15 +115,19 @@ class AuthProvider with ChangeNotifier {
         '/api/usuarios/por-correo',
         jsonEncode({'email': email}),
       );
+      print(res.body);
 
       isLoading = false;
       notifyListeners();
 
       if (res.statusCode == 200) {
         ApiResponseDetailUser user = apiResponseDetailUserFromJson(res.body);
-
         if (user.flagNuevoIngreso == 1) {
-          showAboutDialog(context: context);
+          showPasswordDialog(context, user.id, () async {
+            await PreferencesHelper().setUser(user);
+            navigateHandleRole(user.role, context);
+          });
+
           return user;
         } else {
           await PreferencesHelper().setUser(user);
@@ -195,5 +207,11 @@ class AuthProvider with ChangeNotifier {
         );
       },
     );
+  }
+
+  // Quitar el modal: onClick
+  void toggleModalSync() {
+    _viewModalSync = !_viewModalSync;
+    notifyListeners();
   }
 }

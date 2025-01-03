@@ -1,10 +1,16 @@
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:forzado/core/urls.dart';
+import 'package:forzado/data/providers/dropdown/dropdown_provider.dart';
+import 'package:forzado/models/form/forzado/model_forzado.dart';
 import 'package:forzado/models/forzado/model_forzado.dart';
 import 'package:forzado/models/remove_forzado/model_list_remove.dart';
+import 'package:forzado/pages/steps_form/congratulation.dart';
+import 'package:forzado/pages/steps_form/step_form.dart';
 import 'package:forzado/services/api_client.dart';
+import 'package:forzado/widgets/modal_error.dart';
 import 'package:http/http.dart' as http;
 
 class ForzadosProvider with ChangeNotifier {
@@ -12,9 +18,13 @@ class ForzadosProvider with ChangeNotifier {
   String? _errorMessage;
   String? _errorMessageGetForados;
   List<ForzadoItem> _forzados = [];
+  Future<List<ForzadoItem>>? _futureForzados;
+
   // Atributo para manejar el mensaje de error
   String? get errorMessage => _errorMessage;
   String? get errorMessageGetForzados => _errorMessageGetForados;
+
+  Future<List<ForzadoItem>>? get futureForzados => _futureForzados;
 
   int _pendingHighCount = 0;
   int _pendingLowCount = 0;
@@ -96,23 +106,27 @@ class ForzadosProvider with ChangeNotifier {
 
   Future<List<ForzadoItem>> getForzados(String rol) async {
     try {
-      final res = await client.get(AppUrl.getListForzados).timeout(const Duration(seconds: 10));
+      final res = await client
+          .get(AppUrl.getListForzados)
+          .timeout(const Duration(seconds: 10));
       ForzadosModel decodeData = forzadosModelFromJson(res.body);
+
       if (res.statusCode == 200) {
         if (rol == 'ejecutor-alta') {
-          _forzados = _forzados
+          _forzados = decodeData.data!
               .where((f) => f.estado?.toLowerCase() == 'aprobado-alta')
               .toList();
         } else if (rol == 'aprobado-baja') {
-          _forzados = _forzados
+          _forzados = decodeData.data!
               .where((f) => f.estado?.toLowerCase() == 'aprobado-alta')
               .toList();
         } else if (rol == 'solicitante') {
-          _forzados = _forzados
+          _forzados = decodeData.data!
               .where((f) => f.estado?.toLowerCase() == 'ejecutado-alta')
               .toList();
+          return _forzados;
         } else if (rol == 'aprobador') {
-          _forzados = _forzados
+          _forzados = decodeData.data!
               .where((f) =>
                   f.estado?.toLowerCase() == 'pendiente-alta' ||
                   f.estado?.toLowerCase() == 'pendiente-baja')
@@ -134,8 +148,146 @@ class ForzadosProvider with ChangeNotifier {
     } finally {
       _isFetch = false;
       notifyListeners();
+      print('termino');
     }
 
     return _forzados;
+  }
+
+  Future<List<ForzadoItem>> getFutureForzados(String rol) {
+    _futureForzados ??= getForzados(rol);
+    return _futureForzados!;
+  }
+
+  void resetFutureForzados() {
+    _futureForzados = null;
+  }
+
+// Metodos post
+  bool _isFecthingPostData = false;
+  bool get isFetchingPostData => _isFecthingPostData;
+
+  String _errorMessagePost = '';
+  String get errorMessagePostData => _errorMessagePost;
+
+  Future<String> sendRequestPost(BuildContext context,
+      DropDownValuesManagerProvider dropdownProvider) async {
+    final data = InsertQueryParameters(
+      tagPrefijo: dropdownProvider.currentValueTagPrefijo!.id.toString(),
+      tagCentro: dropdownProvider.currentValueTagCentro!.id.toString(),
+      tagSubfijo: 'Default value',
+      descripcion: dropdownProvider.currentValueDescription,
+      disciplina: dropdownProvider.currentValueTagDisciplina!.id.toString(),
+      turno: dropdownProvider.currentValueSlot!.id.toString(),
+      interlockSeguridad: dropdownProvider.currentValueInterlock,
+      responsable: dropdownProvider.currentStateResponsibility!.id.toString(),
+      riesgoA: dropdownProvider.currentStateRisk!.id.toString(),
+      riesgo: dropdownProvider.currentRisk!.id.toString(),
+      probabilidad: dropdownProvider.currentStateProbability!.id.toString(),
+      impacto: dropdownProvider.currentStateImpact!.id.toString(),
+      solicitante: dropdownProvider.currentStateApplicant!.id.toString(),
+      aprobador: dropdownProvider.currentStateApprover!.id.toString(),
+      ejecutor: dropdownProvider.currentStateExecutor!.id.toString(),
+      autorizacion: 'Default value',
+      tipoForzado: dropdownProvider.currentStateTypeForzado!.id.toString(),
+    );
+    try {
+      ApiClient client = ApiClient();
+      _isFecthingPostData = true;
+      notifyListeners();
+      // print('Response: ${res.body}');
+      print(json.encode(data.toMap()));
+      final res =
+          await client.post(AppUrl.postAddForzado, json.encode(data.toMap()));
+      if (res.statusCode == 200) {
+        // para volver a contar los forzados
+        fetchCountForzados();
+        final route = MaterialPageRoute(
+          builder: (_) => CongratulationAnimation(
+            page: const StepperForm(),
+          ),
+        );
+        Navigator.pushReplacement(context, route);
+        _isFecthingPostData = false;
+        notifyListeners();
+      } else if (res.statusCode == 500) {
+        _errorMessagePost =
+            'Error interno del servidor. Por favor, intente más tarde.';
+        _isFecthingPostData = false;
+        notifyListeners();
+      } else {
+        _errorMessagePost = 'Error al enviar la solicitud. Intente nuevamente.';
+        _isFecthingPostData = false;
+        notifyListeners();
+      }
+    } on TimeoutException {
+      _errorMessagePost =
+          'La solicitud excedió el tiempo de espera. Intente nuevamente.';
+    } on http.ClientException {
+      _errorMessagePost = 'Error al conectar con el servidor.';
+    } catch (e) {
+      _errorMessagePost =
+          'Error interno del servidor. Por favor, intente más tarde.';
+    } finally {
+      _isFecthingPostData = false;
+      notifyListeners();
+    }
+    return errorMessagePostData;
+  }
+
+  // Validar step form 1
+  bool validateStepFormOne(DropDownValuesManagerProvider dropdownProvider) {
+    if (dropdownProvider.currentValueTagPrefijo == null) {
+      return false;
+    }
+    if (dropdownProvider.currentValueTagCentro == null) {
+      return false;
+    }
+    if (dropdownProvider.currentValueDescription.toString().isEmpty) {
+      return false;
+    }
+    if (dropdownProvider.currentValueTagDisciplina == null) {
+      return false;
+    }
+    if (dropdownProvider.currentValueSlot == null) {
+      return false;
+    }
+    return true;
+  }
+
+  bool validateStepFormTwo(DropDownValuesManagerProvider dropdownProvider) {
+    if (dropdownProvider.currentValueInterlock.isEmpty) {
+      return false;
+    }
+    if (dropdownProvider.currentStateResponsibility == null) {
+      return false;
+    }
+    if (dropdownProvider.currentStateRisk == null) {
+      return false;
+    }
+    if (dropdownProvider.currentStateProbability == null) {
+      return false;
+    }
+    if (dropdownProvider.currentStateImpact == null) {
+      return false;
+    }
+    return true;
+  }
+
+  // Validar step form 3
+  bool validateStepFormThree(DropDownValuesManagerProvider dropdownProvider) {
+    if (dropdownProvider.currentStateApplicant == null) {
+      return false;
+    }
+    if (dropdownProvider.currentStateApprover == null) {
+      return false;
+    }
+    if (dropdownProvider.currentStateExecutor == null) {
+      return false;
+    }
+    if (dropdownProvider.currentStateTypeForzado == null) {
+      return false;
+    }
+    return true;
   }
 }

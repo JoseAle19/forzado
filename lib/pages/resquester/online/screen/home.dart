@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:forzado/data/providers/auth/auth_provider.dart';
 import 'package:forzado/pages/resquester/offline/datatable%20_forzados.dart';
 import 'package:forzado/pages/resquester/offline/screens/bajas_forzado_offline.dart';
 import 'package:forzado/pages/resquester/online/screen/home_page.dart';
 import 'package:forzado/pages/steps_form/step_form.dart';
 import 'package:forzado/widgets/cards.dart';
-
+import 'package:provider/provider.dart';
 
 class PageOnline extends StatelessWidget {
   const PageOnline({
@@ -16,12 +17,15 @@ class PageOnline extends StatelessWidget {
   final Widget? widget;
   @override
   Widget build(BuildContext context) {
-    
-
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: ListView(physics: const BouncingScrollPhysics(), children: [
-        widget ?? const SizedBox(),
+        // Colocar el widget de sincronizacion
+        Consumer<AuthProvider>(
+          builder: (context, value, child) {
+            return value.viewModalSync ? widget! : const SizedBox();
+          },
+        ),
         GestureDetector(
           onTap: () {
             final route =
@@ -103,7 +107,7 @@ class PageOnline extends StatelessWidget {
           margin: const EdgeInsets.only(top: 40),
           padding: const EdgeInsets.symmetric(horizontal: 16),
           height: 40,
-          color: const Color(0xffD9D9D9),
+          color: const Color(0xff001d39),
           width: double.infinity,
           alignment: Alignment.center,
           child: const Text(
@@ -111,7 +115,7 @@ class PageOnline extends StatelessWidget {
             style: TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.w500,
-              color: Colors.black87,
+              color: Colors.white,
             ),
             textAlign: TextAlign.center,
           ),
@@ -188,53 +192,7 @@ class PageOnline extends StatelessWidget {
           color: const Color(0xffD9D9D9),
           width: double.infinity,
         ),
-
-const CardsDashBoard()
-
-        // FutureBuilder<ModelListForzados>(
-        //   future:
-        //       _ListServiceForzados.getDataByEndpoint(AppUrl.getListForzados),
-        //   builder: (BuildContext context,
-        //       AsyncSnapshot<ModelListForzados> snapshot) {
-        //     if (snapshot.connectionState == ConnectionState.waiting) {
-        //       return const Center(
-        //         child: CircularProgressIndicator(),
-        //       );
-        //     } else if (snapshot.hasError) {
-        //       // Manejando errores si el Future falla
-        //       String errorMessage = snapshot.error.toString();
-        //       return Column(
-        //         mainAxisAlignment: MainAxisAlignment.center,
-        //         children: [
-        //           const Icon(Icons.error, color: Colors.red, size: 50),
-        //           const SizedBox(height: 10),
-        //           Text(
-        //             errorMessage,
-        //             textAlign: TextAlign.center,
-        //             style: const TextStyle(color: Colors.red, fontSize: 16),
-        //           ),
-        //           const SizedBox(height: 20),
-        //           ElevatedButton(
-        //             onPressed: () {},
-        //             child: const Text('Reintentar'),
-        //           ),
-        //         ],
-        //       );
-        //     } else if (snapshot.hasData && snapshot.data != null) {
-        //       // Manejando datos si el Future retorna correctamente
-        //       ModelListForzados data = snapshot.data!;
-              // return CardsDashBoard(data: data);
-        //     } else {
-        //       // Caso en que no hay datos disponibles
-        //       return const Center(
-        //         child: Text(
-        //           "No hay datos disponibles.",
-        //           style: TextStyle(fontSize: 16),
-        //         ),
-        //       );
-        //     }
-        //   },
-        // )
+        const CardsDashBoard()
       ]),
     );
   }

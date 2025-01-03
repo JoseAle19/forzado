@@ -3,7 +3,6 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:forzado/services/api_client.dart';
-import 'package:http/http.dart' as http;
 
 class PasswordProvider with ChangeNotifier {
   final TextEditingController passwordController = TextEditingController();
@@ -17,8 +16,6 @@ class PasswordProvider with ChangeNotifier {
     notifyListeners();
   }
 
-
-
   void validatePassword(String value) {
     if (value.isEmpty) {
       errorMessage = 'La contraseña no puede estar vacía.';
@@ -30,10 +27,7 @@ class PasswordProvider with ChangeNotifier {
       errorMessage = '';
     }
     notifyListeners();
-
   }
-
-
 
   Future<void> updatePassword(int userId, VoidCallback onSuccess) async {
     if (passwordController.text.isEmpty || errorMessage.isNotEmpty) return;
@@ -65,8 +59,7 @@ class PasswordProvider with ChangeNotifier {
     }
   }
 
-
-  void clean(){
+  void clean() {
     passwordController.clear();
     errorMessage = '';
     notifyListeners();

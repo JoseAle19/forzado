@@ -7,6 +7,7 @@ class InsertQueryParameters {
   String turno;
   String interlockSeguridad;
   String responsable;
+  String riesgoA;
   String riesgo;
   String probabilidad;
   String impacto;
@@ -26,6 +27,7 @@ class InsertQueryParameters {
     required this.turno,
     required this.interlockSeguridad,
     required this.responsable,
+    required this.riesgoA,
     required this.riesgo,
     required this.probabilidad,
     required this.impacto,
@@ -47,6 +49,7 @@ class InsertQueryParameters {
       'turno': turno,
       'interlockSeguridad': interlockSeguridad,
       'responsable': responsable,
+      'riesgoA': riesgoA,
       'riesgo': riesgo,
       'probabilidad': probabilidad,
       'impacto': impacto,
@@ -69,6 +72,7 @@ class InsertQueryParameters {
       turno: map['turno'] ?? '',
       interlockSeguridad: map['interlockSeguridad'] ?? '',
       responsable: map['responsable'] ?? '',
+      riesgoA: map['riesgoA'] ?? '',
       riesgo: map['riesgo'] ?? '',
       probabilidad: map['probabilidad'] ?? '',
       impacto: map['impacto'] ?? '',
@@ -91,6 +95,7 @@ class InsertQueryParameters {
       'interlockSeguridad': interlockSeguridad,
       'responsable': responsable,
       'riesgo': riesgo,
+      'riesgoA': riesgoA,
       'probabilidad': probabilidad,
       'impacto': impacto,
       'solicitante': solicitante,
@@ -101,5 +106,3 @@ class InsertQueryParameters {
     };
   }
 }
-
-

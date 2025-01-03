@@ -17,7 +17,7 @@ class _HomePageRemoveState extends State<HomePageRemove> {
 
   @override
   Widget build(BuildContext context) {
-      final providerForzados = Provider.of<ForzadosProvider>(context);
+    final providerForzados = Provider.of<ForzadosProvider>(context);
 
     return Scaffold(
       appBar: AppBar(
@@ -48,7 +48,7 @@ class _HomePageRemoveState extends State<HomePageRemove> {
       body: Padding(
         padding: const EdgeInsets.all(20),
         child: FutureBuilder<List<ForzadoItem>>(
-          future: providerForzados.getForzados('solicitante'),
+          future: providerForzados.futureForzados,
           builder: (BuildContext context,
               AsyncSnapshot<List<ForzadoItem>> snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
@@ -58,25 +58,8 @@ class _HomePageRemoveState extends State<HomePageRemove> {
             } else if (snapshot.hasError) {
               // Manejando errores si el Future falla
               String errorMessage = snapshot.error.toString();
-              return Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Icon(Icons.error, color: Colors.red, size: 50),
-                  const SizedBox(height: 10),
-                  Text(
-                    errorMessage,
-                    textAlign: TextAlign.center,
-                    style: const TextStyle(color: Colors.red, fontSize: 16),
-                  ),
-                  const SizedBox(height: 20),
-                  ElevatedButton(
-                    onPressed: () {},
-                    child: const Text('Reintentar'),
-                  ),
-                ],
-              );
+              return ShowErrorFetch(errorMessage: errorMessage);
             } else if (snapshot.hasData && snapshot.data != null) {
-             
               return const Expanded(
                 child: ListForzado(),
               );
@@ -92,6 +75,36 @@ class _HomePageRemoveState extends State<HomePageRemove> {
           },
         ),
       ),
+    );
+  }
+}
+
+class ShowErrorFetch extends StatelessWidget {
+  const ShowErrorFetch({
+    super.key,
+    required this.errorMessage,
+  });
+
+  final String errorMessage;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        const Icon(Icons.error, color: Colors.red, size: 50),
+        const SizedBox(height: 10),
+        Text(
+          errorMessage,
+          textAlign: TextAlign.center,
+          style: const TextStyle(color: Colors.red, fontSize: 16),
+        ),
+        const SizedBox(height: 20),
+        ElevatedButton(
+          onPressed: () {},
+          child: const Text('Reintentar'),
+        ),
+      ],
     );
   }
 }

@@ -1,10 +1,10 @@
 class AppUrl {
   // Base URL del servidor
-  static const String url =
-      "https://sntps2jn-3001.brs.devtunnels.ms"; // Cambia según tu configuración
+  static const String url = "https://sntps2jn-3002.brs.devtunnels.ms";
+  // Cambia según tu configuración
 
   // Endpoints  para vitarme equivocacion de rutas
-  static const String login = "api/mobile/auth/";
+  static const String login = "/api/mobile/auth/";
 
   static const String gettagPrefijo1 = "/api/maestras/subarea";
   static const String getTagCentro1 = "/api/maestras/activo";
@@ -35,8 +35,5 @@ class AppUrl {
   static const String getAltaRechazar = "/api/solicitudes/alta/rechazar";
   static const String getBajaAprobar = "/api/solicitudes/baja/aprobar";
 
-
   static const String getForzadoByState = "/api/solicitudes/estado";
-
 }
- 
