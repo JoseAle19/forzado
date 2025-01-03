@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:forzado/core/utils/preferences_helper.dart';
 import 'package:forzado/data/providers/auth/auth_provider.dart';
+import 'package:forzado/data/providers/bottom/bottom_navigationbar_provider.dart';
 import 'package:forzado/data/providers/dropdown/dropdown_provider.dart';
 import 'package:forzado/data/providers/requester_provider.dart';
 import 'package:forzado/pages/auth/login_page.dart';
@@ -29,7 +30,7 @@ class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        bottomNavigationBar: const CustomBotttomNavigation(),
+        // bottomNavigationBar: const CustomBotttomNavigation(),
         appBar: AppBar(
           automaticallyImplyLeading: false,
           title: Consumer<AuthProvider>(
@@ -42,6 +43,7 @@ class _HomeState extends State<Home> {
           actions: [
             Consumer<RequesterHomeProvider>(
               builder: (context, value, child) {
+                print(value.isConnected);
                 return value.isConnected
                     ? IconButton(
                         onPressed: () async {
@@ -84,11 +86,21 @@ class CustomBotttomNavigation extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BottomNavigationBar(items: const [
-      BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Inicio'),
-      BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Perfil'),
-      BottomNavigationBarItem(
-          icon: Icon(Icons.settings), label: 'Configuración'),
-    ]);
+    return Consumer<BottomNavigationBarProvider>(
+      builder: (context, value, child) {
+        return BottomNavigationBar(
+            currentIndex: value.currentIndex,
+            onTap: (index) {
+              value.setIndex(index);
+              Provider.of<RequesterHomeProvider>(context, listen: false)
+                  .pageController
+                  .jumpToPage(index);
+            },
+          items: const [
+          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Inicio'),
+          BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Perfil'),
+        ]);
+      },
+    );
   }
 }

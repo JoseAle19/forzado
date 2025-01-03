@@ -26,10 +26,14 @@ class RequesterHomeProvider with ChangeNotifier {
   Future<void> _verifyConnection() async {
     final List<ConnectivityResult> connectivityResult =
         await (Connectivity().checkConnectivity());
-    if (connectivityResult.contains(ConnectivityResult.wifi)) {
+    if (connectivityResult.contains(ConnectivityResult.wifi)
+        || connectivityResult.contains(ConnectivityResult.ethernet)
+    ) {
       isConnected = true;
+      notifyListeners();
     } else {
       isConnected = false;
+      notifyListeners();
     }
   }
 

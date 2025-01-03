@@ -7,10 +7,7 @@ import 'package:forzado/data/providers/dropdown/dropdown_provider.dart';
 import 'package:forzado/models/form/forzado/model_forzado.dart';
 import 'package:forzado/models/forzado/model_forzado.dart';
 import 'package:forzado/models/remove_forzado/model_list_remove.dart';
-import 'package:forzado/pages/steps_form/congratulation.dart';
-import 'package:forzado/pages/steps_form/step_form.dart';
 import 'package:forzado/services/api_client.dart';
-import 'package:forzado/widgets/modal_error.dart';
 import 'package:http/http.dart' as http;
 
 class ForzadosProvider with ChangeNotifier {
@@ -170,7 +167,7 @@ class ForzadosProvider with ChangeNotifier {
   String _errorMessagePost = '';
   String get errorMessagePostData => _errorMessagePost;
 
-  Future<String> sendRequestPost(BuildContext context,
+  Future<bool> sendRequestPost(BuildContext context,
       DropDownValuesManagerProvider dropdownProvider) async {
     final data = InsertQueryParameters(
       tagPrefijo: dropdownProvider.currentValueTagPrefijo!.id.toString(),
@@ -195,44 +192,46 @@ class ForzadosProvider with ChangeNotifier {
       ApiClient client = ApiClient();
       _isFecthingPostData = true;
       notifyListeners();
-      // print('Response: ${res.body}');
-      print(json.encode(data.toMap()));
       final res =
           await client.post(AppUrl.postAddForzado, json.encode(data.toMap()));
       if (res.statusCode == 200) {
         // para volver a contar los forzados
-        fetchCountForzados();
-        final route = MaterialPageRoute(
-          builder: (_) => CongratulationAnimation(
-            page: const StepperForm(),
-          ),
-        );
-        Navigator.pushReplacement(context, route);
+          
         _isFecthingPostData = false;
         notifyListeners();
+        return true;
       } else if (res.statusCode == 500) {
         _errorMessagePost =
             'Error interno del servidor. Por favor, intente más tarde.';
         _isFecthingPostData = false;
         notifyListeners();
+        return false;
       } else {
         _errorMessagePost = 'Error al enviar la solicitud. Intente nuevamente.';
         _isFecthingPostData = false;
         notifyListeners();
+        return false;
       }
+
     } on TimeoutException {
       _errorMessagePost =
           'La solicitud excedió el tiempo de espera. Intente nuevamente.';
+                  return false;
+
     } on http.ClientException {
       _errorMessagePost = 'Error al conectar con el servidor.';
+              return false;
+
     } catch (e) {
       _errorMessagePost =
           'Error interno del servidor. Por favor, intente más tarde.';
+                  return false;
+
     } finally {
       _isFecthingPostData = false;
       notifyListeners();
     }
-    return errorMessagePostData;
+    // return errorMessagePostData;
   }
 
   // Validar step form 1
@@ -290,4 +289,7 @@ class ForzadosProvider with ChangeNotifier {
     }
     return true;
   }
+
+
+  
 }

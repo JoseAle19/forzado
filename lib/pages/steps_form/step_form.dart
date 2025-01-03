@@ -1,15 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:forzado/core/app_styles.dart';
 import 'package:forzado/core/configs/theme/app_colors.dart';
+import 'package:forzado/data/providers/Stepper/stepper_provider.dart';
 import 'package:forzado/data/providers/dropdown/dropdown_provider.dart';
 import 'package:forzado/data/providers/forzados/forzados_provider.dart';
 import 'package:forzado/models/model_one.dart' as modelone;
 import 'package:forzado/models/model_three.dart' as modelThree;
 import 'package:forzado/models/model_two.dart' as modelTwo;
-// import 'package:forzado/services/api_client.dart';
-// import 'package:forzado/services/service_one.dart';
-// import 'package:forzado/services/service_three.dart';
-// import 'package:forzado/services/service_two.dart';
+import 'package:forzado/pages/steps_form/congratulation.dart';
 import 'package:forzado/widgets/custom_dropdown_button.dart';
 import 'package:forzado/widgets/modal_error.dart';
 import 'package:provider/provider.dart';
@@ -21,105 +19,14 @@ class StepperForm extends StatefulWidget {
   State<StepperForm> createState() => _StepperFormState();
 }
 
-enum ValueType {
-  tagPrefijo,
-  tagCentro,
-  description,
-  tagDisciplina,
-  slot,
-  segurity,
-  responsability,
-  risk,
-  probability,
-  impact,
-  applicant,
-  approver,
-  executor,
-  forzado,
-}
-
 class _StepperFormState extends State<StepperForm> {
-  // first screen
-  String currentValueTagPrefijo = "";
-  String currentValueTagCentro = "";
-  String currentValueDescription = "";
-  String currentValueTagDisciplina = "";
-  String currentValueSlot = "";
-  // second pantalla
-  String currentValueSegurity = "";
-  String currentStateResponsability = '';
-  String currentStateRisk = '';
-  String currentStateProbability = '';
-  String currentStateImpact = '';
-  // third screen
-  String currentStateapplicant = '';
-  String currentStateapprover = '';
-  String currentStateexecutor = '';
-  String currentStateForzado = '';
 
-  int _currentState = 0;
-
-// Jose: valor para validar si esta o no haciendo la peticion
-  // bool forzadosProvider.isFetchingPostData = false;
-  // void _updateCurrentValue(ValueType valueType, String newValue) {
-  //   setState(() {
-  //     switch (valueType) {
-  //       case ValueType.tagPrefijo:
-  //         currentValueTagPrefijo = newValue;
-  //         break;
-  //       case ValueType.tagCentro:
-  //         currentValueTagCentro = newValue;
-  //         break;
-  //       case ValueType.description:
-  //         currentValueDescription = newValue;
-  //         break;
-  //       case ValueType.tagDisciplina:
-  //         currentValueTagDisciplina = newValue;
-  //         break;
-  //       case ValueType.slot:
-  //         currentValueSlot = newValue;
-  //         break;
-  //       case ValueType.segurity:
-  //         currentValueSegurity = newValue;
-  //         break;
-  //       case ValueType.responsability:
-  //         currentStateResponsability = newValue;
-  //         break;
-  //       case ValueType.risk:
-  //         currentStateRisk = newValue;
-  //         break;
-  //       case ValueType.probability:
-  //         currentStateProbability = newValue;
-  //         break;
-  //       case ValueType.impact:
-  //         currentStateImpact = newValue;
-  //         break;
-  //       case ValueType.applicant:
-  //         currentStateapplicant = newValue;
-  //         break;
-  //       case ValueType.approver:
-  //         currentStateapprover = newValue;
-  //         break;
-  //       case ValueType.executor:
-  //         currentStateexecutor = newValue;
-  //         break;
-  //       case ValueType.forzado:
-  //         currentStateForzado = newValue;
-  //         break;
-  //     }
-  //   });
-  // }
-
-// Jose: Mostrar error si lo hay al realizar la peticion
   String error = '';
   @override
   Widget build(BuildContext context) {
     final forzadosProvider = Provider.of<ForzadosProvider>(context);
     final dropdownProvider =
         Provider.of<DropDownValuesManagerProvider>(context);
-    // ServiceOne serviceOne = ServiceOne(ApiClient());
-    // ServiceTwo serviceTwo = ServiceTwo(ApiClient());
-    // ServiceThree serviceThree = ServiceThree(ApiClient());
 
     return Scaffold(
       appBar: AppBar(
@@ -127,6 +34,7 @@ class _StepperFormState extends State<StepperForm> {
         leading: IconButton(
           onPressed: () {
             Navigator.pop(context);
+            
           },
           icon: const Icon(Icons.arrow_back_ios),
         ),
@@ -134,548 +42,333 @@ class _StepperFormState extends State<StepperForm> {
       body: Center(
           child: Stack(
         children: [
-          Stepper(
-            stepIconHeight: 30,
-            stepIconWidth: 30,
-            stepIconBuilder: (stepIndex, stepState) {
-              return stepIndex == 0
-                  ? Container(
-                      width: double.infinity,
-                      height: double.infinity,
-                      decoration: BoxDecoration(
-                          color: AppColors.primary,
-                          borderRadius: BorderRadius.circular(20)),
-                      child: const Center(
-                        child: Text(
-                          '1',
-                          style: TextStyle(color: Colors.white),
-                          textAlign: TextAlign.center,
-                        ),
-                      ))
-                  : stepIndex == 1
-                      ? Container(
-                          width: double.infinity,
-                          height: double.infinity,
-                          decoration: BoxDecoration(
-                              color: AppColors.primary,
-                              borderRadius: BorderRadius.circular(20)),
-                          child: const Center(
-                            child: Text(
-                              '2',
-                              style: TextStyle(color: Colors.white),
-                              textAlign: TextAlign.center,
-                            ),
-                          ))
-                      : Container(
-                          width: double.infinity,
-                          height: double.infinity,
-                          decoration: BoxDecoration(
-                              color: AppColors.primary,
-                              borderRadius: BorderRadius.circular(20)),
-                          child: const Center(
-                            child: Text(
-                              '3',
-                              style: TextStyle(color: Colors.white),
-                              textAlign: TextAlign.center,
-                            ),
-                          ));
-            },
-            controlsBuilder: (context, details) {
-              bool validation = details.currentStep != 2 ? true : false;
-              return GestureDetector(
-                onTap: () async {
-                  if (forzadosProvider.isFetchingPostData) {
-                    return null;
-                  }
-                  // Validar Dropdown
-                  if (details.currentStep == 0
-                      ? forzadosProvider.validateStepFormOne(dropdownProvider)
-                      : details.currentStep == 1
+          Consumer<StepperProvider>(
+            builder: (context, value, child) {
+              return Stepper(
+                stepIconHeight: 30,
+                stepIconWidth: 30,
+                stepIconBuilder: (stepIndex, stepState) =>
+                    _stepperIcons(stepIndex, stepState), // Iconos de los steps
+                controlsBuilder: (context, details) {
+                  bool validation = details.currentStep != 2 ? true : false;
+                  return GestureDetector(
+                    onTap: () async {
+                      if (forzadosProvider.isFetchingPostData) {
+                        return;
+                      }
+                      // Validar Dropdown
+                      if (details.currentStep == 0
                           ? forzadosProvider
-                              .validateStepFormTwo(dropdownProvider)
-                          : forzadosProvider
-                              .validateStepFormThree(dropdownProvider)) {
-                    if (validation) {
-                      details.onStepContinue!();
-                    } else {
-                      // Future<void> sendRequestPost() async {
-                      //   final data = InsertQueryParameters(
-                      //       tagPrefijo: currentValueTagPrefijo,
-                      //       tagCentro: currentValueTagCentro,
-                      //       tagSubfijo: '1',
-                      //       descripcion: currentValueDescription,
-                      //       disciplina: currentValueTagDisciplina,
-                      //       turno: currentValueSlot,
-                      //       interlockSeguridad: currentValueSegurity,
-                      //       responsable: currentStateResponsability,
-                      //       riesgo: currentStateRisk,
-                      //       probabilidad: currentStateResponsability,
-                      //       impacto: currentStateImpact,
-                      //       solicitante: currentStateapplicant,
-                      //       aprobador: currentStateapprover,
-                      //       ejecutor: currentStateexecutor,
-                      //       autorizacion: '1',
-                      //       tipoForzado: currentStateForzado);
-                      //   try {
-                      //     setState(() {
-                      //       forzadosProvider.isFetchingPostData = true;
-                      //     });
-
-                      //     ApiClient client = new ApiClient();
-                      //     final response = await client.post(
-                      //         AppUrl.postAddForzado, json.encode(data.toMap()));
-
-                      //     if (response.statusCode == 200) {
-                      //       forzadosProvider.fetchCountForzados();
-                      //       final route = MaterialPageRoute(
-                      //           builder: (_) => CongratulationAnimation(
-                      //                 page: const StepperForm(),
-                      //               ));
-                      //       Navigator.pushReplacement(context, route);
-                      //       setState(() {
-                      //         forzadosProvider.isFetchingPostData = false;
-                      //       });
-                      //     } else {
-                      //       setState(() {
-                      //         error = 'Error al realizar la petición';
-                      //       });
-                      //       CustomModal modal = CustomModal();
-                      //       modal.showModal(
-                      //           context,
-                      //           'Error al realizar la petición',
-                      //           Colors.redAccent,
-                      //           false);
-
-                      //       setState(() {
-                      //         forzadosProvider.isFetchingPostData = false;
-                      //       });
-                      //     }
-                      //   } catch (e) {
-                      //     print(e);
-                      //     CustomModal modal = CustomModal();
-                      //     modal.showModal(context, 'Contacte a soporte',
-                      //         Colors.redAccent, false);
-
-                      //     setState(() {
-                      //       forzadosProvider.isFetchingPostData = false;
-                      //     });
-                      //   }
-                      // }
-
-                      final res = await forzadosProvider.sendRequestPost(
-                          context, dropdownProvider);
-                      print(res.toString());
-                    }
-                  } else {
-                    CustomModal modal = CustomModal();
-                    modal.showModal(context, 'Completa todos los campos',
-                        Colors.redAccent, false);
-                  }
-                },
-                child: AnimatedContainer(
-                  duration: const Duration(milliseconds: 400),
-                  decoration: BoxDecoration(
-                      color: validation
-                          ? const Color(0xff001d39)
-                          : forzadosProvider.isFetchingPostData
-                              ? const Color.fromARGB(255, 51, 52, 57)
-                              : const Color(0xff21378C),
-                      borderRadius: BorderRadius.circular(20)),
-                  padding: const EdgeInsets.all(10),
-                  margin: const EdgeInsets.symmetric(vertical: 20),
-                  child: Center(
-                      child: Text(
-                    validation
-                        ? 'Continuar'
-                        : forzadosProvider.isFetchingPostData == true
-                            ? 'Espera'
-                            : 'Finalizar',
-                    style: AppStyles.textStyle,
-                  )),
-                ),
-              );
-            },
-            type: StepperType.horizontal,
-            currentStep: _currentState,
-            steps: [
-              Step(
-                  isActive: _currentState == 0,
-                  title: const Text(''),
-                  content: Expanded(
-                    child: Container(
-                      width: double.infinity,
-                      height: MediaQuery.of(context).size.height * .6,
-                      child: ListView(
-                        physics: const BouncingScrollPhysics(),
-                        shrinkWrap: true,
-                        children: [
-                          CustomDropdownButton<modelone.Value>(
-                            hintText: 'Prefijo del Tag o Sub Área',
-                            items: dropdownProvider.listPrefijos,
-                            selectedItem:
-                                dropdownProvider.currentValueTagPrefijo,
-                            onChanged: (value) {
-                              dropdownProvider.currentValueTagPrefijo = value!;
-                            },
-                          ),
-                          CustomDropdownButton<modelone.Value>(
-                            hintText: 'Tag (centro) *:',
-                            items: dropdownProvider.listCentros,
-                            selectedItem:
-                                dropdownProvider.currentValueTagCentro,
-                            onChanged: (value) {
-                              dropdownProvider.currentValueTagCentro = value!;
-                            },
-                          ),
-                          // CustomDropDownButtonOne(
-                          //     onChanged: (value) => _updateCurrentValue(
-                          //         ValueType.tagPrefijo, value),
-                          //     currentValue: currentValueTagPrefijo,
-                          //     service: serviceOne,
-                          //     descriptionField: 'Tag (Prefijo) *',
-                          //     hintText: 'Prefijo del Tag o Sub Área',
-                          //     endPoint: AppUrl.gettagPrefijo1),
-                          // CustomDropDownButtonOne(
-                          //     onChanged: (value) => _updateCurrentValue(
-                          //         ValueType.tagCentro, value),
-                          //     currentValue: currentValueTagCentro,
-                          //     service: serviceOne,
-                          //     descriptionField: 'Tag (Centro) *',
-                          //     hintText:
-                          //         'Parte Central  del Tag Asoc. al instrumento o Equipo',
-                          //     endPoint: AppUrl.getTagCentro1),
-                          Container(
-                            margin: const EdgeInsets.symmetric(vertical: 20),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                const Text('Descripción *'),
-                                const SizedBox(
-                                  height: 5,
-                                ),
-                                TextFormField(
-                                  initialValue:
-                                      dropdownProvider.currentValueDescription,
-                                  onChanged: (value) => dropdownProvider
-                                      .currentValueDescription = value,
-                                  maxLength: 100,
-                                  maxLines: 2,
-                                  decoration: InputDecoration(
-                                    hintText: 'Agregue una descripción',
-                                    border: OutlineInputBorder(
-                                      borderSide: BorderSide(
-                                          color: Colors.grey.shade50),
-                                      borderRadius: const BorderRadius.all(
-                                          Radius.circular(10)),
-                                    ),
-                                    contentPadding: const EdgeInsets.symmetric(
-                                        horizontal: 5, vertical: 15),
-                                  ),
-                                )
-                              ],
-                            ),
-                          ),
-                          CustomDropdownButton<modelTwo.Value>(
-                            hintText: 'Disciplina *:',
-                            items: dropdownProvider.listDiciplinas,
-                            selectedItem:
-                                dropdownProvider.currentValueTagDisciplina,
-                            onChanged: (value) {
-                              dropdownProvider.currentValueTagDisciplina =
-                                  value!;
-                            },
-                          ),
-                          CustomDropdownButton<modelTwo.Value>(
-                            hintText: 'Turno *:',
-                            items: dropdownProvider.listTurnos,
-                            selectedItem: dropdownProvider.currentValueSlot,
-                            onChanged: (value) {
-                              dropdownProvider.currentValueSlot = value!;
-                            },
-                          ),
-
-                          // CustomDropDownButtonTwo(
-                          //     onChanged: (value) =>
-                          //         _updateCurrentValue(ValueType.slot, value),
-                          //     currentValue: currentValueSlot,
-                          //     service: serviceTwo,
-                          //     descriptionField: 'Turno *',
-                          //     hintText: 'Turno',
-                          //     endPoint: AppUrl.getTurno2),
-                        ],
-                      ),
+                              .validateStepFormOne(dropdownProvider)
+                          : details.currentStep == 1
+                              ? forzadosProvider
+                                  .validateStepFormTwo(dropdownProvider)
+                              : forzadosProvider
+                                  .validateStepFormThree(dropdownProvider)) {
+                        if (validation) {
+                          details.onStepContinue!();
+                        } else {
+                          final res = await forzadosProvider.sendRequestPost(
+                              context, dropdownProvider);
+                          if (!res) {
+                            CustomModal().showModal(
+                                context,
+                                forzadosProvider.errorMessagePostData,
+                                Colors.red,
+                                false);
+                          } else {
+                            final route = MaterialPageRoute(
+                                builder: (_) => CongratulationAnimation(
+                                      page: const StepperForm(),
+                                    ));
+                            Navigator.pushReplacement(context, route);
+                            dropdownProvider.clearValues();
+                          }
+                        }
+                      } else {
+                        CustomModal modal = CustomModal();
+                        modal.showModal(context, 'Completa todos los campos',
+                            Colors.redAccent, false);
+                      }
+                    },
+                    child: AnimatedContainer(
+                      duration: const Duration(milliseconds: 400),
+                      decoration: BoxDecoration(
+                          color: validation
+                              ? const Color(0xff001d39)
+                              : forzadosProvider.isFetchingPostData
+                                  ? const Color.fromARGB(255, 51, 52, 57)
+                                  : const Color(0xff21378C),
+                          borderRadius: BorderRadius.circular(20)),
+                      padding: const EdgeInsets.all(10),
+                      margin: const EdgeInsets.symmetric(vertical: 20),
+                      child: Center(
+                          child: Text(
+                        validation
+                            ? 'Continuar'
+                            : forzadosProvider.isFetchingPostData == true
+                                ? 'Espera'
+                                : 'Finalizar',
+                        style: AppStyles.textStyle,
+                      )),
                     ),
-                  )),
-              Step(
-                  isActive: _currentState == 1,
-                  title: const Text(''),
-                  content: SizedBox(
-                    width: double.infinity,
-                    height: MediaQuery.of(context).size.height * .6,
-                    child: ListView(
-                      shrinkWrap: true,
-                      children: [
-                        Container(
-                          margin: const EdgeInsets.only(bottom: 20),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
+                  );
+                },
+                steps: [
+                  Step(
+                      isActive: value.currentStep == 0,
+                      title: const Text(''),
+                      content: Expanded(
+                        child: SizedBox(
+                          width: double.infinity,
+                          height: MediaQuery.of(context).size.height * .6,
+                          child: ListView(
+                            physics: const BouncingScrollPhysics(),
+                            shrinkWrap: true,
                             children: [
-                              const Text('Iterlock Seguridad *'),
-                              const SizedBox(
-                                height: 5,
-                              ),
-                              DropdownButtonFormField(
-                                value: dropdownProvider
-                                        .currentValueInterlock.isEmpty
-                                    ? null
-                                    : dropdownProvider.currentValueInterlock,
-                                hint: const Text('Seleccione Interlock'),
-                                items: const [
-                                  DropdownMenuItem(
-                                      value: 'si', child: Text('Si')),
-                                  DropdownMenuItem(
-                                      value: 'NO', child: Text('No')),
-                                ],
-                                validator: (value) {
-                                  if (value!.isEmpty) {
-                                    return 'Seleccione una opcion';
-                                  }
-                                  return '';
-                                },
+                              CustomDropdownButton<modelone.Value>(
+                                hintText: 'Prefijo del Tag o Sub Área',
+                                items: dropdownProvider.listPrefijos,
+                                selectedItem:
+                                    dropdownProvider.currentValueTagPrefijo,
                                 onChanged: (value) {
-                                  dropdownProvider.currentValueInterlock =
-                                      value.toString();
+                                  dropdownProvider.currentValueTagPrefijo =
+                                      value!;
                                 },
-                                decoration: InputDecoration(
-                                  border: OutlineInputBorder(
-                                    borderSide:
-                                        BorderSide(color: Colors.grey.shade50),
-                                    borderRadius: const BorderRadius.all(
-                                        Radius.circular(10)),
-                                  ),
-                                  contentPadding: const EdgeInsets.symmetric(
-                                      horizontal: 5, vertical: 15),
+                              ),
+                              CustomDropdownButton<modelone.Value>(
+                                hintText: 'Tag (centro) *:',
+                                items: dropdownProvider.listCentros,
+                                selectedItem:
+                                    dropdownProvider.currentValueTagCentro,
+                                onChanged: (value) {
+                                  dropdownProvider.currentValueTagCentro =
+                                      value!;
+                                },
+                              ),
+                              Container(
+                                margin:
+                                    const EdgeInsets.symmetric(vertical: 20),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    const Text('Descripción *'),
+                                    const SizedBox(
+                                      height: 5,
+                                    ),
+                                    TextFormField(
+                                      initialValue: dropdownProvider
+                                          .currentValueDescription,
+                                      onChanged: (value) => dropdownProvider
+                                          .currentValueDescription = value,
+                                      maxLength: 100,
+                                      maxLines: 2,
+                                      decoration: InputDecoration(
+                                        hintText: 'Agregue una descripción',
+                                        border: OutlineInputBorder(
+                                          borderSide: BorderSide(
+                                              color: Colors.grey.shade50),
+                                          borderRadius: const BorderRadius.all(
+                                              Radius.circular(10)),
+                                        ),
+                                        contentPadding:
+                                            const EdgeInsets.symmetric(
+                                                horizontal: 5, vertical: 15),
+                                      ),
+                                    )
+                                  ],
                                 ),
+                              ),
+                              CustomDropdownButton<modelTwo.Value>(
+                                hintText: 'Disciplina *:',
+                                items: dropdownProvider.listDiciplinas,
+                                selectedItem:
+                                    dropdownProvider.currentValueTagDisciplina,
+                                onChanged: (value) {
+                                  dropdownProvider.currentValueTagDisciplina =
+                                      value!;
+                                },
+                              ),
+                              CustomDropdownButton<modelTwo.Value>(
+                                hintText: 'Turno *:',
+                                items: dropdownProvider.listTurnos,
+                                selectedItem: dropdownProvider.currentValueSlot,
+                                onChanged: (value) {
+                                  dropdownProvider.currentValueSlot = value!;
+                                },
                               ),
                             ],
                           ),
                         ),
-                        CustomDropdownButton<modelThree.Value>(
-                          hintText: 'Responsable *:',
-                          items: dropdownProvider.listResponsables,
-                          selectedItem:
-                              dropdownProvider.currentStateResponsibility,
-                          onChanged: (value) {
-                            dropdownProvider.currentStateResponsibility =
-                                value!;
-                          },
+                      )),
+                  Step(
+                      isActive: value.currentStep == 1,
+                      title: const Text(''),
+                      content: SizedBox(
+                        width: double.infinity,
+                        height: MediaQuery.of(context).size.height * .6,
+                        child: ListView(
+                          shrinkWrap: true,
+                          children: [
+                            Container(
+                              margin: const EdgeInsets.only(bottom: 20),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  const Text('Iterlock Seguridad *'),
+                                  const SizedBox(
+                                    height: 5,
+                                  ),
+                                  DropdownButtonFormField(
+                                    value: dropdownProvider
+                                            .currentValueInterlock.isEmpty
+                                        ? null
+                                        : dropdownProvider
+                                            .currentValueInterlock,
+                                    hint: const Text('Seleccione Interlock'),
+                                    items: const [
+                                      DropdownMenuItem(
+                                          value: 'si', child: Text('Si')),
+                                      DropdownMenuItem(
+                                          value: 'NO', child: Text('No')),
+                                    ],
+                                    validator: (value) {
+                                      if (value!.isEmpty) {
+                                        return 'Seleccione una opcion';
+                                      }
+                                      return '';
+                                    },
+                                    onChanged: (value) {
+                                      dropdownProvider.currentValueInterlock =
+                                          value.toString();
+                                    },
+                                    decoration: InputDecoration(
+                                      border: OutlineInputBorder(
+                                        borderSide: BorderSide(
+                                            color: Colors.grey.shade50),
+                                        borderRadius: const BorderRadius.all(
+                                            Radius.circular(10)),
+                                      ),
+                                      contentPadding:
+                                          const EdgeInsets.symmetric(
+                                              horizontal: 5, vertical: 15),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            CustomDropdownButton<modelThree.Value>(
+                              hintText: 'Responsable *:',
+                              items: dropdownProvider.listResponsables,
+                              selectedItem:
+                                  dropdownProvider.currentStateResponsibility,
+                              onChanged: (value) {
+                                dropdownProvider.currentStateResponsibility =
+                                    value!;
+                              },
+                            ),
+                            CustomDropdownButton<modelTwo.Value>(
+                              hintText: 'Riesgo A *:',
+                              items: dropdownProvider.listRiesgos,
+                              selectedItem: dropdownProvider.currentStateRisk,
+                              onChanged: (value) {
+                                dropdownProvider.currentStateRisk = value!;
+                              },
+                            ),
+                            CustomDropdownButton<modelTwo.Value>(
+                              hintText: 'Riesgo *:',
+                              items: dropdownProvider.riskLevels,
+                              selectedItem: dropdownProvider.currentRisk,
+                              onChanged: (value) {
+                                dropdownProvider.currentStateRisk = value!;
+                              },
+                            ),
+                            CustomDropdownButton<modelTwo.Value>(
+                              hintText: 'Probabilidad *:',
+                              items: dropdownProvider.listProbabilidades,
+                              selectedItem:
+                                  dropdownProvider.currentStateProbability,
+                              onChanged: (value) {
+                                dropdownProvider.currentStateProbability =
+                                    value!;
+                                dropdownProvider.defineRisk();
+                              },
+                            ),
+                            CustomDropdownButton<modelTwo.Value>(
+                              hintText: 'Impacto *:',
+                              items: dropdownProvider.listImpactos,
+                              selectedItem: dropdownProvider.currentStateImpact,
+                              onChanged: (value) {
+                                dropdownProvider.currentStateImpact = value!;
+                                dropdownProvider.defineRisk();
+                              },
+                            ),
+                          ],
                         ),
-                        // CustomDropDownButtonThree(
-                        //     onChanged: (value) => _updateCurrentValue(
-                        //         ValueType.responsability, value),
-                        //     currentValue: currentStateResponsability,
-                        //     service: serviceThree,
-                        //     descriptionField: 'Responsable *',
-                        //     hintText:
-                        //         'Seleccione Gerencia Responsable del Forzado',
-                        //     endPoint: AppUrl.getResponsable3),
-                        CustomDropdownButton<modelTwo.Value>(
-                          hintText: 'Riesgo A *:',
-                          items: dropdownProvider.listRiesgos,
-                          selectedItem: dropdownProvider.currentStateRisk,
-                          onChanged: (value) {
-                            dropdownProvider.currentStateRisk = value!;
-                          },
-                        ),
-                        CustomDropdownButton<modelTwo.Value>(
-                          hintText: 'Riesgo *:',
-                          items: dropdownProvider.riskLevels,
-                          selectedItem: dropdownProvider.currentRisk,
-                          onChanged: (value) {
-                            dropdownProvider.currentStateRisk = value!;
-                          },
-                        ),
-
-                        // Container(
-                        //   margin: const EdgeInsets.only(bottom: 20),
-                        //   child: Column(
-                        //     crossAxisAlignment: CrossAxisAlignment.start,
-                        //     children: [
-                        //       const Text('Riesgo'),
-                        //       const SizedBox(
-                        //         height: 5,
-                        //       ),
-                        //       DropdownButtonFormField(
-                        //         value: dropdownProvider.defineRisk().isEmpty
-                        //             ? null
-                        //             : dropdownProvider.defineRisk(),
-                        //         hint: const Text('Riesgo'),
-                        //         items: const [
-                        //           DropdownMenuItem(
-                        //               value: 'Moderado',
-                        //               child: Text('Moderado')),
-                        //           DropdownMenuItem(
-                        //               value: 'Bajo', child: Text('Bajo')),
-                        //           DropdownMenuItem(
-                        //               value: 'Alto', child: Text('alto')),
-                        //         ],
-                        //         onChanged: (value) {},
-                        //         decoration: InputDecoration(
-                        //           border: OutlineInputBorder(
-                        //             borderSide:
-                        //                 BorderSide(color: Colors.grey.shade50),
-                        //             borderRadius: const BorderRadius.all(
-                        //                 Radius.circular(10)),
-                        //           ),
-                        //           contentPadding: const EdgeInsets.symmetric(
-                        //               horizontal: 5, vertical: 15),
-                        //         ),
-                        //       ),
-                        //     ],
-                        //   ),
-                        // ),
-
-                        // CustomDropDownButtonTwo(
-                        //     onChanged: (value) =>
-                        //         _updateCurrentValue(ValueType.risk, value),
-                        //     currentValue: currentStateRisk,
-                        //     service: serviceTwo,
-                        //     descriptionField: 'Riesgo A *',
-                        //     hintText: 'Riesgo',
-                        //     endPoint: AppUrl.getRiesgoA2),
-                        CustomDropdownButton<modelTwo.Value>(
-                          hintText: 'Probabilidad *:',
-                          items: dropdownProvider.listProbabilidades,
-                          selectedItem:
-                              dropdownProvider.currentStateProbability,
-                          onChanged: (value) {
-                            dropdownProvider.currentStateProbability = value!;
-                            dropdownProvider.defineRisk();
-                          },
-                        ),
-                        // CustomDropDownButtonTwo(
-                        //     onChanged: (value) =>
-                        //         _updateCurrentValue(ValueType.probability, value),
-                        //     currentValue: currentStateProbability,
-                        //     service: serviceTwo,
-                        //     descriptionField: 'Probabilidad *',
-                        //     hintText: 'Categoria de Consecuencias',
-                        //     endPoint: AppUrl.getProbabilidad2),
-                        CustomDropdownButton<modelTwo.Value>(
-                          hintText: 'Impacto *:',
-                          items: dropdownProvider.listImpactos,
-                          selectedItem: dropdownProvider.currentStateImpact,
-                          onChanged: (value) {
-                            dropdownProvider.currentStateImpact = value!;
-                            dropdownProvider.defineRisk();
-                          },
-                        ),
-                        // CustomDropDownButtonTwo(
-                        //     onChanged: (value) =>
-                        //         _updateCurrentValue(ValueType.impact, value),
-                        //     currentValue: currentStateImpact,
-                        //     service: serviceTwo,
-                        //     descriptionField: 'Impacto *',
-                        //     hintText: 'Seleccione Impacto de la Consecuencia',
-                        //     endPoint: AppUrl.getImpacto2),
-                      ],
+                      )),
+                  Step(
+                    isActive: value.currentStep == 2,
+                    title: const Text(''),
+                    content: Container(
+                      width: double.infinity,
+                      child: ListView(
+                        shrinkWrap: true,
+                        children: [
+                          CustomDropdownButton<modelThree.Value>(
+                            hintText: 'Solicitante (AN) *:',
+                            items: dropdownProvider.listSolicitantes,
+                            selectedItem:
+                                dropdownProvider.currentStateApplicant,
+                            onChanged: (value) {
+                              dropdownProvider.currentStateApplicant = value!;
+                            },
+                          ),
+                          CustomDropdownButton<modelThree.Value>(
+                            hintText: 'Aprobador *:',
+                            items: dropdownProvider.listAprobadores,
+                            selectedItem: dropdownProvider.currentStateApprover,
+                            onChanged: (value) {
+                              dropdownProvider.currentStateApprover = value!;
+                            },
+                          ),
+                          CustomDropdownButton<modelThree.Value>(
+                            hintText: 'Ejecutor *:',
+                            items: dropdownProvider.listEjecutores,
+                            selectedItem: dropdownProvider.currentStateExecutor,
+                            onChanged: (value) {
+                              dropdownProvider.currentStateExecutor = value!;
+                            },
+                          ),
+                          CustomDropdownButton<modelTwo.Value>(
+                            hintText: 'Tipo de Forzado *:',
+                            items: dropdownProvider.listTipoDeForzados,
+                            selectedItem:
+                                dropdownProvider.currentStateTypeForzado,
+                            onChanged: (value) {
+                              dropdownProvider.currentStateTypeForzado = value!;
+                            },
+                          ),
+                        ],
+                      ),
                     ),
-                  )),
-              Step(
-                isActive: _currentState == 2,
-                title: const Text(''),
-                content: Container(
-                  width: double.infinity,
-                  child: ListView(
-                    shrinkWrap: true,
-                    children: [
-                      CustomDropdownButton<modelThree.Value>(
-                        hintText: 'Solicitante (AN) *:',
-                        items: dropdownProvider.listSolicitantes,
-                        selectedItem: dropdownProvider.currentStateApplicant,
-                        onChanged: (value) {
-                          dropdownProvider.currentStateApplicant = value!;
-                        },
-                      ),
-                      CustomDropdownButton<modelThree.Value>(
-                        hintText: 'Aprobador *:',
-                        items: dropdownProvider.listAprobadores,
-                        selectedItem: dropdownProvider.currentStateApprover,
-                        onChanged: (value) {
-                          dropdownProvider.currentStateApprover = value!;
-                        },
-                      ),
-                      CustomDropdownButton<modelThree.Value>(
-                        hintText: 'Ejecutor *:',
-                        items: dropdownProvider.listEjecutores,
-                        selectedItem: dropdownProvider.currentStateExecutor,
-                        onChanged: (value) {
-                          dropdownProvider.currentStateExecutor = value!;
-                        },
-                      ),
-                      CustomDropdownButton<modelTwo.Value>(
-                        hintText: 'Tipo de Forzado *:',
-                        items: dropdownProvider.listTipoDeForzados,
-                        selectedItem: dropdownProvider.currentStateTypeForzado,
-                        onChanged: (value) {
-                          dropdownProvider.currentStateTypeForzado = value!;
-                        },
-                      ),
-                      // CustomDropDownButtonThree(
-                      //     onChanged: (value) =>
-                      //         _updateCurrentValue(ValueType.applicant, value),
-                      //     currentValue: currentStateapplicant,
-                      //     service: serviceThree,
-                      //     descriptionField: 'Solicitante (AN) *',
-                      //     hintText: 'Seleccione Solicitante del Forzado',
-                      //     endPoint: AppUrl.getSolicitantes3),
-                      // CustomDropDownButtonThree(
-                      //     onChanged: (value) =>
-                      //         _updateCurrentValue(ValueType.approver, value),
-                      //     currentValue: currentStateapprover,
-                      //     service: serviceThree,
-                      //     descriptionField: 'Aprobador *',
-                      //     hintText: 'Seleccione Aprobador del Forzado',
-                      //     endPoint: AppUrl.getAprobadores),
-                      // CustomDropDownButtonThree(
-                      //     onChanged: (value) =>
-                      //         _updateCurrentValue(ValueType.executor, value),
-                      //     currentValue: currentStateexecutor,
-                      //     service: serviceThree,
-                      //     descriptionField: 'Ejecutor *',
-                      //     hintText: 'Seleccione Ejecutor',
-                      //     endPoint: AppUrl.getEjecutor),
-                      // CustomDropDownButtonTwo(
-                      //     onChanged: (value) =>
-                      //         _updateCurrentValue(ValueType.forzado, value),
-                      //     currentValue: currentStateForzado,
-                      //     service: serviceTwo,
-                      //     descriptionField: 'Tipo de Forzado *',
-                      //     hintText: 'Seleccione Tipo de Forzado',
-                      //     endPoint: AppUrl.getTipoForzado2),
-                    ],
                   ),
-                ),
-              ),
-            ],
-            onStepContinue: () {
-              if (_currentState != 2) {
-                setState(() {
-                  _currentState += 1;
-                });
-              }
-            },
-            onStepCancel: () {
-              if (_currentState != 0) {
-                setState(() {
-                  _currentState -= 1;
-                });
-              }
-            },
-            onStepTapped: (value) {
-              setState(() {
-                _currentState = value;
-              });
+                ],
+                onStepContinue: () {
+                  if (value.currentStep != 2) {
+                    value.setCurrentStep(value.currentStep + 1);
+                  }
+                },
+                onStepCancel: () {
+                  if (value.currentStep != 0) {
+                    value.setCurrentStep(value.currentStep - 1);
+                  }
+                },
+                onStepTapped: (stepValue) {
+                  value.setCurrentStep(stepValue);
+                },
+                type: StepperType.horizontal,
+                currentStep: value.currentStep,
+              );
             },
           ),
           Consumer<DropDownValuesManagerProvider>(
@@ -730,5 +423,49 @@ class _StepperFormState extends State<StepperForm> {
         ],
       )),
     );
+  }
+
+  Widget _stepperIcons(stepIndex, stepState) {
+    return stepIndex == 0
+        ? Container(
+            width: double.infinity,
+            height: double.infinity,
+            decoration: BoxDecoration(
+                color: AppColors.primary,
+                borderRadius: BorderRadius.circular(20)),
+            child: const Center(
+              child: Text(
+                '1',
+                style: TextStyle(color: Colors.white),
+                textAlign: TextAlign.center,
+              ),
+            ))
+        : stepIndex == 1
+            ? Container(
+                width: double.infinity,
+                height: double.infinity,
+                decoration: BoxDecoration(
+                    color: AppColors.primary,
+                    borderRadius: BorderRadius.circular(20)),
+                child: const Center(
+                  child: Text(
+                    '2',
+                    style: TextStyle(color: Colors.white),
+                    textAlign: TextAlign.center,
+                  ),
+                ))
+            : Container(
+                width: double.infinity,
+                height: double.infinity,
+                decoration: BoxDecoration(
+                    color: AppColors.primary,
+                    borderRadius: BorderRadius.circular(20)),
+                child: const Center(
+                  child: Text(
+                    '3',
+                    style: TextStyle(color: Colors.white),
+                    textAlign: TextAlign.center,
+                  ),
+                ));
   }
 }

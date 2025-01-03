@@ -390,4 +390,6 @@ class DropDownValuesManagerProvider with ChangeNotifier {
     modeltwo.Value(id: 18, descripcion: 'ALTO'),
   ];
   List<modeltwo.Value> get riskLevels => _riskLevels;
+
+
 }
