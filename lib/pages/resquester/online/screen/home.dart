@@ -3,7 +3,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:forzado/data/providers/auth/auth_provider.dart';
 import 'package:forzado/pages/resquester/offline/datatable%20_forzados.dart';
 import 'package:forzado/pages/resquester/offline/screens/bajas_forzado_offline.dart';
-import 'package:forzado/pages/resquester/online/screen/home_page.dart';
+import 'package:forzado/pages/resquester/online/screen/list_forzados.dart';
 import 'package:forzado/pages/steps_form/step_form.dart';
 import 'package:forzado/widgets/cards.dart';
 import 'package:provider/provider.dart';
@@ -67,7 +67,7 @@ class PageOnline extends StatelessWidget {
         GestureDetector(
           onTap: () {
             final route =
-                MaterialPageRoute(builder: (_) => const HomePageRemove());
+                MaterialPageRoute(builder: (_) => const ListForzadosRequesterLow());
             Navigator.push(context, route);
           },
           child: Container(

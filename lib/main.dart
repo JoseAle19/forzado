@@ -65,12 +65,15 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => RequesterHomeProvider()),
         ChangeNotifierProvider(create: (_) => PasswordProvider()),
         ChangeNotifierProvider(create: (_) => ListForzadosEjecutadosProvider()),
-        ChangeNotifierProvider(create: (_) => ForzadosProvider()..fetchCountForzados()),  
-        ChangeNotifierProvider(create: (_) => DropDownValuesManagerProvider()),  
-             ChangeNotifierProvider(create: (_) => BottomNavigationBarProvider()),  
-        ChangeNotifierProvider(create: (_) => DropDownValuesManagerProvider()),  
-             ChangeNotifierProvider(create: (_) => StepperProvider()),  
-            ],
+        ChangeNotifierProvider(
+            create: (_) => ForzadosProvider()
+              ..fetchCountForzados()
+              ..getForzados()),
+        ChangeNotifierProvider(create: (_) => DropDownValuesManagerProvider()),
+        ChangeNotifierProvider(create: (_) => BottomNavigationBarProvider()),
+        ChangeNotifierProvider(create: (_) => DropDownValuesManagerProvider()),
+        ChangeNotifierProvider(create: (_) => StepperProvider()),
+      ],
       child: const MaterialApp(
           debugShowCheckedModeBanner: false,
           title: 'Forzados',

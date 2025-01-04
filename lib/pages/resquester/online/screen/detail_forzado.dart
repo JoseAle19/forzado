@@ -13,12 +13,12 @@ import 'package:forzado/widgets/custom_dropdown_three.dart';
 import 'package:provider/provider.dart';
 
 // ignore: must_be_immutable
-class FormRemoveForzado extends StatefulWidget {
-  const FormRemoveForzado({super.key, required this.detailForzado});
+class DetailsForzadorRequester extends StatefulWidget {
+  const DetailsForzadorRequester({super.key, required this.detailForzado});
   final ForzadoItem detailForzado;
 
   @override
-  State<FormRemoveForzado> createState() => _FormRemoveForzadoState();
+  State<DetailsForzadorRequester> createState() => _FormRemoveForzadoState();
 }
 
 enum ValuesType {
@@ -28,7 +28,7 @@ enum ValuesType {
   description,
 }
 
-class _FormRemoveForzadoState extends State<FormRemoveForzado> {
+class _FormRemoveForzadoState extends State<DetailsForzadorRequester> {
   bool isFetching = false;
   String currentStateapplicant = '';
   String currentStateapprover = '';
@@ -163,9 +163,11 @@ class _FormRemoveForzadoState extends State<FormRemoveForzado> {
                       child: CircularProgressIndicator(),
                     )
                   : GestureDetector(
-                      onTap: () {
+                      onTap: () async  {
                         if (!isFetching) sendRequestForcedForzado();
-                        forzadosProvider.fetchCountForzados();
+                      await  forzadosProvider.fetchCountForzados();
+                        await forzadosProvider.getForzados();
+                        
                       },
                       child: Container(
                         width: double.infinity,

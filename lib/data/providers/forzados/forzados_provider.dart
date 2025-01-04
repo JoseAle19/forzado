@@ -13,13 +13,12 @@ import 'package:http/http.dart' as http;
 class ForzadosProvider with ChangeNotifier {
   bool _isFetch = false;
   String? _errorMessage;
-  String? _errorMessageGetForzados;
+
   List<ForzadoItem> _forzados = [];
   Future<List<ForzadoItem>>? _futureForzados;
 
   // Atributo para manejar el mensaje de error
   String? get errorMessage => _errorMessage;
-  String? get errorMessageGetForzados => _errorMessageGetForzados;
 
   Future<List<ForzadoItem>>? get futureForzados => _futureForzados;
 
@@ -100,39 +99,29 @@ class ForzadosProvider with ChangeNotifier {
   }
 
 // obtener los forzados en general
-
-  Future<List<ForzadoItem>> getForzados(String rol) async {
+  bool _loadingGetForzados = false;
+  bool get loadingGetForzados => _loadingGetForzados;
+  String? _errorMessageGetForzados;
+  String? get errorMessageGetForzados => _errorMessageGetForzados;
+  Future<void> getForzados() async {
     try {
-       final res = await client
+      _loadingGetForzados = true;
+      notifyListeners();
+      final res = await client
           .get(AppUrl.getListForzados)
           .timeout(const Duration(seconds: 10));
       ForzadosModel decodeData = forzadosModelFromJson(res.body);
       if (res.statusCode == 200) {
-        if (rol == 'ejecutor-alta') {
-          _forzados = decodeData.data!
-              .where((f) => f.estado?.toLowerCase() == 'aprobado-alta')
-              .toList();
-        } else if (rol == 'aprobado-baja') {
-          _forzados = decodeData.data!
-              .where((f) => f.estado?.toLowerCase() == 'aprobado-alta')
-              .toList();
-        } else if (rol == 'solicitante') {
-          print('solicitante');
-          _forzados = decodeData.data!
-              .where((f) => f.estado?.toLowerCase() == 'ejecutado-alta')
-              .toList();
-          return _forzados;
-        } else if (rol == 'aprobador') {
-          _forzados = decodeData.data!
-              .where((f) =>
-                  f.estado?.toLowerCase() == 'pendiente-alta' ||
-                  f.estado?.toLowerCase() == 'pendiente-baja')
-              .toList();
-        }
+        _forzados = decodeData.data!;
+        print('Forzados: ${_forzados}');
+        _errorMessageGetForzados = '';
         notifyListeners();
-      } else {
-        _errorMessageGetForzados = decodeData.message.toString();
+      } 
+      if (res.statusCode == 500) {
+        _errorMessageGetForzados =
+            'Error interno del servidor. Por favor, intente más tarde.';
       }
+    
     } on TimeoutException {
       _errorMessageGetForzados =
           'La solicitud excedió el tiempo de espera. Intente nuevamente.';
@@ -143,22 +132,10 @@ class ForzadosProvider with ChangeNotifier {
       print('Error: ${e}');
       _errorMessageGetForzados =
           'Error interno del servidor. Por favor, intente más tarde.';
-    } finally {
-      _isFetch = false;
+   } finally {
+      _loadingGetForzados = false;
       notifyListeners();
-      print('termino');
     }
-
-    return _forzados;
-  }
-
-  Future<List<ForzadoItem>> getFutureForzados(String rol) {
-     _futureForzados ??= getForzados(rol);
-    return _futureForzados!;
-  }
-
-  void resetFutureForzados() {
-    _futureForzados = null;
   }
 
 // Metodos post
@@ -198,8 +175,8 @@ class ForzadosProvider with ChangeNotifier {
       if (res.statusCode == 200) {
         // para volver a contar los forzados
         _isFecthingPostData = false;
-          fetchCountForzados();
-          // getForzados(rol);
+        fetchCountForzados();
+        // getForzados(rol);
         notifyListeners();
         return true;
       } else if (res.statusCode == 500) {
@@ -214,21 +191,17 @@ class ForzadosProvider with ChangeNotifier {
         notifyListeners();
         return false;
       }
-
     } on TimeoutException {
       _errorMessagePost =
           'La solicitud excedió el tiempo de espera. Intente nuevamente.';
-                  return false;
-
+      return false;
     } on http.ClientException {
       _errorMessagePost = 'Error al conectar con el servidor.';
-              return false;
-
+      return false;
     } catch (e) {
       _errorMessagePost =
           'Error interno del servidor. Por favor, intente más tarde.';
-                  return false;
-
+      return false;
     } finally {
       _isFecthingPostData = false;
       notifyListeners();
@@ -291,7 +264,4 @@ class ForzadosProvider with ChangeNotifier {
     }
     return true;
   }
-
-
-  
 }
