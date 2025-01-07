@@ -43,7 +43,6 @@ class PasswordProvider with ChangeNotifier {
             }),
           )
           .timeout(const Duration(seconds: 5));
-
       if (res.statusCode == 200) {
         onSuccess();
       } else {

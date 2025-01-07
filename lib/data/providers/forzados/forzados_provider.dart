@@ -2,12 +2,16 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:forzado/adapters/forzado.dart';
 import 'package:forzado/core/urls.dart';
+import 'package:forzado/core/utils/preferences_helper.dart';
 import 'package:forzado/data/providers/dropdown/dropdown_provider.dart';
 import 'package:forzado/models/form/forzado/model_forzado.dart';
 import 'package:forzado/models/forzado/model_forzado.dart';
 import 'package:forzado/models/remove_forzado/model_list_remove.dart';
 import 'package:forzado/services/api_client.dart';
+import 'package:forzado/widgets/modal_error.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:http/http.dart' as http;
 
 class ForzadosProvider with ChangeNotifier {
@@ -113,15 +117,13 @@ class ForzadosProvider with ChangeNotifier {
       ForzadosModel decodeData = forzadosModelFromJson(res.body);
       if (res.statusCode == 200) {
         _forzados = decodeData.data!;
-        print('Forzados: ${_forzados}');
         _errorMessageGetForzados = '';
         notifyListeners();
-      } 
+      }
       if (res.statusCode == 500) {
         _errorMessageGetForzados =
             'Error interno del servidor. Por favor, intente más tarde.';
       }
-    
     } on TimeoutException {
       _errorMessageGetForzados =
           'La solicitud excedió el tiempo de espera. Intente nuevamente.';
@@ -132,7 +134,7 @@ class ForzadosProvider with ChangeNotifier {
       print('Error: ${e}');
       _errorMessageGetForzados =
           'Error interno del servidor. Por favor, intente más tarde.';
-   } finally {
+    } finally {
       _loadingGetForzados = false;
       notifyListeners();
     }
@@ -148,6 +150,7 @@ class ForzadosProvider with ChangeNotifier {
   Future<bool> sendRequestPost(BuildContext context,
       DropDownValuesManagerProvider dropdownProvider) async {
     final data = InsertQueryParameters(
+      usuario: PreferencesHelper().getUser()!.id.toString(),
       tagPrefijo: dropdownProvider.currentValueTagPrefijo!.id.toString(),
       tagCentro: dropdownProvider.currentValueTagCentro!.id.toString(),
       tagSubfijo: 'Default value',
@@ -165,7 +168,9 @@ class ForzadosProvider with ChangeNotifier {
       ejecutor: dropdownProvider.currentStateExecutor!.id.toString(),
       autorizacion: 'Default value',
       tipoForzado: dropdownProvider.currentStateTypeForzado!.id.toString(),
+      projectName: dropdownProvider.currentStateProjectName!.id.toString(),
     );
+    print('Data: ${data.toMap()}');
     try {
       ApiClient client = ApiClient();
       _isFecthingPostData = true;
@@ -261,6 +266,125 @@ class ForzadosProvider with ChangeNotifier {
     }
     if (dropdownProvider.currentStateTypeForzado == null) {
       return false;
+    }
+    return true;
+  }
+
+// off
+  // Validar step form 1
+  bool validateStepFormOneOff(DropdownProviderManagerOffline dropdownProvider) {
+    if (dropdownProvider.currentValueTagPrefijo == null) {
+      return false;
+    }
+    if (dropdownProvider.currentValueTagCentro == null) {
+      return false;
+    }
+    if (dropdownProvider.currentValueDescription.toString().isEmpty) {
+      return false;
+    }
+    if (dropdownProvider.currentValueTagDisciplina == null) {
+      return false;
+    }
+    if (dropdownProvider.currentValueSlot == null) {
+      return false;
+    }
+    return true;
+  }
+
+  bool validateStepFormTwoOff(DropdownProviderManagerOffline dropdownProvider) {
+    if (dropdownProvider.currentValueInterlock.isEmpty) {
+      return false;
+    }
+    if (dropdownProvider.currentStateResponsibility == null) {
+      return false;
+    }
+    if (dropdownProvider.currentStateRisk == null) {
+      return false;
+    }
+    if (dropdownProvider.currentStateProbability == null) {
+      return false;
+    }
+    if (dropdownProvider.currentStateImpact == null) {
+      return false;
+    }
+    return true;
+  }
+
+  // Validar step form 3
+  bool validateStepFormThreeOff(
+      DropdownProviderManagerOffline dropdownProvider) {
+    if (dropdownProvider.currentStateApplicant == null) {
+      return false;
+    }
+    if (dropdownProvider.currentStateApprover == null) {
+      return false;
+    }
+    if (dropdownProvider.currentStateExecutor == null) {
+      return false;
+    }
+    if (dropdownProvider.currentStateTypeForzado == null) {
+      return false;
+    }
+    return true;
+  }
+
+  Future<bool> sendRequestPostOff(BuildContext context,
+      DropdownProviderManagerOffline dropdownProvider) async {
+    final data = InsertQueryParameters(
+      usuario: PreferencesHelper().getUser()!.id.toString(),
+      tagPrefijo: dropdownProvider.currentValueTagPrefijo!.id.toString(),
+      tagCentro: dropdownProvider.currentValueTagCentro!.id.toString(),
+      tagSubfijo: 'Default value',
+      descripcion: dropdownProvider.currentValueDescription,
+      disciplina: dropdownProvider.currentValueTagDisciplina!.id.toString(),
+      turno: dropdownProvider.currentValueSlot!.id.toString(),
+      interlockSeguridad: dropdownProvider.currentValueInterlock,
+      responsable: dropdownProvider.currentStateResponsibility!.id.toString(),
+      riesgoA: dropdownProvider.currentStateRisk!.id.toString(),
+      riesgo: dropdownProvider.currentRisk!.id.toString(),
+      probabilidad: dropdownProvider.currentStateProbability!.id.toString(),
+      impacto: dropdownProvider.currentStateImpact!.id.toString(),
+      solicitante: dropdownProvider.currentStateApplicant!.id.toString(),
+      aprobador: dropdownProvider.currentStateApprover!.id.toString(),
+      ejecutor: dropdownProvider.currentStateExecutor!.id.toString(),
+      autorizacion: 'Default value',
+      tipoForzado: dropdownProvider.currentStateTypeForzado!.id.toString(),
+      projectName: dropdownProvider.currentStateProjectName!.id.toString(),
+    );
+
+    try {
+      // Abrir la caja
+      final box = await Hive.box<Forzado>('forzado');
+      final data = Forzado(
+        usuario: PreferencesHelper().getUser()!.id.toString(),
+        tagPrefijo: dropdownProvider.currentValueTagPrefijo!.id.toString(),
+        tagCentro: dropdownProvider.currentValueTagCentro!.id.toString(),
+        descripcion: dropdownProvider.currentValueDescription,
+        disciplina: dropdownProvider.currentValueTagDisciplina!.id.toString(),
+        turno: dropdownProvider.currentValueSlot!.id.toString(),
+        interlock: dropdownProvider.currentValueInterlock,
+        responsable: dropdownProvider.currentStateResponsibility!.id.toString(),
+        riesgoA: dropdownProvider.currentStateRisk!.id.toString(),
+        riesgo: dropdownProvider.currentRisk!.id.toString(),
+        probabilidad: dropdownProvider.currentStateProbability!.id.toString(),
+        impacto: dropdownProvider.currentStateImpact!.id.toString(),
+        solicitante: dropdownProvider.currentStateApplicant!.id.toString(),
+        aprobador: dropdownProvider.currentStateApprover!.id.toString(),
+        ejecutor: dropdownProvider.currentStateExecutor!.id.toString(),
+        autorizacion: 'Default value',
+        tipoDeForzado: dropdownProvider.currentStateTypeForzado!.id.toString(),
+        projectName: dropdownProvider.currentStateProjectName!.id.toString(),
+      );
+      CustomModal modal = CustomModal();
+      // Guardar los datos en la caja
+      await box.add(data);
+      modal.showModal(context, 'Forzado agregado', Colors.blue, true);
+    } catch (e) {
+      CustomModal modal = CustomModal();
+      modal.showModal(context, 'Forzado no agregado', Colors.red, false);
+      print('Error abriendo caja: $e');
+    } finally {
+      await Hive.box<Forzado>('forzado').close();
     }
     return true;
   }

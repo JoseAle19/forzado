@@ -46,7 +46,8 @@ class ListForzadosRequesterLow extends StatelessWidget {
           ),
           Text(
             'Lista de forzados ejecutados',
-            style: TextStyle(fontSize: 15, fontWeight: FontWeight.w300),
+            style: TextStyle(
+                fontSize: 15, fontWeight: FontWeight.w500, color: Colors.grey),
           ),
         ],
       ),
@@ -55,6 +56,7 @@ class ListForzadosRequesterLow extends StatelessWidget {
 
   Widget _customAppBar(BuildContext context) {
     return Container(
+        margin: const EdgeInsets.only(top: 35),
         alignment: Alignment.topLeft,
         width: double.infinity,
         // margin: const EdgeInsets.all(10),
@@ -79,29 +81,44 @@ class ListForzadosRequesterLow extends StatelessWidget {
       if (value.errorMessageGetForzados!.isNotEmpty) {
         return Center(
             child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(value.errorMessageGetForzados!, textAlign: TextAlign.center,),
-                const SizedBox(height: 10,),
-                ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.primary
-                  ),
-                  onPressed: () {
-                    value.getForzados();
-                  },
-                  child: const Text('Reintentar', style: TextStyle(
-                    color: Colors.white
-                  ),),
-                )
-              ],
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              value.errorMessageGetForzados!,
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(
+              height: 10,
+            ),
+            ElevatedButton(
+              style:
+                  ElevatedButton.styleFrom(backgroundColor: AppColors.primary),
+              onPressed: () {
+                value.getForzados();
+              },
+              child: const Text(
+                'Reintentar',
+                style: TextStyle(color: Colors.white),
+              ),
             )
+          ],
+        ));
+      }
+      if (value.forzados.isEmpty) {
+        return const Center(
+          child: Text('No hay forzados ejecutados'),
         );
       }
       return ListView.builder(
-        itemCount: value.forzados.where((element) => element.estado!.toLowerCase() == 'ejecutado-alta').length,
+        itemCount: value.forzados
+            .where(
+                (element) => element.estado!.toLowerCase() == 'ejecutado-alta')
+            .length,
         itemBuilder: (context, index) {
-          final f = value.forzados.where((element) => element.estado!.toLowerCase() == 'ejecutado-alta').elementAt(index);
+          final f = value.forzados
+              .where((element) =>
+                  element.estado!.toLowerCase() == 'ejecutado-alta')
+              .elementAt(index);
           return _cardForzado(f, context);
         },
       );
@@ -119,7 +136,7 @@ class ListForzadosRequesterLow extends StatelessWidget {
             color: Color.fromARGB(106, 28, 50, 97),
             spreadRadius: 0.0,
             blurRadius: 5.0,
-            offset: Offset(0,5),
+            offset: Offset(0, 5),
           ),
         ],
       ),
@@ -138,21 +155,22 @@ class ListForzadosRequesterLow extends StatelessWidget {
             style: TextStyle(color: Colors.white),
           )),
         ),
-        title:   Text(f.descripcion ??'No especificado', style: const TextStyle(
-          fontSize: 15,
-          fontWeight: FontWeight.bold
-        ),),
-        subtitle: Text(f.area.toString(), style: const TextStyle(
-          fontSize: 12
-        ),),
+        title: Text(
+          f.descripcion ?? 'No especificado',
+          style: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+        ),
+        subtitle: Text(
+          f.area.toString(),
+          style: const TextStyle(fontSize: 12),
+        ),
         trailing: GestureDetector(
-          onTap: ()=> Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (_) =>   DetailsForzadorRequester(detailForzado: f),
-            ),
-          ) ,
-          child: const Icon(Icons.arrow_forward_ios)),
+            onTap: () => Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => DetailsForzadorRequester(detailForzado: f),
+                  ),
+                ),
+            child: const Icon(Icons.arrow_forward_ios)),
       ),
     );
   }

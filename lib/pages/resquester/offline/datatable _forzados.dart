@@ -5,8 +5,10 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:forzado/adapters/forzado.dart';
 import 'package:forzado/core/urls.dart';
+import 'package:forzado/core/utils/preferences_helper.dart';
 import 'package:forzado/models/Boxes.dart';
 import 'package:forzado/models/form/forzado/model_forzado.dart';
+import 'package:forzado/models/model_user_detail.dart';
 import 'package:forzado/services/api_client.dart';
 import 'package:hive/hive.dart';
 
@@ -122,6 +124,7 @@ class _ForzadosDataTableState extends State<ForzadosDataTable> {
         Forzado forzado = listForzado[i];
 
         final data = InsertQueryParameters(
+            usuario: PreferencesHelper().getUser()!.id.toString(),
             tagPrefijo: forzado.tagPrefijo!.toString(),
             tagCentro: forzado.tagCentro.toString(),
             tagSubfijo: 'Subfijo',
@@ -138,7 +141,8 @@ class _ForzadosDataTableState extends State<ForzadosDataTable> {
             ejecutor: forzado.ejecutor!,
             autorizacion: '1',
             tipoForzado: forzado.tipoDeForzado!,
-            riesgoA: '');
+            riesgoA: '',
+            projectName: '');
 
         final transformedMap =
             data.toJson().map((key, value) => MapEntry(key, value.toString()));

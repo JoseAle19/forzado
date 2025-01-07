@@ -6,14 +6,20 @@ import 'package:forzado/adapters/adapter_forzados.dart';
 import 'package:forzado/adapters/adapter_one.dart';
 import 'package:forzado/adapters/adapter_three.dart';
 import 'package:forzado/adapters/adapter_two.dart';
+import 'package:forzado/adapters/user_adapter.dart';
 import 'package:forzado/core/configs/theme/app_colors.dart';
 import 'package:forzado/core/urls.dart';
 import 'package:forzado/data/providers/auth/auth_provider.dart';
+import 'package:forzado/data/providers/dropdown/dropdown_provider.dart';
+import 'package:forzado/models/Boxes.dart';
 import 'package:forzado/services/api_client.dart';
 import 'package:forzado/services/manager.dart';
 import 'package:forzado/widgets/modal_error.dart';
 import 'package:hive_flutter/adapters.dart';
 import 'package:provider/provider.dart';
+import 'package:forzado/models/model_one.dart' as modelone;
+import 'package:forzado/models/model_three.dart' as modelThree;
+import 'package:forzado/models/model_two.dart' as modelTwo;
 
 class SyncData extends StatefulWidget {
   @override
@@ -22,6 +28,7 @@ class SyncData extends StatefulWidget {
 
 class _SyncDataState extends State<SyncData> {
   bool synchronizing = false;
+
   Future<void> fillAllBoxes() async {
     final dataManager = DataManager();
 
@@ -46,12 +53,12 @@ class _SyncDataState extends State<SyncData> {
     // AdapterThree
     await dataManager.fetchAndFillBox<AdapterThree>(
         'Responsable', AppUrl.getResponsable3);
-    await dataManager.fetchAndFillBox<AdapterThree>(
-        'Solicitante', AppUrl.getSolicitantes3);
-    await dataManager.fetchAndFillBox<AdapterThree>(
-        'Aprobador', AppUrl.getAprobadores);
-    await dataManager.fetchAndFillBox<AdapterThree>(
-        'Ejecutor', AppUrl.getEjecutor);
+    // await dataManager.fetchAndFillBox<AdapterThree>(
+    //     'Solicitante', AppUrl.getSolicitantes3);
+    // await dataManager.fetchAndFillBox<AdapterThree>(
+    //     'Aprobador', AppUrl.getAprobadores);
+    // await dataManager.fetchAndFillBox<AdapterThree>(
+    //     'Ejecutor', AppUrl.getEjecutor);
     await getForzados(context);
   }
 
@@ -114,6 +121,94 @@ class _SyncDataState extends State<SyncData> {
     await box.addAll(forzadosAlta);
   }
 
+  Future<void> fillListByRole(BuildContext context) async {
+    final boxSolicitante = Hive.isBoxOpen('Solicitante')
+        ? Hive.box<AdapterThree>('Solicitante')
+        : await Hive.openBox('Solicitante');
+
+    final boxAprobador = Hive.isBoxOpen('Aprobador')
+        ? Hive.box<AdapterThree>('Aprobador')
+        : await Hive.openBox('Aprobador');
+
+    final boxEjecutor = Hive.isBoxOpen('Ejecutor')
+        ? Hive.box<AdapterThree>('Ejecutor')
+        : await Hive.openBox('Ejecutor');
+
+    // Limpiar contenido previo de las cajas
+    await boxSolicitante.clear();
+    await boxAprobador.clear();
+    await boxEjecutor.clear();
+
+    final dropdownProvider =
+        Provider.of<DropDownValuesManagerProvider>(context, listen: false);
+
+    for (var user in dropdownProvider.users) {
+      if (user.roles != null && user.roles!.isNotEmpty) {
+        if (user.roles!.containsKey('1')) {
+          boxSolicitante.add(AdapterThree(
+            id: user.id!,
+            nombre: '${user.nombre} ${user.apePaterno}',
+          ));
+        }
+        if (user.roles!.containsKey('2')) {
+          boxAprobador.add(AdapterThree(
+            id: user.id!,
+            nombre: '${user.nombre} ${user.apePaterno}',
+          ));
+        }
+        if (user.roles!.containsKey('3')) {
+          boxEjecutor.add(AdapterThree(
+            id: user.id!,
+            nombre: '${user.nombre} ${user.apePaterno}',
+          ));
+        }
+      } else {
+        print('Sin roles del usuario ${user.nombre}');
+      }
+    }
+  }
+
+  Future<void> fillTags(BuildContext context) async {
+    final dropdownProviderOn =
+        Provider.of<DropDownValuesManagerProvider>(context, listen: false);
+
+    await Hive.box<AdapterOne>(HiveBoxes.tagPrefijo).clear();
+    Hive.box<AdapterOne>(HiveBoxes.tagPrefijo).addAll(
+        dropdownProviderOn.listPrefijos.map((tag) => AdapterOne(
+            id: tag.id, codigo: tag.codigo, descripcion: tag.descripcion)));
+
+    await Hive.box<AdapterOne>(HiveBoxes.tagCentro).clear();
+    Hive.box<AdapterOne>(HiveBoxes.tagCentro).addAll(
+        dropdownProviderOn.listCentros.map((tag) => AdapterOne(
+            id: tag.id, codigo: tag.codigo, descripcion: tag.descripcion)));
+
+    await Hive.box<AdapterTwo>(HiveBoxes.projects).clear();
+    Hive.box<AdapterTwo>(HiveBoxes.projects).addAll(dropdownProviderOn
+        .listProjects
+        .map((tag) => AdapterTwo(id: tag.id, descripcion: tag.descripcion)));
+
+    await Hive.box<AdapterUser>(HiveBoxes.users).clear();
+    Hive.box<AdapterUser>(HiveBoxes.users).addAll(dropdownProviderOn.users.map(
+        (tag) => AdapterUser(
+            id: tag.id,
+            apeMaterno: tag.apeMaterno,
+            apePaterno: tag.apeMaterno,
+            areaDescripcion: tag.areaDescripcion,
+            areaId: tag.areaId,
+            correo: tag.correo,
+            dni: tag.dni,
+            estado: tag.estado,
+            nombre: tag.nombre,
+            puestoDescripcion: tag.puestoDescripcion,
+            puestoId: tag.puestoId,
+            rolDescripcion: tag.rolDescripcion,
+            rolId: tag.rolId,
+            roles: tag.roles,
+            usuario: tag.usuario)));
+
+    // El segundo modelo
+  }
+
   @override
   Widget build(BuildContext context) {
     return Stack(
@@ -157,36 +252,40 @@ class _SyncDataState extends State<SyncData> {
                 alignment: Alignment.centerRight,
                 child: ElevatedButton(
                   onPressed: () async {
-                    try {
-                      setState(() {
-                        synchronizing = true;
-                      });
-                      await fillAllBoxes();
-                      setState(() {
-                        synchronizing = true;
-                      });
-                      CustomModal modal = CustomModal();
-                      modal.showModal(
-                          context, 'Datos sincronizados', Colors.green, true);
-                    } catch (e) {
-                      setState(() {
-                        synchronizing = false;
-                      });
+                    // try {
+                    //   setState(() {
+                    //     synchronizing = true;
+                    //   });
+                    //   await fillAllBoxes();
+                    //   setState(() {
+                    //     synchronizing = true;
+                    //   });
+                    //   CustomModal modal = CustomModal();
+                    //   modal.showModal(
+                    //       context, 'Datos sincronizados', Colors.green, true);
+                    // } catch (e) {
+                    //   setState(() {
+                    //     synchronizing = false;
+                    //   });
 
-                      CustomModal modal = CustomModal();
-                      modal.showModal(
-                          context,
-                          'Ocurrio un error al sincronizar, contacta a soporte',
-                          Colors.redAccent,
-                          false);
-                    } finally {
-                      setState(() {
-                        synchronizing = false;
-                      });
-                    }
+                    //   CustomModal modal = CustomModal();
+                    //   modal.showModal(
+                    //       context,
+                    //       'Ocurrio un error al sincronizar, contacta a soporte',
+                    //       Colors.redAccent,
+                    //       false);
+                    // } finally {
+                    //   setState(() {
+                    //     synchronizing = false;
+                    //   });
+                    // }
+                    await fillListByRole(context);
+                    await fillTags(context);
+                    CustomModal().showModal(
+                        context, 'Sincronizados', Colors.green, true);
                   },
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Color(0xffc8a064),
+                    backgroundColor: const Color(0xffc8a064),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(8.0),
                     ),

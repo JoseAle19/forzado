@@ -5,6 +5,7 @@ import 'package:forzado/adapters/adapter_three.dart';
 import 'package:forzado/adapters/adapter_two.dart';
 import 'package:forzado/adapters/forzado.dart';
 import 'package:forzado/adapters/forzado_baja.dart';
+import 'package:forzado/adapters/user_adapter.dart';
 import 'package:forzado/core/utils/preferences_helper.dart';
 import 'package:forzado/data/providers/Stepper/stepper_provider.dart';
 import 'package:forzado/data/providers/auth/auth_provider.dart';
@@ -15,6 +16,7 @@ import 'package:forzado/data/providers/forzados/forzados_provider.dart';
 import 'package:forzado/data/providers/offline/list_forzados_ejecutados_provider.dart';
 import 'package:forzado/data/providers/requester_provider.dart';
 import 'package:forzado/data/providers/splash_provider.dart';
+import 'package:forzado/data/providers/users/user_provider.dart';
 import 'package:forzado/home_page.dart';
 import 'package:hive_flutter/adapters.dart';
 import 'package:intl/date_symbol_data_local.dart';
@@ -30,6 +32,7 @@ void main() async {
   Hive.registerAdapter(ForzadoAdapter());
   Hive.registerAdapter(ForzadosAdapter());
   Hive.registerAdapter(ForzadoBajaAdapter());
+  Hive.registerAdapter(AdapterUserAdapter());
 
   // Abre las cajas para cada modelo
   await Hive.openBox<AdapterOne>('TagPrefijo');
@@ -41,13 +44,16 @@ void main() async {
   await Hive.openBox<AdapterTwo>('Probabilidad');
   await Hive.openBox<AdapterTwo>('Impacto');
   await Hive.openBox<AdapterTwo>('Tipo');
+  await Hive.openBox<AdapterTwo>('projects');
 
   await Hive.openBox<AdapterThree>('Responsable');
   await Hive.openBox<AdapterThree>('Solicitante');
   await Hive.openBox<AdapterThree>('Aprobador');
   await Hive.openBox<AdapterThree>('Ejecutor');
+  await Hive.openBox<AdapterUser>('users');
   await Hive.openBox<ForzadoBaja>('forzadoBajaBox');
   await Hive.openBox<Forzados>('Forzados');
+  await Hive.openBox<Forzado>('Forzado');
 
   await initializeDateFormatting('es_ES', null);
   runApp(const MyApp());
@@ -72,7 +78,9 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => DropDownValuesManagerProvider()),
         ChangeNotifierProvider(create: (_) => BottomNavigationBarProvider()),
         ChangeNotifierProvider(create: (_) => DropDownValuesManagerProvider()),
+        ChangeNotifierProvider(create: (_) => DropdownProviderManagerOffline()),
         ChangeNotifierProvider(create: (_) => StepperProvider()),
+        ChangeNotifierProvider(create: (_) => UserProvider()),
       ],
       child: const MaterialApp(
           debugShowCheckedModeBanner: false,

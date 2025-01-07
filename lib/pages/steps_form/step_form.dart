@@ -20,7 +20,6 @@ class StepperForm extends StatefulWidget {
 }
 
 class _StepperFormState extends State<StepperForm> {
-
   String error = '';
   @override
   Widget build(BuildContext context) {
@@ -33,9 +32,8 @@ class _StepperFormState extends State<StepperForm> {
         title: const Text('Alta Forzado'),
         leading: IconButton(
           onPressed: () {
-             dropdownProvider.clearValues();
+            dropdownProvider.clearValues();
             Navigator.pop(context);
-
           },
           icon: const Icon(Icons.arrow_back_ios),
         ),
@@ -84,6 +82,7 @@ class _StepperFormState extends State<StepperForm> {
                                     ));
                             Navigator.pushReplacement(context, route);
                             dropdownProvider.clearValues();
+                            value.setCurrentStep(0);
                           }
                         }
                       } else {
@@ -126,8 +125,18 @@ class _StepperFormState extends State<StepperForm> {
                           physics: const BouncingScrollPhysics(),
                           shrinkWrap: true,
                           children: [
+                            CustomDropdownButton<modelTwo.Value>(
+                              hintText: 'Nombre del proyecto asociado *:',
+                              items: dropdownProvider.listProjects,
+                              selectedItem:
+                                  dropdownProvider.currentStateProjectName,
+                              onChanged: (value) {
+                                dropdownProvider.currentStateProjectName =
+                                    value!;
+                              },
+                            ),
                             CustomDropdownButton<modelone.Value>(
-                              hintText: 'Prefijo del Tag o Sub Área',
+                              hintText: 'Prefijo del Tag o Sub Área *:',
                               items: dropdownProvider.listPrefijos,
                               selectedItem:
                                   dropdownProvider.currentValueTagPrefijo,
@@ -142,13 +151,11 @@ class _StepperFormState extends State<StepperForm> {
                               selectedItem:
                                   dropdownProvider.currentValueTagCentro,
                               onChanged: (value) {
-                                dropdownProvider.currentValueTagCentro =
-                                    value!;
+                                dropdownProvider.currentValueTagCentro = value!;
                               },
                             ),
                             Container(
-                              margin:
-                                  const EdgeInsets.symmetric(vertical: 20),
+                              margin: const EdgeInsets.symmetric(vertical: 20),
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
@@ -240,6 +247,7 @@ class _StepperFormState extends State<StepperForm> {
                                     onChanged: (value) {
                                       dropdownProvider.currentValueInterlock =
                                           value.toString();
+                                      dropdownProvider.validateInterlok();
                                     },
                                     decoration: InputDecoration(
                                       border: OutlineInputBorder(
@@ -274,26 +282,6 @@ class _StepperFormState extends State<StepperForm> {
                                 dropdownProvider.currentStateRisk = value!;
                               },
                             ),
-                            Stack(
-                              children: [
-                                CustomDropdownButton<modelTwo.Value>(
-                                hintText: 'Riesgo *:',
-                                items: dropdownProvider.riskLevels,
-                                selectedItem: dropdownProvider.currentRisk,
-                                onChanged: (value) {
-                                  dropdownProvider.currentStateRisk = value!;
-                                },
-                              ),
-                              Positioned(
-                                top: 0,
-                                right: 0,
-                                  bottom: 0,
-                                  left: 0,
-                                child: Container(
-                                color: Colors.transparent,
-                              ))
-                              ],
-                            ),
                             CustomDropdownButton<modelTwo.Value>(
                               hintText: 'Probabilidad *:',
                               items: dropdownProvider.listProbabilidades,
@@ -313,6 +301,26 @@ class _StepperFormState extends State<StepperForm> {
                                 dropdownProvider.currentStateImpact = value!;
                                 dropdownProvider.defineRisk();
                               },
+                            ),
+                            Stack(
+                              children: [
+                                CustomDropdownButton<modelTwo.Value>(
+                                  hintText: 'Riesgo *:',
+                                  items: dropdownProvider.riskLevels,
+                                  selectedItem: dropdownProvider.currentRisk,
+                                  onChanged: (value) {
+                                    dropdownProvider.currentStateRisk = value!;
+                                  },
+                                ),
+                                Positioned(
+                                    top: 0,
+                                    right: 0,
+                                    bottom: 0,
+                                    left: 0,
+                                    child: Container(
+                                      color: Colors.transparent,
+                                    ))
+                              ],
                             ),
                           ],
                         ),

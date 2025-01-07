@@ -16,6 +16,7 @@ class AppUrl {
   static const String getRiesgoA2 = "/api/maestras/riesgo-a";
   static const String getTipoForzado2 = "/api/maestras/tipo-forzado";
   static const String getImpacto2 = "/api/maestras/impacto";
+  static const String getProjects2 = "/api/maestras/proyecto";
 
   static const String getResponsable3 = "/api/maestras/responsable";
   static const String getSolicitantes3 = "/api/usuarios";
@@ -36,4 +37,7 @@ class AppUrl {
   static const String getBajaAprobar = "/api/solicitudes/baja/aprobar";
 
   static const String getForzadoByState = "/api/solicitudes/estado";
+
+  // Para traer los usuarios
+  static const String getListUsers = "/api/usuarios";
 }

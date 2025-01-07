@@ -25,7 +25,7 @@ class AuthProvider with ChangeNotifier {
   bool _viewModalSync = true;
   bool viewPassword = true;
 
-  ApiResponseDetailUser? _user; // _user ahora es opcional
+  ApiResponseDetailUser? _user; // _us  er ahora es opcional
   ApiResponseDetailUser? get user => _user;
   bool get viewModalSync => _viewModalSync;
   Future<void> checkSession() async {
@@ -64,7 +64,7 @@ class AuthProvider with ChangeNotifier {
             body: body,
           )
           .timeout(const Duration(seconds: 10)); // Timeout de 10 segundos
-
+      print(response.body);
       isLoading = false;
       notifyListeners();
       if (response.statusCode == 200) {
@@ -107,6 +107,7 @@ class AuthProvider with ChangeNotifier {
 
   Future<ApiResponseDetailUser> getUserByEmail(
       String email, BuildContext context) async {
+    print(email);
     try {
       isLoading = true;
       notifyListeners();
@@ -115,25 +116,30 @@ class AuthProvider with ChangeNotifier {
         '/api/usuarios/por-correo',
         jsonEncode({'email': email}),
       );
- 
+
       isLoading = false;
       notifyListeners();
 
       if (res.statusCode == 200) {
         ApiResponseDetailUser user = apiResponseDetailUserFromJson(res.body);
+        int role = int.parse(user.roles.keys
+            .reduce((a, b) => int.parse(a) > int.parse(b) ? a : b));
         if (user.flagNuevoIngreso == 1) {
           showPasswordDialog(context, user.id, () async {
             await PreferencesHelper().setUser(user);
-            navigateHandleRole(user.role, context);
+            await checkSession();
+            print('Este es el role: $role');
+            navigateHandleRole(role, context);
           });
 
           return user;
         } else {
-          await Provider.of<AuthProvider>(context, listen: false)
-              .checkSession();
           await PreferencesHelper().setUser(user);
-
-          navigateHandleRole(user.role, context);
+          await checkSession();
+          int role = int.parse(user.roles.keys
+              .reduce((a, b) => int.parse(a) > int.parse(b) ? a : b));
+          print('Este es el role: $role');
+          navigateHandleRole(role, context);
           return user;
         }
       } else {
@@ -155,27 +161,27 @@ class AuthProvider with ChangeNotifier {
 
   void navigateHandleRole(int role, BuildContext context) {
     switch (role) {
-      case 4:
-        final route = MaterialPageRoute(builder: (_) => const HomeExecuter());
-        Navigator.pushReplacement(context, route);
-        break;
-      case 7:
-        final route = MaterialPageRoute(builder: (_) => const HomeExecuter());
-        Navigator.pushReplacement(context, route);
-        break;
       case 3:
-        final route = MaterialPageRoute(builder: (_) => const HomeApprove());
+        final route = MaterialPageRoute(builder: (_) => const HomeExecuter());
         Navigator.pushReplacement(context, route);
         break;
-      case 6:
-        final route = MaterialPageRoute(builder: (_) => const HomeApprove());
-        Navigator.pushReplacement(context, route);
-        break;
+      // case 7:
+      //   final route = MaterialPageRoute(builder: (_) => const HomeExecuter());
+      //   Navigator.pushReplacement(context, route);
+      //   break;
       case 2:
-        final route = MaterialPageRoute(builder: (_) => const Home());
+        final route = MaterialPageRoute(builder: (_) => const HomeApprove());
         Navigator.pushReplacement(context, route);
         break;
-      case 5:
+      // case 6:
+      //   final route = MaterialPageRoute(builder: (_) => const HomeApprove());
+      //   Navigator.pushReplacement(context, route);
+      //   break;
+      // case 2:
+      //   final route = MaterialPageRoute(builder: (_) => const Home());
+      //   Navigator.pushReplacement(context, route);
+      //   break;
+      case 1:
         final route = MaterialPageRoute(builder: (_) => const Home());
         Navigator.pushReplacement(context, route);
         break;

@@ -33,7 +33,6 @@ class _CustomDropDownButtonState extends State<CustomDropDownButtonThreeOff> {
     boxAdapterThree = Hive.box<AdapterThree>(widget.box);
 
     _loadDataFromHive();
-    print(items);
   }
 
   void _loadDataFromHive() {

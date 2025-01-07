@@ -4,12 +4,19 @@ import 'package:forzado/adapters/adapter_three.dart';
 import 'package:forzado/adapters/adapter_two.dart';
 import 'package:forzado/adapters/forzado.dart';
 import 'package:forzado/core/app_styles.dart';
+import 'package:forzado/core/configs/theme/app_colors.dart';
+import 'package:forzado/data/providers/Stepper/stepper_provider.dart';
+import 'package:forzado/data/providers/dropdown/dropdown_provider.dart';
+import 'package:forzado/data/providers/forzados/forzados_provider.dart';
 import 'package:forzado/models/Boxes.dart';
- import 'package:forzado/widgets/drop_down_offline/custom_drop_one.dart';
-import 'package:forzado/widgets/drop_down_offline/custom_drop_three.dart';
-import 'package:forzado/widgets/drop_down_offline/custom_drop_two.dart';
+import 'package:forzado/pages/steps_form/congratulation.dart';
+import 'package:forzado/widgets/custom_dropdown_button.dart';
 import 'package:forzado/widgets/modal_error.dart';
 import 'package:hive_flutter/adapters.dart';
+import 'package:provider/provider.dart';
+import 'package:forzado/models/model_one.dart' as modelone;
+import 'package:forzado/models/model_three.dart' as modelThree;
+import 'package:forzado/models/model_two.dart' as modelTwo;
 
 class StepperFormOffline extends StatefulWidget {
   const StepperFormOffline({super.key});
@@ -136,6 +143,9 @@ class _StepperFormOfflineState extends State<StepperFormOffline> {
 
   @override
   Widget build(BuildContext context) {
+    final forzadosProvider = Provider.of<ForzadosProvider>(context);
+    final dropdownProvider =
+        Provider.of<DropdownProviderManagerOffline>(context);
     return Scaffold(
       appBar: AppBar(
         title: const Text('Alta de forzando offline'),
@@ -144,203 +154,189 @@ class _StepperFormOfflineState extends State<StepperFormOffline> {
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
-            Expanded(
-              child: Stepper(
-                controlsBuilder: (context, details) {
-                  // Método para validar campos por paso
-                  bool isStepValid(int currentStep) {
-                    switch (currentStep) {
-                      case 0:
-                        return [
-                          currentValueTagPrefijo.descripcion,
-                          currentValueTagCentro.descripcion,
-                          currentValueTagDisciplina.descripcion,
-                          currentValueSlot.descripcion,
-                          currentValueDescription,
-                        ].every((field) => field.isNotEmpty);
-                      case 1:
-                        return [
-                          currentValueResponsability.nombre,
-                          currentValueRisk.descripcion,
-                          currentValueProbability.descripcion,
-                          currentValueImpact.descripcion,
-                          currentValueInterlock,
-                        ].every((field) => field.isNotEmpty);
-                      case 2:
-                        return [
-                          currentValueapplicant.nombre,
-                          currentValueapprover.nombre,
-                          currentValueexecutor.nombre,
-                          currentValueForzado.descripcion,
-                        ].every((field) => field.isNotEmpty);
-                      default:
-                        return false;
-                    }
-                  }
-
-                  void showErrorModal(BuildContext context, String message) {
-                    CustomModal modal = CustomModal();
-                    modal.showModal(context, message, Colors.red, false);
-                  }
-
-                  bool isFinalStep = details.currentStep == 2;
-                  bool validation = isStepValid(details.currentStep);
-
-                  return GestureDetector(
-                    onTap: () async {
-                      if (validation) {
-                        if (isFinalStep) {
-                          if (!isStepValid(details.currentStep)) {
-                            showErrorModal(
-                                context, 'Completa todos los campos');
-                            return;
+            Expanded(child: Consumer<StepperProvider>(
+              builder: (context, value, child) {
+                return Stepper(
+                  stepIconHeight: 30,
+                  stepIconWidth: 30,
+                  stepIconBuilder: (stepIndex, stepState) => _stepperIcons(
+                      stepIndex, stepState), // Iconos de los steps
+                  controlsBuilder: (context, details) {
+                    bool validation = details.currentStep != 2 ? true : false;
+                    return GestureDetector(
+                      onTap: () async {
+                        // Validar Dropdown
+                        if (details.currentStep == 0
+                            ? forzadosProvider
+                                .validateStepFormOneOff(dropdownProvider)
+                            : details.currentStep == 1
+                                ? forzadosProvider
+                                    .validateStepFormTwoOff(dropdownProvider)
+                                : forzadosProvider.validateStepFormThreeOff(
+                                    dropdownProvider)) {
+                          if (validation) {
+                            details.onStepContinue!();
+                          } else {
+                            final res = await forzadosProvider
+                                .sendRequestPostOff(context, dropdownProvider);
+                            if (!res) {
+                              CustomModal().showModal(
+                                  context,
+                                  forzadosProvider.errorMessagePostData,
+                                  Colors.red,
+                                  false);
+                            } else {
+                              final route = MaterialPageRoute(
+                                  builder: (_) => CongratulationAnimation(
+                                        page: const StepperFormOffline(),
+                                      ));
+                              Navigator.pushReplacement(context, route);
+                              dropdownProvider.clearValues();
+                              value.setCurrentStepOff(0);
+                            }
                           }
-                          await saveData(
-                            currentValueTagPrefijo,
-                            currentValueTagCentro,
-                            currentValueDescription,
-                            currentValueTagDisciplina,
-                            currentValueSlot,
-                            currentValueSegurity,
-                            currentValueResponsability,
-                            currentValueRisk,
-                            currentValueProbability,
-                            currentValueImpact,
-                            currentValueapplicant,
-                            currentValueapprover,
-                            currentValueexecutor,
-                            currentValueForzado,
-                            currentValueInterlock,
-                          );
                         } else {
-                          details.onStepContinue!();
+                          CustomModal modal = CustomModal();
+                          modal.showModal(context, 'Completa todos los campos',
+                              Colors.redAccent, false);
                         }
-                      } else {
-                        showErrorModal(context, 'Completa todos los campos');
-                      }
-                    },
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: validation
-                            ? const Color(0xff001d39)
-                            : const Color(0xff001d39),
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      padding: const EdgeInsets.all(10),
-                      margin: const EdgeInsets.symmetric(vertical: 20),
-                      child: Center(
-                        child: Text(
-                          isFinalStep ? 'Finalizar' : 'Continuar',
+                      },
+                      child: AnimatedContainer(
+                        duration: const Duration(milliseconds: 400),
+                        decoration: BoxDecoration(
+                            color: validation
+                                ? const Color(0xff001d39)
+                                : const Color(0xff21378C),
+                            borderRadius: BorderRadius.circular(20)),
+                        padding: const EdgeInsets.all(10),
+                        margin: const EdgeInsets.symmetric(vertical: 20),
+                        child: Center(
+                            child: Text(
+                          validation ? 'Continuar' : 'Finalizar',
                           style: AppStyles.textStyle,
-                        ),
+                        )),
                       ),
-                    ),
-                  );
-                },
-                type: StepperType.horizontal,
-                currentStep: _currentStep,
-                onStepContinue: () {
-                  if (_currentStep < 2) {
-                    setState(() {
-                      _currentStep += 1;
-                    });
-                  }
-                },
-                onStepCancel: () {
-                  if (_currentStep > 0) {
-                    setState(() {
-                      _currentStep -= 1;
-                    });
-                  }
-                },
-                steps: [
-                  Step(
-                    title: _currentStep == 0
-                        ? const Text('Tag  y Subfijo')
-                        : const SizedBox(),
-                    content: SingleChildScrollView(
-                      child: Column(
-                        children: [
-                          CustomDropDownButtonOneOff(
-                            box: HiveBoxes.tagPrefijo,
-                            descriptionField: 'Tag (Prefijo) * ',
-                            hintText: 'Prefijo del Tag o Sub Área',
-                            currentValue: currentValueTagPrefijo,
-                            onChanged: (value) => _updateCurrentValue(
-                                ValueType.tagPrefijo, value),
-                          ),
-                          CustomDropDownButtonOneOff(
-                            box: HiveBoxes.tagCentro,
-                            descriptionField: 'Tag (Centro) *',
-                            hintText:
-                                'Parte Central  del Tag Asoc. al instrumento o Equipo',
-                            currentValue: currentValueTagCentro,
-                            onChanged: (value) =>
-                                _updateCurrentValue(ValueType.tagCentro, value),
-                          ),
-                          Container(
-                            margin: const EdgeInsets.symmetric(vertical: 20),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                const Text('Descripción *'),
-                                TextFormField(
-                                  initialValue: currentValueDescription,
-                                  onChanged: (value) {
-                                    setState(() {
-                                      currentValueDescription = value;
-                                    });
-                                  },
-                                  maxLength: 100,
-                                  maxLines: 2,
-                                  decoration: const InputDecoration(
-                                      hintText: 'Agregue una descripción'),
-                                )
-                              ],
-                            ),
-                          ),
-                          CustomDropDownButtonTwoOff(
-                            box: HiveBoxes.disciplina,
-                            descriptionField: 'Disciplina *',
-                            hintText: 'Disciplina que solicita el Forzado',
-                            currentValue: currentValueTagDisciplina,
-                            onChanged: (value) => _updateCurrentValue(
-                                ValueType.tagDisciplina, value),
-                          ),
-                          CustomDropDownButtonTwoOff(
-                            box: HiveBoxes.turno,
-                            descriptionField: 'Turno *',
-                            hintText: 'Disciplina que solicita el Forzado',
-                            currentValue: currentValueSlot,
-                            onChanged: (value) =>
-                                _updateCurrentValue(ValueType.slot, value),
-                          ),
-                        ],
-                      ),
-                    ),
-                    isActive: _currentStep >= 0,
-                    state: _currentStep > 0
-                        ? StepState.complete
-                        : StepState.indexed,
-                  ),
-                  Step(
-                    title: const SizedBox(),
-                    content: SingleChildScrollView(
-                      child: Column(
-                        children: [
-                          SizedBox(
-                            width: double.infinity,
-                            child: ListView(
-                              shrinkWrap: true,
-                              children: [
-                                Column(
+                    );
+                  },
+                  steps: [
+                    Step(
+                        isActive: value.currentStepOff == 0,
+                        title: const Text(''),
+                        content: SizedBox(
+                          width: double.infinity,
+                          height: MediaQuery.of(context).size.height * .6,
+                          child: ListView(
+                            physics: const BouncingScrollPhysics(),
+                            shrinkWrap: true,
+                            children: [
+                              CustomDropdownButton<modelTwo.Value>(
+                                hintText: 'Nombre del proyecto asociado *:',
+                                items: dropdownProvider.listProjects,
+                                selectedItem:
+                                    dropdownProvider.currentStateProjectName,
+                                onChanged: (value) {
+                                  dropdownProvider.currentStateProjectName =
+                                      value!;
+                                },
+                              ),
+                              CustomDropdownButton<modelone.Value>(
+                                hintText: 'Prefijo del Tag o Sub Área *:',
+                                items: dropdownProvider.listPrefijos,
+                                selectedItem:
+                                    dropdownProvider.currentValueTagPrefijo,
+                                onChanged: (value) {
+                                  dropdownProvider.currentValueTagPrefijo =
+                                      value!;
+                                },
+                              ),
+                              CustomDropdownButton<modelone.Value>(
+                                hintText: 'Tag (centro) *:',
+                                items: dropdownProvider.listCentros,
+                                selectedItem:
+                                    dropdownProvider.currentValueTagCentro,
+                                onChanged: (value) {
+                                  dropdownProvider.currentValueTagCentro =
+                                      value!;
+                                },
+                              ),
+                              Container(
+                                margin:
+                                    const EdgeInsets.symmetric(vertical: 20),
+                                child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    const Text('Iterlock Seguridad *'),
+                                    const Text('Descripción *'),
+                                    const SizedBox(
+                                      height: 5,
+                                    ),
+                                    TextFormField(
+                                      initialValue: dropdownProvider
+                                          .currentValueDescription,
+                                      onChanged: (value) => dropdownProvider
+                                          .currentValueDescription = value,
+                                      maxLength: 100,
+                                      maxLines: 2,
+                                      decoration: InputDecoration(
+                                        hintText: 'Agregue una descripción',
+                                        border: OutlineInputBorder(
+                                          borderSide: BorderSide(
+                                              color: Colors.grey.shade50),
+                                          borderRadius: const BorderRadius.all(
+                                              Radius.circular(10)),
+                                        ),
+                                        contentPadding:
+                                            const EdgeInsets.symmetric(
+                                                horizontal: 5, vertical: 15),
+                                      ),
+                                    )
+                                  ],
+                                ),
+                              ),
+                              CustomDropdownButton<modelTwo.Value>(
+                                hintText: 'Disciplina *:',
+                                items: dropdownProvider.listDiciplinas,
+                                selectedItem:
+                                    dropdownProvider.currentValueTagDisciplina,
+                                onChanged: (value) {
+                                  dropdownProvider.currentValueTagDisciplina =
+                                      value!;
+                                },
+                              ),
+                              CustomDropdownButton<modelTwo.Value>(
+                                hintText: 'Turno *:',
+                                items: dropdownProvider.listTurnos,
+                                selectedItem: dropdownProvider.currentValueSlot,
+                                onChanged: (value) {
+                                  dropdownProvider.currentValueSlot = value!;
+                                },
+                              ),
+                            ],
+                          ),
+                        )),
+                    Step(
+                        isActive: value.currentStep == 1,
+                        title: const Text(''),
+                        content: SizedBox(
+                          width: double.infinity,
+                          height: MediaQuery.of(context).size.height * .6,
+                          child: ListView(
+                            shrinkWrap: true,
+                            children: [
+                              Container(
+                                margin: const EdgeInsets.only(bottom: 20),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    const Text('Interlock Seguridad *'),
+                                    const SizedBox(
+                                      height: 5,
+                                    ),
                                     DropdownButtonFormField(
-                                      value: currentValueInterlock.isEmpty
+                                      value: dropdownProvider
+                                              .currentValueInterlock.isEmpty
                                           ? null
-                                          : currentValueInterlock,
+                                          : dropdownProvider
+                                              .currentValueInterlock,
                                       hint: const Text('Seleccione Interlock'),
                                       items: const [
                                         DropdownMenuItem(
@@ -348,121 +344,211 @@ class _StepperFormOfflineState extends State<StepperFormOffline> {
                                         DropdownMenuItem(
                                             value: 'NO', child: Text('No')),
                                       ],
-                                      validator: (value) => value == null
-                                          ? 'Seleccione una opción válida'
-                                          : null,
-                                      onChanged: (value) {
-                                        setState(() {
-                                          currentValueInterlock = value!;
-                                        });
+                                      validator: (value) {
+                                        if (value!.isEmpty) {
+                                          return 'Seleccione una opcion';
+                                        }
+                                        return '';
                                       },
+                                      onChanged: (value) {
+                                        dropdownProvider.currentValueInterlock =
+                                            value.toString();
+                                        dropdownProvider.validateInterlok();
+                                      },
+                                      decoration: InputDecoration(
+                                        border: OutlineInputBorder(
+                                          borderSide: BorderSide(
+                                              color: Colors.grey.shade50),
+                                          borderRadius: const BorderRadius.all(
+                                              Radius.circular(10)),
+                                        ),
+                                        contentPadding:
+                                            const EdgeInsets.symmetric(
+                                                horizontal: 5, vertical: 15),
+                                      ),
                                     ),
                                   ],
                                 ),
-                                CustomDropDownButtonThreeOff(
-                                  box: HiveBoxes.responsable,
-                                  descriptionField: 'Responsable *',
-                                  hintText:
-                                      'Seleccione Gerencia Responsable del Forzado',
-                                  currentValue: currentValueResponsability,
-                                  onChanged: (value) => _updateCurrentValue(
-                                      ValueType.responsability, value),
-                                ),
-                                CustomDropDownButtonTwoOff(
-                                  box: HiveBoxes.riesgo,
-                                  descriptionField: 'Riesgo A * ',
-                                  hintText: 'Riesgo',
-                                  currentValue: currentValueRisk,
-                                  onChanged: (value) => _updateCurrentValue(
-                                      ValueType.risk, value),
-                                ),
-                                CustomDropDownButtonTwoOff(
-                                  box: HiveBoxes.probabilidad,
-                                  descriptionField: 'Probabilidad *',
-                                  hintText: 'Categoria de Consecuencias',
-                                  currentValue: currentValueProbability,
-                                  onChanged: (value) => _updateCurrentValue(
-                                      ValueType.probability, value),
-                                ),
-                                CustomDropDownButtonTwoOff(
-                                  box: HiveBoxes.impacto,
-                                  descriptionField: 'Impacto * *',
-                                  hintText:
-                                      'Seleccione Impacto de la Consecuencia',
-                                  currentValue: currentValueImpact,
-                                  onChanged: (value) => _updateCurrentValue(
-                                      ValueType.impact, value),
-                                ),
-                              ],
-                            ),
+                              ),
+                              CustomDropdownButton<modelThree.Value>(
+                                hintText: 'Responsable *:',
+                                items: dropdownProvider.listResponsables,
+                                selectedItem:
+                                    dropdownProvider.currentStateResponsibility,
+                                onChanged: (value) {
+                                  dropdownProvider.currentStateResponsibility =
+                                      value!;
+                                },
+                              ),
+                              CustomDropdownButton<modelTwo.Value>(
+                                hintText: 'Riesgo A *:',
+                                items: dropdownProvider.listRiesgos,
+                                selectedItem: dropdownProvider.currentStateRisk,
+                                onChanged: (value) {
+                                  dropdownProvider.currentStateRisk = value!;
+                                },
+                              ),
+                              CustomDropdownButton<modelTwo.Value>(
+                                hintText: 'Probabilidad *:',
+                                items: dropdownProvider.listProbabilidades,
+                                selectedItem:
+                                    dropdownProvider.currentStateProbability,
+                                onChanged: (value) {
+                                  dropdownProvider.currentStateProbability =
+                                      value!;
+                                  dropdownProvider.defineRisk();
+                                },
+                              ),
+                              CustomDropdownButton<modelTwo.Value>(
+                                hintText: 'Impacto *:',
+                                items: dropdownProvider.listImpactos,
+                                selectedItem:
+                                    dropdownProvider.currentStateImpact,
+                                onChanged: (value) {
+                                  dropdownProvider.currentStateImpact = value!;
+                                  dropdownProvider.defineRisk();
+                                },
+                              ),
+                              Stack(
+                                children: [
+                                  CustomDropdownButton<modelTwo.Value>(
+                                    hintText: 'Riesgo *:',
+                                    items: dropdownProvider.riskLevels,
+                                    selectedItem: dropdownProvider.currentRisk,
+                                    onChanged: (value) {
+                                      dropdownProvider.currentStateRisk =
+                                          value!;
+                                    },
+                                  ),
+                                  Positioned(
+                                      top: 0,
+                                      right: 0,
+                                      bottom: 0,
+                                      left: 0,
+                                      child: Container(
+                                        color: Colors.transparent,
+                                      ))
+                                ],
+                              ),
+                            ],
                           ),
-                        ],
+                        )),
+                    Step(
+                      isActive: value.currentStep == 2,
+                      title: const Text(''),
+                      content: SizedBox(
+                        width: double.infinity,
+                        child: ListView(
+                          shrinkWrap: true,
+                          children: [
+                            CustomDropdownButton<modelThree.Value>(
+                              hintText: 'Solicitante (AN) *:',
+                              items: dropdownProvider.listSolicitantes,
+                              selectedItem:
+                                  dropdownProvider.currentStateApplicant,
+                              onChanged: (value) {
+                                dropdownProvider.currentStateApplicant = value!;
+                              },
+                            ),
+                            CustomDropdownButton<modelThree.Value>(
+                              hintText: 'Aprobador *:',
+                              items: dropdownProvider.listAprobadores,
+                              selectedItem:
+                                  dropdownProvider.currentStateApprover,
+                              onChanged: (value) {
+                                dropdownProvider.currentStateApprover = value!;
+                              },
+                            ),
+                            CustomDropdownButton<modelThree.Value>(
+                              hintText: 'Ejecutor *:',
+                              items: dropdownProvider.listEjecutores,
+                              selectedItem:
+                                  dropdownProvider.currentStateExecutor,
+                              onChanged: (value) {
+                                dropdownProvider.currentStateExecutor = value!;
+                              },
+                            ),
+                            CustomDropdownButton<modelTwo.Value>(
+                              hintText: 'Tipo de Forzado *:',
+                              items: dropdownProvider.listTipoDeForzados,
+                              selectedItem:
+                                  dropdownProvider.currentStateTypeForzado,
+                              onChanged: (value) {
+                                dropdownProvider.currentStateTypeForzado =
+                                    value!;
+                              },
+                            ),
+                          ],
+                        ),
                       ),
                     ),
-                    isActive: _currentStep >= 1,
-                    state: _currentStep > 1
-                        ? StepState.complete
-                        : StepState.indexed,
-                  ),
-                  Step(
-                    title: const SizedBox(),
-                    content: SingleChildScrollView(
-                      child: Column(
-                        children: [
-                          SizedBox(
-                            width: double.infinity,
-                            child: ListView(
-                              shrinkWrap: true,
-                              children: [
-                                CustomDropDownButtonThreeOff(
-                                  box: HiveBoxes.solicitante,
-                                  descriptionField: 'Solicitante (AN) *',
-                                  hintText:
-                                      'Seleccione Solicitante del Forzado',
-                                  currentValue: currentValueapplicant,
-                                  onChanged: (value) => _updateCurrentValue(
-                                      ValueType.applicant, value),
-                                ),
-                                CustomDropDownButtonThreeOff(
-                                  box: HiveBoxes.aprobador,
-                                  descriptionField: 'Aprobador *',
-                                  hintText: 'Seleccione Aprobador del Forzado',
-                                  currentValue: currentValueapprover,
-                                  onChanged: (value) => _updateCurrentValue(
-                                      ValueType.approver, value),
-                                ),
-                                CustomDropDownButtonThreeOff(
-                                  box: HiveBoxes.ejecutor,
-                                  descriptionField: 'Ejecutor *',
-                                  hintText: 'Seleccione Ejecutor',
-                                  currentValue: currentValueexecutor,
-                                  onChanged: (value) => _updateCurrentValue(
-                                      ValueType.executor, value),
-                                ),
-                                CustomDropDownButtonTwoOff(
-                                  box: HiveBoxes.tipo,
-                                  descriptionField: 'Tipo de Forzado',
-                                  hintText: 'Seleccione Tipo de Forzado',
-                                  currentValue: currentValueForzado,
-                                  onChanged: (value) => _updateCurrentValue(
-                                      ValueType.forzado, value),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    isActive: _currentStep >= 2,
-                    state: StepState.indexed,
-                  ),
-                ],
-              ),
-            ),
+                  ],
+                  onStepContinue: () {
+                    if (value.currentStepOff != 2) {
+                      value.setCurrentStepOff(value.currentStepOff + 1);
+                    }
+                  },
+                  onStepCancel: () {
+                    if (value.currentStepOff != 0) {
+                      value.setCurrentStepOff(value.currentStepOff - 1);
+                    }
+                  },
+                  onStepTapped: (stepValue) {
+                    value.setCurrentStepOff(stepValue);
+                  },
+                  type: StepperType.horizontal,
+                  currentStep: value.currentStepOff,
+                );
+              },
+            )),
           ],
         ),
       ),
     );
+  }
+
+  Widget _stepperIcons(stepIndex, stepState) {
+    return stepIndex == 0
+        ? Container(
+            width: double.infinity,
+            height: double.infinity,
+            decoration: BoxDecoration(
+                color: AppColors.primary,
+                borderRadius: BorderRadius.circular(20)),
+            child: const Center(
+              child: Text(
+                '1',
+                style: TextStyle(color: Colors.white),
+                textAlign: TextAlign.center,
+              ),
+            ))
+        : stepIndex == 1
+            ? Container(
+                width: double.infinity,
+                height: double.infinity,
+                decoration: BoxDecoration(
+                    color: AppColors.primary,
+                    borderRadius: BorderRadius.circular(20)),
+                child: const Center(
+                  child: Text(
+                    '2',
+                    style: TextStyle(color: Colors.white),
+                    textAlign: TextAlign.center,
+                  ),
+                ))
+            : Container(
+                width: double.infinity,
+                height: double.infinity,
+                decoration: BoxDecoration(
+                    color: AppColors.primary,
+                    borderRadius: BorderRadius.circular(20)),
+                child: const Center(
+                  child: Text(
+                    '3',
+                    style: TextStyle(color: Colors.white),
+                    textAlign: TextAlign.center,
+                  ),
+                ));
   }
 
   Future<void> saveData(

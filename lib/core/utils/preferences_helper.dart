@@ -15,11 +15,14 @@ class PreferencesHelper {
   }
 
   Future<void> setUser(ApiResponseDetailUser user) async {
+    print(user.toJson());
+    int role = int.parse(
+        user.roles.keys.reduce((a, b) => int.parse(a) > int.parse(b) ? a : b));
     await _prefs.setBool('logged', true);
     await _prefs.setInt('id', user.id);
     await _prefs.setString('username', user.name);
     await _prefs.setString('area', user.area);
-    await _prefs.setInt('rol', user.role);
+    await _prefs.setInt('rol', role);
     await _prefs.setInt('flag', user.flagNuevoIngreso);
   }
 
@@ -43,7 +46,7 @@ class PreferencesHelper {
       id: id,
       name: username,
       area: area,
-      role: role,
+      roles: {role.toString(): 'role'},
       flagNuevoIngreso: flagNuevoIngreso,
       jwt: '0',
     );

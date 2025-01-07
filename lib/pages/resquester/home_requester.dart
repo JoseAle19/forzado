@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:forzado/core/utils/preferences_helper.dart';
 import 'package:forzado/data/providers/auth/auth_provider.dart';
@@ -23,7 +25,8 @@ class _HomeState extends State<Home> {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       Provider.of<DropDownValuesManagerProvider>(context, listen: false)
-          .getData();
+        ..getData()
+        ..getUsersByRole();
     });
   }
 
@@ -35,7 +38,7 @@ class _HomeState extends State<Home> {
           automaticallyImplyLeading: false,
           title: Consumer<AuthProvider>(
             builder: (context, value, child) => Text(
-              'Hola ${value.user?.name}',
+              'Hola ${utf8.decode(latin1.encode(value.user!.name), allowMalformed: true)}',
               style: const TextStyle(
                   fontFamily: 'noto', fontWeight: FontWeight.bold),
             ),
@@ -43,7 +46,7 @@ class _HomeState extends State<Home> {
           actions: [
             Consumer<RequesterHomeProvider>(
               builder: (context, value, child) {
-                 return value.isConnected
+                return value.isConnected
                     ? IconButton(
                         onPressed: () async {
                           await PreferencesHelper().clear();
@@ -95,10 +98,11 @@ class CustomBotttomNavigation extends StatelessWidget {
                   .pageController
                   .jumpToPage(index);
             },
-          items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Inicio'),
-          BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Perfil'),
-        ]);
+            items: const [
+              BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Inicio'),
+              BottomNavigationBarItem(
+                  icon: Icon(Icons.person), label: 'Perfil'),
+            ]);
       },
     );
   }

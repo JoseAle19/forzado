@@ -1,4 +1,5 @@
 class InsertQueryParameters {
+  String usuario;
   String tagPrefijo;
   String tagCentro;
   String tagSubfijo;
@@ -16,9 +17,11 @@ class InsertQueryParameters {
   String ejecutor;
   String autorizacion;
   String tipoForzado;
+  String projectName;
 
   // Constructor
   InsertQueryParameters({
+    required this.usuario,
     required this.tagPrefijo,
     required this.tagCentro,
     required this.tagSubfijo,
@@ -36,11 +39,13 @@ class InsertQueryParameters {
     required this.ejecutor,
     required this.autorizacion,
     required this.tipoForzado,
+    required this.projectName,
   });
 
   // Método para convertir un objeto a un mapa, útil para enviar en la solicitud POST
   Map<String, dynamic> toMap() {
     return {
+      'usuario': usuario,
       'tagPrefijo': tagPrefijo,
       'tagCentro': tagCentro,
       'tagSubfijo': tagSubfijo,
@@ -58,12 +63,14 @@ class InsertQueryParameters {
       'ejecutor': ejecutor,
       'autorizacion': autorizacion,
       'tipoForzado': tipoForzado,
+      'proyecto': projectName,
     };
   }
 
   // Método para crear un objeto a partir de un mapa (útil para recibir los datos del cuerpo de la petición)
   factory InsertQueryParameters.fromMap(Map<String, dynamic> map) {
     return InsertQueryParameters(
+      usuario: map['usuario'] ?? '',
       tagPrefijo: map['tagPrefijo'] ?? '',
       tagCentro: map['tagCentro'] ?? '',
       tagSubfijo: map['tagSubfijo'] ?? '',
@@ -81,6 +88,7 @@ class InsertQueryParameters {
       ejecutor: map['ejecutor'] ?? '',
       autorizacion: map['autorizacion'] ?? '',
       tipoForzado: map['tipoForzado'] ?? '',
+      projectName: map['proyectoId'] ?? '',
     );
   }
 

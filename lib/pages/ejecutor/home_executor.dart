@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:forzado/core/utils/preferences_helper.dart';
 import 'package:forzado/data/providers/auth/auth_provider.dart';
@@ -11,18 +13,19 @@ class HomeExecuter extends StatelessWidget {
   const HomeExecuter({super.key});
   @override
   Widget build(BuildContext context) {
-   
     return Scaffold(
       bottomNavigationBar: const CustomBotttomNavigation(),
       appBar: AppBar(
         automaticallyImplyLeading: false,
-        title: Consumer<AuthProvider>(
-          builder: (context, value, child) => Text(
-            'Hola ${value.user!.name}',
+        title: Consumer<AuthProvider>(builder: (context, value, child) {
+          String name = utf8.decode(latin1.encode(value.user!.name),
+              allowMalformed: true);
+          return Text(
+            'Hola $name',
             style: const TextStyle(
                 fontFamily: 'noto', fontWeight: FontWeight.bold),
-          ),
-        ),
+          );
+        }),
         actions: [
           const IconButton(
               onPressed: null, icon: Icon(Icons.notifications_none_outlined)),

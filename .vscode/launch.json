@@ -20,6 +20,12 @@
             "request": "launch",
             "type": "dart",
             "flutterMode": "release"
+        },
+        {
+            "name": "Flutter (lib\\adapters\\user_adapter.dart)",
+            "type": "dart",
+            "request": "launch",
+            "program": "lib\\adapters\\user_adapter.dart"
         }
     ]
 }

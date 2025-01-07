@@ -33,14 +33,14 @@ class SplashProvider with ChangeNotifier {
 
   Widget _navigateHandleRole(int role) {
     switch (role) {
-      case 4:
+      case 3:
       case 7:
         return const HomeExecuter();
-      case 3:
+      case 2:
       case 6:
         return const HomeApprove();
-      case 2:
       case 5:
+      case 1:
         return const Home();
       default:
         return const LoginPage();
