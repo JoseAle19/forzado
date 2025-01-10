@@ -2,6 +2,9 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:forzado/adapters/adapter_one.dart';
+import 'package:forzado/adapters/adapter_three.dart';
+import 'package:forzado/adapters/adapter_two.dart';
 import 'package:forzado/adapters/forzado.dart';
 import 'package:forzado/core/urls.dart';
 import 'package:forzado/core/utils/preferences_helper.dart';
@@ -330,51 +333,40 @@ class ForzadosProvider with ChangeNotifier {
 
   Future<bool> sendRequestPostOff(BuildContext context,
       DropdownProviderManagerOffline dropdownProvider) async {
-    final data = InsertQueryParameters(
-      usuario: PreferencesHelper().getUser()!.id.toString(),
-      tagPrefijo: dropdownProvider.currentValueTagPrefijo!.id.toString(),
-      tagCentro: dropdownProvider.currentValueTagCentro!.id.toString(),
-      tagSubfijo: 'Default value',
-      descripcion: dropdownProvider.currentValueDescription,
-      disciplina: dropdownProvider.currentValueTagDisciplina!.id.toString(),
-      turno: dropdownProvider.currentValueSlot!.id.toString(),
-      interlockSeguridad: dropdownProvider.currentValueInterlock,
-      responsable: dropdownProvider.currentStateResponsibility!.id.toString(),
-      riesgoA: dropdownProvider.currentStateRisk!.id.toString(),
-      riesgo: dropdownProvider.currentRisk!.id.toString(),
-      probabilidad: dropdownProvider.currentStateProbability!.id.toString(),
-      impacto: dropdownProvider.currentStateImpact!.id.toString(),
-      solicitante: dropdownProvider.currentStateApplicant!.id.toString(),
-      aprobador: dropdownProvider.currentStateApprover!.id.toString(),
-      ejecutor: dropdownProvider.currentStateExecutor!.id.toString(),
-      autorizacion: 'Default value',
-      tipoForzado: dropdownProvider.currentStateTypeForzado!.id.toString(),
-      projectName: dropdownProvider.currentStateProjectName!.id.toString(),
-    );
+    Box<Forzado> box = await Hive.box<Forzado>('Forzado');
 
     try {
       // Abrir la caja
-      final box = await Hive.box<Forzado>('forzado');
       final data = Forzado(
-        usuario: PreferencesHelper().getUser()!.id.toString(),
-        tagPrefijo: dropdownProvider.currentValueTagPrefijo!.id.toString(),
-        tagCentro: dropdownProvider.currentValueTagCentro!.id.toString(),
-        descripcion: dropdownProvider.currentValueDescription,
-        disciplina: dropdownProvider.currentValueTagDisciplina!.id.toString(),
-        turno: dropdownProvider.currentValueSlot!.id.toString(),
-        interlock: dropdownProvider.currentValueInterlock,
-        responsable: dropdownProvider.currentStateResponsibility!.id.toString(),
-        riesgoA: dropdownProvider.currentStateRisk!.id.toString(),
-        riesgo: dropdownProvider.currentRisk!.id.toString(),
-        probabilidad: dropdownProvider.currentStateProbability!.id.toString(),
-        impacto: dropdownProvider.currentStateImpact!.id.toString(),
-        solicitante: dropdownProvider.currentStateApplicant!.id.toString(),
-        aprobador: dropdownProvider.currentStateApprover!.id.toString(),
-        ejecutor: dropdownProvider.currentStateExecutor!.id.toString(),
-        autorizacion: 'Default value',
-        tipoDeForzado: dropdownProvider.currentStateTypeForzado!.id.toString(),
-        projectName: dropdownProvider.currentStateProjectName!.id.toString(),
-      );
+          usuario: PreferencesHelper().getUser()!.id.toString(),
+          projectValue:
+              AdapterTwo.fromValue(dropdownProvider.currentStateProjectName!),
+          descripcion: dropdownProvider.currentValueDescription,
+          interlock: dropdownProvider.currentValueInterlock,
+          tagPrefijoValue:
+              AdapterOne.fromValue(dropdownProvider.currentValueTagPrefijo!),
+          tagCentroValue:
+              AdapterOne.fromValue(dropdownProvider.currentValueTagCentro!),
+          disciplinaValue:
+              AdapterTwo.fromValue(dropdownProvider.currentValueTagDisciplina!),
+          turnoValue: AdapterTwo.fromValue(dropdownProvider.currentValueSlot!),
+          responsableValue: AdapterThree.fromValue(
+              dropdownProvider.currentStateResponsibility!),
+          riesgoAValue:
+              AdapterTwo.fromValue(dropdownProvider.currentStateRisk!),
+          probabilidadValue:
+              AdapterTwo.fromValue(dropdownProvider.currentStateProbability!),
+          impactoValue:
+              AdapterTwo.fromValue(dropdownProvider.currentStateImpact!),
+          riesgoValue: AdapterTwo.fromValue(dropdownProvider.currentRisk!),
+          solicitanteValue:
+              AdapterThree.fromValue(dropdownProvider.currentStateApplicant!),
+          aprobadorValue:
+              AdapterThree.fromValue(dropdownProvider.currentStateApprover!),
+          ejecutorValue:
+              AdapterThree.fromValue(dropdownProvider.currentStateExecutor!),
+          tipoForzadoValue:
+              AdapterTwo.fromValue(dropdownProvider.currentStateTypeForzado!));
       CustomModal modal = CustomModal();
       // Guardar los datos en la caja
       await box.add(data);
@@ -383,8 +375,6 @@ class ForzadosProvider with ChangeNotifier {
       CustomModal modal = CustomModal();
       modal.showModal(context, 'Forzado no agregado', Colors.red, false);
       print('Error abriendo caja: $e');
-    } finally {
-      await Hive.box<Forzado>('forzado').close();
     }
     return true;
   }

@@ -1,12 +1,10 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:forzado/core/urls.dart';
 import 'package:forzado/models/remove_forzado/model_list_remove.dart';
 import 'package:forzado/pages/ejecutor/forzados_executer.dart';
 import 'package:forzado/pages/steps_form/congratulation.dart';
-import 'package:forzado/services/api_client.dart';
 import 'package:forzado/widgets/modal_error.dart';
+import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 
 class DetailForzadoScreen extends StatefulWidget {
@@ -20,13 +18,14 @@ class DetailForzadoScreen extends StatefulWidget {
 
 class _DetailForzadoScreenState extends State<DetailForzadoScreen> {
   bool isFetching = false; // Variable para controlar el estado de carga
-  DateTime? selectedDateTime ;
+  DateTime? selectedDateTime;
 
   void initState() {
     super.initState();
     // selectedDateTime = DateTime.now();
   }
- Future<void> _selectDate(BuildContext context) async {
+
+  Future<void> _selectDate(BuildContext context) async {
     final DateTime? pickedDate = await showDatePicker(
       context: context,
       initialDate: selectedDateTime ?? DateTime.now(),
@@ -98,13 +97,13 @@ class _DetailForzadoScreenState extends State<DetailForzadoScreen> {
     }
   }
 
-
-String _formatDateTime(DateTime? dateTime) {
+  String _formatDateTime(DateTime? dateTime) {
     if (dateTime == null) {
       return 'No seleccionada';
     }
 
-    final DateFormat dateFormatter = DateFormat('d \'de\' MMMM \'del\' y', 'es_ES');
+    final DateFormat dateFormatter =
+        DateFormat('d \'de\' MMMM \'del\' y', 'es_ES');
     final String formattedDate = dateFormatter.format(dateTime);
 
     final String formattedTime =
@@ -112,6 +111,7 @@ String _formatDateTime(DateTime? dateTime) {
 
     return '$formattedDate a las $formattedTime';
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -215,52 +215,66 @@ String _formatDateTime(DateTime? dateTime) {
                 ),
               ),
               const SizedBox(height: 20),
- Padding(
-        padding: const EdgeInsets.all(20.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Text(
-              'Fecha y hora seleccionada:',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            ),
-            SizedBox(height: 10),
-            Container(
-              padding: EdgeInsets.symmetric(vertical: 15, horizontal: 20),
-              decoration: BoxDecoration(
-                border: Border.all(color: Colors.blue, width: 2),
-                borderRadius: BorderRadius.circular(10),
+              Padding(
+                padding: const EdgeInsets.all(20.0),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    Text(
+                      'Fecha y hora seleccionada:',
+                      style:
+                          TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                    ),
+                    SizedBox(height: 10),
+                    Container(
+                      padding:
+                          EdgeInsets.symmetric(vertical: 15, horizontal: 20),
+                      decoration: BoxDecoration(
+                        border: Border.all(color: Colors.blue, width: 2),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: Text(
+                        _formatDateTime(selectedDateTime),
+                        style: TextStyle(fontSize: 16),
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+                    ElevatedButton.icon(
+                      onPressed: () => _selectDate(context),
+                      icon: const Icon(
+                        Icons.date_range,
+                        color: Colors.white,
+                      ),
+                      label: Text(
+                        'Seleccionar Fecha',
+                        style: TextStyle(color: Colors.white),
+                      ),
+                      style: ElevatedButton.styleFrom(
+                        padding: EdgeInsets.symmetric(vertical: 15),
+                        backgroundColor: Colors.blue,
+                      ),
+                    ),
+                    const SizedBox(height: 10),
+                    ElevatedButton.icon(
+                      onPressed: () => _selectTime(context),
+                      icon: const Icon(
+                        Icons.access_time,
+                        color: Colors.white,
+                      ),
+                      label: Text(
+                        'Seleccionar Hora',
+                        style: TextStyle(color: Colors.white),
+                      ),
+                      style: ElevatedButton.styleFrom(
+                        padding: EdgeInsets.symmetric(vertical: 15),
+                        backgroundColor: Colors.blue,
+                      ),
+                    ),
+                  ],
+                ),
               ),
-              child: Text(
-                _formatDateTime(selectedDateTime),
-                style: TextStyle(fontSize: 16),
-              ),
-            ),
-            const SizedBox(height: 20),
-            ElevatedButton.icon(
-              onPressed: () => _selectDate(context),
-              icon: const Icon(Icons.date_range, color: Colors.white,),
-              label: Text('Seleccionar Fecha', style: TextStyle(color: Colors.white),),
-              style: ElevatedButton.styleFrom(
-                padding: EdgeInsets.symmetric(vertical: 15),
-                backgroundColor: Colors.blue,
-              ),
-            ),
-            const SizedBox(height: 10),
-            ElevatedButton.icon(
-              onPressed: () => _selectTime(context),
-              icon: const Icon(Icons.access_time, color: Colors.white,),
-              label: Text('Seleccionar Hora', style: TextStyle(color: Colors.white),),
-              style: ElevatedButton.styleFrom(
-                padding: EdgeInsets.symmetric(vertical: 15),
-                backgroundColor: Colors.blue,
-              ),
-            ),
-          ],
-        ),
-      ),
-    
+
               const Divider(),
 
               // Indicador de carga
@@ -272,19 +286,18 @@ String _formatDateTime(DateTime? dateTime) {
                 Center(
                   child: GestureDetector(
                     onTap: () async {
+                      if (selectedDateTime == null) return;
 
-                      if(selectedDateTime==null) return;
-
-                      await handleExecution(
-                          widget.forzado.id.toString(), widget.isExecuterAlta,
-                          selectedDateTime
-                          );
+                      await handleExecution(widget.forzado.id.toString(),
+                          widget.isExecuterAlta, selectedDateTime);
                     },
                     child: Container(
                       padding: const EdgeInsets.symmetric(
                           vertical: 10, horizontal: 30),
                       decoration: BoxDecoration(
-                        color: selectedDateTime!=null? const Color(0xff009283) : Colors.grey,
+                        color: selectedDateTime != null
+                            ? const Color(0xff009283)
+                            : Colors.grey,
                         borderRadius: BorderRadius.circular(5),
                       ),
                       child: const Text(
@@ -297,7 +310,6 @@ String _formatDateTime(DateTime? dateTime) {
                     ),
                   ),
                 ),
-             
             ],
           ),
         ),
@@ -305,7 +317,8 @@ String _formatDateTime(DateTime? dateTime) {
     );
   }
 
-  Future<void> handleExecution(String id, bool iisExecuterAlta, DateTime? date) async {
+  Future<void> handleExecution(
+      String id, bool iisExecuterAlta, DateTime? date) async {
     CustomModal modal = CustomModal();
     setState(() {
       isFetching = true;
@@ -332,25 +345,40 @@ String _formatDateTime(DateTime? dateTime) {
   }
 
   Future<int> executerAlta(String id, bool isAlta, DateTime? date) async {
+    final detaFormat =
+        '${date!.toIso8601String().split('T')[0]}T${date.hour.toString().padLeft(2, '0')}:${date.minute.toString().padLeft(2, '0')}';
 
+    // Crear los datos en formato FormData
+    final Map<String, String> body = {
+      'fechaEjecucion': detaFormat,
+      'id': id,
+    };
 
-    final detaFormat = '${date!.toIso8601String().split('T')[0]}T${date!.hour.toString().padLeft(2, '0')}:${date!.minute.toString().padLeft(2, '0')}';
-
-    ApiClient client = ApiClient();
-    final Map<String, dynamic> body = {'fechaEjecucion':detaFormat,'id': id};
     try {
-      final res = await client.post(
-          isAlta ? AppUrl.postEjecutarAlta : AppUrl.postEjecutarBaja,
-          jsonEncode(body));
-      print(res.statusCode);
-      if (res.statusCode == 200) {
-        return 0;
+      // Construir la URL basada en el tipo de operación
+      final uri = Uri.parse(isAlta
+          ? '${AppUrl.url}${AppUrl.postEjecutarAlta}'
+          : '${AppUrl.url}${AppUrl.postEjecutarBaja}');
+
+      // Crear una solicitud POST con MultipartRequest para FormData
+      final request = http.MultipartRequest('POST', uri)..fields.addAll(body);
+
+      // Enviar la solicitud y obtener la respuesta
+      final streamedResponse = await request.send();
+      final response = await http.Response.fromStream(streamedResponse);
+
+      print(response.body);
+      print(response.statusCode);
+
+      // Verificar el estado de la respuesta
+      if (response.statusCode == 200) {
+        return 0; // Éxito
       } else {
-        return 1;
+        return 1; // Error en la respuesta
       }
     } catch (e) {
-      print('Ocurrió un error $e');
-      return 1;
+      print('Ocurrió un error: $e');
+      return 1; // Error en el manejo de la solicitud
     }
   }
 }

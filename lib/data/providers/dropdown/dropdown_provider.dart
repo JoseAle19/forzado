@@ -525,17 +525,13 @@ class DropDownValuesManagerProvider with ChangeNotifier {
         }
       } else if (res.statusCode == 401) {
         _errorMessageGetUsers = 'Error al obtener los usuarios';
-        throw Exception('Error al obtener los usuarios');
       } else if (res.statusCode == 500) {
         _errorMessageGetUsers = 'Error interno del servidor';
-        throw Exception('Error interno del servidor');
       }
     } on TimeoutException catch (_) {
       _errorMessageGetUsers = 'La solicitud excedió el tiempo límite.';
-      throw Exception('La solicitud excedió el tiempo límite.');
     } catch (e) {
       _errorMessageGetUsers = 'Error en la solicitud: $e';
-      throw Exception('Error en la solicitud: $e');
     } finally {
       _isLoadingGetUsers = false;
       notifyListeners();
@@ -890,7 +886,7 @@ class DropdownProviderManagerOffline with ChangeNotifier {
     modeltwo.Value(id: 3, descripcion: 'BAJO'),
     modeltwo.Value(id: 20, descripcion: 'MODERADO ALTO'),
     modeltwo.Value(id: 15, descripcion: 'MODERADO'),
-    modeltwo.Value(id: 9, descripcion: 'MODERAsDO'),
+    modeltwo.Value(id: 9, descripcion: 'MODERADO'),
     modeltwo.Value(id: 6, descripcion: 'BAJO'),
     modeltwo.Value(id: 3, descripcion: 'BAJO'),
     modeltwo.Value(id: 24, descripcion: 'MAYOR ALTO'),

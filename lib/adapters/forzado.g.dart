@@ -54,13 +54,27 @@ class ForzadoAdapter extends TypeAdapter<Forzado> {
       status: fields[34] as String?,
       usuario: fields[35] as String?,
       projectName: fields[36] as String?,
+      projectValue: fields[37] as AdapterTwo?,
+      tagPrefijoValue: fields[38] as AdapterOne?,
+      tagCentroValue: fields[39] as AdapterOne?,
+      disciplinaValue: fields[40] as AdapterTwo?,
+      turnoValue: fields[41] as AdapterTwo?,
+      responsableValue: fields[42] as AdapterThree?,
+      probabilidadValue: fields[43] as AdapterTwo?,
+      impactoValue: fields[44] as AdapterTwo?,
+      riesgoValue: fields[45] as AdapterTwo?,
+      solicitanteValue: fields[46] as AdapterThree?,
+      aprobadorValue: fields[47] as AdapterThree?,
+      ejecutorValue: fields[48] as AdapterThree?,
+      tipoForzadoValue: fields[49] as AdapterTwo?,
+      riesgoAValue: fields[50] as AdapterTwo?,
     );
   }
 
   @override
   void write(BinaryWriter writer, Forzado obj) {
     writer
-      ..writeByte(37)
+      ..writeByte(51)
       ..writeByte(0)
       ..write(obj.tagPrefijo)
       ..writeByte(1)
@@ -134,7 +148,35 @@ class ForzadoAdapter extends TypeAdapter<Forzado> {
       ..writeByte(35)
       ..write(obj.usuario)
       ..writeByte(36)
-      ..write(obj.projectName);
+      ..write(obj.projectName)
+      ..writeByte(37)
+      ..write(obj.projectValue)
+      ..writeByte(38)
+      ..write(obj.tagPrefijoValue)
+      ..writeByte(39)
+      ..write(obj.tagCentroValue)
+      ..writeByte(40)
+      ..write(obj.disciplinaValue)
+      ..writeByte(41)
+      ..write(obj.turnoValue)
+      ..writeByte(42)
+      ..write(obj.responsableValue)
+      ..writeByte(43)
+      ..write(obj.probabilidadValue)
+      ..writeByte(44)
+      ..write(obj.impactoValue)
+      ..writeByte(45)
+      ..write(obj.riesgoValue)
+      ..writeByte(46)
+      ..write(obj.solicitanteValue)
+      ..writeByte(47)
+      ..write(obj.aprobadorValue)
+      ..writeByte(48)
+      ..write(obj.ejecutorValue)
+      ..writeByte(49)
+      ..write(obj.tipoForzadoValue)
+      ..writeByte(50)
+      ..write(obj.riesgoAValue);
   }
 
   @override

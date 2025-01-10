@@ -5,12 +5,13 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:forzado/adapters/forzado.dart';
 import 'package:forzado/core/urls.dart';
-import 'package:forzado/core/utils/preferences_helper.dart';
+import 'package:forzado/data/providers/forzados/forzados_provider.dart';
 import 'package:forzado/models/Boxes.dart';
 import 'package:forzado/models/form/forzado/model_forzado.dart';
-import 'package:forzado/models/model_user_detail.dart';
 import 'package:forzado/services/api_client.dart';
+import 'package:forzado/widgets/modal_error.dart';
 import 'package:hive/hive.dart';
+import 'package:provider/provider.dart';
 
 class ForzadosDataTable extends StatefulWidget {
   const ForzadosDataTable();
@@ -47,23 +48,40 @@ class _ForzadosDataTableState extends State<ForzadosDataTable> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              detalleItem('Prefijo', forzado.tagCentroDescription),
-              detalleItem('Centro', forzado.tagCentroDescription),
-              detalleItem('Descripción', forzado.descripcionDescription),
-              detalleItem('Disciplina', forzado.disciplinaDescription),
-              detalleItem('Turno', forzado.turnoDescription),
+              detalleItem('usuario', forzado.usuario.toString()),
               detalleItem(
-                  'Interlock Seguridad', forzado.iterlockSeguridadDescription),
-              detalleItem('Responsable', forzado.responsableDescription),
-              detalleItem('Riesgo A', forzado.riesgoADescription),
-              detalleItem('Probabilidad', forzado.probabilidadDescription),
-              detalleItem('Impacto', forzado.impactoDescription),
-              detalleItem('Riesgo', forzado.riesgoDescription),
-              detalleItem('Solicitante', forzado.solicitanteDescription),
-              detalleItem('Aprobador', forzado.aprobadorDescription),
-              detalleItem('Ejecutor', forzado.ejecutorDescription),
-              detalleItem('Autorización', forzado.autorizacionDescription),
-              detalleItem('Tipo de Forzado', forzado.tipoDeForzadoDescription),
+                  'Nombre del proyecto', forzado.projectValue?.descripcion),
+              detalleItem('Centro', forzado.tagCentroValue?.descripcion),
+              detalleItem('Descripción', forzado.descripcion),
+              detalleItem('Disciplina', forzado.disciplinaValue?.descripcion),
+              detalleItem('Turno', forzado.turnoValue?.descripcion),
+              detalleItem('Interlock Seguridad', forzado.interlock),
+              detalleItem('Responsable', forzado.responsableValue?.nombre),
+              detalleItem('Riesgo A', forzado.riesgoAValue?.descripcion),
+              detalleItem(
+                  'Probabilidad', forzado.probabilidadValue?.descripcion),
+              detalleItem('Impacto', forzado.impactoValue?.descripcion),
+              detalleItem('Riesgo', forzado.riesgoValue?.descripcion),
+              detalleItem(
+                  'Solicitante',
+                  utf8.decode(
+                      latin1.encode(
+                          forzado.solicitanteValue?.nombre ?? 'No value'),
+                      allowMalformed: true)),
+              detalleItem(
+                  'Aprobador',
+                  utf8.decode(
+                      latin1
+                          .encode(forzado.aprobadorValue?.nombre ?? 'No value'),
+                      allowMalformed: true)),
+              detalleItem(
+                  'Ejecutor',
+                  utf8.decode(
+                      latin1
+                          .encode(forzado.ejecutorValue?.nombre ?? 'No value'),
+                      allowMalformed: true)),
+              detalleItem(
+                  'Tipo de Forzado', forzado.tipoForzadoValue?.descripcion),
             ],
           ),
         ),
@@ -115,7 +133,10 @@ class _ForzadosDataTableState extends State<ForzadosDataTable> {
     );
   }
 
-  void sincronizarInformacion() async {
+  void sincronizarInformacion(BuildContext context) async {
+    final forzadosProvider =
+        Provider.of<ForzadosProvider>(context, listen: false);
+    CustomModal modal = CustomModal();
     try {
       setState(() {
         isSync = true;
@@ -124,42 +145,46 @@ class _ForzadosDataTableState extends State<ForzadosDataTable> {
         Forzado forzado = listForzado[i];
 
         final data = InsertQueryParameters(
-            usuario: PreferencesHelper().getUser()!.id.toString(),
-            tagPrefijo: forzado.tagPrefijo!.toString(),
-            tagCentro: forzado.tagCentro.toString(),
-            tagSubfijo: 'Subfijo',
-            descripcion: forzado.descripcion!,
-            disciplina: forzado.disciplina!,
-            turno: forzado.turno!,
-            interlockSeguridad: forzado.interlock!,
-            responsable: forzado.responsable!,
-            riesgo: forzado.riesgo!,
-            probabilidad: forzado.probabilidad!,
-            impacto: forzado.impacto!,
-            solicitante: forzado.solicitante!,
-            aprobador: forzado.aprobador!,
-            ejecutor: forzado.ejecutor!,
-            autorizacion: '1',
-            tipoForzado: forzado.tipoDeForzado!,
-            riesgoA: '',
-            projectName: '');
+          usuario: forzado.usuario!,
+          tagPrefijo: forzado.tagPrefijoValue!.id.toString(),
+          tagCentro: forzado.tagCentroValue!.id.toString(),
+          tagSubfijo: 'Default value',
+          descripcion: forzado.descripcion!,
+          disciplina: forzado.disciplinaValue!.id.toString(),
+          turno: forzado.turnoValue!.id.toString(),
+          interlockSeguridad: forzado.interlock!,
+          responsable: forzado.responsableValue!.id.toString(),
+          riesgoA: forzado.riesgoAValue!.id.toString(),
+          riesgo: forzado.riesgoValue!.id.toString(),
+          probabilidad: forzado.probabilidadValue!.id.toString(),
+          impacto: forzado.impactoValue!.id.toString(),
+          solicitante: forzado.solicitanteValue!.id.toString(),
+          aprobador: forzado.aprobadorValue!.id.toString(),
+          ejecutor: forzado.ejecutorValue!.id.toString(),
+          autorizacion: 'Default value',
+          tipoForzado: forzado.tipoForzadoValue!.id.toString(),
+          projectName: forzado.projectValue!.id.toString(),
+        );
 
-        final transformedMap =
-            data.toJson().map((key, value) => MapEntry(key, value.toString()));
-
-        final jsonString = jsonEncode(transformedMap);
-
-        ApiClient client = new ApiClient();
-        final response = await client.post(AppUrl.postAddForzado, jsonString);
-
-        if (response.statusCode == 200) {
-          print('Respuesta exitosa');
-        } else {
-          print(response.body);
-          print('Error en la solicitud: ${response.statusCode}');
+        try {
+          ApiClient client = ApiClient();
+          final res = await client.post(
+              AppUrl.postAddForzado, json.encode(data.toMap()));
+          print(res.body);
+          if (res.statusCode == 200) {
+            forzadosProvider.fetchCountForzados();
+            modal.showModal(
+                context, 'Sincronización completada', Colors.green, true);
+          } else {
+            modal.showModal(
+                context, 'Ocurrió un error interno', Colors.red, false);
+          }
+        } catch (e) {
+          modal.showModal(
+              context, 'Ocurrió un error interno', Colors.red, false);
         }
       }
-      deleteForzadoBox();
+      // deleteForzadoBox();
 
       setState(() {
         isSync = false;
@@ -180,24 +205,25 @@ class _ForzadosDataTableState extends State<ForzadosDataTable> {
   }
 
   void loadForzados() async {
-    late Box<Forzado> box;
+    Box<Forzado> box = await Hive.box<Forzado>('Forzado');
+
     setState(() {
       isLoading = true;
     });
     try {
-      box = await Hive.openBox(HiveBoxes.forzado);
       setState(() {
         listForzado = box.values.toList();
       });
+      print(listForzado.map((f) {
+        print(f.tagPrefijo);
+      }));
     } catch (e) {
       print('Error al guardar: $e');
     } finally {
       setState(() {
         isLoading = false;
       });
-      if (box.isOpen) {
-        await box.close();
-      }
+      if (box.isOpen) {}
     }
   }
 
@@ -228,7 +254,11 @@ class _ForzadosDataTableState extends State<ForzadosDataTable> {
       appBar: AppBar(
         actions: [
           IconButton(
-            onPressed: sincronizarInformacion,
+            // onPressed: () async {
+            //   final box = await Hive.openBox(HiveBoxes.forzado);
+            //   box.clear();
+            // },
+            onPressed: () => sincronizarInformacion(context),
             icon: const Icon(Icons.sync),
           )
         ],
@@ -272,12 +302,12 @@ class _ForzadosDataTableState extends State<ForzadosDataTable> {
                               vertical: 8, horizontal: 16),
                           child: ListTile(
                             title: Text(
-                              forzado.descripcion ?? 'Sin descripción',
+                              'Proyecto: ${forzado.projectValue?.descripcion}',
                               style:
                                   const TextStyle(fontWeight: FontWeight.bold),
                             ),
-                            subtitle:
-                                Text('Centro: ${forzado.tagCentro ?? 'N/A'}'),
+                            subtitle: Text(
+                                'Centro: ${forzado.tagCentroValue?.descripcion ?? 'no value'}'),
                             trailing: Wrap(
                               spacing: 8, // Espaciado entre botones
                               children: [

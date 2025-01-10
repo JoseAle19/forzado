@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:forzado/adapters/forzado.dart';
 import 'package:forzado/core/configs/theme/app_colors.dart';
 import 'package:forzado/data/providers/forzados/forzados_provider.dart';
 import 'package:forzado/models/forzado/model_forzado.dart';
@@ -11,16 +12,19 @@ class ListForzadosRequesterLow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: const Text('Baja de forzado'),
+      ),
       body: Column(
         children: [
-          _customAppBar(context),
+          // _customAppBar(context),
           Expanded(
             child: Container(
               // color: Colors.blue,
               padding: const EdgeInsets.all(10),
               child: Column(
                 children: [
-                  _titleWidget(),
+                  // _titleWidget(),
                   Expanded(
                     child: _futureListForzadosRequesterLow(),
                   )
@@ -35,7 +39,7 @@ class ListForzadosRequesterLow extends StatelessWidget {
 
   Widget _titleWidget() {
     return Container(
-      margin: const EdgeInsets.only(bottom: 20),
+      margin: const EdgeInsets.only(bottom: 0),
       width: double.infinity,
       child: const Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -125,52 +129,82 @@ class ListForzadosRequesterLow extends StatelessWidget {
     });
   }
 
-  Widget _cardForzado(ForzadoItem f, BuildContext context) {
-    return Container(
-      // margin: const EdgeInsets.all(10),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(10),
-        boxShadow: const [
-          BoxShadow(
-            color: Color.fromARGB(106, 28, 50, 97),
-            spreadRadius: 0.0,
-            blurRadius: 5.0,
-            offset: Offset(0, 5),
-          ),
-        ],
+  Widget _cardForzado(ForzadoItem forzado, BuildContext context) {
+    return Card(
+      elevation: 4,
+      margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
       ),
-      child: ListTile(
-        // Colocar id del forzado
-        leading: Container(
-          width: 40,
-          height: 40,
-          decoration: BoxDecoration(
-            color: AppColors.primary,
-            borderRadius: BorderRadius.circular(100),
-          ),
-          child: const Center(
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            CircleAvatar(
+              radius: 30,
+              backgroundColor: Colors.blue.shade100,
               child: Text(
-            '12',
-            style: TextStyle(color: Colors.white),
-          )),
-        ),
-        title: Text(
-          f.descripcion ?? 'No especificado',
-          style: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
-        ),
-        subtitle: Text(
-          f.area.toString(),
-          style: const TextStyle(fontSize: 12),
-        ),
-        trailing: GestureDetector(
-            onTap: () => Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (_) => DetailsForzadorRequester(detailForzado: f),
-                  ),
+                '${forzado.id}',
+                style: const TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.blue,
                 ),
-            child: const Icon(Icons.arrow_forward_ios)),
+              ),
+            ),
+            const SizedBox(width: 16),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'ID: ${forzado.id}',
+                    style: const TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      color: Color(0xFF333333),
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  // Descripción
+                  Text(
+                    forzado.estado ?? 'Sin estado',
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(
+                      fontSize: 14,
+                      color: Color(0xFF666666),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(width: 8),
+            IconButton(
+              onPressed: () {
+                navigateDetailForzado(context, forzado);
+              },
+              icon: const Icon(
+                Icons.arrow_forward_ios,
+                color: Colors.blue,
+                size: 20,
+              ),
+              splashRadius: 20,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void navigateDetailForzado(BuildContext context, ForzadoItem item) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => DetailsForzadorRequester(
+          detailForzado: item,
+        ),
       ),
     );
   }

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:forzado/core/urls.dart';
 import 'package:forzado/models/remove_forzado/model_list_remove.dart';
 import 'package:forzado/pages/aprobador/home_approve.dart';
+import 'package:forzado/pages/aprobador/screen/shutdown_forzado.dart';
 import 'package:forzado/pages/resquester/online/widgets/text_info.dart';
 import 'package:forzado/pages/steps_form/congratulation.dart';
 import 'package:forzado/services/api_client.dart';
@@ -95,14 +96,10 @@ class _DetailApproveForzadoState extends State<DetailApproveForzado> {
       if (res.statusCode == 200) {
         print(res.body);
         modal.showModal(context, 'Operacion exitosa', Colors.green, true);
-        Navigator.pushAndRemoveUntil(
+        Navigator.pushReplacement(
             context,
             MaterialPageRoute(
-                builder: (context) => CongratulationAnimation(
-                    page: widget.isAlta
-                        ? const HomeApprove()
-                        : const HomeApprove())),
-            (route) => false);
+                builder: (context) => ShutdownForzado(isAlta: widget.isAlta)));
       } else {
         print(res.body);
         print('Error en la solicitud: ${res.statusCode}');

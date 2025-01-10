@@ -121,18 +121,17 @@ class _BajasForzadoOfflineState extends State<BajasForzadoOffline> {
 
   void removeForzadoBajaById() async {
     final box = Hive.box<ForzadoBaja>('forzadoBajaBox');
-  setState(() {
-    isfetch = true;
-  });
+    setState(() {
+      isfetch = true;
+    });
     for (var i = 0; i < box.values.toList().length; i++) {
       ForzadoBaja forzado = box.values.toList()[i];
-    await  syncForzadosBaja(forzado);
-    box.delete(forzado.id_forzado);
+      await syncForzadosBaja(forzado);
+      box.delete(forzado.id_forzado);
     }
-  setState(() {
-    isfetch = false;
-  });
-
+    setState(() {
+      isfetch = false;
+    });
   }
 
   Future<void> syncForzadosBaja(ForzadoBaja forzado) async {
@@ -175,7 +174,13 @@ class _BajasForzadoOfflineState extends State<BajasForzadoOffline> {
                 onPressed: () {
                   removeForzadoBajaById();
                 },
-                icon: const Icon(Icons.sync))
+                icon: const Icon(Icons.sync)),
+            IconButton(
+                onPressed: () {
+                  final box = Hive.box<ForzadoBaja>('forzadoBajaBox');
+                  print(box.values.toList());
+                },
+                icon: const Icon(Icons.delete))
           ],
         ),
         body: Center(

@@ -1,3 +1,6 @@
+import 'package:forzado/adapters/adapter_one.dart';
+import 'package:forzado/adapters/adapter_three.dart';
+import 'package:forzado/adapters/adapter_two.dart';
 import 'package:hive/hive.dart';
 
 part 'forzado.g.dart';
@@ -110,6 +113,35 @@ class Forzado extends HiveObject {
   @HiveField(36)
   String? projectName;
 
+  @HiveField(37)
+  AdapterTwo? projectValue;
+  @HiveField(38)
+  AdapterOne? tagPrefijoValue;
+  @HiveField(39)
+  AdapterOne? tagCentroValue;
+  @HiveField(40)
+  AdapterTwo? disciplinaValue;
+  @HiveField(41)
+  AdapterTwo? turnoValue;
+  @HiveField(42)
+  AdapterThree? responsableValue;
+  @HiveField(43)
+  AdapterTwo? probabilidadValue;
+  @HiveField(44)
+  AdapterTwo? impactoValue;
+  @HiveField(45)
+  AdapterTwo? riesgoValue;
+  @HiveField(46)
+  AdapterThree? solicitanteValue;
+  @HiveField(47)
+  AdapterThree? aprobadorValue;
+  @HiveField(48)
+  AdapterThree? ejecutorValue;
+  @HiveField(49)
+  AdapterTwo? tipoForzadoValue;
+  @HiveField(50)
+  AdapterTwo? riesgoAValue;
+
   Forzado({
     this.tagPrefijo,
     this.tagCentro,
@@ -148,5 +180,19 @@ class Forzado extends HiveObject {
     this.status,
     this.usuario,
     this.projectName,
+    this.projectValue,
+    this.tagPrefijoValue,
+    this.tagCentroValue,
+    this.disciplinaValue,
+    this.turnoValue,
+    this.responsableValue,
+    this.probabilidadValue,
+    this.impactoValue,
+    this.riesgoValue,
+    this.solicitanteValue,
+    this.aprobadorValue,
+    this.ejecutorValue,
+    this.tipoForzadoValue,
+    this.riesgoAValue,
   });
 }

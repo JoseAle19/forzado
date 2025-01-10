@@ -1,4 +1,5 @@
 import 'package:hive/hive.dart';
+import 'package:forzado/models/model_one.dart' as modelone;
 
 part 'adapter_one.g.dart';
 
@@ -18,4 +19,11 @@ class AdapterOne extends HiveObject {
     required this.codigo,
     required this.descripcion,
   });
+  factory AdapterOne.fromValue(modelone.Value value) {
+    return AdapterOne(
+      id: value.id,
+      codigo: value.codigo,
+      descripcion: value.descripcion,
+    );
+  }
 }

@@ -24,22 +24,6 @@ class _ApproveforzadoState extends State<ShutdownForzado> {
     return Scaffold(
       appBar: AppBar(
         elevation: 0,
-        actions: [
-          IconButton(
-            onPressed: () async {
-              // await showSearch(
-              //   context: context,
-              //   delegate: CustomSearchExecuter(
-              //       searchList: listData
-              //           .where((element) =>
-              //               element.estado!.toLowerCase() == 'pendiente-baja' ||
-              //               element.estado!.toLowerCase() == 'Pendiente-alta')
-              //           .toList()),
-              // );
-            },
-            icon: const Icon(Icons.search),
-          ),
-        ],
         leading: IconButton(
           onPressed: () {
             final newRoute = MaterialPageRoute(builder: (_) => HomeApprove());

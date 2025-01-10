@@ -8,15 +8,14 @@ import 'package:forzado/core/configs/theme/app_colors.dart';
 import 'package:forzado/data/providers/Stepper/stepper_provider.dart';
 import 'package:forzado/data/providers/dropdown/dropdown_provider.dart';
 import 'package:forzado/data/providers/forzados/forzados_provider.dart';
-import 'package:forzado/models/Boxes.dart';
+import 'package:forzado/models/model_one.dart' as modelone;
+import 'package:forzado/models/model_three.dart' as modelThree;
+import 'package:forzado/models/model_two.dart' as modelTwo;
 import 'package:forzado/pages/steps_form/congratulation.dart';
 import 'package:forzado/widgets/custom_dropdown_button.dart';
 import 'package:forzado/widgets/modal_error.dart';
 import 'package:hive_flutter/adapters.dart';
 import 'package:provider/provider.dart';
-import 'package:forzado/models/model_one.dart' as modelone;
-import 'package:forzado/models/model_three.dart' as modelThree;
-import 'package:forzado/models/model_two.dart' as modelTwo;
 
 class StepperFormOffline extends StatefulWidget {
   const StepperFormOffline({super.key});
