@@ -17,6 +17,6 @@ class AdapterThree extends HiveObject {
   });
   factory AdapterThree.fromValue(modelThree.Value value) {
     return AdapterThree(
-        id: value.id, nombre: '${value.nombre} ${value.apePaterno}');
+        id: value.id, nombre: '${value.nombre} ${value.apePaterno ?? ' '}');
   }
 }

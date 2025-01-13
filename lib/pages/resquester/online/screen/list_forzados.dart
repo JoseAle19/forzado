@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:forzado/adapters/forzado.dart';
 import 'package:forzado/core/configs/theme/app_colors.dart';
 import 'package:forzado/data/providers/forzados/forzados_provider.dart';
 import 'package:forzado/models/forzado/model_forzado.dart';
@@ -13,7 +12,7 @@ class ListForzadosRequesterLow extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Baja de forzado'),
+        title: const Text('Retiro de forzado'),
       ),
       body: Column(
         children: [
@@ -45,7 +44,7 @@ class ListForzadosRequesterLow extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Baja forzado',
+            'Retiro forzado',
             style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
           ),
           Text(
@@ -115,13 +114,13 @@ class ListForzadosRequesterLow extends StatelessWidget {
       }
       return ListView.builder(
         itemCount: value.forzados
-            .where(
-                (element) => element.estado!.toLowerCase() == 'ejecutado-alta')
+            .where((element) =>
+                element.estado!.toLowerCase() == 'ejecutado-forzado')
             .length,
         itemBuilder: (context, index) {
           final f = value.forzados
               .where((element) =>
-                  element.estado!.toLowerCase() == 'ejecutado-alta')
+                  element.estado!.toLowerCase() == 'ejecutado-forzado')
               .elementAt(index);
           return _cardForzado(f, context);
         },
@@ -169,11 +168,11 @@ class ListForzadosRequesterLow extends StatelessWidget {
                   const SizedBox(height: 4),
                   // Descripción
                   Text(
-                    forzado.estado ?? 'Sin estado',
+                    forzado.estado!.toUpperCase(),
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                     style: const TextStyle(
-                      fontSize: 14,
+                      fontSize: 12,
                       color: Color(0xFF666666),
                     ),
                   ),

@@ -255,7 +255,7 @@ class _ForzadosDataTableState extends State<ForzadosDataTable> {
         actions: [
           IconButton(
             // onPressed: () async {
-            //   final box = await Hive.openBox(HiveBoxes.forzado);
+            //   final box = await Hive.box<Forzado>(HiveBoxes.forzado);
             //   box.clear();
             // },
             onPressed: () => sincronizarInformacion(context),

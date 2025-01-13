@@ -9,6 +9,7 @@ import 'package:forzado/adapters/forzado.dart';
 import 'package:forzado/core/urls.dart';
 import 'package:forzado/core/utils/preferences_helper.dart';
 import 'package:forzado/data/providers/dropdown/dropdown_provider.dart';
+import 'package:forzado/data/providers/dropdown/dropdown_provider_off.dart';
 import 'package:forzado/models/form/forzado/model_forzado.dart';
 import 'package:forzado/models/forzado/model_forzado.dart';
 import 'package:forzado/models/remove_forzado/model_list_remove.dart';
@@ -119,7 +120,50 @@ class ForzadosProvider with ChangeNotifier {
           .timeout(const Duration(seconds: 10));
       ForzadosModel decodeData = forzadosModelFromJson(res.body);
       if (res.statusCode == 200) {
-        _forzados = decodeData.data!;
+        _forzados = decodeData.data!.map((f) {
+          String state = f.estado!.toLowerCase();
+          if (state.contains("baja")) {
+            state = state.replaceAll("baja", "retiro");
+            print(state);
+          } else if (state.contains("alta")) {
+            state = state.replaceAll("alta", "forzado");
+          }
+
+          return ForzadoItem(
+              id: f.id,
+              aprobador: f.aprobador,
+              aprobadorAId: f.aprobadorAId,
+              aprobadorBId: f.aprobadorBId,
+              area: f.area,
+              descripcion: f.descripcion,
+              disciplinaDescripcion: f.disciplinaDescripcion,
+              ejecutor: f.ejecutor,
+              ejecutorAId: f.ejecutorAId,
+              ejecutorBId: f.ejecutorBId,
+              estadoSolicitud: f.estadoSolicitud,
+              fecha: f.fecha,
+              fechaCierre: f.fechaCierre,
+              fechaCreacion: f.fechaCreacion,
+              fechaModificacion: f.fechaModificacion,
+              fechaRealizacion: f.fechaRealizacion,
+              motivoRechazoDescripcion: f.motivoRechazoDescripcion,
+              nombre: f.nombre,
+              responsableNombre: f.responsableNombre,
+              riesgoDescripcion: f.riesgoDescripcion,
+              solicitanteAId: f.solicitanteAId,
+              solicitanteBId: f.solicitanteBId,
+              solicitante: f.solicitante,
+              subareaCodigo: f.subareaCodigo,
+              subareaDescripcion: f.subareaDescripcion,
+              tagCentroCodigo: f.tagCentroCodigo,
+              tagCentroDescripcion: f.tagCentroDescripcion,
+              tipo: f.tipo,
+              tipoForzadoDescripcion: f.tipoForzadoDescripcion,
+              turnoDescripcion: f.turnoDescripcion,
+              usuarioCreacion: f.usuarioCreacion,
+              usuarioModificacion: f.usuarioModificacion,
+              estado: state);
+        }).toList();
         _errorMessageGetForzados = '';
         notifyListeners();
       }

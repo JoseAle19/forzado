@@ -6,7 +6,7 @@ import 'package:forzado/adapters/forzado.dart';
 import 'package:forzado/core/app_styles.dart';
 import 'package:forzado/core/configs/theme/app_colors.dart';
 import 'package:forzado/data/providers/Stepper/stepper_provider.dart';
-import 'package:forzado/data/providers/dropdown/dropdown_provider.dart';
+import 'package:forzado/data/providers/dropdown/dropdown_provider_off.dart';
 import 'package:forzado/data/providers/forzados/forzados_provider.dart';
 import 'package:forzado/models/model_one.dart' as modelone;
 import 'package:forzado/models/model_three.dart' as modelThree;
@@ -147,7 +147,7 @@ class _StepperFormOfflineState extends State<StepperFormOffline> {
         Provider.of<DropdownProviderManagerOffline>(context);
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Alta de forzando offline'),
+        title: const Text('Forzado Offline'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -229,7 +229,7 @@ class _StepperFormOfflineState extends State<StepperFormOffline> {
                             shrinkWrap: true,
                             children: [
                               CustomDropdownButton<modelTwo.Value>(
-                                hintText: 'Nombre del proyecto asociado *:',
+                                hintText: 'Área de Forzado *:',
                                 items: dropdownProvider.listProjects,
                                 selectedItem:
                                     dropdownProvider.currentStateProjectName,
@@ -385,6 +385,7 @@ class _StepperFormOfflineState extends State<StepperFormOffline> {
                                 selectedItem: dropdownProvider.currentStateRisk,
                                 onChanged: (value) {
                                   dropdownProvider.currentStateRisk = value!;
+                                  dropdownProvider.defineInterlockbyRiskA();
                                 },
                               ),
                               CustomDropdownButton<modelTwo.Value>(

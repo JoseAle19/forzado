@@ -4,6 +4,7 @@
 
 import 'dart:convert';
 
+import 'package:forzado/adapters/adapter_two.dart';
 import 'package:forzado/core/abstract/dropdown_item.dart';
 
 ModelTwo modelTwoFromJson(String str) => ModelTwo.fromJson(json.decode(str));

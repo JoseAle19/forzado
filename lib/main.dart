@@ -12,6 +12,7 @@ import 'package:forzado/data/providers/auth/auth_provider.dart';
 import 'package:forzado/data/providers/auth/password_provider.dart';
 import 'package:forzado/data/providers/bottom/bottom_navigationbar_provider.dart';
 import 'package:forzado/data/providers/dropdown/dropdown_provider.dart';
+import 'package:forzado/data/providers/dropdown/dropdown_provider_off.dart';
 import 'package:forzado/data/providers/forzados/forzados_provider.dart';
 import 'package:forzado/data/providers/offline/list_forzados_ejecutados_provider.dart';
 import 'package:forzado/data/providers/requester_provider.dart';
@@ -54,7 +55,6 @@ void main() async {
   await Hive.openBox<ForzadoBaja>('forzadoBajaBox');
   await Hive.openBox<Forzados>('Forzados');
   await Hive.openBox<Forzado>('Forzado');
-
   await initializeDateFormatting('es_ES', null);
   runApp(const MyApp());
 }

@@ -57,7 +57,7 @@ class PageOnline extends StatelessWidget {
                   height: 5,
                 ),
                 Text(
-                  'Alta Forzado',
+                  'Forzado',
                   style: TextStyle(color: Colors.white),
                 )
               ],
@@ -66,8 +66,8 @@ class PageOnline extends StatelessWidget {
         ),
         GestureDetector(
           onTap: () {
-            final route =
-                MaterialPageRoute(builder: (_) => const ListForzadosRequesterLow());
+            final route = MaterialPageRoute(
+                builder: (_) => const ListForzadosRequesterLow());
             Navigator.push(context, route);
           },
           child: Container(
@@ -96,7 +96,7 @@ class PageOnline extends StatelessWidget {
                   height: 5,
                 ),
                 Text(
-                  'Baja Forzado',
+                  'Retiro Forzado',
                   style: TextStyle(color: Colors.white),
                 )
               ],
@@ -146,7 +146,7 @@ class PageOnline extends StatelessWidget {
                   height: 5,
                 ),
                 const Text(
-                  'Altas Forzado (Campo)',
+                  'Forzados Forzado (Campo)',
                   style: TextStyle(color: Colors.white),
                 )
               ],

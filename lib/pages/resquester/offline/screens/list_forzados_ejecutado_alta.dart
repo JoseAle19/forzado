@@ -21,7 +21,7 @@ class ListForzadosEjecutadoAlta extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Baja de forzado'),
+        title: const Text('Retiro de forzado'),
       ),
       body: ValueListenableBuilder(
         valueListenable: box.listenable(),
@@ -39,6 +39,9 @@ class ListForzadosEjecutadoAlta extends StatelessWidget {
             },
             itemBuilder: (BuildContext context, int index) {
               Forzados forzado = forzados[index];
+              final state = forzado.estado!.toLowerCase() == 'ejecutado-alta'
+                  ? 'Ejecutado-forzado'
+                  : 'sin estado';
               return Card(
                 elevation: 4,
                 margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
@@ -78,11 +81,11 @@ class ListForzadosEjecutadoAlta extends StatelessWidget {
                             const SizedBox(height: 4),
                             // Descripción
                             Text(
-                              forzado.estado,
+                              state.toUpperCase(),
                               maxLines: 2,
                               overflow: TextOverflow.ellipsis,
                               style: const TextStyle(
-                                fontSize: 14,
+                                fontSize: 12,
                                 color: Color(0xFF666666),
                               ),
                             ),

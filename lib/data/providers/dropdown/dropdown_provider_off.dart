@@ -1,25 +1,23 @@
 import 'dart:async';
-import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:forzado/core/urls.dart';
+import 'package:forzado/adapters/adapter_one.dart';
+import 'package:forzado/adapters/adapter_three.dart';
+import 'package:forzado/adapters/adapter_two.dart';
+import 'package:forzado/adapters/user_adapter.dart';
 import 'package:forzado/core/utils/preferences_helper.dart';
+import 'package:forzado/data/providers/dropdown/dropdown_provider.dart';
+import 'package:forzado/models/Boxes.dart';
 import 'package:forzado/models/model_one.dart' as modelone;
+import 'package:forzado/models/model_three.dart' as modelThree;
 import 'package:forzado/models/model_three.dart' as modelthird;
 import 'package:forzado/models/model_two.dart' as modeltwo;
 import 'package:forzado/models/model_user_detail.dart';
-import 'package:forzado/models/user/model_user.dart';
-import 'package:forzado/services/api_client.dart';
+import 'package:forzado/models/user/model_user.dart' as modeluser;
+import 'package:hive_flutter/hive_flutter.dart';
+import 'package:provider/provider.dart';
 
-class DropDownValuesManagerProvider with ChangeNotifier {
-  List<Value> _users = [];
-  List<Value> get users => _users;
-  String _errorMessageGetUsers = '';
-  bool _isLoadingGetUsers = false;
-  // getters
-  bool get isLoading => _isLoadingGetUsers;
-  String get errorMessage => _errorMessageGetUsers;
-
+class DropdownProviderManagerOffline with ChangeNotifier {
 // Getters y Setters para ModelOne
   List<modelone.Value> _listPrefijos = [];
   List<modelone.Value> _listCentros = [];
@@ -224,6 +222,12 @@ class DropDownValuesManagerProvider with ChangeNotifier {
     notifyListeners();
   }
 
+  List<modeluser.Value> _usersOff = [];
+  List<modeluser.Value> get usersOff => _usersOff;
+  set usersOff(List<modeluser.Value> value) {
+    _usersOff = value;
+  }
+
 // Limpiar los valores de los dropdown
   void clearValues() {
     _currentValueTagPrefijo = null;
@@ -243,91 +247,6 @@ class DropDownValuesManagerProvider with ChangeNotifier {
     _currentStateProjectName = null;
     _currentRisk = null;
     notifyListeners();
-  }
-
-  // variable para el error
-  String _error = '';
-  String get error => _error;
-
-  bool _isGettingData = false;
-  bool get isGettingdata => _isGettingData;
-
-  // Llenar los dropdown co informacion de la api
-
-  Future<void> getData() async {
-    ApiClient client = ApiClient();
-    _error = '';
-    _isGettingData = true;
-    notifyListeners();
-    try {
-      final responses = await Future.wait([
-        client.get(AppUrl.gettagPrefijo1),
-        client.get(AppUrl.getTagCentro1),
-        client.get(AppUrl.getTagDisciplina2),
-        client.get(AppUrl.getTurno2),
-        client.get(AppUrl.getResponsable3),
-        client.get(AppUrl.getRiesgoA2),
-        client.get(AppUrl.getProbabilidad2),
-        client.get(AppUrl.getImpacto2),
-        client.get(AppUrl.getTipoForzado2),
-        client.get(AppUrl.getSolicitantes3),
-        client.get(AppUrl.getAprobadores),
-        client.get(AppUrl.getEjecutor),
-        client.get(AppUrl.getProjects2),
-      ]).timeout(const Duration(seconds: 60));
-
-      for (final response in responses) {
-        if (response.statusCode != 200) {
-          throw HttpException(
-              'Error en el servidor: ${response.statusCode}, URL: ${response.request?.url}');
-        }
-      }
-
-      // Procesar respuestas para ModelOne
-      final resPrefijos = modelone.modelOneFromJson(responses[0].body);
-      final resCentros = modelone.modelOneFromJson(responses[1].body);
-      listPrefijos = resPrefijos.values;
-      listCentros = resCentros.values;
-
-      // Procesar respuestas para ModelTwo
-      final resDiciplinas = modeltwo.modelTwoFromJson(responses[2].body);
-      final resTurnos = modeltwo.modelTwoFromJson(responses[3].body);
-      final resRiesgos = modeltwo.modelTwoFromJson(responses[5].body);
-      final resProbabilidades = modeltwo.modelTwoFromJson(responses[6].body);
-      final resImpactos = modeltwo.modelTwoFromJson(responses[7].body);
-      final resTipoForzados = modeltwo.modelTwoFromJson(responses[8].body);
-      final resProjects = modeltwo.modelTwoFromJson(responses[12].body);
-      listDiciplinas = resDiciplinas.values;
-      listTurnos = resTurnos.values;
-      listRiesgos = resRiesgos.values;
-      listProbabilidades = resProbabilidades.values;
-      listImpactos = resImpactos.values;
-      listTipoDeForzados = resTipoForzados.values;
-      listProjects = resProjects.values;
-      final resResponsables = modelthird.modelThreeFromJson(responses[4].body);
-      listResponsables = resResponsables.values;
-
-      notifyListeners();
-    } on TimeoutException {
-      _error = 'Tiempo de espera agotado. Inténtelo de nuevo más tarde.';
-      notifyListeners();
-    } on SocketException {
-      _error = 'Error de conexión. Verifique su conexión a internet.';
-      notifyListeners();
-    } on HttpException catch (e) {
-      _error = 'Error en el servidor: ${e.message}';
-      notifyListeners();
-    } on FormatException {
-      _error =
-          'Error en el formato de los datos. Verifique la respuesta de la API.';
-      notifyListeners();
-    } catch (e) {
-      _error = 'Ocurrió un error desconocido: $e';
-      notifyListeners();
-    } finally {
-      _isGettingData = false;
-      notifyListeners();
-    }
   }
 
 // Mapa para definir el riesgo según el impacto y la probabilidad
@@ -416,27 +335,6 @@ class DropDownValuesManagerProvider with ChangeNotifier {
     }
   }
 
-  void addAprobadoresByPuesto() {
-    _listAprobadores.clear();
-    for (var i = 0; i < _users.length; i++) {
-      if (_users[i].puestoDescripcion!.toLowerCase() ==
-          "GERENTE PLANTA PROCESO".toLowerCase()) {
-        _listAprobadores.add(modelthird.Value(
-          id: _users[i].id!,
-          nombre:
-              '${_users[i].nombre!} ${_users[i].apePaterno!} ${_users[i].apeMaterno!}',
-        ));
-      }
-    }
-  }
-
-  bool isEnabledInterlock() {
-    return currentStateRisk?.descripcion.toLowerCase() ==
-            'personas'.toLowerCase()
-        ? false
-        : true;
-  }
-
   void defineInterlockbyRiskA() {
     if (currentStateRisk!.descripcion.isEmpty) return;
     if (currentStateRisk!.descripcion.toLowerCase() == 'personas') {
@@ -447,16 +345,37 @@ class DropDownValuesManagerProvider with ChangeNotifier {
     notifyListeners();
   }
 
+  bool isEnabledInterlock() {
+    return currentStateRisk?.descripcion.toLowerCase() ==
+            'personas'.toLowerCase()
+        ? false
+        : true;
+  }
+
+  void addAprobadoresByPuesto() {
+    _listAprobadores.clear();
+    for (var i = 0; i < _usersOff.length; i++) {
+      if (_usersOff[i].puestoDescripcion!.toLowerCase() ==
+          "GERENTE PLANTA PROCESO".toLowerCase()) {
+        _listAprobadores.add(modelthird.Value(
+          id: _usersOff[i].id!,
+          nombre:
+              '${_usersOff[i].nombre!} ${_usersOff[i].apePaterno!} ${_usersOff[i].apeMaterno!}',
+        ));
+      }
+    }
+  }
+
   void addArobbadoresByRole() {
     listAprobadores.clear();
 
-    for (var i = 0; i < _users.length; i++) {
-      print(_users[i].apePaterno);
-      if (_users[i].roles!.containsKey('2')) {
+    for (var i = 0; i < _usersOff.length; i++) {
+      print(_usersOff[i].apePaterno);
+      if (_usersOff[i].roles!.containsKey('2')) {
         listAprobadores.add(modelthird.Value(
-          id: _users[i].id!,
+          id: _usersOff[i].id!,
           nombre:
-              '${_users[i].nombre!} ${_users[i].apePaterno!} ${_users[i].apeMaterno!}',
+              '${_usersOff[i].nombre!} ${_usersOff[i].apePaterno!} ${_usersOff[i].apeMaterno!}',
         ));
       }
     }
@@ -477,7 +396,7 @@ class DropDownValuesManagerProvider with ChangeNotifier {
     modeltwo.Value(id: 3, descripcion: 'BAJO'),
     modeltwo.Value(id: 20, descripcion: 'MODERADO ALTO'),
     modeltwo.Value(id: 15, descripcion: 'MODERADO'),
-    modeltwo.Value(id: 9, descripcion: 'MODERAsDO'),
+    modeltwo.Value(id: 9, descripcion: 'MODERADO'),
     modeltwo.Value(id: 6, descripcion: 'BAJO'),
     modeltwo.Value(id: 3, descripcion: 'BAJO'),
     modeltwo.Value(id: 24, descripcion: 'MAYOR ALTO'),
@@ -494,53 +413,213 @@ class DropDownValuesManagerProvider with ChangeNotifier {
   ];
   List<modeltwo.Value> get riskLevels => _riskLevels;
 
-  Future<void> getUsersByRole() async {
-    try {
-      final res = await ApiClient()
-          .get(AppUrl.getListUsers)
-          .timeout(const Duration(seconds: 5));
-      if (res.statusCode == 200) {
-        final UserModelResponse response = userModelResponseFromJson(res.body);
-        _users = response.values!;
+  List<modelone.Value> convertList(List<AdapterOne> list) {
+    return list
+        .map((item) => modelone.Value(
+            id: item.id, descripcion: item.descripcion, codigo: item.codigo))
+        .toList();
+  }
 
-        for (final user in _users) {
-          if (user.roles != null && user.roles!.isNotEmpty) {
-            if (user.roles!.containsKey('1')) {
-              listSolicitantes.add(modelthird.Value(
-                id: user.id!,
-                nombre: '${user.nombre!} ${user.apePaterno} ${user.apeMaterno}',
-              ));
-            }
-            if (user.roles!.containsKey('2')) {
-              listAprobadores.add(modelthird.Value(
-                id: user.id!,
-                nombre: '${user.nombre!} ${user.apePaterno} ${user.apeMaterno}',
-                apePaterno: user.apePaterno!,
-              ));
-            }
-            if (user.roles!.containsKey('3')) {
-              print('entro a ejecutores');
-              listEjecutores.add(modelthird.Value(
-                id: user.id!,
-                nombre: '${user.nombre!} ${user.apePaterno} ${user.apeMaterno}',
-                apePaterno: user.apePaterno!,
-              ));
-            }
-          } else {}
-        }
-      } else if (res.statusCode == 401) {
-        _errorMessageGetUsers = 'Error al obtener los usuarios';
-      } else if (res.statusCode == 500) {
-        _errorMessageGetUsers = 'Error interno del servidor';
-      }
-    } on TimeoutException catch (_) {
-      _errorMessageGetUsers = 'La solicitud excedió el tiempo límite.';
+  List<modeltwo.Value> convertListTwo(List<AdapterTwo> value) {
+    return value
+        .map((item) =>
+            modeltwo.Value(id: item.id, descripcion: item.descripcion))
+        .toList();
+  }
+
+  List<modelThree.Value> ConvertListThree(List<AdapterThree> value) {
+    return value
+        .map((item) => modelThree.Value(id: item.id, nombre: item.nombre))
+        .toList();
+  }
+
+  Future<void> getDataHive() async {
+    try {
+      // Obtener datos desde Hive
+      final listProjectsBox =
+          Hive.box<AdapterTwo>(HiveBoxes.projects).values.toList();
+      print('Proyectos ${listProjectsBox}');
+      final listPrefijosBox =
+          Hive.box<AdapterOne>(HiveBoxes.tagPrefijo).values.toList();
+      final listCentrosBox =
+          Hive.box<AdapterOne>(HiveBoxes.tagCentro).values.toList();
+      final listDisciplinasBox =
+          Hive.box<AdapterTwo>(HiveBoxes.disciplina).values.toList();
+      final listTurnosBox =
+          Hive.box<AdapterTwo>(HiveBoxes.turno).values.toList();
+      final listResponsablesBox =
+          Hive.box<AdapterThree>(HiveBoxes.responsable).values.toList();
+      final listRiesgosABox =
+          Hive.box<AdapterTwo>(HiveBoxes.riesgo).values.toList();
+      final listProbabilidadesBox =
+          Hive.box<AdapterTwo>(HiveBoxes.probabilidad).values.toList();
+      final listImpactosBox =
+          Hive.box<AdapterTwo>(HiveBoxes.impacto).values.toList();
+      final listSolicitantesBox =
+          Hive.box<AdapterThree>(HiveBoxes.solicitante).values.toList();
+      final listAprobadoresBox =
+          Hive.box<AdapterThree>(HiveBoxes.aprobador).values.toList();
+      final listEjecutoresBox =
+          Hive.box<AdapterThree>(HiveBoxes.ejecutor).values.toList();
+      final listTipodeForzadosBox =
+          Hive.box<AdapterTwo>(HiveBoxes.tipo).values.toList();
+      final listUsersBox =
+          Hive.box<AdapterUser>(HiveBoxes.users).values.toList();
+
+      // Procesar datos obtenidos
+      listProjects = convertListTwo(listProjectsBox);
+      listPrefijos = convertList(listPrefijosBox);
+      listCentros = convertList(listCentrosBox);
+      listDiciplinas = convertListTwo(listDisciplinasBox);
+      listTurnos = convertListTwo(listTurnosBox);
+      listResponsables = ConvertListThree(listResponsablesBox);
+      listRiesgos = convertListTwo(listRiesgosABox);
+      listProbabilidades = convertListTwo(listProbabilidadesBox);
+      listImpactos = convertListTwo(listImpactosBox);
+      listSolicitantes = ConvertListThree(listSolicitantesBox);
+      listAprobadores = ConvertListThree(listAprobadoresBox);
+      listEjecutores = ConvertListThree(listEjecutoresBox);
+      listTipoDeForzados = convertListTwo(listTipodeForzadosBox);
+      usersOff = listUsersBox.map((u) {
+        return modeluser.Value(
+          id: u.id,
+          apeMaterno: u.apeMaterno,
+          apePaterno: u.apePaterno, // Corregido
+          areaDescripcion: u.areaDescripcion,
+          areaId: u.areaId,
+          correo: u.correo,
+          dni: u.dni,
+          estado: u.estado,
+          nombre: u.nombre,
+          puestoDescripcion: u.puestoDescripcion,
+          puestoId: u.puestoId,
+          rolDescripcion: u.rolDescripcion,
+          rolId: u.rolId,
+          roles: u.roles,
+          usuario: u.usuario,
+        );
+      }).toList();
+      print('not error');
     } catch (e) {
-      _errorMessageGetUsers = 'Error en la solicitud: $e';
-    } finally {
-      _isLoadingGetUsers = false;
-      notifyListeners();
-      print('todos los usuarios: ${_users.length}');
+      print('Error: $e');
+    }
+  }
+
+  Future<void> clearAndPopulateBoxes(BuildContext context) async {
+    final valuesDropdownOn =
+        Provider.of<DropDownValuesManagerProvider>(context, listen: false);
+    await populateBox(
+        HiveBoxes.projects,
+        valuesDropdownOn.listProjects.map((i) {
+          return AdapterTwo(id: i.id, descripcion: i.descripcion);
+        }).toList());
+
+    await populateBox(
+        HiveBoxes.tagPrefijo,
+        valuesDropdownOn.listPrefijos.map((i) {
+          return AdapterOne(
+              codigo: i.codigo, descripcion: i.descripcion, id: i.id);
+        }).toList());
+
+    await populateBox(
+        HiveBoxes.tagCentro,
+        valuesDropdownOn.listCentros.map((i) {
+          return AdapterOne(
+              codigo: i.codigo, descripcion: i.descripcion, id: i.id);
+        }).toList());
+
+    await populateBox(
+        HiveBoxes.disciplina,
+        valuesDropdownOn.listDiciplinas.map((i) {
+          return AdapterTwo(id: i.id, descripcion: i.descripcion);
+        }).toList());
+
+    await populateBox(
+        HiveBoxes.turno,
+        valuesDropdownOn.listTurnos.map((i) {
+          return AdapterTwo(id: i.id, descripcion: i.descripcion);
+        }).toList());
+    await populateBox(
+        HiveBoxes.responsable,
+        valuesDropdownOn.listResponsables.map((i) {
+          return AdapterThree(id: i.id, nombre: '${i.nombre} ${i.apePaterno}');
+        }).toList());
+
+    await populateBox(
+        HiveBoxes.riesgo,
+        valuesDropdownOn.listRiesgos.map((i) {
+          return AdapterTwo(id: i.id, descripcion: i.descripcion);
+        }).toList());
+
+    await populateBox(
+        HiveBoxes.probabilidad,
+        valuesDropdownOn.listProbabilidades.map((i) {
+          return AdapterTwo(id: i.id, descripcion: i.descripcion);
+        }).toList());
+
+    await populateBox(
+        HiveBoxes.impacto,
+        valuesDropdownOn.listImpactos.map((i) {
+          return AdapterTwo(id: i.id, descripcion: i.descripcion);
+        }).toList());
+
+    await populateBox(
+        HiveBoxes.tipo,
+        valuesDropdownOn.listTipoDeForzados.map((i) {
+          return AdapterTwo(id: i.id, descripcion: i.descripcion);
+        }).toList());
+
+    await populateBox(
+        HiveBoxes.solicitante,
+        valuesDropdownOn.listSolicitantes.map((i) {
+          return AdapterThree(id: i.id, nombre: '${i.nombre} ');
+        }).toList());
+
+    await populateBox(
+        HiveBoxes.aprobador,
+        valuesDropdownOn.listAprobadores.map((i) {
+          return AdapterThree(id: i.id, nombre: '${i.nombre} ');
+        }).toList());
+
+    await populateBox(
+        HiveBoxes.ejecutor,
+        valuesDropdownOn.listEjecutores.map((i) {
+          return AdapterThree(id: i.id, nombre: '${i.nombre} ');
+        }).toList());
+
+    await populateBox(
+        HiveBoxes.users,
+        valuesDropdownOn.users.map((i) {
+          return AdapterUser(
+            id: i.id,
+            apeMaterno: i.apeMaterno,
+            apePaterno: i.apePaterno,
+            areaDescripcion: i.areaDescripcion,
+            areaId: i.areaId,
+            correo: i.correo,
+            dni: i.dni,
+            estado: i.estado,
+            nombre: i.nombre,
+            puestoDescripcion: i.puestoDescripcion,
+            puestoId: i.puestoId,
+            rolDescripcion: i.rolDescripcion,
+            rolId: i.rolId,
+            roles: i.roles,
+            usuario: i.usuario,
+          );
+        }).toList());
+
+    notifyListeners();
+  }
+
+  Future<void> populateBox<T>(String boxName, List<T> data) async {
+    try {
+      final box = Hive.box<T>(boxName);
+      await box.clear();
+      await box.addAll(data);
+    } catch (e, stackTrace) {
+      print('Error al poblar la caja $boxName: $e');
+      print('StackTrace: $stackTrace');
     }
   }
 }

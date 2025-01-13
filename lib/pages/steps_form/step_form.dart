@@ -29,7 +29,7 @@ class _StepperFormState extends State<StepperForm> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Alta Forzado'),
+        title: const Text('Forzado'),
         leading: IconButton(
           onPressed: () {
             dropdownProvider.clearValues();
@@ -126,7 +126,7 @@ class _StepperFormState extends State<StepperForm> {
                           shrinkWrap: true,
                           children: [
                             CustomDropdownButton<modelTwo.Value>(
-                              hintText: 'Nombre del proyecto asociado *:',
+                              hintText: 'Área de Forzado *:',
                               items: dropdownProvider.listProjects,
                               selectedItem:
                                   dropdownProvider.currentStateProjectName,
@@ -280,6 +280,7 @@ class _StepperFormState extends State<StepperForm> {
                               selectedItem: dropdownProvider.currentStateRisk,
                               onChanged: (value) {
                                 dropdownProvider.currentStateRisk = value!;
+                                dropdownProvider.defineInterlockbyRiskA();
                               },
                             ),
                             CustomDropdownButton<modelTwo.Value>(

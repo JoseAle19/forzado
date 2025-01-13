@@ -59,12 +59,11 @@ class AuthProvider with ChangeNotifier {
       final response = await http
           .post(
             Uri.parse(
-                'https://sntps2jn-3001.brs.devtunnels.ms/api/mobile/auth'),
+                'https://0q0xvvjx-3000.usw3.devtunnels.ms/api/mobile/auth'),
             headers: headers,
             body: body,
           )
           .timeout(const Duration(seconds: 10)); // Timeout de 10 segundos
-      print(response.body);
       isLoading = false;
       notifyListeners();
       if (response.statusCode == 200) {
@@ -98,6 +97,7 @@ class AuthProvider with ChangeNotifier {
           message:
               'La solicitud excedió el tiempo de espera. Intente nuevamente.');
     } catch (e) {
+      print(e);
       modal.showModal(context, 'Error de red o conexión', Colors.orange, false);
       isLoading = false;
       notifyListeners();

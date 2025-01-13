@@ -1,6 +1,6 @@
 class AppUrl {
   // Base URL del servidor
-  static const String url = "https://sntps2jn-3001.brs.devtunnels.ms";
+  static const String url = "https://0q0xvvjx-3000.usw3.devtunnels.ms";
   // Cambia según tu configuración
 
   // Endpoints  para vitarme equivocacion de rutas

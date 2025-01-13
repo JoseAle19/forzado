@@ -4,6 +4,7 @@
 
 import 'dart:convert';
 
+import 'package:forzado/adapters/adapter_three.dart';
 import 'package:forzado/core/abstract/dropdown_item.dart';
 
 ModelThree modelThreeFromJson(String str) =>
@@ -34,16 +35,16 @@ class ModelThree {
 class Value implements DropDownItem {
   final int id;
   final String nombre;
-  final String apePaterno;
+  final String? apePaterno;
 
   Value({
     required this.id,
     required this.nombre,
-    required this.apePaterno,
+    this.apePaterno,
   });
 
   @override
-  String getLabel() => nombre + ' ' + apePaterno;
+  String getLabel() => '$nombre';
 
   @override
   int get idT => id;
