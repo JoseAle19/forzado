@@ -328,11 +328,14 @@ class DropdownProviderManagerOffline with ChangeNotifier {
         _listAprobadores.add(
             modelthird.Value(id: user.id, nombre: user.name, apePaterno: ''));
       }
-      notifyListeners();
     } else {
       addAprobadoresByPuesto();
-      notifyListeners();
     }
+      if (!_listAprobadores.contains(currentStateApprover)) {
+    currentStateApprover = null;
+  }
+
+      notifyListeners();
   }
 
   void defineInterlockbyRiskA() {
@@ -368,10 +371,8 @@ class DropdownProviderManagerOffline with ChangeNotifier {
 
   void addArobbadoresByRole() {
     listAprobadores.clear();
-
     for (var i = 0; i < _usersOff.length; i++) {
-      print(_usersOff[i].apePaterno);
-      if (_usersOff[i].roles!.containsKey('2')) {
+       if (_usersOff[i].roles!.containsKey('2')) {
         listAprobadores.add(modelthird.Value(
           id: _usersOff[i].id!,
           nombre:

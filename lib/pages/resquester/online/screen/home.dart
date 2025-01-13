@@ -4,6 +4,7 @@ import 'package:forzado/data/providers/auth/auth_provider.dart';
 import 'package:forzado/pages/resquester/offline/datatable%20_forzados.dart';
 import 'package:forzado/pages/resquester/offline/screens/bajas_forzado_offline.dart';
 import 'package:forzado/pages/resquester/online/screen/list_forzados.dart';
+import 'package:forzado/pages/resquester/online/screen/list_forzados_flag.dart';
 import 'package:forzado/pages/steps_form/step_form.dart';
 import 'package:forzado/widgets/cards.dart';
 import 'package:provider/provider.dart';
@@ -66,6 +67,45 @@ class PageOnline extends StatelessWidget {
         ),
         GestureDetector(
           onTap: () {
+            final route =
+                MaterialPageRoute(builder: (_) => const ListForzadosFlag());
+            Navigator.push(context, route);
+          },
+          child: Container(
+            margin: const EdgeInsets.only(top: 20),
+            padding: const EdgeInsets.all(20),
+            width: double.infinity,
+            decoration: BoxDecoration(
+                boxShadow: const [
+                  BoxShadow(
+                    color: Colors.black26,
+                    spreadRadius: 2.0,
+                    blurRadius: 5.0,
+                    offset: Offset(-2.0, 0),
+                  ),
+                ],
+                color: const Color.fromARGB(255, 129, 196, 155),
+                borderRadius: BorderRadius.circular(10)),
+            child: const Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Icon(
+                  Icons.account_balance,
+                  color: Colors.white,
+                ),
+                SizedBox(
+                  height: 5,
+                ),
+                Text(
+                  'Forzados',
+                  style: TextStyle(color: Colors.white),
+                )
+              ],
+            ),
+          ),
+        ),
+        GestureDetector(
+          onTap: () {
             final route = MaterialPageRoute(
                 builder: (_) => const ListForzadosRequesterLow());
             Navigator.push(context, route);
@@ -103,6 +143,7 @@ class PageOnline extends StatelessWidget {
             ),
           ),
         ),
+        
         Container(
           margin: const EdgeInsets.only(top: 40),
           padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -146,7 +187,7 @@ class PageOnline extends StatelessWidget {
                   height: 5,
                 ),
                 const Text(
-                  'Forzados Forzado (Campo)',
+                  'Forzados (Campo)',
                   style: TextStyle(color: Colors.white),
                 )
               ],
@@ -179,7 +220,7 @@ class PageOnline extends StatelessWidget {
                   height: 5,
                 ),
                 const Text(
-                  'Bajas Forzado (Campo)',
+                  'Retiros Forzado (Campo)',
                   style: TextStyle(color: Colors.white),
                 )
               ],

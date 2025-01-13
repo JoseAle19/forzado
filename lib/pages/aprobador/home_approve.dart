@@ -81,7 +81,7 @@ class HomeApprove extends StatelessWidget {
                           height: 5,
                         ),
                         Text(
-                          'Alta de Forzado',
+                          'Forzado',
                           style: TextStyle(color: Colors.white),
                         )
                       ],
@@ -132,7 +132,7 @@ class HomeApprove extends StatelessWidget {
                           height: 5,
                         ),
                         Text(
-                          'Baja Forzado',
+                          'Retiro Forzado',
                           style: TextStyle(color: Colors.white),
                         )
                       ],

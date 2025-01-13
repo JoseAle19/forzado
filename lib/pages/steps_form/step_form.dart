@@ -26,13 +26,14 @@ class _StepperFormState extends State<StepperForm> {
     final forzadosProvider = Provider.of<ForzadosProvider>(context);
     final dropdownProvider =
         Provider.of<DropDownValuesManagerProvider>(context);
-
+    final stepperProvider = Provider.of<StepperProvider>(context);
     return Scaffold(
       appBar: AppBar(
         title: const Text('Forzado'),
         leading: IconButton(
           onPressed: () {
             dropdownProvider.clearValues();
+            stepperProvider.setCurrentStep(0);
             Navigator.pop(context);
           },
           icon: const Icon(Icons.arrow_back_ios),
@@ -346,9 +347,15 @@ class _StepperFormState extends State<StepperForm> {
                           CustomDropdownButton<modelThree.Value>(
                             hintText: 'Aprobador *:',
                             items: dropdownProvider.listAprobadores,
-                            selectedItem: dropdownProvider.currentStateApprover,
+                            selectedItem: dropdownProvider.listAprobadores
+                                    .contains(
+                                        dropdownProvider.currentStateApprover)
+                                ? dropdownProvider.currentStateApprover
+                                : null,
                             onChanged: (value) {
-                              dropdownProvider.currentStateApprover = value!;
+                              if (value != null) {
+                                dropdownProvider.currentStateApprover = value;
+                              }
                             },
                           ),
                           CustomDropdownButton<modelThree.Value>(

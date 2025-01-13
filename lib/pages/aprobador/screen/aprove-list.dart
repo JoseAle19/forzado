@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:forzado/core/urls.dart';
 import 'package:forzado/models/remove_forzado/model_list_remove.dart';
-import 'package:forzado/pages/aprobador/home_approve.dart';
 import 'package:forzado/pages/aprobador/screen/detail_approve_forzado.dart';
 import 'package:forzado/services/api_client.dart';
 import 'package:forzado/services/remove_forzado/list_service_remove.dart';
@@ -42,7 +41,7 @@ class _ApproveforzadoState extends State<Approveforzado> {
           icon: const Icon(Icons.arrow_back_ios),
         ),
         title: const Text(
-          'Forzados - Pendiente alta/baja',
+          'Forzados - Pendiente forzado/retiro',
           style: TextStyle(fontFamily: 'noto', fontSize: 15),
         ),
       ),
@@ -138,6 +137,7 @@ class _ApproveforzadoState extends State<Approveforzado> {
                 },
                 itemBuilder: (BuildContext context, int index) {
                   ForzadoM forzado = snapshot.data!.data[index];
+                  
                   return Card(
                     elevation: 4,
                     margin:
@@ -178,7 +178,7 @@ class _ApproveforzadoState extends State<Approveforzado> {
                                 const SizedBox(height: 4),
                                 // Descripción
                                 Text(
-                                  forzado.estado ?? "Sin estado",
+                                  forzado.estado!.toLowerCase() == 'pendiente-alta' ?"EJECUTADO FORZADO":'EJECUTADO RETIRO',
                                   maxLines: 2,
                                   overflow: TextOverflow.ellipsis,
                                   style: const TextStyle(

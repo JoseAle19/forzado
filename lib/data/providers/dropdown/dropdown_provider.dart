@@ -409,11 +409,14 @@ class DropDownValuesManagerProvider with ChangeNotifier {
         _listAprobadores.add(
             modelthird.Value(id: user.id, nombre: user.name, apePaterno: ''));
       }
-      notifyListeners();
     } else {
       addAprobadoresByPuesto();
-      notifyListeners();
     }
+          if (!_listAprobadores.contains(currentStateApprover)) {
+    currentStateApprover = null;
+  }
+
+      notifyListeners();
   }
 
   void addAprobadoresByPuesto() {
@@ -477,7 +480,7 @@ class DropDownValuesManagerProvider with ChangeNotifier {
     modeltwo.Value(id: 3, descripcion: 'BAJO'),
     modeltwo.Value(id: 20, descripcion: 'MODERADO ALTO'),
     modeltwo.Value(id: 15, descripcion: 'MODERADO'),
-    modeltwo.Value(id: 9, descripcion: 'MODERAsDO'),
+    modeltwo.Value(id: 9, descripcion: 'MODERADO'),
     modeltwo.Value(id: 6, descripcion: 'BAJO'),
     modeltwo.Value(id: 3, descripcion: 'BAJO'),
     modeltwo.Value(id: 24, descripcion: 'MAYOR ALTO'),
@@ -544,3 +547,6 @@ class DropDownValuesManagerProvider with ChangeNotifier {
     }
   }
 }
+
+
+

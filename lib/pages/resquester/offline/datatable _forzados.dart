@@ -137,13 +137,15 @@ class _ForzadosDataTableState extends State<ForzadosDataTable> {
     final forzadosProvider =
         Provider.of<ForzadosProvider>(context, listen: false);
     CustomModal modal = CustomModal();
-    try {
-      setState(() {
-        isSync = true;
-      });
-      for (var i = 0; i < listForzado.length; i++) {
-        Forzado forzado = listForzado[i];
 
+    Box<Forzado> box = await Hive.box<Forzado>('Forzado');
+
+    setState(() {
+      isSync = true;
+    });
+
+    try {
+      for (var forzado in box.values) {
         final data = InsertQueryParameters(
           usuario: forzado.usuario!,
           tagPrefijo: forzado.tagPrefijoValue!.id.toString(),
@@ -170,27 +172,27 @@ class _ForzadosDataTableState extends State<ForzadosDataTable> {
           ApiClient client = ApiClient();
           final res = await client.post(
               AppUrl.postAddForzado, json.encode(data.toMap()));
-          print(res.body);
+
           if (res.statusCode == 200) {
+            // Elimina el objeto sincronizado del Box
+            await box.delete(forzado.key);
+            setState(() {
+              listForzado.remove(forzado);
+            });
             forzadosProvider.fetchCountForzados();
             modal.showModal(
                 context, 'Sincronización completada', Colors.green, true);
           } else {
             modal.showModal(
-                context, 'Ocurrió un error interno', Colors.red, false);
+                context, 'Error al sincronizar un elemento', Colors.red, false);
           }
         } catch (e) {
           modal.showModal(
-              context, 'Ocurrió un error interno', Colors.red, false);
+              context, 'Error al sincronizar: $e', Colors.red, false);
         }
       }
-      // deleteForzadoBox();
-
-      setState(() {
-        isSync = false;
-      });
     } catch (e) {
-      print('Error al guardar: $e');
+      print('Error en la sincronización: $e');
     } finally {
       setState(() {
         isSync = false;
@@ -211,19 +213,14 @@ class _ForzadosDataTableState extends State<ForzadosDataTable> {
       isLoading = true;
     });
     try {
-      setState(() {
-        listForzado = box.values.toList();
-      });
-      print(listForzado.map((f) {
-        print(f.tagPrefijo);
-      }));
+      // Puedes trabajar directamente con el iterable `box.values`
+      listForzado = box.values.toList();
     } catch (e) {
-      print('Error al guardar: $e');
+      print('Error al cargar los datos: $e');
     } finally {
       setState(() {
         isLoading = false;
       });
-      if (box.isOpen) {}
     }
   }
 
