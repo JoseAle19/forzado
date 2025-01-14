@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:forzado/models/remove_forzado/model_list_remove.dart';
-import 'package:forzado/pages/aprobador/screen/detail_approve_forzado.dart';
 
 class ListApproveForzado extends StatelessWidget {
   const ListApproveForzado({
@@ -11,22 +10,23 @@ class ListApproveForzado extends StatelessWidget {
   final bool isAlta;
   final List<ForzadoM> data;
 
-  void navigateDetailsApproveForzado(
-      BuildContext context, ForzadoM item, bool isAltaF) {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) =>
-            DetailApproveForzado(detailForzado: item, isAlta: isAltaF),
-      ),
-    );
-  }
+  // void navigateDetailsApproveForzado(
+  //     BuildContext context, ForzadoM item, bool isAltaF) {
+  //   Navigator.push(
+  //     context,
+  //     MaterialPageRoute(
+  //       builder: (context) =>
+  //           DetailApproveForzado(detailForzado: item, isAlta: isAltaF),
+  //     ),
+  //   );
+  // }
 
   @override
   Widget build(BuildContext context) {
     return ListView.separated(
       itemBuilder: (context, index) {
         final forzado = data[index];
+        final state = forzado.estado!.toLowerCase() == 'pendiente-alta'?"PENDIENTE-FORZADO": forzado.estado!.toLowerCase() == 'pendiente-baja'? 'pENDIENTE-RETIRO':'sIN ESTADO';
         return Card(
           elevation: 4,
           margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
@@ -66,7 +66,7 @@ class ListApproveForzado extends StatelessWidget {
                       const SizedBox(height: 4),
                       // Descripción
                       Text(
-                        forzado.estado ?? 'Sin estado',
+                        state,
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
                         style: const TextStyle(
@@ -80,7 +80,7 @@ class ListApproveForzado extends StatelessWidget {
                 const SizedBox(width: 8),
                 IconButton(
                   onPressed: () {
-                    navigateDetailsApproveForzado(context, forzado, isAlta);
+                    // navigateDetailsApproveForzado(context, forzado, isAlta);
                   },
                   icon: const Icon(
                     Icons.arrow_forward_ios,

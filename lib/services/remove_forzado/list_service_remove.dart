@@ -14,6 +14,7 @@ class ListServiceForzados {
           const Duration(seconds: 5)); // Tiempo de espera de 5 segundos
 
       if (response.statusCode == 200) {
+        print(response.body);
         return ModelListForzadosFromJson(response.body);
       } else {
         throw Exception(

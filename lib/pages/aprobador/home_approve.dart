@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:forzado/core/utils/preferences_helper.dart';
 import 'package:forzado/data/providers/auth/auth_provider.dart';
-import 'package:forzado/pages/aprobador/screen/aprove-list.dart';
+import 'package:forzado/pages/aprobador/screen/list_approve.dart';
 import 'package:forzado/pages/aprobador/screen/shutdown_forzado.dart';
+import 'package:forzado/pages/aprobador/widgets/list_forzado.dart';
 import 'package:forzado/pages/auth/login_page.dart';
 import 'package:forzado/pages/resquester/home_requester.dart';
 import 'package:forzado/widgets/cards.dart';
@@ -48,7 +49,7 @@ class HomeApprove extends StatelessWidget {
             GestureDetector(
               onTap: () {
                 final route = MaterialPageRoute(
-                    builder: (_) => const Approveforzado(
+                    builder: (_) => const ListForzadosAppro(
                           isAlta: true,
                         ));
                 Navigator.push(context, route);
@@ -97,7 +98,7 @@ class HomeApprove extends StatelessWidget {
             GestureDetector(
               onTap: () {
                 final route = MaterialPageRoute(
-                    builder: (_) => const ShutdownForzado(
+                    builder: (_) => const ListForzadosAppro(
                           isAlta: false,
                         ));
                 Navigator.push(context, route);

@@ -2,9 +2,13 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:forzado/core/urls.dart';
+import 'package:forzado/models/forzado/model_forzado.dart';
 import 'package:forzado/models/remove_forzado/model_list_remove.dart';
 import 'package:forzado/pages/aprobador/home_approve.dart';
+import 'package:forzado/pages/aprobador/provider/forzados_provider.dart';
+import 'package:forzado/pages/aprobador/screen/list_approve.dart';
 import 'package:forzado/pages/aprobador/screen/shutdown_forzado.dart';
+import 'package:forzado/pages/ejecutor/models/aprobador.dart';
 import 'package:forzado/pages/resquester/online/widgets/text_info.dart';
 import 'package:forzado/pages/steps_form/congratulation.dart';
 import 'package:forzado/services/api_client.dart';
@@ -12,11 +16,12 @@ import 'package:forzado/services/service_two.dart';
 import 'package:forzado/widgets/custom_dropdown_two.dart';
 import 'package:forzado/widgets/modal_error.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 
 class DetailApproveForzado extends StatefulWidget {
   const DetailApproveForzado(
       {super.key, required this.detailForzado, required this.isAlta});
-  final ForzadoM detailForzado;
+  final ForzadoApprove detailForzado;
   final bool isAlta;
   @override
   State<DetailApproveForzado> createState() => _DetailApproveForzadoState();
@@ -38,7 +43,9 @@ class _DetailApproveForzadoState extends State<DetailApproveForzado> {
     }
   }
 
-  Future<int> executerAlta(String id) async {
+  Future<int> executerAlta(String id, BuildContext  context ) async {
+    
+    final providerForzados= Provider.of<ForzadosProviderApprove>(context,listen: false);
     ApiClient client = ApiClient();
 
     final Map<String, dynamic> body = {'id': id};
@@ -51,6 +58,7 @@ class _DetailApproveForzadoState extends State<DetailApproveForzado> {
       final res = await client.post(
           '/api/solicitudes/${isStateReque}/aprobar', jsonEncode(body));
       if (res.statusCode == 200) {
+        providerForzados.deleteForzadoById(id);
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(
@@ -74,7 +82,8 @@ class _DetailApproveForzadoState extends State<DetailApproveForzado> {
     }
   }
 
-  Future<int> executerDecline(String id) async {
+  Future<int> executerDecline(String id, BuildContext context ) async {
+    final providerForzados= Provider.of<ForzadosProviderApprove>(context, listen: false);
     CustomModal modal = CustomModal();
     if (currentValue.isEmpty) {
       modal.showModal(context, 'Selecciona un motivo', Colors.red, false);
@@ -94,12 +103,17 @@ class _DetailApproveForzadoState extends State<DetailApproveForzado> {
 
       print('respuesta de la peticion ${res.body}');
       if (res.statusCode == 200) {
-        print(res.body);
-        modal.showModal(context, 'Operacion exitosa', Colors.green, true);
-        Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(
-                builder: (context) => ShutdownForzado(isAlta: widget.isAlta)));
+                providerForzados.deleteForzadoById(id);
+
+         modal.showModal(context, 'Operacion exitosa', Colors.green, true);
+       Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+              builder: (context) => CongratulationAnimation(
+                  page: widget.isAlta
+                      ? const HomeApprove()
+                      : const HomeApprove())),
+        );
       } else {
         print(res.body);
         print('Error en la solicitud: ${res.statusCode}');
@@ -120,7 +134,7 @@ class _DetailApproveForzadoState extends State<DetailApproveForzado> {
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: true,
-        title: const Text('Detalles del forzado'),
+        title: Text('Detalles ${widget.isAlta ?"alta":"baja"}'),
         centerTitle: true,
       ),
       body: Padding(
@@ -243,7 +257,7 @@ class _DetailApproveForzadoState extends State<DetailApproveForzado> {
         TextInfo(
           title: 'Turno',
           description:
-              widget.detailForzado.turnoDescripcion?.name ?? 'No especificado',
+              widget.detailForzado.turnoDescripcion ?? 'No especificado',
         ),
       ],
     );
@@ -257,25 +271,25 @@ class _DetailApproveForzadoState extends State<DetailApproveForzado> {
           'Responsable y Riesgo',
           style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
         ),
-        const TextInfo(
+         TextInfo(
           title: 'Interlock Seguridad',
-          description: 'No especificado',
+          description: widget.detailForzado.interlock.toString(),
         ),
         TextInfo(
           title: 'Responsable',
           description:
-              widget.detailForzado.responsableNombre?.name ?? 'No especificado',
+              widget.detailForzado.responsableNombre ?? 'No especificado',
         ),
         TextInfo(
           title: 'Riesgo',
           description:
-              widget.detailForzado.riesgoDescripcion?.name ?? 'No especificado',
+              widget.detailForzado.riesgoDescripcion ?? 'No especificado',
         ),
-        const TextInfo(
+          const TextInfo(
           title: 'Probabilidad',
           description: 'No especificado',
         ),
-        const TextInfo(
+         const TextInfo(
           title: 'Impacto',
           description: 'No especificado',
         ),
@@ -295,21 +309,18 @@ class _DetailApproveForzadoState extends State<DetailApproveForzado> {
           title: 'Solicitante (AN)',
           description: widget.detailForzado.solicitante ?? 'No especificado',
         ),
-        const TextInfo(
+         TextInfo(
           title: 'Aprobador',
-          description: 'No especificado',
-        ),
-        const TextInfo(
-          title: 'Ejecutor',
-          description: 'No especificado',
-        ),
-        const TextInfo(
-          title: 'Autorización',
-          description: 'No especificado',
+          description: widget.detailForzado.aprobador ??'Sin valor',
         ),
         TextInfo(
+          title: 'Ejecutor',
+          description: widget.detailForzado.ejecutor ??'Sin valor',
+        ),
+       
+        TextInfo(
           title: 'Tipo de Forzado',
-          description: widget.detailForzado.tipoForzadoDescripcion?.name ??
+          description: widget.detailForzado.tipoForzadoDescripcion ??
               'No especificado',
         ),
       ],
@@ -327,7 +338,7 @@ class _DetailApproveForzadoState extends State<DetailApproveForzado> {
               ElevatedButton(
                 onPressed: () {
                   if (isFetching) return;
-                  executerAlta(widget.detailForzado.id.toString());
+                  executerAlta(widget.detailForzado.id.toString(), context);
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color(0xff009283),
@@ -348,11 +359,11 @@ class _DetailApproveForzadoState extends State<DetailApproveForzado> {
                       onPressed: () {
                         showDialog(
                           context: context,
-                          builder: (BuildContext context) {
+                          builder: (BuildContext contextM) {
                             bool isFetch = false;
                             ServiceTwo serviceTwo = ServiceTwo(ApiClient());
                             return StatefulBuilder(
-                              builder: (context, setState) {
+                              builder: (contextM, setState) {
                                 return AlertDialog(
                                   title: const Text(
                                     'Selecciona un Motivo',
@@ -389,7 +400,7 @@ class _DetailApproveForzadoState extends State<DetailApproveForzado> {
                                           isFetch = true;
                                         });
                                         await executerDecline(
-                                            widget.detailForzado.id.toString());
+                                            widget.detailForzado.id.toString(), context);
                                         setState(() {
                                           isFetch = false;
                                         });

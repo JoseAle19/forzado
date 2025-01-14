@@ -19,6 +19,8 @@ import 'package:forzado/data/providers/requester_provider.dart';
 import 'package:forzado/data/providers/splash_provider.dart';
 import 'package:forzado/data/providers/users/user_provider.dart';
 import 'package:forzado/home_page.dart';
+import 'package:forzado/pages/aprobador/provider/forzados_provider.dart';
+import 'package:forzado/pages/ejecutor/provider/forzados_provider.dart';
 import 'package:hive_flutter/adapters.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:provider/provider.dart';
@@ -81,6 +83,8 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => DropdownProviderManagerOffline()),
         ChangeNotifierProvider(create: (_) => StepperProvider()),
         ChangeNotifierProvider(create: (_) => UserProvider()),
+        ChangeNotifierProvider(create: (_) => ForzadosProviderAjecutor()),
+        ChangeNotifierProvider(create: (_) => ForzadosProviderApprove()),
       ],
       child: const MaterialApp(
           debugShowCheckedModeBanner: false,

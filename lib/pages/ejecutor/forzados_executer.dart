@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:forzado/adapters/forzado.dart';
 import 'package:forzado/core/urls.dart';
 import 'package:forzado/models/remove_forzado/model_list_remove.dart';
-import 'package:forzado/pages/ejecutor/detail_forzado.dart';
 import 'package:forzado/pages/ejecutor/home_executor.dart';
 import 'package:forzado/services/api_client.dart';
 import 'package:forzado/services/remove_forzado/list_service_remove.dart';

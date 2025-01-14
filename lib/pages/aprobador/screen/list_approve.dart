@@ -1,0 +1,375 @@
+import 'package:flutter/material.dart';
+import 'package:forzado/core/configs/theme/app_colors.dart';
+import 'package:forzado/pages/aprobador/provider/forzados_provider.dart';
+import 'package:forzado/pages/aprobador/screen/detail_approve_forzado.dart';
+import 'package:forzado/pages/ejecutor/models/aprobador.dart';
+import 'package:provider/provider.dart';
+
+class ListForzadosAppro extends StatefulWidget {
+  const ListForzadosAppro({super.key, this.isAlta});
+  final isAlta;
+
+  @override
+  State<ListForzadosAppro> createState() => _ListForzadosApproState();
+}
+
+class _ListForzadosApproState extends State<ListForzadosAppro> {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+     if (mounted) {
+        await getData();
+      }
+    });
+  }
+
+
+Future<void> getData() async {
+    final providerForzados =
+        Provider.of<ForzadosProviderApprove>(context, listen: false);
+    await providerForzados.initLoadSolicitudes();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title:  Text(widget.isAlta ? "Aprobar":"Rechazar"),
+      ),
+      body: Consumer<ForzadosProviderApprove>(builder: (context, value, child) {
+        return value.loading
+            ? const Center(
+                child: CircularProgressIndicator(
+                  color: AppColors.primary,
+                ),
+              )
+            : value.messageError.isNotEmpty ?
+            Center(child: Text(value.messageError),)
+            :
+            value.listForzados.isEmpty ? const Center(child: Text('Sin datos'),) :
+            ListView.separated(
+              itemCount: value.listForzados.length,
+              separatorBuilder: (BuildContext context, int index) {
+                ForzadoApprove  forzado = value.listForzados[index];
+                return forzado.estado?.toUpperCase() != 'PENDIENTE-FORZADO'&& forzado.estado?.toUpperCase() != 'PENDIENTE-RETIRO' ? SizedBox.shrink() :Divider();
+              },
+              itemBuilder: (BuildContext context, int index) {
+                ForzadoApprove  forzado = value.listForzados[index];
+              
+              
+                return forzado.estado?.toUpperCase() != 'PENDIENTE-FORZADO'&& forzado.estado?.toUpperCase() != 'PENDIENTE-RETIRO' ? SizedBox.shrink() :  Card(
+                    elevation: 4,
+                    margin:
+                        const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.all(16),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          CircleAvatar(
+                            radius: 30,
+                            backgroundColor: Colors.blue.shade100,
+                            child: Text(
+                              '${forzado.id}',
+                              style: const TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.blue,
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: 16),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  'ID: ${forzado.id}',
+                                  style: const TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold,
+                                    color: Color(0xFF333333),
+                                  ),
+                                ),
+                                const SizedBox(height: 4),
+                                // Descripción
+                                Text(
+                                  forzado.estado!,
+                                  maxLines: 2,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: const TextStyle(
+                                    fontSize: 14,
+                                    color: Color(0xFF666666),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          const SizedBox(width: 8),
+                          IconButton(
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => DetailApproveForzado(
+                                      detailForzado: forzado,
+                                      isAlta: widget.isAlta),
+                                ),
+                              );
+                            },
+                            icon: const Icon(
+                              Icons.arrow_forward_ios,
+                              color: Colors.blue,
+                              size: 20,
+                            ),
+                            splashRadius: 20,
+                          ),
+                        ],
+                      ),
+                    ),
+                  );
+              },
+            );
+      }),
+    );
+  }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+// import 'package:flutter/material.dart';
+// import 'package:forzado/core/urls.dart';
+// import 'package:forzado/models/remove_forzado/model_list_remove.dart';
+// import 'package:forzado/pages/aprobador/screen/detail_approve_forzado.dart';
+// import 'package:forzado/services/api_client.dart';
+// import 'package:forzado/services/remove_forzado/list_service_remove.dart';
+
+// class Approveforzado extends StatefulWidget {
+//   const Approveforzado({super.key, required this.isAlta});
+//   final bool isAlta;
+//   @override
+//   State<Approveforzado> createState() => _ApproveforzadoState();
+// }
+
+// class _ApproveforzadoState extends State<Approveforzado> {
+//   late List<ForzadoM> listData;
+
+//   @override
+//   Widget build(BuildContext context) {
+//     final ListServiceForzados _ListServiceForzados =
+//         ListServiceForzados(ApiClient());
+
+//     return Scaffold(
+//       appBar: AppBar(
+//         elevation: 0,
+//         actions: [
+//           IconButton(
+//             onPressed: () async {
+         
+//             },
+//             icon: const Icon(Icons.search),
+//           ),
+//         ],
+//         leading: IconButton(
+//           onPressed: () {
+//             // final newRoute =
+//             //     MaterialPageRoute(builder: (_) => const HomeApprove());
+//             // Navigator.pushReplacement(context, newRoute);
+//             Navigator.pop(context);
+//           },
+//           icon: const Icon(Icons.arrow_back_ios),
+//         ),
+//         title: const Text(
+//           'Forzados - Pendiente forzado/retiro',
+//           style: TextStyle(fontFamily: 'noto', fontSize: 15),
+//         ),
+//       ),
+//       body: FutureBuilder<ModelListForzados>(
+//         future:
+//             _ListServiceForzados.getDataByEndpoint(AppUrl.getListForzados).then(
+//           (value) {
+//             List<ForzadoM> data = value.data
+//                 .where((element) =>
+//                     element.estado!.toLowerCase() == 'pendiente-alta' ||
+//                     element.estado!.toLowerCase() == 'pendiente-baja')
+//                 .toList();
+//             return ModelListForzados(
+//               success: value.success,
+//               message: value.message,
+//               data: data,
+//             );
+//           },
+//         ),
+//         builder:
+//             (BuildContext context, AsyncSnapshot<ModelListForzados> snapshot) {
+//           if (snapshot.connectionState == ConnectionState.waiting) {
+//             return const Center(child: CircularProgressIndicator());
+//           }
+//           if (snapshot.hasError) {
+//              return const Center(
+//                 child: Text('Ocurrio un error, contacta a soporte'));
+//           }
+//           if (snapshot.data!.data.isEmpty) {
+//             return const Center(child: Text('No hay datos'));
+//           }
+
+//           return FutureBuilder<ModelListForzados>(
+//             future:
+//                 _ListServiceForzados.getDataByEndpoint(AppUrl.getListForzados)
+//                     .then(
+//               (value) {
+//                 List<ForzadoM> data = value.data
+//                     .where((element) =>
+//                         element.estado!.toLowerCase() == 'pendiente-alta' ||
+//                         element.estado!.toLowerCase() == 'pendiente-baja')
+//                     .toList();
+//                 return ModelListForzados(
+//                   success: value.success,
+//                   message: value.message,
+//                   data: data,
+//                 );
+//               },
+//             ),
+//             builder: (BuildContext context,
+//                 AsyncSnapshot<ModelListForzados> snapshot) {
+//               if (snapshot.connectionState == ConnectionState.waiting) {
+//                 return const Center(child: CircularProgressIndicator());
+//               }
+
+//               if (snapshot.data!.data.isEmpty) {
+//                 return Center(
+//                   child: Column(
+//                     mainAxisAlignment: MainAxisAlignment.center,
+//                     children: [
+//                       Icon(
+//                         Icons.hourglass_empty,
+//                         size: 80,
+//                         color: Colors.grey.shade400,
+//                       ),
+//                       const SizedBox(height: 16),
+//                       Text(
+//                         'No tienes forzados disponibles',
+//                         style: TextStyle(
+//                           fontSize: 18,
+//                           fontWeight: FontWeight.bold,
+//                           color: Colors.grey.shade700,
+//                         ),
+//                       ),
+//                       const SizedBox(height: 8),
+//                       Text(
+//                         'Los forzados con estado aprobado alta \nestán en proceso. Por favor, espera.',
+//                         textAlign: TextAlign.center,
+//                         style: TextStyle(
+//                           fontSize: 16,
+//                           color: Colors.grey.shade600,
+//                         ),
+//                       ),
+//                     ],
+//                   ),
+//                 );
+//               }
+
+//               return ListView.separated(
+//                 itemCount: snapshot.data!.data.length,
+//                 separatorBuilder: (BuildContext context, int index) {
+//                   return const SizedBox.shrink();
+//                 },
+//                 itemBuilder: (BuildContext context, int index) {
+//                   ForzadoM forzado = snapshot.data!.data[index];
+                  
+//                   return Card(
+//                     elevation: 4,
+//                     margin:
+//                         const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+//                     shape: RoundedRectangleBorder(
+//                       borderRadius: BorderRadius.circular(12),
+//                     ),
+//                     child: Padding(
+//                       padding: const EdgeInsets.all(16),
+//                       child: Row(
+//                         crossAxisAlignment: CrossAxisAlignment.center,
+//                         children: [
+//                           CircleAvatar(
+//                             radius: 30,
+//                             backgroundColor: Colors.blue.shade100,
+//                             child: Text(
+//                               '${forzado.id}',
+//                               style: const TextStyle(
+//                                 fontSize: 18,
+//                                 fontWeight: FontWeight.bold,
+//                                 color: Colors.blue,
+//                               ),
+//                             ),
+//                           ),
+//                           const SizedBox(width: 16),
+//                           Expanded(
+//                             child: Column(
+//                               crossAxisAlignment: CrossAxisAlignment.start,
+//                               children: [
+//                                 Text(
+//                                   'ID: ${forzado.id}',
+//                                   style: const TextStyle(
+//                                     fontSize: 16,
+//                                     fontWeight: FontWeight.bold,
+//                                     color: Color(0xFF333333),
+//                                   ),
+//                                 ),
+//                                 const SizedBox(height: 4),
+//                                 // Descripción
+//                                 Text(
+//                                   forzado.estado!.toLowerCase() == 'pendiente-alta' ?"EJECUTADO FORZADO":'EJECUTADO RETIRO',
+//                                   maxLines: 2,
+//                                   overflow: TextOverflow.ellipsis,
+//                                   style: const TextStyle(
+//                                     fontSize: 14,
+//                                     color: Color(0xFF666666),
+//                                   ),
+//                                 ),
+//                               ],
+//                             ),
+//                           ),
+//                           const SizedBox(width: 8),
+//                           IconButton(
+//                             onPressed: () {
+//                               Navigator.push(
+//                                 context,
+//                                 MaterialPageRoute(
+//                                   builder: (context) => DetailApproveForzado(
+//                                       detailForzado: forzado,
+//                                       isAlta: widget.isAlta),
+//                                 ),
+//                               );
+//                             },
+//                             icon: const Icon(
+//                               Icons.arrow_forward_ios,
+//                               color: Colors.blue,
+//                               size: 20,
+//                             ),
+//                             splashRadius: 20,
+//                           ),
+//                         ],
+//                       ),
+//                     ),
+//                   );
+//                 },
+//               );
+//             },
+//           );
+//         },
+//       ),
+//     );
+//   }
+// }
