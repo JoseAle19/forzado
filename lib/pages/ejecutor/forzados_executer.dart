@@ -1,4 +1,7 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:forzado/adapters/forzado.dart';
 import 'package:forzado/core/urls.dart';
 import 'package:forzado/models/remove_forzado/model_list_remove.dart';
 import 'package:forzado/pages/ejecutor/detail_forzado.dart';
@@ -14,6 +17,116 @@ class ListExecuterForzado extends StatelessWidget {
   Widget build(BuildContext context) {
     final ListServiceForzados _listServiceForzados =
         ListServiceForzados(ApiClient());
+    Widget detalleItem(String label, String? value) {
+      return Padding(
+        padding: const EdgeInsets.symmetric(vertical: 8),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Expanded(
+              flex: 3,
+              child: Text(
+                '$label:',
+                style: const TextStyle(
+                  fontWeight: FontWeight.w600,
+                  fontSize: 14,
+                  color: Colors.blueGrey,
+                ),
+              ),
+            ),
+            Expanded(
+              flex: 5,
+              child: Text(
+                value ?? 'No disponible',
+                style: const TextStyle(
+                  fontSize: 14,
+                  color: Colors.black87,
+                ),
+              ),
+            ),
+          ],
+        ),
+      );
+    }
+
+    void verInformacion(BuildContext context, Forzado forzado) {
+      showDialog(
+        context: context,
+        builder: (_) => AlertDialog(
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+          backgroundColor: Colors.white,
+          title: const Row(
+            children: [
+              Icon(Icons.info, color: Colors.blueAccent, size: 28),
+              SizedBox(width: 8),
+              Text(
+                'Detalles del Forzado',
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.blueAccent,
+                ),
+              ),
+            ],
+          ),
+          content: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                detalleItem('usuario', forzado.usuario.toString()),
+                detalleItem(
+                    'Nombre del proyecto', forzado.projectValue?.descripcion),
+                detalleItem('Centro', forzado.tagCentroValue?.descripcion),
+                detalleItem('Descripción', forzado.descripcion),
+                detalleItem('Disciplina', forzado.disciplinaValue?.descripcion),
+                detalleItem('Turno', forzado.turnoValue?.descripcion),
+                detalleItem('Interlock Seguridad', forzado.interlock),
+                detalleItem('Responsable', forzado.responsableValue?.nombre),
+                detalleItem('Riesgo A', forzado.riesgoAValue?.descripcion),
+                detalleItem(
+                    'Probabilidad', forzado.probabilidadValue?.descripcion),
+                detalleItem('Impacto', forzado.impactoValue?.descripcion),
+                detalleItem('Riesgo', forzado.riesgoValue?.descripcion),
+                detalleItem(
+                    'Solicitante',
+                    utf8.decode(
+                        latin1.encode(
+                            forzado.solicitanteValue?.nombre ?? 'No value'),
+                        allowMalformed: true)),
+                detalleItem(
+                    'Aprobador',
+                    utf8.decode(
+                        latin1.encode(
+                            forzado.aprobadorValue?.nombre ?? 'No value'),
+                        allowMalformed: true)),
+                detalleItem(
+                    'Ejecutor',
+                    utf8.decode(
+                        latin1.encode(
+                            forzado.ejecutorValue?.nombre ?? 'No value'),
+                        allowMalformed: true)),
+                detalleItem(
+                    'Tipo de Forzado', forzado.tipoForzadoValue?.descripcion),
+              ],
+            ),
+          ),
+          actions: [
+            ElevatedButton(
+              onPressed: () => Navigator.pop(context),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.blueAccent,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
+              ),
+              child:
+                  const Text('Cerrar', style: TextStyle(color: Colors.white)),
+            ),
+          ],
+        ),
+      );
+    }
 
     return Scaffold(
       appBar: AppBar(
@@ -149,14 +262,9 @@ class ListExecuterForzado extends StatelessWidget {
                       const SizedBox(width: 8),
                       IconButton(
                         onPressed: () {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => DetailForzadoScreen(
-                                  forzado: forzado,
-                                  isExecuterAlta: isExecuterAlta,
-                                ),
-                              ));
+                          Forzado forzado = Forzado();
+
+                          verInformacion(context, forzado);
                         },
                         icon: const Icon(
                           Icons.arrow_forward_ios,

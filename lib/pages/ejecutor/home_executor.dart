@@ -47,7 +47,7 @@ class HomeExecuter extends StatelessWidget {
             GestureDetector(
               onTap: () {
                 final route = MaterialPageRoute(
-                    builder: (_) => ListExecuterForzado(
+                    builder: (_) => const ListExecuterForzado(
                           isExecuterAlta: true,
                         ));
                 Navigator.push(context, route);
@@ -80,7 +80,7 @@ class HomeExecuter extends StatelessWidget {
                           height: 5,
                         ),
                         Text(
-                          'Alta de Forzado',
+                          'Forzado',
                           style: TextStyle(color: Colors.white),
                         )
                       ],
@@ -126,12 +126,11 @@ class HomeExecuter extends StatelessWidget {
                           Icons.account_balance,
                           color: Colors.white,
                         ),
-                        // SvgPicture.asset('assets/svgs/bank.svg'),
                         SizedBox(
                           height: 5,
                         ),
                         Text(
-                          'Baja Forzado',
+                          'Retiro Forzado',
                           style: TextStyle(color: Colors.white),
                         )
                       ],
