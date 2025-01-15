@@ -20,6 +20,18 @@ class StepperForm extends StatefulWidget {
 }
 
 class _StepperFormState extends State<StepperForm> {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      final dropdownProvider =
+          Provider.of<DropDownValuesManagerProvider>(context, listen: false);
+      if (mounted) {
+        await dropdownProvider.verifyRuleRisk();
+      }
+    });
+  }
+
   String error = '';
   @override
   Widget build(BuildContext context) {
@@ -292,7 +304,7 @@ class _StepperFormState extends State<StepperForm> {
                               onChanged: (value) {
                                 dropdownProvider.currentStateProbability =
                                     value!;
-                                dropdownProvider.defineRisk();
+                               dropdownProvider.isEnabledRuleRisk? dropdownProvider.defineRisk() : null;
                               },
                             ),
                             CustomDropdownButton<modelTwo.Value>(

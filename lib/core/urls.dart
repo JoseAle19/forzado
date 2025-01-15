@@ -40,4 +40,8 @@ class AppUrl {
 
   // Para traer los usuarios
   static const String getListUsers = "/api/usuarios";
+
+  // validar si la regla se puede aplicar o no 
+  
+  static const String isEnabledRuleRisk= "/api/parametros-globales";
 }

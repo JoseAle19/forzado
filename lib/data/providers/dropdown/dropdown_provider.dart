@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:forzado/core/urls.dart';
 import 'package:forzado/core/utils/preferences_helper.dart';
+import 'package:forzado/models/model_flag.dart';
 import 'package:forzado/models/model_one.dart' as modelone;
 import 'package:forzado/models/model_three.dart' as modelthird;
 import 'package:forzado/models/model_two.dart' as modeltwo;
@@ -12,6 +13,8 @@ import 'package:forzado/models/user/model_user.dart';
 import 'package:forzado/services/api_client.dart';
 
 class DropDownValuesManagerProvider with ChangeNotifier {
+  bool _isEnabledRuleRisk= false;
+  bool get isEnabledRuleRisk => _isEnabledRuleRisk;
   List<Value> _users = [];
   List<Value> get users => _users;
   String _errorMessageGetUsers = '';
@@ -369,6 +372,24 @@ class DropDownValuesManagerProvider with ChangeNotifier {
     },
   };
 
+// validar que la variable que esta en la base e deatos es true o false
+Future<void> verifyRuleRisk() async {
+  ApiClient client = ApiClient();
+
+  final res = await client.get(AppUrl.isEnabledRuleRisk);
+  try {
+    
+  if (res.statusCode == 200) {
+    final decodeData  =  modelFlagFromJson(res.body);
+    _isEnabledRuleRisk = decodeData.values.aplicaReglaRiesgoBajo;
+
+  } else{
+    print('Fue diferente el estatuscode de la respuesta');
+  }
+  } catch (e) {
+    print('Ocurrio un error al hacer la peticion del enpoint del flag');
+  }
+}
 // Definir el riesgo según la probabilidad e impacto
   void defineRisk() async {
     if (currentStateImpact?.descripcion == null ||
