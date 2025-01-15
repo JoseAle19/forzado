@@ -412,11 +412,11 @@ class DropDownValuesManagerProvider with ChangeNotifier {
     } else {
       addAprobadoresByPuesto();
     }
-          if (!_listAprobadores.contains(currentStateApprover)) {
-    currentStateApprover = null;
-  }
+    if (!_listAprobadores.contains(currentStateApprover)) {
+      currentStateApprover = null;
+    }
 
-      notifyListeners();
+    notifyListeners();
   }
 
   void addAprobadoresByPuesto() {
@@ -547,6 +547,3 @@ class DropDownValuesManagerProvider with ChangeNotifier {
     }
   }
 }
-
-
-

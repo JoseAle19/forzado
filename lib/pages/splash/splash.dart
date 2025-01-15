@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:forzado/core/app_colors.dart';
 import 'package:forzado/data/providers/splash_provider.dart';
 import 'package:provider/provider.dart';
@@ -18,7 +19,7 @@ class Splash extends StatelessWidget {
       width: double.infinity,
       color: AppColors.primaryColor,
       child: splashProvider.nextPage == null
-          ? Center(child: Image.asset('assets/logos/logo.png'))
+          ? Center(child: SvgPicture.asset('assets/svgs/candado.svg'))
           : FutureBuilder(
               future: Future.delayed(const Duration(seconds: 1)),
               builder: (context, snapshot) {
