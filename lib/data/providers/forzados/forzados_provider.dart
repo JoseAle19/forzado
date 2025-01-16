@@ -109,7 +109,7 @@ class ForzadosProvider with ChangeNotifier {
 // obtener los forzados en general
   bool _loadingGetForzados = false;
   bool get loadingGetForzados => _loadingGetForzados;
-  String? _errorMessageGetForzados;
+  String? _errorMessageGetForzados = '';
   String? get errorMessageGetForzados => _errorMessageGetForzados;
   Future<void> getForzados() async {
     try {
@@ -118,8 +118,8 @@ class ForzadosProvider with ChangeNotifier {
       final res = await client
           .get(AppUrl.getListForzados)
           .timeout(const Duration(seconds: 10));
-      ForzadosModel decodeData = forzadosModelFromJson(res.body);
       if (res.statusCode == 200) {
+        ForzadosModel decodeData = forzadosModelFromJson(res.body);
         _forzados = decodeData.data!.map((f) {
           String state = f.estado!.toLowerCase();
           if (state.contains("baja")) {
@@ -162,7 +162,12 @@ class ForzadosProvider with ChangeNotifier {
               turnoDescripcion: f.turnoDescripcion,
               usuarioCreacion: f.usuarioCreacion,
               usuarioModificacion: f.usuarioModificacion,
-              estado: state);
+              estado: state,
+              interlock: f.interlock,
+              observadoEjecucion: f.observadoEjecucion,
+              proyectoDescripcion: f.proyectoDescripcion,
+              proyectoId: f.proyectoId,
+              subarea: f.subarea);
         }).toList();
         _errorMessageGetForzados = '';
         notifyListeners();
@@ -195,12 +200,13 @@ class ForzadosProvider with ChangeNotifier {
   String get errorMessagePostData => _errorMessagePost;
 
   Future<bool> sendRequestPost(BuildContext context,
-      DropDownValuesManagerProvider dropdownProvider) async {
+      DropDownValuesManagerProvider dropdownProvider, int id) async {
     final data = InsertQueryParameters(
+      id: id.toString(),
       usuario: PreferencesHelper().getUser()!.id.toString(),
       tagPrefijo: dropdownProvider.currentValueTagPrefijo!.id.toString(),
       tagCentro: dropdownProvider.currentValueTagCentro!.id.toString(),
-      tagSubfijo: 'Default value',
+      tagSubfijo: dropdownProvider.currentTagSubfijo,
       descripcion: dropdownProvider.currentValueDescription,
       disciplina: dropdownProvider.currentValueTagDisciplina!.id.toString(),
       turno: dropdownProvider.currentValueSlot!.id.toString(),
@@ -421,5 +427,30 @@ class ForzadosProvider with ChangeNotifier {
       print('Error abriendo caja: $e');
     }
     return true;
+  }
+
+  void updateForzado(DropDownValuesManagerProvider dropdownProvider) {
+    final data = InsertQueryParameters(
+      // id: ,
+      usuario: PreferencesHelper().getUser()!.id.toString(),
+      tagPrefijo: dropdownProvider.currentValueTagPrefijo!.id.toString(),
+      tagCentro: dropdownProvider.currentValueTagCentro!.id.toString(),
+      tagSubfijo: dropdownProvider.currentTagSubfijo,
+      descripcion: dropdownProvider.currentValueDescription,
+      disciplina: dropdownProvider.currentValueTagDisciplina!.id.toString(),
+      turno: dropdownProvider.currentValueSlot!.id.toString(),
+      interlockSeguridad: dropdownProvider.currentValueInterlock,
+      responsable: dropdownProvider.currentStateResponsibility!.id.toString(),
+      riesgoA: dropdownProvider.currentStateRisk!.id.toString(),
+      riesgo: dropdownProvider.currentRisk!.id.toString(),
+      probabilidad: dropdownProvider.currentStateProbability!.id.toString(),
+      impacto: dropdownProvider.currentStateImpact!.id.toString(),
+      solicitante: dropdownProvider.currentStateApplicant!.id.toString(),
+      aprobador: dropdownProvider.currentStateApprover!.id.toString(),
+      ejecutor: dropdownProvider.currentStateExecutor!.id.toString(),
+      autorizacion: 'Default value',
+      tipoForzado: dropdownProvider.currentStateTypeForzado!.id.toString(),
+      projectName: dropdownProvider.currentStateProjectName!.id.toString(),
+    );
   }
 }

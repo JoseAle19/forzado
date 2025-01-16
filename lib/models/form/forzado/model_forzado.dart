@@ -1,4 +1,5 @@
 class InsertQueryParameters {
+  String? id;
   String usuario;
   String tagPrefijo;
   String tagCentro;
@@ -21,6 +22,7 @@ class InsertQueryParameters {
 
   // Constructor
   InsertQueryParameters({
+    this.id,
     required this.usuario,
     required this.tagPrefijo,
     required this.tagCentro,
@@ -45,6 +47,7 @@ class InsertQueryParameters {
   // Método para convertir un objeto a un mapa, útil para enviar en la solicitud POST
   Map<String, dynamic> toMap() {
     return {
+      'id': id,
       'usuario': usuario,
       'tagPrefijo': tagPrefijo,
       'tagCentro': tagCentro,
@@ -70,6 +73,7 @@ class InsertQueryParameters {
   // Método para crear un objeto a partir de un mapa (útil para recibir los datos del cuerpo de la petición)
   factory InsertQueryParameters.fromMap(Map<String, dynamic> map) {
     return InsertQueryParameters(
+      id: map['id'] ?? '',
       usuario: map['usuario'] ?? '',
       tagPrefijo: map['tagPrefijo'] ?? '',
       tagCentro: map['tagCentro'] ?? '',

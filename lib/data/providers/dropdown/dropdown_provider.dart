@@ -4,6 +4,8 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:forzado/core/urls.dart';
 import 'package:forzado/core/utils/preferences_helper.dart';
+import 'package:forzado/models/forzado/model_forzado.dart';
+import 'package:forzado/models/forzado/model_forzado_id.dart';
 import 'package:forzado/models/model_flag.dart';
 import 'package:forzado/models/model_one.dart' as modelone;
 import 'package:forzado/models/model_three.dart' as modelthird;
@@ -11,9 +13,10 @@ import 'package:forzado/models/model_two.dart' as modeltwo;
 import 'package:forzado/models/model_user_detail.dart';
 import 'package:forzado/models/user/model_user.dart';
 import 'package:forzado/services/api_client.dart';
+import 'package:http/http.dart';
 
 class DropDownValuesManagerProvider with ChangeNotifier {
-  bool _isEnabledRuleRisk= false;
+  bool _isEnabledRuleRisk = false;
   bool get isEnabledRuleRisk => _isEnabledRuleRisk;
   List<Value> _users = [];
   List<Value> get users => _users;
@@ -124,6 +127,7 @@ class DropDownValuesManagerProvider with ChangeNotifier {
   modelthird.Value? _currentStateExecutor;
 
   String _currentValueDescription = '';
+  String _currentValueSubfijo = '';
   String _currentValueInterlock = '';
   modeltwo.Value? _currentRisk;
 
@@ -136,6 +140,12 @@ class DropDownValuesManagerProvider with ChangeNotifier {
   String get currentValueDescription => _currentValueDescription;
   set currentValueDescription(String value) {
     _currentValueDescription = value;
+    notifyListeners();
+  }
+
+  String get currentTagSubfijo => _currentValueSubfijo;
+  set currentTagSubfijo(String value) {
+    _currentValueSubfijo = value;
     notifyListeners();
   }
 
@@ -373,23 +383,22 @@ class DropDownValuesManagerProvider with ChangeNotifier {
   };
 
 // validar que la variable que esta en la base e deatos es true o false
-Future<void> verifyRuleRisk() async {
-  ApiClient client = ApiClient();
+  Future<void> verifyRuleRisk() async {
+    ApiClient client = ApiClient();
 
-  final res = await client.get(AppUrl.isEnabledRuleRisk);
-  try {
-    
-  if (res.statusCode == 200) {
-    final decodeData  =  modelFlagFromJson(res.body);
-    _isEnabledRuleRisk = decodeData.values.aplicaReglaRiesgoBajo;
+    final res = await client.get(AppUrl.isEnabledRuleRisk);
+    try {
+      if (res.statusCode == 200) {
+        final decodeData = modelFlagFromJson(res.body);
+        _isEnabledRuleRisk = decodeData.values.aplicaReglaRiesgoBajo;
+      } else {
+        print('Fue diferente el estatuscode de la respuesta');
+      }
+    } catch (e) {
+      print('Ocurrio un error al hacer la peticion del enpoint del flag');
+    }
+  }
 
-  } else{
-    print('Fue diferente el estatuscode de la respuesta');
-  }
-  } catch (e) {
-    print('Ocurrio un error al hacer la peticion del enpoint del flag');
-  }
-}
 // Definir el riesgo según la probabilidad e impacto
   void defineRisk() async {
     if (currentStateImpact?.descripcion == null ||
@@ -405,16 +414,19 @@ Future<void> verifyRuleRisk() async {
     if (user == null) {
       return; // Salir si el usuario es nulo.
     }
-    if (res.descripcion == 'BAJO' && currentValueInterlock == 'NO') {
-      // Verificar si el usuario actual no está en la lista de aprobadores
-      if (!_listAprobadores.any((element) => element.id == user.id)) {
-        _listAprobadores.add(
-            modelthird.Value(id: user.id, nombre: user.name, apePaterno: ''));
+
+    if (currentStateRisk?.descripcion.toLowerCase() != 'personas') {
+      if (res.descripcion == 'BAJO' && currentValueInterlock == 'NO') {
+        // Verificar si el usuario actual no está en la lista de aprobadores
+        if (!_listAprobadores.any((element) => element.id == user.id)) {
+          _listAprobadores.add(
+              modelthird.Value(id: user.id, nombre: user.name, apePaterno: ''));
+          notifyListeners();
+        }
+      } else {
+        _listAprobadores.removeWhere((element) => element.id == user.id);
         notifyListeners();
       }
-    } else {
-      _listAprobadores.removeWhere((element) => element.id == user.id);
-      notifyListeners();
     }
     _currentRisk = res;
   }
@@ -565,6 +577,101 @@ Future<void> verifyRuleRisk() async {
       _isLoadingGetUsers = false;
       notifyListeners();
       print('todos los usuarios: ${_users.length}');
+    }
+  }
+
+  // Funciones para actualizar
+  Future<void> fillDataUpdate(int id) async {
+    ApiClient client = ApiClient();
+    try {
+      print('cargando');
+      final res = await client.get('/api/solicitudes/alta/$id');
+      if (res.statusCode == 200) {
+        final decodeData = modelForzadoByIdFromJson(res.body);
+        ForzadoId f = decodeData.data![0];
+
+        // Filtrar valores de las listas y asignar
+        currentValueTagPrefijo = _listPrefijos.firstWhere(
+          (element) => element.id == f.tagPrefijo,
+          orElse: () =>
+              modelone.Value(id: 0, codigo: '', descripcion: 'No encontrado'),
+        );
+
+        currentValueTagCentro = _listCentros.firstWhere(
+          (element) => element.id == f.tagCentro,
+          orElse: () =>
+              modelone.Value(id: 0, codigo: '', descripcion: 'No encontrado'),
+        );
+
+        currentValueTagDisciplina = _listDiciplinas.firstWhere(
+          (element) => element.id == f.disciplina,
+          orElse: () => modeltwo.Value(id: 0, descripcion: 'No encontrado'),
+        );
+
+        currentValueSlot = _listTurnos.firstWhere(
+          (element) => element.id == f.turno,
+          orElse: () => modeltwo.Value(id: 0, descripcion: 'No encontrado'),
+        );
+
+        currentStateProbability = _listProbabilidades.firstWhere(
+          (element) => element.id == f.probabilidad,
+          orElse: () => modeltwo.Value(id: 0, descripcion: 'No encontrado'),
+        );
+
+        currentStateImpact = _listImpactos.firstWhere(
+          (element) => element.id == f.impacto,
+          orElse: () => modeltwo.Value(id: 0, descripcion: 'No encontrado'),
+        );
+
+        currentStateRisk = _listRiesgos.firstWhere(
+          (element) => element.id == f.riesgo,
+          orElse: () => modeltwo.Value(id: 0, descripcion: 'No encontrado'),
+        );
+
+        currentStateTypeForzado = _listTipoDeForzados.firstWhere(
+          (element) => element.id == f.tipoForzado,
+          orElse: () => modeltwo.Value(id: 0, descripcion: 'No encontrado'),
+        );
+
+        currentStateProjectName = _listprojects.firstWhere(
+          (element) => element.id == f.proyecto,
+          orElse: () => modeltwo.Value(id: 0, descripcion: 'No encontrado'),
+        );
+
+        currentStateApplicant = _listSolicitantes.firstWhere(
+          (element) => element.id == f.solicitante,
+          orElse: () => modelthird.Value(id: 0, nombre: 'No encontrado'),
+        );
+
+        currentStateResponsibility = _listResponsables.firstWhere(
+          (element) => element.id == f.responsable,
+          orElse: () => modelthird.Value(id: 0, nombre: 'No encontrado'),
+        );
+
+        currentStateApprover = _listAprobadores.firstWhere(
+          (element) => element.id == f.aprobador,
+          orElse: () => modelthird.Value(id: 0, nombre: 'No encontrado'),
+        );
+
+        currentStateExecutor = _listEjecutores.firstWhere(
+          (element) => element.id == f.ejecutor,
+          orElse: () => modelthird.Value(id: 0, nombre: 'No encontrado'),
+        );
+
+        // Asignar valores de cadenas directamente
+        currentValueDescription = f.descripcion ?? '';
+        currentTagSubfijo = f.tagSubfijo ?? '';
+        currentValueInterlock = f.interlockSeguridad == 1 ? 'si' : "NO";
+        if (currentStateImpact != null && currentStateProbability != null) {
+          defineRisk();
+        }
+
+        notifyListeners(); // Notifica que los valores han sido actualizados
+      } else {
+        print('Ocurrió un error en la solicitud: ${res.statusCode}');
+      }
+    } catch (e) {
+      print('Ocurrió un error: $e');
     }
   }
 }

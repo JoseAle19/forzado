@@ -4,149 +4,176 @@
 
 import 'dart:convert';
 
-ForzadosModel forzadosModelFromJson(String str) => ForzadosModel.fromJson(json.decode(str));
+ForzadosModel forzadosModelFromJson(String str) =>
+    ForzadosModel.fromJson(json.decode(str));
 
 String forzadosModelToJson(ForzadosModel data) => json.encode(data.toJson());
 
 class ForzadosModel {
-    final bool? success;
-    final String? message;
-    final List<ForzadoItem>? data;
+  final bool? success;
+  final String? message;
+  final List<ForzadoItem>? data;
 
-    ForzadosModel({
-        this.success,
-        this.message,
-        this.data,
-    });
+  ForzadosModel({
+    this.success,
+    this.message,
+    this.data,
+  });
 
-    factory ForzadosModel.fromJson(Map<String, dynamic> json) => ForzadosModel(
+  factory ForzadosModel.fromJson(Map<String, dynamic> json) => ForzadosModel(
         success: json["success"],
         message: json["message"],
-        data: json["data"] == null ? [] : List<ForzadoItem>.from(json["data"]!.map((x) => ForzadoItem.fromJson(x))),
-    );
+        data: json["data"] == null
+            ? []
+            : List<ForzadoItem>.from(
+                json["data"]!.map((x) => ForzadoItem.fromJson(x))),
+      );
 
-    Map<String, dynamic> toJson() => {
+  Map<String, dynamic> toJson() => {
         "success": success,
         "message": message,
-        "data": data == null ? [] : List<dynamic>.from(data!.map((x) => x.toJson())),
-    };
+        "data": data == null
+            ? []
+            : List<dynamic>.from(data!.map((x) => x.toJson())),
+      };
 }
 
 class ForzadoItem {
-    final int? id;
-    final String? nombre;
-    final String? area;
-    final Tipo? tipo;
-    final String? solicitante;
-    final Aprobador? aprobador;
-    final String? ejecutor;
-    final int? solicitanteAId;
-    final int? aprobadorAId;
-    final int? ejecutorAId;
-    final int? solicitanteBId;
-    final int? aprobadorBId;
-    final int? ejecutorBId;
-    final String? estado;
-    final DateTime? fecha;
-    final String? descripcion;
-    final String? estadoSolicitud;
-    final DateTime? fechaRealizacion;
-    final dynamic fechaCierre;
-    final String? usuarioCreacion;
-    final DateTime? fechaCreacion;
-    final String? usuarioModificacion;
-    final DateTime? fechaModificacion;
-    final String? subareaCodigo;
-    final String? subareaDescripcion;
-    final String? disciplinaDescripcion;
-    final TurnoDescripcion? turnoDescripcion;
-    final dynamic motivoRechazoDescripcion;
-    final TipoForzadoDescripcion? tipoForzadoDescripcion;
-    final String? tagCentroCodigo;
-    final String? tagCentroDescripcion;
-    final ResponsableNombre? responsableNombre;
-    final RiesgoDescripcion? riesgoDescripcion;
+  int? id;
+  String? nombre;
+  String? area;
+  String? subarea;
+  String? tipo;
+  String? solicitante;
+  String? aprobador;
+  String? ejecutor;
+  int? solicitanteAId;
+  int? aprobadorAId;
+  int? ejecutorAId;
+  int? solicitanteBId;
+  int? aprobadorBId;
+  int? ejecutorBId;
+  String? estado;
+  DateTime? fecha;
+  String? descripcion;
+  String? estadoSolicitud;
+  DateTime? fechaRealizacion;
+  dynamic fechaCierre;
+  String? usuarioCreacion;
+  DateTime? fechaCreacion;
+  String? usuarioModificacion;
+  DateTime? fechaModificacion;
+  String? subareaCodigo;
+  String? subareaDescripcion;
+  String? disciplinaDescripcion;
+  String? turnoDescripcion;
+  String? motivoRechazoDescripcion;
+  String? tipoForzadoDescripcion;
+  String? tagCentroCodigo;
+  String? tagCentroDescripcion;
+  String? responsableNombre;
+  String? riesgoDescripcion;
+  int? interlock;
+  String? proyectoDescripcion;
+  int? proyectoId;
+  bool? observadoEjecucion;
 
-    ForzadoItem({
-        this.id,
-        this.nombre,
-        this.area,
-        this.tipo,
-        this.solicitante,
-        this.aprobador,
-        this.ejecutor,
-        this.solicitanteAId,
-        this.aprobadorAId,
-        this.ejecutorAId,
-        this.solicitanteBId,
-        this.aprobadorBId,
-        this.ejecutorBId,
-        this.estado,
-        this.fecha,
-        this.descripcion,
-        this.estadoSolicitud,
-        this.fechaRealizacion,
-        this.fechaCierre,
-        this.usuarioCreacion,
-        this.fechaCreacion,
-        this.usuarioModificacion,
-        this.fechaModificacion,
-        this.subareaCodigo,
-        this.subareaDescripcion,
-        this.disciplinaDescripcion,
-        this.turnoDescripcion,
-        this.motivoRechazoDescripcion,
-        this.tipoForzadoDescripcion,
-        this.tagCentroCodigo,
-        this.tagCentroDescripcion,
-        this.responsableNombre,
-        this.riesgoDescripcion,
-    });
+  ForzadoItem({
+    this.id,
+    this.nombre,
+    this.area,
+    this.subarea,
+    this.tipo,
+    this.solicitante,
+    this.aprobador,
+    this.ejecutor,
+    this.solicitanteAId,
+    this.aprobadorAId,
+    this.ejecutorAId,
+    this.solicitanteBId,
+    this.aprobadorBId,
+    this.ejecutorBId,
+    this.estado,
+    this.fecha,
+    this.descripcion,
+    this.estadoSolicitud,
+    this.fechaRealizacion,
+    this.fechaCierre,
+    this.usuarioCreacion,
+    this.fechaCreacion,
+    this.usuarioModificacion,
+    this.fechaModificacion,
+    this.subareaCodigo,
+    this.subareaDescripcion,
+    this.disciplinaDescripcion,
+    this.turnoDescripcion,
+    this.motivoRechazoDescripcion,
+    this.tipoForzadoDescripcion,
+    this.tagCentroCodigo,
+    this.tagCentroDescripcion,
+    this.responsableNombre,
+    this.riesgoDescripcion,
+    this.interlock,
+    this.proyectoDescripcion,
+    this.proyectoId,
+    this.observadoEjecucion,
+  });
 
-   factory ForzadoItem.fromJson(Map<String, dynamic> json) => ForzadoItem(
-    id: json["id"] ?? "No especificado",
-    nombre: json["nombre"] ?? "Sin contenido",
-    area: json["area"] ?? "No especificado",
-    tipo: tipoValues.map[json["tipo"]],
-    solicitante: json["solicitante"] ?? "No especificado",
-    aprobador: aprobadorValues.map[json["aprobador"]],
-    ejecutor: json["ejecutor"] ?? "No especificado",
-    // solicitanteAId: json["solicitanteAId"] ?? "No especificado",
-    // aprobadorAId: json["aprobadorAId"] ?? "No especificado",
-    // ejecutorAId: json["ejecutorAId"] ?? "No especificado",
-    // solicitanteBId: json["solicitanteBId"] ?? "No especificado",
-    // aprobadorBId: json["aprobadorBId"] ?? "No especificado",
-    // ejecutorBId: json["ejecutorBId"] ?? "No especificado",
-    estado: json["estado"] ?? "No especificado",
-    fecha: json["fecha"] == null ? null : DateTime.parse(json["fecha"]),
-    descripcion: json["descripcion"] ?? "Sin contenido",
-    estadoSolicitud: json["estadoSolicitud"] ?? "No especificado",
-    fechaRealizacion: json["fechaRealizacion"] == null ? null : DateTime.parse(json["fechaRealizacion"]),
-    fechaCierre: json["fechaCierre"] ?? "No especificado",
-    usuarioCreacion: json["usuarioCreacion"] ?? "No especificado",
-    fechaCreacion: json["fechaCreacion"] == null ? null : DateTime.parse(json["fechaCreacion"]),
-    usuarioModificacion: json["usuarioModificacion"] ?? "No especificado",
-    fechaModificacion: json["fechaModificacion"] == null ? null : DateTime.parse(json["fechaModificacion"]),
-    subareaCodigo: json["subareaCodigo"] ?? "No especificado",
-    subareaDescripcion: json["subareaDescripcion"] ?? "Sin contenido",
-    disciplinaDescripcion: json["disciplinaDescripcion"] ?? "Sin contenido",
-    turnoDescripcion: turnoDescripcionValues.map[json["turnoDescripcion"]],
-    motivoRechazoDescripcion: json["motivoRechazoDescripcion"] ?? "Sin contenido",
-    tipoForzadoDescripcion: tipoForzadoDescripcionValues.map[json["tipoForzadoDescripcion"]] ,
-    tagCentroCodigo: json["tagCentroCodigo"] ?? "No especificado",
-    tagCentroDescripcion: json["tagCentroDescripcion"] ?? "Sin contenido",
-    responsableNombre: responsableNombreValues.map[json["responsableNombre"]],
-    riesgoDescripcion: riesgoDescripcionValues.map[json["riesgoDescripcion"]] ,
-);
+  factory ForzadoItem.fromJson(Map<String, dynamic> json) => ForzadoItem(
+        id: json["id"] ?? 0,
+        nombre: json["nombre"] ?? "",
+        area: json["area"] ?? "",
+        subarea: json["subarea"] ?? "",
+        tipo: json["tipo"] ?? "",
+        solicitante: json["solicitante"] ?? "",
+        aprobador: json["aprobador"] ?? "",
+        ejecutor: json["ejecutor"] ?? "",
+        solicitanteAId: json["solicitanteAId"] ?? 0,
+        aprobadorAId: json["aprobadorAId"] ?? 0,
+        ejecutorAId: json["ejecutorAId"] ?? 0,
+        solicitanteBId: json["solicitanteBId"] ?? 0,
+        aprobadorBId: json["aprobadorBId"] ?? 0,
+        ejecutorBId: json["ejecutorBId"] ?? 0,
+        estado: json["estado"] ?? "",
+        fecha: json["fecha"] == null ? null : DateTime.tryParse(json["fecha"]),
+        descripcion: json["descripcion"] ?? "",
+        estadoSolicitud: json["estadoSolicitud"] ?? "",
+        fechaRealizacion: json["fechaRealizacion"] == null
+            ? null
+            : DateTime.tryParse(json["fechaRealizacion"]),
+        fechaCierre: json["fechaCierre"],
+        usuarioCreacion: json["usuarioCreacion"] ?? "",
+        fechaCreacion: json["fechaCreacion"] == null
+            ? null
+            : DateTime.tryParse(json["fechaCreacion"]),
+        usuarioModificacion: json["usuarioModificacion"] ?? "",
+        fechaModificacion: json["fechaModificacion"] == null
+            ? null
+            : DateTime.tryParse(json["fechaModificacion"]),
+        subareaCodigo: json["subareaCodigo"] ?? "",
+        subareaDescripcion: json["subareaDescripcion"] ?? "",
+        disciplinaDescripcion: json["disciplinaDescripcion"] ?? "",
+        turnoDescripcion: json["turnoDescripcion"] ?? "",
+        motivoRechazoDescripcion: json["motivoRechazoDescripcion"] ?? "",
+        tipoForzadoDescripcion: json["tipoForzadoDescripcion"] ?? "",
+        tagCentroCodigo: json["tagCentroCodigo"] ?? "",
+        tagCentroDescripcion: json["tagCentroDescripcion"] ?? "",
+        responsableNombre: json["responsableNombre"] ?? "",
+        riesgoDescripcion: json["riesgoDescripcion"] ?? "",
+        interlock: json["interlock"] ?? 0,
+        proyectoDescripcion: json["proyectoDescripcion"] ?? "",
+        proyectoId: json["proyectoId"] ?? 0,
+        observadoEjecucion: json["observadoEjecucion"] == null ? false : true,
+      );
 
-
-    Map<String, dynamic> toJson() => {
+  Map<String, dynamic> toJson() => {
         "id": id,
         "nombre": nombre,
         "area": area,
-        "tipo": tipoValues.reverse[tipo],
+        "subarea": subarea,
+        "tipo": tipo,
         "solicitante": solicitante,
-        "aprobador": aprobadorValues.reverse[aprobador],
+        "aprobador": aprobador,
         "ejecutor": ejecutor,
         "solicitanteAId": solicitanteAId,
         "aprobadorAId": aprobadorAId,
@@ -167,82 +194,16 @@ class ForzadoItem {
         "subareaCodigo": subareaCodigo,
         "subareaDescripcion": subareaDescripcion,
         "disciplinaDescripcion": disciplinaDescripcion,
-        "turnoDescripcion": turnoDescripcionValues.reverse[turnoDescripcion],
+        "turnoDescripcion": turnoDescripcion,
         "motivoRechazoDescripcion": motivoRechazoDescripcion,
-        "tipoForzadoDescripcion": tipoForzadoDescripcionValues.reverse[tipoForzadoDescripcion],
+        "tipoForzadoDescripcion": tipoForzadoDescripcion,
         "tagCentroCodigo": tagCentroCodigo,
         "tagCentroDescripcion": tagCentroDescripcion,
-        "responsableNombre": responsableNombreValues.reverse[responsableNombre],
-        "riesgoDescripcion": riesgoDescripcionValues.reverse[riesgoDescripcion],
-    };
-}
-
-enum Aprobador {
-    CRISTIAN_CARRILLO
-}
-
-final aprobadorValues = EnumValues({
-    "Cristian Carrillo ": Aprobador.CRISTIAN_CARRILLO
-});
-
-enum ResponsableNombre {
-    GERENCIA_ASSET_PERFOMANCE,
-    GERENCIA_PLANTA
-}
-
-final responsableNombreValues = EnumValues({
-    "GERENCIA ASSET. PERFOMANCE": ResponsableNombre.GERENCIA_ASSET_PERFOMANCE,
-    "GERENCIA PLANTA": ResponsableNombre.GERENCIA_PLANTA
-});
-
-enum RiesgoDescripcion {
-    EQUIPOS,
-    PERSONAS,
-    PROCESOS
-}
-
-final riesgoDescripcionValues = EnumValues({
-    "EQUIPOS": RiesgoDescripcion.EQUIPOS,
-    "PERSONAS": RiesgoDescripcion.PERSONAS,
-    "PROCESOS": RiesgoDescripcion.PROCESOS
-});
-
-enum Tipo {
-    ALTA,
-    BAJA
-}
-
-final tipoValues = EnumValues({
-    "alta": Tipo.ALTA,
-    "baja": Tipo.BAJA
-});
-
-enum TipoForzadoDescripcion {
-    HARDWARE
-}
-
-final tipoForzadoDescripcionValues = EnumValues({
-    "HARDWARE": TipoForzadoDescripcion.HARDWARE
-});
-
-enum TurnoDescripcion {
-    A,
-    B
-}
-
-final turnoDescripcionValues = EnumValues({
-    "A": TurnoDescripcion.A,
-    "B": TurnoDescripcion.B
-});
-
-class EnumValues<T> {
-    Map<String, T> map;
-    late Map<T, String> reverseMap;
-
-    EnumValues(this.map);
-
-    Map<T, String> get reverse {
-            reverseMap = map.map((k, v) => MapEntry(v, k));
-            return reverseMap;
-    }
+        "responsableNombre": responsableNombre,
+        "riesgoDescripcion": riesgoDescripcion,
+        "interlock": interlock,
+        "proyectoDescripcion": proyectoDescripcion,
+        "proyectoId": proyectoId,
+        "observadoEjecucion": observadoEjecucion,
+      };
 }

@@ -13,8 +13,9 @@ import 'package:forzado/widgets/modal_error.dart';
 import 'package:provider/provider.dart';
 
 class StepperForm extends StatefulWidget {
-  const StepperForm({super.key});
-
+  const StepperForm({super.key, this.isUpdate, this.idForzado});
+  final bool? isUpdate;
+  final int? idForzado;
   @override
   State<StepperForm> createState() => _StepperFormState();
 }
@@ -81,7 +82,7 @@ class _StepperFormState extends State<StepperForm> {
                           details.onStepContinue!();
                         } else {
                           final res = await forzadosProvider.sendRequestPost(
-                              context, dropdownProvider);
+                              context, dropdownProvider, widget.idForzado!);
                           if (!res) {
                             CustomModal().showModal(
                                 context,
@@ -121,7 +122,9 @@ class _StepperFormState extends State<StepperForm> {
                             ? 'Continuar'
                             : forzadosProvider.isFetchingPostData == true
                                 ? 'Espera'
-                                : 'Finalizar',
+                                : widget.isUpdate == true
+                                    ? 'Actualizar forzado'
+                                    : 'Finalizar',
                         style: AppStyles.textStyle,
                       )),
                     ),
@@ -168,11 +171,11 @@ class _StepperFormState extends State<StepperForm> {
                               },
                             ),
                             Container(
-                              margin: const EdgeInsets.symmetric(vertical: 20),
+                              margin: const EdgeInsets.symmetric(vertical: 10),
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  const Text('Descripción *'),
+                                  const Text('Tag (Sufijo) *'),
                                   const SizedBox(
                                     height: 5,
                                   ),
@@ -184,7 +187,7 @@ class _StepperFormState extends State<StepperForm> {
                                     maxLength: 100,
                                     maxLines: 2,
                                     decoration: InputDecoration(
-                                      hintText: 'Agregue una descripción',
+                                      hintText: 'Ingrese el subfijo del tag',
                                       border: OutlineInputBorder(
                                         borderSide: BorderSide(
                                             color: Colors.grey.shade50),
@@ -193,12 +196,13 @@ class _StepperFormState extends State<StepperForm> {
                                       ),
                                       contentPadding:
                                           const EdgeInsets.symmetric(
-                                              horizontal: 5, vertical: 15),
+                                              horizontal: 5, vertical: 5),
                                     ),
                                   )
                                 ],
                               ),
                             ),
+                            _inputDescription(dropdownProvider),
                             CustomDropdownButton<modelTwo.Value>(
                               hintText: 'Disciplina *:',
                               items: dropdownProvider.listDiciplinas,
@@ -304,7 +308,10 @@ class _StepperFormState extends State<StepperForm> {
                               onChanged: (value) {
                                 dropdownProvider.currentStateProbability =
                                     value!;
-                               dropdownProvider.isEnabledRuleRisk? dropdownProvider.defineRisk() : null;
+
+                                dropdownProvider.isEnabledRuleRisk
+                                    ? dropdownProvider.defineRisk()
+                                    : null;
                               },
                             ),
                             CustomDropdownButton<modelTwo.Value>(
@@ -461,6 +468,37 @@ class _StepperFormState extends State<StepperForm> {
           )
         ],
       )),
+    );
+  }
+
+  Container _inputDescription(DropDownValuesManagerProvider dropdownProvider) {
+    return Container(
+      margin: const EdgeInsets.symmetric(vertical: 10),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text('Descripción *'),
+          const SizedBox(
+            height: 5,
+          ),
+          TextFormField(
+            initialValue: dropdownProvider.currentValueDescription,
+            onChanged: (value) =>
+                dropdownProvider.currentValueDescription = value,
+            maxLength: 100,
+            maxLines: 2,
+            decoration: InputDecoration(
+              hintText: 'Agregue una descripción',
+              border: OutlineInputBorder(
+                borderSide: BorderSide(color: Colors.grey.shade50),
+                borderRadius: const BorderRadius.all(Radius.circular(10)),
+              ),
+              contentPadding:
+                  const EdgeInsets.symmetric(horizontal: 5, vertical: 15),
+            ),
+          )
+        ],
+      ),
     );
   }
 
