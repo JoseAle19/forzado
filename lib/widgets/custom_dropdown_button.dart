@@ -40,8 +40,11 @@ class CustomDropdownButton<T extends DropDownItem> extends StatelessWidget {
                 child: SizedBox(
                   width: 200,
                   child: Text(
-                    utf8.decode(latin1.encode(item.getLabel()),
-                        allowMalformed: true),
+                    ' ${utf8.decode(latin1.encode(
+                          item.getCode(),
+                        ), allowMalformed: true)} | ${utf8.decode(latin1.encode(
+                          item.getLabel(),
+                        ), allowMalformed: true)}',
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     style: const TextStyle(fontSize: 12),

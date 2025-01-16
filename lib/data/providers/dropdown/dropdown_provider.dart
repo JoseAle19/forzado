@@ -4,16 +4,16 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:forzado/core/urls.dart';
 import 'package:forzado/core/utils/preferences_helper.dart';
-import 'package:forzado/models/forzado/model_forzado.dart';
 import 'package:forzado/models/forzado/model_forzado_id.dart';
 import 'package:forzado/models/model_flag.dart';
 import 'package:forzado/models/model_one.dart' as modelone;
+import 'package:forzado/models/model_tags_matriz.dart';
 import 'package:forzado/models/model_three.dart' as modelthird;
 import 'package:forzado/models/model_two.dart' as modeltwo;
 import 'package:forzado/models/model_user_detail.dart';
 import 'package:forzado/models/user/model_user.dart';
 import 'package:forzado/services/api_client.dart';
-import 'package:http/http.dart';
+import 'package:forzado/widgets/modal_error.dart';
 
 class DropDownValuesManagerProvider with ChangeNotifier {
   bool _isEnabledRuleRisk = false;
@@ -146,12 +146,15 @@ class DropDownValuesManagerProvider with ChangeNotifier {
   String get currentTagSubfijo => _currentValueSubfijo;
   set currentTagSubfijo(String value) {
     _currentValueSubfijo = value;
+    setImpactAndProbabilidad();
+    print('subfijo');
     notifyListeners();
   }
 
   String get currentValueInterlock => _currentValueInterlock;
   set currentValueInterlock(String value) {
     _currentValueInterlock = value;
+    validateInterlok();
     notifyListeners();
   }
 
@@ -159,12 +162,16 @@ class DropDownValuesManagerProvider with ChangeNotifier {
   modelone.Value? get currentValueTagPrefijo => _currentValueTagPrefijo;
   set currentValueTagPrefijo(modelone.Value? value) {
     _currentValueTagPrefijo = value;
+    print('mod');
+    setImpactAndProbabilidad();
+
     notifyListeners();
   }
 
   modelone.Value? get currentValueTagCentro => _currentValueTagCentro;
   set currentValueTagCentro(modelone.Value? value) {
     _currentValueTagCentro = value;
+    setImpactAndProbabilidad();
     notifyListeners();
   }
 
@@ -184,18 +191,23 @@ class DropDownValuesManagerProvider with ChangeNotifier {
   modeltwo.Value? get currentStateProbability => _currentStateProbability;
   set currentStateProbability(modeltwo.Value? value) {
     _currentStateProbability = value;
+    _updateCurrentRisk();
+    validateInterlok();
     notifyListeners();
   }
 
   modeltwo.Value? get currentStateImpact => _currentStateImpact;
   set currentStateImpact(modeltwo.Value? value) {
     _currentStateImpact = value;
+    _updateCurrentRisk();
+    validateInterlok();
     notifyListeners();
   }
 
   modeltwo.Value? get currentStateRisk => _currentStateRisk;
   set currentStateRisk(modeltwo.Value? value) {
     _currentStateRisk = value;
+    validateInterlok();
     notifyListeners();
   }
 
@@ -253,6 +265,7 @@ class DropDownValuesManagerProvider with ChangeNotifier {
     _currentStateExecutor = null;
     _currentValueDescription = '';
     _currentValueInterlock = '';
+    _currentValueSubfijo = '';
     _currentStateProjectName = null;
     _currentRisk = null;
     notifyListeners();
@@ -400,53 +413,181 @@ class DropDownValuesManagerProvider with ChangeNotifier {
   }
 
 // Definir el riesgo según la probabilidad e impacto
+  // void defineRisk() async {
+  //   if (currentStateImpact?.descripcion == null ||
+  //       currentStateProbability?.descripcion == null) {
+  //     return;
+  //   }
+  //   // Obtener los valores normalizados (en mayúsculas)
+  //   final impact = currentStateImpact?.descripcion.toUpperCase();
+  //   final probability = currentStateProbability?.descripcion.toUpperCase();
+  //   final nivel = riskMatrix[impact]?[probability] ?? '';
+  //   final res = riskLevels.firstWhere((element) => element.id == nivel);
+  //   ApiResponseDetailUser? user = await PreferencesHelper().getUser();
+  //   if (user == null) {
+  //     return; // Salir si el usuario es nulo.
+  //   }
+
+  //   if (currentStateRisk?.descripcion.toLowerCase() != 'personas') {
+  //     if (res.descripcion == 'BAJO' && currentValueInterlock == 'NO') {
+  //       // Verificar si el usuario actual no está en la lista de aprobadores
+  //       if (!_listAprobadores.any((element) => element.id == user.id)) {
+  //         _listAprobadores.add(
+  //             modelthird.Value(id: user.id, nombre: user.name, apePaterno: ''));
+  //         notifyListeners();
+  //       }
+  //     } else {
+  //       _listAprobadores.removeWhere((element) => element.id == user.id);
+  //       notifyListeners();
+  //     }
+  //   }
+  //   _currentRisk = res;
+  // }
+
   void defineRisk() async {
     if (currentStateImpact?.descripcion == null ||
         currentStateProbability?.descripcion == null) {
       return;
     }
-    // Obtener los valores normalizados (en mayúsculas)
+
+    // Obtener valores normalizados
     final impact = currentStateImpact?.descripcion.toUpperCase();
     final probability = currentStateProbability?.descripcion.toUpperCase();
     final nivel = riskMatrix[impact]?[probability] ?? '';
     final res = riskLevels.firstWhere((element) => element.id == nivel);
+
+    // Verificar si la regla de riesgo está habilitada
     ApiResponseDetailUser? user = await PreferencesHelper().getUser();
     if (user == null) {
-      return; // Salir si el usuario es nulo.
+      return;
     }
 
-    if (currentStateRisk?.descripcion.toLowerCase() != 'personas') {
-      if (res.descripcion == 'BAJO' && currentValueInterlock == 'NO') {
-        // Verificar si el usuario actual no está en la lista de aprobadores
-        if (!_listAprobadores.any((element) => element.id == user.id)) {
-          _listAprobadores.add(
-              modelthird.Value(id: user.id, nombre: user.name, apePaterno: ''));
-          notifyListeners();
-        }
-      } else {
-        _listAprobadores.removeWhere((element) => element.id == user.id);
-        notifyListeners();
+    if (isEnabledRuleRisk &&
+        res.descripcion == 'BAJO' &&
+        currentValueInterlock == 'NO') {
+      // Agregar usuario logeado como aprobador si no está
+      if (!_listAprobadores.any((element) => element.id == user.id)) {
+        _listAprobadores.add(
+          modelthird.Value(id: user.id, nombre: user.name, apePaterno: ''),
+        );
       }
+    } else {
+      // Remover al usuario logeado si no aplica
+      _listAprobadores.removeWhere((element) => element.id == user.id);
     }
+
     _currentRisk = res;
+    notifyListeners();
+  }
+
+  // void validateInterlok() async {
+  //   ApiResponseDetailUser? user = await PreferencesHelper().getUser();
+  //   if (currentValueInterlock == 'NO') {
+  //     addArobbadoresByRole();
+  //     if (user == null) {
+  //       return;
+  //     }
+  //     if (!_listAprobadores.any((element) => element.id == user.id)) {
+  //       _listAprobadores.add(
+  //           modelthird.Value(id: user.id, nombre: user.name, apePaterno: ''));
+  //     }
+  //   } else {
+  //     addAprobadoresByPuesto();
+  //   }
+  //   if (!_listAprobadores.contains(currentStateApprover)) {
+  //     currentStateApprover = null;
+  //   }
+
+  //   notifyListeners();
+  // }
+  List<Tags> _listTagsMatriz = [];
+  List<Tags> get listTagsMatriz => _listTagsMatriz;
+  // String  _errorGetListTagsmatriz = '';
+  // String get  errorGetListTagsmatriz =>_errorGetListTagsmatriz;
+
+  Future<void> getTagsMatrizRiesgo(BuildContext context) async {
+    ApiClient client = ApiClient();
+    try {
+      final res = await client.get(AppUrl.tagsMatrizRiesgo);
+      if (res.statusCode == 200) {
+        final decodeData = modelTagsMatrizFromJson(res.body);
+        _listTagsMatriz = decodeData.values;
+        notifyListeners();
+      } else {
+        CustomModal().showModal(
+            context, 'Ocurrió un error inesperado', Colors.red, false);
+      }
+    } catch (e) {
+      CustomModal()
+          .showModal(context, 'Ocurrió un error inesperado', Colors.red, false);
+    }
+  }
+// Settera valores de sub  probabilidad e impacto si hay conincidencias con los datos que retorna el endpint de tags matriz rieso
+
+  void setImpactAndProbabilidad() {
+    if (currentValueTagPrefijo == null ||
+        currentValueTagCentro == null ||
+        currentTagSubfijo == '') {
+      return;
+    }
+
+    final idSubArea = currentValueTagPrefijo!.id;
+    final idTagCentro = currentValueTagCentro!.id;
+    final subfijo = currentTagSubfijo;
+
+    final tag = _listTagsMatriz.firstWhere(
+      (tag) =>
+          tag.prefijoId == idSubArea &&
+          tag.centroId == idTagCentro &&
+          tag.sufijo == subfijo,
+      orElse: () => Tags(
+          id: 0000,
+          prefijoId: 0000,
+          centroId: 0000,
+          sufijo: 'error',
+          probabilidadId: 0000,
+          impactoId: 0000), // Devuelve null si no encuentra un elemento
+    );
+    if (tag.sufijo != 'error') {
+      // setear valores
+      final probabilidad =
+          listProbabilidades.firstWhere((p) => p.id == tag.probabilidadId);
+      final impacto = listImpactos.firstWhere((i) => i.id == tag.impactoId);
+      currentStateProbability = probabilidad;
+      currentStateImpact = impacto;
+    }
+    else{      currentStateProbability = null;
+      currentStateImpact = null;
+      currentRisk = null;
+}
+    print('Tag encontrada con coincidencias ${tag.sufijo}');
   }
 
   void validateInterlok() async {
     ApiResponseDetailUser? user = await PreferencesHelper().getUser();
-    if (currentValueInterlock == 'NO') {
-      addArobbadoresByRole();
-      if (user == null) {
-        return;
-      }
-      if (!_listAprobadores.any((element) => element.id == user.id)) {
-        _listAprobadores.add(
-            modelthird.Value(id: user.id, nombre: user.name, apePaterno: ''));
-      }
-    } else {
+    if (currentValueInterlock == 'si') {
       addAprobadoresByPuesto();
+      print('by puesto');
+      return;
     }
-    if (!_listAprobadores.contains(currentStateApprover)) {
-      currentStateApprover = null;
+    if (_currentValueInterlock == 'si' ||
+        (_currentValueInterlock == 'NO' &&
+            _currentStateRisk?.descripcion.toLowerCase() == 'personas')) {
+      addAprobadoresByPuesto();
+      print('by puesto');
+    } else {
+      addArobbadoresByRole();
+      print('by role');
+    }
+
+    if (isEnabledRuleRisk &&
+        _currentRisk?.descripcion.toLowerCase() == 'bajo' &&
+        user != null &&
+        currentValueInterlock == 'NO' &&
+        !_listAprobadores.any((element) => element.id == user.id)) {
+      _listAprobadores.add(
+        modelthird.Value(id: user.id, nombre: user.name, apePaterno: ''),
+      );
     }
 
     notifyListeners();
@@ -454,14 +595,14 @@ class DropDownValuesManagerProvider with ChangeNotifier {
 
   void addAprobadoresByPuesto() {
     _listAprobadores.clear();
-    for (var i = 0; i < _users.length; i++) {
-      if (_users[i].puestoDescripcion!.toLowerCase() ==
-          "GERENTE PLANTA PROCESO".toLowerCase()) {
-        _listAprobadores.add(modelthird.Value(
-          id: _users[i].id!,
-          nombre:
-              '${_users[i].nombre!} ${_users[i].apePaterno!} ${_users[i].apeMaterno!}',
-        ));
+    for (var user in _users) {
+      if (user.puestoDescripcion?.toLowerCase() == "gerente planta proceso") {
+        _listAprobadores.add(
+          modelthird.Value(
+            id: user.id!,
+            nombre: '${user.nombre!} ${user.apePaterno!} ${user.apeMaterno!}',
+          ),
+        );
       }
     }
   }
@@ -471,6 +612,18 @@ class DropDownValuesManagerProvider with ChangeNotifier {
             'personas'.toLowerCase()
         ? false
         : true;
+  }
+
+  void _updateCurrentRisk() {
+    if (_currentStateImpact?.descripcion != null &&
+        _currentStateProbability?.descripcion != null) {
+      final impact = _currentStateImpact!.descripcion.toUpperCase();
+      final probability = _currentStateProbability!.descripcion.toUpperCase();
+      final nivel = riskMatrix[impact]?[probability] ?? '';
+      _currentRisk = riskLevels.firstWhere((element) => element.id == nivel,
+          orElse: () => modeltwo.Value(id: 1, descripcion: ''));
+      notifyListeners();
+    }
   }
 
   void defineInterlockbyRiskA() {
@@ -484,16 +637,15 @@ class DropDownValuesManagerProvider with ChangeNotifier {
   }
 
   void addArobbadoresByRole() {
-    listAprobadores.clear();
-
-    for (var i = 0; i < _users.length; i++) {
-      print(_users[i].apePaterno);
-      if (_users[i].roles!.containsKey('2')) {
-        listAprobadores.add(modelthird.Value(
-          id: _users[i].id!,
-          nombre:
-              '${_users[i].nombre!} ${_users[i].apePaterno!} ${_users[i].apeMaterno!}',
-        ));
+    _listAprobadores.clear();
+    for (var user in _users) {
+      if (user.roles != null && user.roles!.containsKey('2')) {
+        _listAprobadores.add(
+          modelthird.Value(
+            id: user.id!,
+            nombre: '${user.nombre!} ${user.apePaterno!} ${user.apeMaterno!}',
+          ),
+        );
       }
     }
   }
@@ -644,23 +796,32 @@ class DropDownValuesManagerProvider with ChangeNotifier {
         );
 
         currentStateResponsibility = _listResponsables.firstWhere(
-          (element) => element.id == f.responsable,
+          (element) => element.idT == f.responsable,
           orElse: () => modelthird.Value(id: 0, nombre: 'No encontrado'),
         );
+   
 
-        currentStateApprover = _listAprobadores.firstWhere(
-          (element) => element.id == f.aprobador,
+    print('id for ${f.aprobador}');
+        for (var i = 0; i < listAprobadores.length; i++) {
+          if (listAprobadores[i].id == f.aprobador) {
+            final apro = listAprobadores[i];
+          currentStateApprover = modelthird.Value(id: apro.id, nombre: '${apro.id} ${apro.apePaterno} ${apro.apePaterno}');
+          notifyListeners();
+          }
+        }
+        currentStateApprover = listAprobadores.firstWhere(
+          (element) => element.idT.toString() == f.aprobador.toString(),
           orElse: () => modelthird.Value(id: 0, nombre: 'No encontrado'),
-        );
+        ); 
 
         currentStateExecutor = _listEjecutores.firstWhere(
-          (element) => element.id == f.ejecutor,
+          (element) => element.idT == f.ejecutor,
           orElse: () => modelthird.Value(id: 0, nombre: 'No encontrado'),
         );
 
-        // Asignar valores de cadenas directamente
-        currentValueDescription = f.descripcion ?? '';
-        currentTagSubfijo = f.tagSubfijo ?? '';
+     // Asignar valores de cadenas directamente
+        currentValueDescription = f.descripcion!;
+        currentTagSubfijo = f.tagSubfijo!;
         currentValueInterlock = f.interlockSeguridad == 1 ? 'si' : "NO";
         if (currentStateImpact != null && currentStateProbability != null) {
           defineRisk();

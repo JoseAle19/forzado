@@ -29,6 +29,8 @@ class _StepperFormState extends State<StepperForm> {
           Provider.of<DropDownValuesManagerProvider>(context, listen: false);
       if (mounted) {
         await dropdownProvider.verifyRuleRisk();
+        await dropdownProvider.getTagsMatrizRiesgo(context);
+        widget.isUpdate != true? dropdownProvider.clearValues() : null;
       }
     });
   }
@@ -81,8 +83,9 @@ class _StepperFormState extends State<StepperForm> {
                         if (validation) {
                           details.onStepContinue!();
                         } else {
+                          String id = widget.isUpdate == true ? widget.idForzado.toString() :'';
                           final res = await forzadosProvider.sendRequestPost(
-                              context, dropdownProvider, widget.idForzado!);
+                              context, dropdownProvider,   id );
                           if (!res) {
                             CustomModal().showModal(
                                 context,
@@ -181,13 +184,14 @@ class _StepperFormState extends State<StepperForm> {
                                   ),
                                   TextFormField(
                                     initialValue: dropdownProvider
-                                        .currentValueDescription,
+                                        .currentTagSubfijo,
                                     onChanged: (value) => dropdownProvider
-                                        .currentValueDescription = value,
+                                        .currentTagSubfijo = value,
                                     maxLength: 100,
                                     maxLines: 2,
                                     decoration: InputDecoration(
-                                      hintText: 'Ingrese el subfijo del tag',
+                                      hintText:widget.isUpdate==true ?dropdownProvider
+                                        .currentTagSubfijo: 'Ingrese el subfijo del tag',
                                       border: OutlineInputBorder(
                                         borderSide: BorderSide(
                                             color: Colors.grey.shade50),
@@ -238,7 +242,7 @@ class _StepperFormState extends State<StepperForm> {
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  const Text('Iterlock Seguridad *'),
+                                  const Text('Interlock Seguridad *'),
                                   const SizedBox(
                                     height: 5,
                                   ),
@@ -368,7 +372,8 @@ class _StepperFormState extends State<StepperForm> {
                             items: dropdownProvider.listAprobadores,
                             selectedItem: dropdownProvider.listAprobadores
                                     .contains(
-                                        dropdownProvider.currentStateApprover)
+                                        dropdownProvider.currentStateApprover) && widget.isUpdate !=false
+
                                 ? dropdownProvider.currentStateApprover
                                 : null,
                             onChanged: (value) {
@@ -488,7 +493,8 @@ class _StepperFormState extends State<StepperForm> {
             maxLength: 100,
             maxLines: 2,
             decoration: InputDecoration(
-              hintText: 'Agregue una descripción',
+              hintText:widget.isUpdate ==true ?dropdownProvider
+                                        .currentValueDescription:'Agregue una descripción',
               border: OutlineInputBorder(
                 borderSide: BorderSide(color: Colors.grey.shade50),
                 borderRadius: const BorderRadius.all(Radius.circular(10)),

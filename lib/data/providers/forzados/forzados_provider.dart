@@ -200,7 +200,7 @@ class ForzadosProvider with ChangeNotifier {
   String get errorMessagePostData => _errorMessagePost;
 
   Future<bool> sendRequestPost(BuildContext context,
-      DropDownValuesManagerProvider dropdownProvider, int id) async {
+      DropDownValuesManagerProvider dropdownProvider, String id) async {
     final data = InsertQueryParameters(
       id: id.toString(),
       usuario: PreferencesHelper().getUser()!.id.toString(),
@@ -228,13 +228,15 @@ class ForzadosProvider with ChangeNotifier {
       ApiClient client = ApiClient();
       _isFecthingPostData = true;
       notifyListeners();
-      final res =
-          await client.post(AppUrl.postAddForzado, json.encode(data.toMap()));
+      // late res;
+      final res = id.isNotEmpty
+          ? await client.put(AppUrl.postAddForzado, json.encode(data.toMap()))
+          : await client.post(AppUrl.postAddForzado, json.encode(data.toMap()));
       if (res.statusCode == 200) {
         // para volver a contar los forzados
         _isFecthingPostData = false;
         fetchCountForzados();
-        // getForzados(rol);
+        getForzados();
         notifyListeners();
         return true;
       } else if (res.statusCode == 500) {

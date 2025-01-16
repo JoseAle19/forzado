@@ -44,4 +44,6 @@ class AppUrl {
   // validar si la regla se puede aplicar o no
 
   static const String isEnabledRuleRisk = "/api/parametros-globales";
+  static const String tagsMatrizRiesgo = "/api/maestras/tags-matriz-riesgo";
+
 }

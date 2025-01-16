@@ -41,6 +41,8 @@ class Value implements DropDownItem {
   });
   @override
   String getLabel() => descripcion;
+  @override
+  String getCode() => id.toString();
 
   @override
   int get idT => id;

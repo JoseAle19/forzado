@@ -168,6 +168,11 @@ class ForzadoApprove {
       case "RECHAZADO-ALTA":
         return "RECHAZADO-FORZADO";
 
+ case "APROBADO-BAJA":
+        return "APROBADO-RETIRO";
+      case "APROBADO-ALTA":
+        return "APROBADO-FORZADO";
+
         
       default:
         return estado;
