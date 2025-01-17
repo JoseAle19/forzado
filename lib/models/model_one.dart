@@ -42,7 +42,7 @@ class Value implements DropDownItem {
   });
 
   @override
-  String getLabel() => descripcion;
+  String getLabel() => '| $descripcion';
   @override
   String getCode() => codigo;
 

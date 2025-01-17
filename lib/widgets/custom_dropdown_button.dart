@@ -8,13 +8,18 @@ class CustomDropdownButton<T extends DropDownItem> extends StatelessWidget {
   final List<T> items;
   final T? selectedItem;
   final ValueChanged<T?> onChanged;
+  final Color textColor;
+  final Color backgroundColor;
 
-  const CustomDropdownButton(
-      {super.key,
-      required this.hintText,
-      required this.items,
-      this.selectedItem,
-      required this.onChanged});
+  const CustomDropdownButton({
+    super.key,
+    required this.hintText,
+    required this.items,
+    this.selectedItem,
+    required this.onChanged,
+    this.textColor = Colors.black,
+    this.backgroundColor = Colors.transparent,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -23,7 +28,10 @@ class CustomDropdownButton<T extends DropDownItem> extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(hintText),
+          Text(
+            hintText,
+          
+          ),
           const SizedBox(
             height: 5,
           ),
@@ -33,6 +41,7 @@ class CustomDropdownButton<T extends DropDownItem> extends StatelessWidget {
               'Selecciona una opción',
               maxLines: 2,
               overflow: TextOverflow.ellipsis,
+             
             ),
             items: items.map((item) {
               return DropdownMenuItem<T>(
@@ -42,20 +51,22 @@ class CustomDropdownButton<T extends DropDownItem> extends StatelessWidget {
                   child: Text(
                     ' ${utf8.decode(latin1.encode(
                           item.getCode(),
-                        ), allowMalformed: true)} | ${utf8.decode(latin1.encode(
+                        ), allowMalformed: true)} ${utf8.decode(latin1.encode(
                           item.getLabel(),
                         ), allowMalformed: true)}',
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(fontSize: 12),
+                    style: TextStyle(fontSize: 12, color: textColor),
                   ),
                 ),
               );
             }).toList(),
             onChanged: onChanged,
             decoration: InputDecoration(
+              filled: true,
+              fillColor: backgroundColor,
               border: OutlineInputBorder(
-                borderSide: BorderSide(color: Colors.grey.shade50),
+                borderSide: BorderSide(color: Colors.grey.shade600),
                 borderRadius: const BorderRadius.all(Radius.circular(10)),
               ),
               contentPadding:

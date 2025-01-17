@@ -192,6 +192,7 @@ class _StepperFormState extends State<StepperForm> {
                                     maxLength: 100,
                                     maxLines: 2,
                                     decoration: InputDecoration(
+                                      hintStyle: TextStyle(color: Colors.grey.shade600),
                                       hintText: widget.isUpdate == true
                                           ? dropdownProvider.currentTagSubfijo
                                           : 'Ingrese el subfijo del tag',
@@ -245,7 +246,7 @@ class _StepperFormState extends State<StepperForm> {
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  const Text('Interlock Seguridad *'),
+                                  const Text('¿Interlock Seguridad? *'),
                                   const SizedBox(
                                     height: 5,
                                   ),
@@ -370,6 +371,8 @@ class _StepperFormState extends State<StepperForm> {
                             Stack(
                               children: [
                                 CustomDropdownButton<modelTwo.Value>(
+                                  backgroundColor: dropdownProvider.currentRisk?.descripcion.toLowerCase() == 'bajo' ? Color(0xffBBF7D0):dropdownProvider.currentRisk?.descripcion.toLowerCase() == 'moderado' ? Color(0xffFEF08A): dropdownProvider.currentRisk?.descripcion.toLowerCase() == 'alto' ? Color(0xffEF4444): Colors.transparent ,
+                                  textColor: dropdownProvider.currentRisk?.descripcion.toLowerCase() == 'alto'? Colors.white : Colors.black,
                                   hintText: 'Riesgo *:',
                                   items: dropdownProvider.riskLevels,
                                   selectedItem: dropdownProvider.currentRisk,
@@ -533,6 +536,8 @@ class _StepperFormState extends State<StepperForm> {
             maxLength: 100,
             maxLines: 2,
             decoration: InputDecoration(
+                                                    hintStyle: TextStyle(color: Colors.grey.shade600),
+
               hintText: widget.isUpdate == true
                   ? dropdownProvider.currentValueDescription
                   : 'Agregue una descripción',

@@ -227,6 +227,7 @@ class DropDownValuesManagerProvider with ChangeNotifier {
   modelthird.Value? get currentStateApplicant => _currentStateApplicant;
   set currentStateApplicant(modelthird.Value? value) {
     _currentStateApplicant = value;
+    validateInterlok();
     notifyListeners();
   }
 
@@ -404,6 +405,7 @@ class DropDownValuesManagerProvider with ChangeNotifier {
       if (res.statusCode == 200) {
         final decodeData = modelFlagFromJson(res.body);
         _isEnabledRuleRisk = decodeData.values.aplicaReglaRiesgoBajo;
+        print('regla del riesgo bajo aplica? $_isEnabledRuleRisk');
       } else {
         print('Fue diferente el estatuscode de la respuesta');
       }
@@ -460,20 +462,6 @@ class DropDownValuesManagerProvider with ChangeNotifier {
     ApiResponseDetailUser? user = await PreferencesHelper().getUser();
     if (user == null) {
       return;
-    }
-
-    if (isEnabledRuleRisk &&
-        res.descripcion == 'BAJO' &&
-        currentValueInterlock == 'NO') {
-      // Agregar usuario logeado como aprobador si no está
-      if (!_listAprobadores.any((element) => element.id == user.id)) {
-        _listAprobadores.add(
-          modelthird.Value(id: user.id, nombre: user.name, apePaterno: ''),
-        );
-      }
-    } else {
-      // Remover al usuario logeado si no aplica
-      _listAprobadores.removeWhere((element) => element.id == user.id);
     }
 
     _currentRisk = res;
@@ -570,7 +558,6 @@ class DropDownValuesManagerProvider with ChangeNotifier {
   }
 
   void validateInterlok() async {
-    ApiResponseDetailUser? user = await PreferencesHelper().getUser();
     if (currentValueInterlock == 'si') {
       addAprobadoresByPuesto();
 
@@ -588,12 +575,28 @@ class DropDownValuesManagerProvider with ChangeNotifier {
 
     if (isEnabledRuleRisk &&
         _currentRisk?.descripcion.toLowerCase() == 'bajo' &&
-        user != null &&
         currentValueInterlock == 'NO' &&
-        !_listAprobadores.any((element) => element.id == user.id)) {
+        !_listAprobadores
+            .any((element) => element.id == currentStateApplicant?.id) &&
+        currentStateApplicant != null &&
+        currentStateRisk?.descripcion.toLowerCase() != 'personas') {
       _listAprobadores.add(
-        modelthird.Value(id: user.id, nombre: user.name, apePaterno: ''),
+        modelthird.Value(
+            id: currentStateApplicant!.id,
+            nombre:
+                '${currentStateApplicant!.nombre} ${currentStateApplicant!.apePaterno ?? ''}',
+            apePaterno: ''),
       );
+      print('Agrega al aplicante');
+    } else {
+      print('No se aplica la regla del riesgo bajo');
+      if (currentStateApplicant != null &&
+          listAprobadores.any((a) => a.id == currentStateApplicant!.id)) {
+        listAprobadores.remove(currentStateApplicant);
+        print('remueve el solicitante si el riesgo es diferente a bajo');
+      } else {
+        print('a nadie que eliminar');
+      }
     }
 
     notifyListeners();
@@ -664,22 +667,22 @@ class DropDownValuesManagerProvider with ChangeNotifier {
     modeltwo.Value(id: 4, descripcion: 'BAJO'),
     modeltwo.Value(id: 2, descripcion: 'BAJO'),
     modeltwo.Value(id: 1, descripcion: 'BAJO'),
-    modeltwo.Value(id: 16, descripcion: 'MENOR MODERADO'),
+    modeltwo.Value(id: 16, descripcion: 'MODERADO'),
     modeltwo.Value(id: 12, descripcion: 'MODERADO'),
     modeltwo.Value(id: 8, descripcion: 'MODERADO'),
     modeltwo.Value(id: 5, descripcion: 'BAJO'),
     modeltwo.Value(id: 3, descripcion: 'BAJO'),
-    modeltwo.Value(id: 20, descripcion: 'MODERADO ALTO'),
+    modeltwo.Value(id: 20, descripcion: 'ALTO'),
     modeltwo.Value(id: 15, descripcion: 'MODERADO'),
     modeltwo.Value(id: 9, descripcion: 'MODERADO'),
     modeltwo.Value(id: 6, descripcion: 'BAJO'),
     modeltwo.Value(id: 3, descripcion: 'BAJO'),
-    modeltwo.Value(id: 24, descripcion: 'MAYOR ALTO'),
+    modeltwo.Value(id: 24, descripcion: 'ALTO'),
     modeltwo.Value(id: 22, descripcion: 'ALTO'),
     modeltwo.Value(id: 17, descripcion: 'MODERADO'),
     modeltwo.Value(id: 14, descripcion: 'MODERADO'),
     modeltwo.Value(id: 10, descripcion: 'MODERADO'),
-    modeltwo.Value(id: 25, descripcion: 'EXTREMO ALTO'),
+    modeltwo.Value(id: 25, descripcion: 'ALTO'),
     modeltwo.Value(id: 23, descripcion: 'ALTO'),
     modeltwo.Value(id: 21, descripcion: 'ALTO'),
     modeltwo.Value(id: 19, descripcion: 'ALTO'),
@@ -713,7 +716,6 @@ class DropDownValuesManagerProvider with ChangeNotifier {
               ));
             }
             if (user.roles!.containsKey('3')) {
-              print('entro a ejecutores');
               listEjecutores.add(modelthird.Value(
                 id: user.id!,
                 nombre: '${user.nombre!} ${user.apePaterno} ${user.apeMaterno}',
