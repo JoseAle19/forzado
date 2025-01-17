@@ -4,44 +4,43 @@ import 'package:forzado/pages/ejecutor/models/aprobador.dart';
 import 'package:forzado/services/api_client.dart';
 
 class ForzadosProviderApprove with ChangeNotifier {
-// Una lista, para que se pueda manipular los datos
+  // Lista para manejar datos
   List<ForzadoApprove> _listForzados = [];
   List<ForzadoApprove> get listForzados => _listForzados;
+
   String _messageError = '';
   String get messageError => _messageError;
+
   bool _loading = false;
   bool get loading => _loading;
-// Gettin data
-  ApiClient client = ApiClient();
+
+  // Cliente de API
+  final ApiClient client = ApiClient();
+
   Future<void> initLoadSolicitudes() async {
-    final res = await client.get(AppUrl.getListForzados);
-    // if (listForzados.isNotEmpty) return;
-    print('pasa aca');
+    _loading = true;
+    notifyListeners();
+
     try {
-      _loading = true;
-      notifyListeners();
+      final res = await client.get(AppUrl.getListForzados);
+
       if (res.statusCode == 200) {
         final decodeData = modelForzadosApproveFromJson(res.body);
         _listForzados = decodeData.data;
       } else {
-        _messageError = 'Ocurrio un error, intenta mas tarde';
+        _messageError = 'Ocurrió un error, intenta más tarde.';
       }
     } catch (e) {
-      
-      _messageError = 'Ocurrio un error, intenta mas tarde';
+      _messageError = 'Ocurrió un error al procesar la solicitud.';
     } finally {
-      _messageError = '';
       _loading = false;
-      print('sasas');
       notifyListeners();
     }
   }
 
-
-void deleteForzadoById(String id) {
-  // Filtrar la lista para eliminar el elemento con el ID correspondiente
-  _listForzados.removeWhere((f) => f.id.toString() == id);
-  notifyListeners();
-}
-
+  void deleteForzadoById(String id) {
+    // Filtra la lista para eliminar el elemento con el ID correspondiente
+    _listForzados.removeWhere((f) => f.id.toString() == id);
+    notifyListeners();
+  }
 }

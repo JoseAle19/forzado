@@ -33,7 +33,12 @@ class Splash extends StatelessWidget {
                     );
                   });
                 }
-                return Center(child: Image.asset('assets/logos/logo.png'));
+                return Center(
+                    child: SvgPicture.asset(
+                  'assets/svgs/candado.svg',
+                  height: 100,
+                  width: 100,
+                ));
               },
             ),
     );

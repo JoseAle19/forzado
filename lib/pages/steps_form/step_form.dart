@@ -30,7 +30,7 @@ class _StepperFormState extends State<StepperForm> {
       if (mounted) {
         await dropdownProvider.verifyRuleRisk();
         await dropdownProvider.getTagsMatrizRiesgo(context);
-        widget.isUpdate != true? dropdownProvider.clearValues() : null;
+        widget.isUpdate != true ? dropdownProvider.clearValues() : null;
       }
     });
   }
@@ -83,9 +83,11 @@ class _StepperFormState extends State<StepperForm> {
                         if (validation) {
                           details.onStepContinue!();
                         } else {
-                          String id = widget.isUpdate == true ? widget.idForzado.toString() :'';
+                          String id = widget.isUpdate == true
+                              ? widget.idForzado.toString()
+                              : '';
                           final res = await forzadosProvider.sendRequestPost(
-                              context, dropdownProvider,   id );
+                              context, dropdownProvider, id);
                           if (!res) {
                             CustomModal().showModal(
                                 context,
@@ -183,15 +185,16 @@ class _StepperFormState extends State<StepperForm> {
                                     height: 5,
                                   ),
                                   TextFormField(
-                                    initialValue: dropdownProvider
-                                        .currentTagSubfijo,
+                                    initialValue:
+                                        dropdownProvider.currentTagSubfijo,
                                     onChanged: (value) => dropdownProvider
                                         .currentTagSubfijo = value,
                                     maxLength: 100,
                                     maxLines: 2,
                                     decoration: InputDecoration(
-                                      hintText:widget.isUpdate==true ?dropdownProvider
-                                        .currentTagSubfijo: 'Ingrese el subfijo del tag',
+                                      hintText: widget.isUpdate == true
+                                          ? dropdownProvider.currentTagSubfijo
+                                          : 'Ingrese el subfijo del tag',
                                       border: OutlineInputBorder(
                                         borderSide: BorderSide(
                                             color: Colors.grey.shade50),
@@ -304,28 +307,65 @@ class _StepperFormState extends State<StepperForm> {
                                 dropdownProvider.defineInterlockbyRiskA();
                               },
                             ),
-                            CustomDropdownButton<modelTwo.Value>(
-                              hintText: 'Probabilidad *:',
-                              items: dropdownProvider.listProbabilidades,
-                              selectedItem:
-                                  dropdownProvider.currentStateProbability,
-                              onChanged: (value) {
-                                dropdownProvider.currentStateProbability =
-                                    value!;
+                            Stack(
+                              children: [
+                                CustomDropdownButton<modelTwo.Value>(
+                                  hintText: 'Probabilidad *:',
+                                  items: dropdownProvider.listProbabilidades,
+                                  selectedItem:
+                                      dropdownProvider.currentStateProbability,
+                                  onChanged: (value) {
+                                    if (dropdownProvider
+                                        .isEnabledRuletagMatriz) {
+                                      print('no editable');
+                                      return;
+                                    }
 
-                                dropdownProvider.isEnabledRuleRisk
-                                    ? dropdownProvider.defineRisk()
-                                    : null;
-                              },
+                                    dropdownProvider.currentStateProbability =
+                                        value!;
+                                    dropdownProvider.isEnabledRuleRisk
+                                        ? dropdownProvider.defineRisk()
+                                        : null;
+                                  },
+                                ),
+                                Positioned(
+                                    top: 0,
+                                    right: 0,
+                                    bottom: 0,
+                                    left: 0,
+                                    child:
+                                        dropdownProvider.isEnabledRuletagMatriz
+                                            ? Container(
+                                                color: Colors.transparent,
+                                              )
+                                            : SizedBox())
+                              ],
                             ),
-                            CustomDropdownButton<modelTwo.Value>(
-                              hintText: 'Impacto *:',
-                              items: dropdownProvider.listImpactos,
-                              selectedItem: dropdownProvider.currentStateImpact,
-                              onChanged: (value) {
-                                dropdownProvider.currentStateImpact = value!;
-                                dropdownProvider.defineRisk();
-                              },
+                            Stack(
+                              children: [
+                                CustomDropdownButton<modelTwo.Value>(
+                                  hintText: 'Impacto *:',
+                                  items: dropdownProvider.listImpactos,
+                                  selectedItem:
+                                      dropdownProvider.currentStateImpact,
+                                  onChanged: (value) {
+                                    dropdownProvider.currentStateImpact =
+                                        value!;
+                                    dropdownProvider.defineRisk();
+                                  },
+                                ),
+                                Positioned(
+                                    top: 0,
+                                    right: 0,
+                                    bottom: 0,
+                                    left: 0,
+                                    child:
+                                        dropdownProvider.isEnabledRuletagMatriz
+                                            ? Container(
+                                                color: Colors.transparent,
+                                              )
+                                            : SizedBox())
+                              ],
                             ),
                             Stack(
                               children: [
@@ -371,9 +411,9 @@ class _StepperFormState extends State<StepperForm> {
                             hintText: 'Aprobador *:',
                             items: dropdownProvider.listAprobadores,
                             selectedItem: dropdownProvider.listAprobadores
-                                    .contains(
-                                        dropdownProvider.currentStateApprover) && widget.isUpdate !=false
-
+                                        .contains(dropdownProvider
+                                            .currentStateApprover) &&
+                                    widget.isUpdate != false
                                 ? dropdownProvider.currentStateApprover
                                 : null,
                             onChanged: (value) {
@@ -493,8 +533,9 @@ class _StepperFormState extends State<StepperForm> {
             maxLength: 100,
             maxLines: 2,
             decoration: InputDecoration(
-              hintText:widget.isUpdate ==true ?dropdownProvider
-                                        .currentValueDescription:'Agregue una descripción',
+              hintText: widget.isUpdate == true
+                  ? dropdownProvider.currentValueDescription
+                  : 'Agregue una descripción',
               border: OutlineInputBorder(
                 borderSide: BorderSide(color: Colors.grey.shade50),
                 borderRadius: const BorderRadius.all(Radius.circular(10)),

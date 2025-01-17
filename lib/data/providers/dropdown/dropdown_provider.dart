@@ -522,8 +522,12 @@ class DropDownValuesManagerProvider with ChangeNotifier {
           .showModal(context, 'Ocurrió un error inesperado', Colors.red, false);
     }
   }
-// Settera valores de sub  probabilidad e impacto si hay conincidencias con los datos que retorna el endpint de tags matriz rieso
 
+// Variable para saber si cumple con un acondicion
+  bool _isEnabledRuletagMatriz = false;
+  bool get isEnabledRuletagMatriz => _isEnabledRuletagMatriz;
+
+// Settear valores de sub  probabilidad e impacto si hay conincidencias con los datos que retorna el endpint de tags matriz rieso
   void setImpactAndProbabilidad() {
     if (currentValueTagPrefijo == null ||
         currentValueTagCentro == null ||
@@ -555,19 +559,21 @@ class DropDownValuesManagerProvider with ChangeNotifier {
       final impacto = listImpactos.firstWhere((i) => i.id == tag.impactoId);
       currentStateProbability = probabilidad;
       currentStateImpact = impacto;
-    }
-    else{      currentStateProbability = null;
+      _isEnabledRuletagMatriz = true;
+    } else {
+      _isEnabledRuletagMatriz = false;
+      currentStateProbability = null;
       currentStateImpact = null;
       currentRisk = null;
-}
-    print('Tag encontrada con coincidencias ${tag.sufijo}');
+    }
+    notifyListeners();
   }
 
   void validateInterlok() async {
     ApiResponseDetailUser? user = await PreferencesHelper().getUser();
     if (currentValueInterlock == 'si') {
       addAprobadoresByPuesto();
-      print('by puesto');
+
       return;
     }
     if (_currentValueInterlock == 'si' ||
@@ -799,27 +805,28 @@ class DropDownValuesManagerProvider with ChangeNotifier {
           (element) => element.idT == f.responsable,
           orElse: () => modelthird.Value(id: 0, nombre: 'No encontrado'),
         );
-   
 
-    print('id for ${f.aprobador}');
+        print('id for ${f.aprobador}');
         for (var i = 0; i < listAprobadores.length; i++) {
           if (listAprobadores[i].id == f.aprobador) {
             final apro = listAprobadores[i];
-          currentStateApprover = modelthird.Value(id: apro.id, nombre: '${apro.id} ${apro.apePaterno} ${apro.apePaterno}');
-          notifyListeners();
+            currentStateApprover = modelthird.Value(
+                id: apro.id,
+                nombre: '${apro.id} ${apro.apePaterno} ${apro.apePaterno}');
+            notifyListeners();
           }
         }
         currentStateApprover = listAprobadores.firstWhere(
           (element) => element.idT.toString() == f.aprobador.toString(),
           orElse: () => modelthird.Value(id: 0, nombre: 'No encontrado'),
-        ); 
+        );
 
         currentStateExecutor = _listEjecutores.firstWhere(
           (element) => element.idT == f.ejecutor,
           orElse: () => modelthird.Value(id: 0, nombre: 'No encontrado'),
         );
 
-     // Asignar valores de cadenas directamente
+        // Asignar valores de cadenas directamente
         currentValueDescription = f.descripcion!;
         currentTagSubfijo = f.tagSubfijo!;
         currentValueInterlock = f.interlockSeguridad == 1 ? 'si' : "NO";
