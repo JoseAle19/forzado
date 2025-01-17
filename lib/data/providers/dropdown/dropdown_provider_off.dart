@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:forzado/adapters/adapter_one.dart';
+import 'package:forzado/adapters/adapter_tags.dart';
 import 'package:forzado/adapters/adapter_three.dart';
 import 'package:forzado/adapters/adapter_two.dart';
 import 'package:forzado/adapters/user_adapter.dart';
@@ -119,6 +120,7 @@ class DropdownProviderManagerOffline with ChangeNotifier {
   modelthird.Value? _currentStateExecutor;
 
   String _currentValueDescription = '';
+  String _currentValueSubfijo = '';
   String _currentValueInterlock = '';
   modeltwo.Value? _currentRisk;
 
@@ -134,9 +136,17 @@ class DropdownProviderManagerOffline with ChangeNotifier {
     notifyListeners();
   }
 
+  String get currentValueSubfijo => _currentValueSubfijo;
+  set currentValueSubfijo(String value) {
+    _currentValueSubfijo = value;
+    validateValues();
+    notifyListeners();
+  }
+
   String get currentValueInterlock => _currentValueInterlock;
   set currentValueInterlock(String value) {
     _currentValueInterlock = value;
+    validateValues();
     notifyListeners();
   }
 
@@ -144,12 +154,14 @@ class DropdownProviderManagerOffline with ChangeNotifier {
   modelone.Value? get currentValueTagPrefijo => _currentValueTagPrefijo;
   set currentValueTagPrefijo(modelone.Value? value) {
     _currentValueTagPrefijo = value;
+    validateValues();
     notifyListeners();
   }
 
   modelone.Value? get currentValueTagCentro => _currentValueTagCentro;
   set currentValueTagCentro(modelone.Value? value) {
     _currentValueTagCentro = value;
+    validateValues();
     notifyListeners();
   }
 
@@ -169,18 +181,23 @@ class DropdownProviderManagerOffline with ChangeNotifier {
   modeltwo.Value? get currentStateProbability => _currentStateProbability;
   set currentStateProbability(modeltwo.Value? value) {
     _currentStateProbability = value;
+    validateValues();
+
     notifyListeners();
   }
 
   modeltwo.Value? get currentStateImpact => _currentStateImpact;
   set currentStateImpact(modeltwo.Value? value) {
     _currentStateImpact = value;
+    validateValues();
     notifyListeners();
   }
 
   modeltwo.Value? get currentStateRisk => _currentStateRisk;
   set currentStateRisk(modeltwo.Value? value) {
     _currentStateRisk = value;
+    validateValues();
+
     notifyListeners();
   }
 
@@ -331,11 +348,11 @@ class DropdownProviderManagerOffline with ChangeNotifier {
     } else {
       addAprobadoresByPuesto();
     }
-      if (!_listAprobadores.contains(currentStateApprover)) {
-    currentStateApprover = null;
-  }
+    if (!_listAprobadores.contains(currentStateApprover)) {
+      currentStateApprover = null;
+    }
 
-      notifyListeners();
+    notifyListeners();
   }
 
   void defineInterlockbyRiskA() {
@@ -372,7 +389,7 @@ class DropdownProviderManagerOffline with ChangeNotifier {
   void addArobbadoresByRole() {
     listAprobadores.clear();
     for (var i = 0; i < _usersOff.length; i++) {
-       if (_usersOff[i].roles!.containsKey('2')) {
+      if (_usersOff[i].roles!.containsKey('2')) {
         listAprobadores.add(modelthird.Value(
           id: _usersOff[i].id!,
           nombre:
@@ -509,6 +526,10 @@ class DropdownProviderManagerOffline with ChangeNotifier {
   Future<void> clearAndPopulateBoxes(BuildContext context) async {
     final valuesDropdownOn =
         Provider.of<DropDownValuesManagerProvider>(context, listen: false);
+
+    valuesDropdownOn.verifyRuleRisk();
+    valuesDropdownOn.getTagsMatrizRiesgo(context);
+
     await populateBox(
         HiveBoxes.projects,
         valuesDropdownOn.listProjects.map((i) {
@@ -622,5 +643,65 @@ class DropdownProviderManagerOffline with ChangeNotifier {
       print('Error al poblar la caja $boxName: $e');
       print('StackTrace: $stackTrace');
     }
+  }
+  bool _isEnabledRuletagMatriz = false;
+  bool get isEnabledRuletagMatriz => _isEnabledRuletagMatriz;
+
+  void validateValues() async {
+ if (currentValueTagPrefijo == null ||
+        currentValueTagCentro == null ||
+        currentValueSubfijo == '') {
+      return;
+    }
+
+    final idSubArea = currentValueTagPrefijo!.id;
+    final idTagCentro = currentValueTagCentro!.id;
+    final subfijo = currentValueSubfijo;
+
+
+
+
+
+
+
+      if (!Hive.isBoxOpen(HiveBoxes.tags)) return;
+      final tagsBox = Hive.box<AdapterTags>(HiveBoxes.tags);
+      final List<AdapterTags> tags = tagsBox.values.toList();
+      // Verificar si la regla de riesgo bajo está habilitada
+      final isRiskEnabled = Hive.isBoxOpen('isEnabledRuleRisk')
+          ? Hive.box('isEnabledRuleRisk').get('isRuleRiskActive')
+          : false;
+  final tag = tags.firstWhere(
+      (tag) =>
+          tag.prefijoId == idSubArea &&
+          tag.centroId == idTagCentro &&
+          tag.sufijo == subfijo,
+      orElse: () => AdapterTags(
+          id: 0000,
+          prefijoId: 0000,
+          centroId: 0000,
+          sufijo: 'error',
+          probabilidadId: 0000,
+          impactoId: 0000), // Devuelve null si no encuentra un elemento
+    );
+
+
+
+
+    if (tag.sufijo != 'error') {
+      // setear valores
+      final probabilidad =
+          listProbabilidades.firstWhere((p) => p.id == tag.probabilidadId);
+      final impacto = listImpactos.firstWhere((i) => i.id == tag.impactoId);
+      currentStateProbability = probabilidad;
+      currentStateImpact = impacto;
+      _isEnabledRuletagMatriz = true;
+    } else {
+      _isEnabledRuletagMatriz = false;
+      currentStateProbability = null;
+      currentStateImpact = null;
+      currentRisk = null;
+    }
+    
   }
 }

@@ -14,4 +14,5 @@ class HiveBoxes {
   static const String forzado = 'forzado';
   static const String users = 'users';
   static const String projects = 'projects';
+  static const String tags = 'tags';
 }

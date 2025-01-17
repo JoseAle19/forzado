@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:forzado/adapters/adapter_forzados.dart';
 import 'package:forzado/adapters/adapter_one.dart';
+import 'package:forzado/adapters/adapter_tags.dart';
 import 'package:forzado/adapters/adapter_three.dart';
 import 'package:forzado/adapters/adapter_two.dart';
 import 'package:forzado/adapters/forzado.dart';
@@ -19,6 +20,7 @@ import 'package:forzado/data/providers/requester_provider.dart';
 import 'package:forzado/data/providers/splash_provider.dart';
 import 'package:forzado/data/providers/users/user_provider.dart';
 import 'package:forzado/home_page.dart';
+import 'package:forzado/models/Boxes.dart';
 import 'package:forzado/pages/aprobador/provider/forzados_provider.dart';
 import 'package:forzado/pages/ejecutor/provider/forzados_provider.dart';
 import 'package:hive_flutter/adapters.dart';
@@ -36,6 +38,7 @@ void main() async {
   Hive.registerAdapter(ForzadosAdapter());
   Hive.registerAdapter(ForzadoBajaAdapter());
   Hive.registerAdapter(AdapterUserAdapter());
+  Hive.registerAdapter(AdapterTagsAdapter());
 
   // Abre las cajas para cada modelo
   await Hive.openBox<AdapterOne>('TagPrefijo');
@@ -57,6 +60,9 @@ void main() async {
   await Hive.openBox<ForzadoBaja>('forzadoBajaBox');
   await Hive.openBox<Forzados>('Forzados');
   await Hive.openBox<Forzado>('Forzado');
+
+  await Hive.openBox('isEnabledRuleRisk');
+  await Hive.openBox<AdapterTags>(HiveBoxes.tags);
   await initializeDateFormatting('es_ES', null);
   runApp(const MyApp());
 }

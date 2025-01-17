@@ -2,8 +2,10 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:forzado/adapters/adapter_tags.dart';
 import 'package:forzado/core/urls.dart';
 import 'package:forzado/core/utils/preferences_helper.dart';
+import 'package:forzado/models/Boxes.dart';
 import 'package:forzado/models/forzado/model_forzado_id.dart';
 import 'package:forzado/models/model_flag.dart';
 import 'package:forzado/models/model_one.dart' as modelone;
@@ -14,6 +16,7 @@ import 'package:forzado/models/model_user_detail.dart';
 import 'package:forzado/models/user/model_user.dart';
 import 'package:forzado/services/api_client.dart';
 import 'package:forzado/widgets/modal_error.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 
 class DropDownValuesManagerProvider with ChangeNotifier {
   bool _isEnabledRuleRisk = false;
@@ -269,6 +272,7 @@ class DropDownValuesManagerProvider with ChangeNotifier {
     _currentValueSubfijo = '';
     _currentStateProjectName = null;
     _currentRisk = null;
+    _isEnabledRuletagMatriz = false;
     notifyListeners();
   }
 
@@ -397,22 +401,32 @@ class DropDownValuesManagerProvider with ChangeNotifier {
   };
 
 // validar que la variable que esta en la base e deatos es true o false
-  Future<void> verifyRuleRisk() async {
-    ApiClient client = ApiClient();
+ Future<void> verifyRuleRisk() async {
+  ApiClient client = ApiClient();
 
+  try {
     final res = await client.get(AppUrl.isEnabledRuleRisk);
-    try {
-      if (res.statusCode == 200) {
-        final decodeData = modelFlagFromJson(res.body);
-        _isEnabledRuleRisk = decodeData.values.aplicaReglaRiesgoBajo;
-        print('regla del riesgo bajo aplica? $_isEnabledRuleRisk');
-      } else {
-        print('Fue diferente el estatuscode de la respuesta');
-      }
-    } catch (e) {
-      print('Ocurrio un error al hacer la peticion del enpoint del flag');
+
+    if (res.statusCode == 200) {
+      final decodeData = modelFlagFromJson(res.body);
+      _isEnabledRuleRisk = decodeData.values.aplicaReglaRiesgoBajo;
+      print('Regla del riesgo bajo aplica? $_isEnabledRuleRisk');
+
+      // Abre la caja si no está abierta
+      final boxRisk = Hive.isBoxOpen('isEnabledRuleRisk')
+          ? Hive.box('isEnabledRuleRisk')
+          : await Hive.openBox('isEnabledRuleRisk');
+
+      await boxRisk.put('isRuleRiskActive', _isEnabledRuleRisk);
+      print('Estado guardado en Hive');
+    } else {
+      print('Error: El servidor devolvió un statusCode diferente a 200');
     }
+  } catch (e) {
+    print('Error al realizar la petición del endpoint del flag: $e');
   }
+}
+
 
 // Definir el riesgo según la probabilidad e impacto
   // void defineRisk() async {
@@ -500,12 +514,19 @@ class DropDownValuesManagerProvider with ChangeNotifier {
       if (res.statusCode == 200) {
         final decodeData = modelTagsMatrizFromJson(res.body);
         _listTagsMatriz = decodeData.values;
+        final boxTags = Hive.box<AdapterTags>(HiveBoxes.tags);
+        await boxTags.clear();
+        print('limpio');
+        await boxTags.addAll(
+            listTagsMatriz.map((t) => AdapterTags.fromJson(t.toJson())));
+        print('lleno');
         notifyListeners();
       } else {
         CustomModal().showModal(
             context, 'Ocurrió un error inesperado', Colors.red, false);
       }
     } catch (e) {
+      print(e);
       CustomModal()
           .showModal(context, 'Ocurrió un error inesperado', Colors.red, false);
     }

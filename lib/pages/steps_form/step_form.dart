@@ -317,7 +317,7 @@ class _StepperFormState extends State<StepperForm> {
                                       dropdownProvider.currentStateProbability,
                                   onChanged: (value) {
                                     if (dropdownProvider
-                                        .isEnabledRuletagMatriz) {
+                                        .isEnabledRuletagMatriz && widget.isUpdate ==true) {
                                       print('no editable');
                                       return;
                                     }
