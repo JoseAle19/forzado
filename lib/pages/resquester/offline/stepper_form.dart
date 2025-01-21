@@ -28,21 +28,15 @@ class _StepperFormOfflineState extends State<StepperFormOffline> {
   @override
   void initState() {
     super.initState();
-    // WidgetsBinding.instance.addPostFrameCallback((_) async {
-    //   if (mounted) {
-    //     getData();
-    //   }
-    // });
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      if (mounted) {
+        final dropdownProvider =
+            Provider.of<DropdownProviderManagerOffline>(context, listen: false);
+
+        dropdownProvider.clearValues();
+      }
+    });
   }
-
-  // Future<void> getData() async {
-
-  //   final boxRisk = Hive.isBoxOpen('isEnabledRuleRisk')
-  //       ? Hive.box('isEnabledRuleRisk')
-  //       : await Hive.openBox('isEnabledRuleRisk');
-  //   print(await boxRisk.get('isRuleRiskActive'));
-
-  // }
 
   @override
   Widget build(BuildContext context) {
@@ -286,7 +280,7 @@ class _StepperFormOfflineState extends State<StepperFormOffline> {
                                     onChanged: (value) {
                                       dropdownProvider.currentValueInterlock =
                                           value.toString();
-                                      dropdownProvider.validateInterlok();
+                                      // dropdownProvider.validateInterlok();
                                     },
                                     decoration: InputDecoration(
                                       border: OutlineInputBorder(
@@ -319,28 +313,86 @@ class _StepperFormOfflineState extends State<StepperFormOffline> {
                               selectedItem: dropdownProvider.currentStateRisk,
                               onChanged: (value) {
                                 dropdownProvider.currentStateRisk = value!;
-                                dropdownProvider.defineInterlockbyRiskA();
+                                // dropdownProvider.defineInterlockbyRiskA();
                               },
                             ),
-                            CustomDropdownButton<modelTwo.Value>(
-                              hintText: 'Probabilidad *:',
-                              items: dropdownProvider.listProbabilidades,
-                              selectedItem:
-                                  dropdownProvider.currentStateProbability,
-                              onChanged: (value) {
-                                dropdownProvider.currentStateProbability =
-                                    value!;
-                                dropdownProvider.defineRisk();
-                              },
+                            // CustomDropdownButton<modelTwo.Value>(
+                            //   hintText: 'Probabilidad *:',
+                            //   items: dropdownProvider.listProbabilidades,
+                            //   selectedItem:
+                            //       dropdownProvider.currentStateProbability,
+                            //   onChanged: (value) {
+                            //     dropdownProvider.currentStateProbability =
+                            //         value!;
+                            //     dropdownProvider.defineRisk();
+                            //   },
+                            // ),
+                            // CustomDropdownButton<modelTwo.Value>(
+                            //   hintText: 'Impacto *:',
+                            //   items: dropdownProvider.listImpactos,
+                            //   selectedItem: dropdownProvider.currentStateImpact,
+                            //   onChanged: (value) {
+                            //     dropdownProvider.currentStateImpact = value!;
+                            //     dropdownProvider.defineRisk();
+                            //   },
+                            // ),
+                            Stack(
+                              children: [
+                                CustomDropdownButton<modelTwo.Value>(
+                                  hintText: 'Probabilidad *:',
+                                  items: dropdownProvider.listProbabilidades,
+                                  selectedItem:
+                                      dropdownProvider.currentStateProbability,
+                                  onChanged: (value) {
+                                    if (dropdownProvider
+                                        .isEnabledRuletagMatriz) {
+                                      print('no editable');
+                                      return;
+                                    }
+
+                                    dropdownProvider.currentStateProbability =
+                                        value!;
+                                    dropdownProvider.defineRisk();
+                                  },
+                                ),
+                                Positioned(
+                                    top: 0,
+                                    right: 0,
+                                    bottom: 0,
+                                    left: 0,
+                                    child:
+                                        dropdownProvider.isEnabledRuletagMatriz
+                                            ? Container(
+                                                color: Colors.transparent,
+                                              )
+                                            : SizedBox())
+                              ],
                             ),
-                            CustomDropdownButton<modelTwo.Value>(
-                              hintText: 'Impacto *:',
-                              items: dropdownProvider.listImpactos,
-                              selectedItem: dropdownProvider.currentStateImpact,
-                              onChanged: (value) {
-                                dropdownProvider.currentStateImpact = value!;
-                                dropdownProvider.defineRisk();
-                              },
+                            Stack(
+                              children: [
+                                CustomDropdownButton<modelTwo.Value>(
+                                  hintText: 'Impacto *:',
+                                  items: dropdownProvider.listImpactos,
+                                  selectedItem:
+                                      dropdownProvider.currentStateImpact,
+                                  onChanged: (value) {
+                                    dropdownProvider.currentStateImpact =
+                                        value!;
+                                    dropdownProvider.defineRisk();
+                                  },
+                                ),
+                                Positioned(
+                                    top: 0,
+                                    right: 0,
+                                    bottom: 0,
+                                    left: 0,
+                                    child:
+                                        dropdownProvider.isEnabledRuletagMatriz
+                                            ? Container(
+                                                color: Colors.transparent,
+                                              )
+                                            : SizedBox())
+                              ],
                             ),
                             Stack(
                               children: [

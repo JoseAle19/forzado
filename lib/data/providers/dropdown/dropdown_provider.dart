@@ -146,14 +146,6 @@ class DropDownValuesManagerProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  String get currentTagSubfijo => _currentValueSubfijo;
-  set currentTagSubfijo(String value) {
-    _currentValueSubfijo = value;
-    setImpactAndProbabilidad();
-    print('subfijo');
-    notifyListeners();
-  }
-
   String get currentValueInterlock => _currentValueInterlock;
   set currentValueInterlock(String value) {
     _currentValueInterlock = value;
@@ -165,7 +157,6 @@ class DropDownValuesManagerProvider with ChangeNotifier {
   modelone.Value? get currentValueTagPrefijo => _currentValueTagPrefijo;
   set currentValueTagPrefijo(modelone.Value? value) {
     _currentValueTagPrefijo = value;
-    print('mod');
     setImpactAndProbabilidad();
 
     notifyListeners();
@@ -174,6 +165,13 @@ class DropDownValuesManagerProvider with ChangeNotifier {
   modelone.Value? get currentValueTagCentro => _currentValueTagCentro;
   set currentValueTagCentro(modelone.Value? value) {
     _currentValueTagCentro = value;
+    setImpactAndProbabilidad();
+    notifyListeners();
+  }
+
+  String get currentTagSubfijo => _currentValueSubfijo;
+  set currentTagSubfijo(String value) {
+    _currentValueSubfijo = value;
     setImpactAndProbabilidad();
     notifyListeners();
   }
@@ -273,6 +271,7 @@ class DropDownValuesManagerProvider with ChangeNotifier {
     _currentStateProjectName = null;
     _currentRisk = null;
     _isEnabledRuletagMatriz = false;
+    _currentValueSubfijo = '';
     notifyListeners();
   }
 
@@ -401,32 +400,31 @@ class DropDownValuesManagerProvider with ChangeNotifier {
   };
 
 // validar que la variable que esta en la base e deatos es true o false
- Future<void> verifyRuleRisk() async {
-  ApiClient client = ApiClient();
+  Future<void> verifyRuleRisk() async {
+    ApiClient client = ApiClient();
 
-  try {
-    final res = await client.get(AppUrl.isEnabledRuleRisk);
+    try {
+      final res = await client.get(AppUrl.isEnabledRuleRisk);
 
-    if (res.statusCode == 200) {
-      final decodeData = modelFlagFromJson(res.body);
-      _isEnabledRuleRisk = decodeData.values.aplicaReglaRiesgoBajo;
-      print('Regla del riesgo bajo aplica? $_isEnabledRuleRisk');
+      if (res.statusCode == 200) {
+        final decodeData = modelFlagFromJson(res.body);
+        _isEnabledRuleRisk = decodeData.values.aplicaReglaRiesgoBajo;
+        print('Regla del riesgo bajo aplica? $_isEnabledRuleRisk');
 
-      // Abre la caja si no está abierta
-      final boxRisk = Hive.isBoxOpen('isEnabledRuleRisk')
-          ? Hive.box('isEnabledRuleRisk')
-          : await Hive.openBox('isEnabledRuleRisk');
+        // Abre la caja si no está abierta
+        final boxRisk = Hive.isBoxOpen('isEnabledRuleRisk')
+            ? Hive.box('isEnabledRuleRisk')
+            : await Hive.openBox('isEnabledRuleRisk');
 
-      await boxRisk.put('isRuleRiskActive', _isEnabledRuleRisk);
-      print('Estado guardado en Hive');
-    } else {
-      print('Error: El servidor devolvió un statusCode diferente a 200');
+        await boxRisk.put('isRuleRiskActive', _isEnabledRuleRisk);
+        print('Estado guardado en Hive');
+      } else {
+        print('Error: El servidor devolvió un statusCode diferente a 200');
+      }
+    } catch (e) {
+      print('Error al realizar la petición del endpoint del flag: $e');
     }
-  } catch (e) {
-    print('Error al realizar la petición del endpoint del flag: $e');
   }
-}
-
 
 // Definir el riesgo según la probabilidad e impacto
   // void defineRisk() async {
