@@ -35,7 +35,7 @@ Future<void> getData() async {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title:  Text(widget.isAlta ? "Aprobar":"Rechazar"),
+        title:  Text(widget.isAlta ? "Consultas":"Consultas"),
       ),
       body: Consumer<ForzadosProviderApprove>(builder: (context, value, child) {
         return value.loading

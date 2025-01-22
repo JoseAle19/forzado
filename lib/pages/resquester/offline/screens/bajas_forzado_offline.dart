@@ -166,8 +166,8 @@ class _BajasForzadoOfflineState extends State<BajasForzadoOffline> {
     return Scaffold(
         appBar: AppBar(
           title: const Text(
-            'Forzados sync',
-            style: TextStyle(fontSize: 15),
+            'Solicitudes Retiro Pendientes por Sincronizar',
+            style: TextStyle(fontSize: 18),
           ),
           actions: [
             IconButton(
@@ -190,9 +190,26 @@ class _BajasForzadoOfflineState extends State<BajasForzadoOffline> {
               List<ForzadoBaja> forzados = box.values.toList();
 
               if (forzados.isEmpty) {
-                return const Center(
-                  child: Text('Sin forzados agregados'),
-                );
+                return   Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const Icon(
+                            Icons.info_outline,
+                            size: 80,
+                            color: Colors.grey,
+                          ),
+                          const SizedBox(height: 16),
+                          Text(
+                            'No hay solicitudes pendientes de sincronizar',
+                            style: TextStyle(
+                              fontSize: 18,
+                              color: Colors.grey[600],
+                              fontWeight: FontWeight.bold,
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                        ],
+                      );
               }
               return ListView.separated(
                 itemCount: forzados.length,

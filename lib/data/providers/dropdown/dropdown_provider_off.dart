@@ -330,7 +330,7 @@ class DropdownProviderManagerOffline with ChangeNotifier {
     if (user == null) {
       return; // Salir si el usuario es nulo.
     }
-    if (res.descripcion == 'BAJO' && currentValueInterlock == 'NO') {
+    if (res.descripcion == 'BAJO' && currentValueInterlock == 'NO' && currentStateRisk?.descripcion.toLowerCase() != 'personas') {
       // Verificar si el usuario actual no está en la lista de aprobadores
       if (!_listAprobadores.any((element) => element.id == user.id)) {
         _listAprobadores.add(
@@ -346,57 +346,45 @@ class DropdownProviderManagerOffline with ChangeNotifier {
 
   void validateInterlok() async {
     if (currentValueInterlock == 'si') {
+      print('interlock si');
       addAprobadoresByPuesto();
-    }
-    if (currentStateRisk?.descripcion == 'personas' &&
-        currentValueInterlock == 'NO') {
-      addAprobadoresByPuesto();
-    }
-
-    if (currentStateRisk?.descripcion != 'personas' &&
-        currentValueInterlock == 'NO') {
-      addArobbadoresByRole();
-    }
-    if (_currentRisk?.descripcion.toLowerCase() == 'bajo' &&
-        currentValueInterlock == 'NO' &&
-        !_listAprobadores
-            .any((element) => element.id == currentStateApplicant?.id) &&
-        currentStateApplicant != null &&
-        currentStateRisk?.descripcion.toLowerCase() != 'personas') {
-      _listAprobadores.add(
-        modelthird.Value(
-            id: currentStateApplicant!.id,
-            nombre:
-                '${currentStateApplicant!.nombre} ${currentStateApplicant!.apePaterno ?? ''}',
-            apePaterno: ''),
-      );
-      print('Agrega al aplicante');
     } else {
-      print('No se aplica la regla del riesgo bajo');
-      if (currentStateApplicant != null &&
-          listAprobadores.any((a) => a.id == currentStateApplicant!.id)) {
-        listAprobadores.remove(currentStateApplicant);
-        print('remueve el solicitante si el riesgo es diferente a bajo');
-      } else {
-        print('a nadie que eliminar');
-      }
-    }
+            print('interlock no');
+      if (currentStateRisk?.descripcion.toLowerCase() == 'personas' &&
+          currentValueInterlock == 'NO') {
+            print('interlock no y personas');
+        addAprobadoresByPuesto();
+       }
 
-    // if (currentValueInterlock == 'NO') {
-    //   addArobbadoresByRole();
-    // ApiResponseDetailUser? user = await PreferencesHelper().getUser();
-    //   if (user == null) {
-    //     return;
-    //   }
-    //   if (!_listAprobadores.any((element) => element.id == user.id)) {
-    //     _listAprobadores.add(
-    //         modelthird.Value(id: user.id, nombre: user.name, apePaterno: ''));
-    //   }
-    // } else {
-    //   addAprobadoresByPuesto();
-    // }
-    if (!_listAprobadores.contains(currentStateApprover)) {
-      currentStateApprover = null;
+     
+      if (_currentRisk?.descripcion.toLowerCase() == 'bajo' &&
+          currentValueInterlock != 'si' &&
+          !_listAprobadores
+              .any((element) => element.id == currentStateApplicant?.id) &&
+          currentStateApplicant != null &&
+          currentStateRisk?.descripcion.toLowerCase() != 'personas') {
+        _listAprobadores.add(
+          modelthird.Value(
+              id: currentStateApplicant!.id,
+              nombre:
+                  '${currentStateApplicant!.nombre} ${currentStateApplicant!.apePaterno ?? ''}',
+              apePaterno: ''),
+        );
+        print('Agrega al aplicante');
+      } else {
+        print('No se aplica la regla del riesgo bajo');
+        if (currentStateApplicant != null &&
+            listAprobadores.any((a) => a.id == currentStateApplicant!.id)) {
+          listAprobadores.remove(currentStateApplicant);
+          print('remueve el solicitante si el riesgo es diferente a bajo');
+        } else {
+          print('a nadie que eliminar');
+        }
+      }
+
+      if (!_listAprobadores.contains(currentStateApprover)) {
+        currentStateApprover = null;
+      }
     }
 
     notifyListeners();

@@ -78,7 +78,7 @@ class HomeApprove extends StatelessWidget {
                           height: 5,
                         ),
                         Text(
-                          'Forzado',
+                          'Aprobar Solicitud Forzado',
                           style: TextStyle(color: Colors.white),
                         )
                       ],
@@ -129,7 +129,7 @@ class HomeApprove extends StatelessWidget {
                           height: 5,
                         ),
                         Text(
-                          'Retiro Forzado',
+                          'Aprobar Solicitud Retiro',
                           style: TextStyle(color: Colors.white),
                         )
                       ],

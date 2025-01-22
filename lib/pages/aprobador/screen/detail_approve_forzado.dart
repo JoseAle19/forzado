@@ -2,12 +2,8 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:forzado/core/urls.dart';
-import 'package:forzado/models/forzado/model_forzado.dart';
-import 'package:forzado/models/remove_forzado/model_list_remove.dart';
 import 'package:forzado/pages/aprobador/home_approve.dart';
 import 'package:forzado/pages/aprobador/provider/forzados_provider.dart';
-import 'package:forzado/pages/aprobador/screen/list_approve.dart';
-import 'package:forzado/pages/aprobador/screen/shutdown_forzado.dart';
 import 'package:forzado/pages/ejecutor/models/aprobador.dart';
 import 'package:forzado/pages/resquester/online/widgets/text_info.dart';
 import 'package:forzado/pages/steps_form/congratulation.dart';
@@ -133,10 +129,8 @@ class _DetailApproveForzadoState extends State<DetailApproveForzado> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        automaticallyImplyLeading: true,
-        title: Text('Detalles ${widget.isAlta ?"alta":"baja"}'),
-        centerTitle: true,
-      ),
+         title: const  Text('Detalles de la Solicitud'),
+       ),
       body: Padding(
         padding: const EdgeInsets.all(20),
         child: ListView(
@@ -341,7 +335,7 @@ class _DetailApproveForzadoState extends State<DetailApproveForzado> {
                   executerAlta(widget.detailForzado.id.toString(), context);
                 },
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xff009283),
+                  backgroundColor: const Color(0xff3b82f6),
                   padding:
                       const EdgeInsets.symmetric(horizontal: 30, vertical: 15),
                 ),
@@ -436,7 +430,7 @@ class _DetailApproveForzadoState extends State<DetailApproveForzado> {
                         );
                       },
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xff920000),
+                        backgroundColor: const Color(0xffef4444),
                         padding: const EdgeInsets.symmetric(
                             horizontal: 30, vertical: 15),
                       ),

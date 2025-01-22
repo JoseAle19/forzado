@@ -66,7 +66,7 @@ class _PageOfflineState extends State<PageOffline> {
                     height: 5,
                   ),
                   const Text(
-                    'Solicitar Forzado',
+                    'Solicitud de Forzado',
                     style: TextStyle(color: Colors.white),
                   )
                 ],
@@ -102,7 +102,7 @@ class _PageOfflineState extends State<PageOffline> {
                     height: 5,
                   ),
                   const Text(
-                    'Retiro Forzado',
+                    'Solicitud de Retiro Forzado',
                     style: TextStyle(color: Colors.white),
                   )
                 ],
@@ -135,7 +135,7 @@ class _PageOfflineState extends State<PageOffline> {
                     height: 5,
                   ),
                   const Text(
-                    'Forzado (Campo)',
+                    'Solicitudes Pendientes de Sincrnización',
                     style: TextStyle(color: Colors.white),
                   )
                 ],
@@ -168,7 +168,7 @@ class _PageOfflineState extends State<PageOffline> {
                     height: 5,
                   ),
                   const Text(
-                    'Retiros Forzado (Campo)',
+                    'Solicitudes Retiro Pendientes de Sincrnización',
                     style: TextStyle(color: Colors.white),
                   )
                 ],

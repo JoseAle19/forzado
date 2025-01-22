@@ -38,6 +38,7 @@ class ListForzadosEjecutadoAlta extends StatelessWidget {
               return const SizedBox.shrink();
             },
             itemBuilder: (BuildContext context, int index) {
+              print(forzados[index].estado);
               Forzados forzado = forzados[index];
               final state = forzado.estado!.toLowerCase() == 'ejecutado-alta'
                   ? 'Ejecutado-forzado'

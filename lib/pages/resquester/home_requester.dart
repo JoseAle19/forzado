@@ -92,7 +92,7 @@ class CustomBotttomNavigation extends StatelessWidget {
       builder: (context, value, child) {
         return BottomNavigationBar(
             currentIndex: value.currentIndex,
-            onTap: (index) {
+            onTap: 1<2 ?null : (index) {
               value.setIndex(index);
               Provider.of<RequesterHomeProvider>(context, listen: false)
                   .pageController

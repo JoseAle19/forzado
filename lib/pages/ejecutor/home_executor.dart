@@ -27,8 +27,7 @@ class HomeExecuter extends StatelessWidget {
           );
         }),
         actions: [
-          const IconButton(
-              onPressed: null, icon: Icon(Icons.notifications_none_outlined)),
+          
           IconButton(
               onPressed: () async {
                 await PreferencesHelper().clear();
@@ -80,7 +79,7 @@ class HomeExecuter extends StatelessWidget {
                           height: 5,
                         ),
                         Text(
-                          'Forzado',
+                          'Solicitud forzado',
                           style: TextStyle(color: Colors.white),
                         )
                       ],
@@ -130,7 +129,7 @@ class HomeExecuter extends StatelessWidget {
                           height: 5,
                         ),
                         Text(
-                          'Retiro Forzado',
+                          'Solicitud Retiro Forzado',
                           style: TextStyle(color: Colors.white),
                         )
                       ],
@@ -151,49 +150,7 @@ class HomeExecuter extends StatelessWidget {
             ),
             const CardsDashBoard()
 
-            // FutureBuilder<ModelListForzados>(
-            //   future: _ListServiceForzados.getDataByEndpoint(
-            //       AppUrl.getListForzados),
-            //   builder: (BuildContext context,
-            //       AsyncSnapshot<ModelListForzados> snapshot) {
-            //     if (snapshot.connectionState == ConnectionState.waiting) {
-            //       return const Center(
-            //         child: CircularProgressIndicator(),
-            //       );
-            //     } else if (snapshot.hasError) {
-            //       String errorMessage;
-            //       if (snapshot.error is SocketException) {
-            //         errorMessage =
-            //             "No hay conexión a Internet. Por favor, verifica tu conexión.";
-            //       } else if (snapshot.error is HttpException) {
-            //         errorMessage =
-            //             "Hubo un problema con el servidor. Intenta nuevamente más tarde.";
-            //       } else {
-            //         errorMessage = "Ocurrió un error inesperado";
-            //       }
-
-            //       return Column(
-            //         mainAxisAlignment: MainAxisAlignment.center,
-            //         children: [
-            //           const Icon(Icons.error, color: Colors.red, size: 50),
-            //           const SizedBox(height: 10),
-            //           Text(errorMessage, textAlign: TextAlign.center),
-            //           const SizedBox(height: 20),
-            //           ElevatedButton(
-            //             onPressed: () => _ListServiceForzados.getDataByEndpoint(
-            //                 AppUrl.getListForzados),
-            //             child: const Text('Reintentar'),
-            //           ),
-            //         ],
-            //       );
-            //     } else if (snapshot.hasData) {
-            //       ModelListForzados data = snapshot.data!;
-            //       return CardsDashBoard(data: data);
-            //     } else {
-            //       return const Text("No data available");
-            //     }
-            //   },
-            // ),
+          
           ],
         ),
       ),

@@ -5,14 +5,28 @@ import 'package:forzado/models/forzado/model_forzado.dart';
 import 'package:forzado/pages/resquester/online/screen/detail_forzado.dart';
 import 'package:provider/provider.dart';
 
-class ListForzadosRequesterLow extends StatelessWidget {
+class ListForzadosRequesterLow extends StatefulWidget {
   const ListForzadosRequesterLow({super.key});
+
+  @override
+  State<ListForzadosRequesterLow> createState() =>
+      _ListForzadosRequesterLowState();
+}
+
+class _ListForzadosRequesterLowState extends State<ListForzadosRequesterLow> {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance!.addPostFrameCallback((_) {
+      Provider.of<ForzadosProvider>(context, listen: false).getForzados();
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Retiro de forzado'),
+        title: const Text('Solicitud Retiro de forzado'),
       ),
       body: Column(
         children: [
@@ -72,6 +86,7 @@ class ListForzadosRequesterLow extends StatelessWidget {
 
   Widget _futureListForzadosRequesterLow() {
     return Consumer<ForzadosProvider>(builder: (context, value, child) {
+      print('holaaa ${value.loadingGetForzados}');
       return value.loadingGetForzados
           ? const Center(child: CircularProgressIndicator())
           : _ListForzadosRequesterLow();
@@ -80,52 +95,75 @@ class ListForzadosRequesterLow extends StatelessWidget {
 
   Widget _ListForzadosRequesterLow() {
     return Consumer<ForzadosProvider>(
-        builder: (context, ForzadosProvider value, child) {
-      if (value.errorMessageGetForzados!.isNotEmpty) {
-        return Center(
+      builder: (context, value, child) {
+        // Mostrar error si existe un mensaje de error
+        if (value.errorMessageGetForzados?.isNotEmpty == true) {
+          return Center(
             child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  value.errorMessageGetForzados!,
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(fontSize: 16),
+                ),
+                const SizedBox(height: 10),
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppColors.primary,
+                  ),
+                  onPressed: value.getForzados,
+                  child: const Text(
+                    'Reintentar',
+                    style: TextStyle(color: Colors.white),
+                  ),
+                ),
+              ],
+            ),
+          );
+        }
+
+        // Mostrar mensaje si no hay forzados
+        final forzadosEjecutados = value.forzados
+            .where((element) =>
+                element.estado?.toLowerCase() == 'ejecutado-forzado')
+            .toList();
+
+        if (forzadosEjecutados.isEmpty) {
+          return Center(
+                      child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
+            const Icon(
+              Icons.info_outline,
+              size: 30,
+              color: Colors.grey,
+            ),
+            const SizedBox(height: 16),
             Text(
-              value.errorMessageGetForzados!,
+              'No hay solicitudes',
+              style: TextStyle(
+                fontSize: 15,
+                color: Colors.grey[600],
+                fontWeight: FontWeight.bold,
+              ),
               textAlign: TextAlign.center,
             ),
-            const SizedBox(
-              height: 10,
-            ),
-            ElevatedButton(
-              style:
-                  ElevatedButton.styleFrom(backgroundColor: AppColors.primary),
-              onPressed: () {
-                value.getForzados();
-              },
-              child: const Text(
-                'Reintentar',
-                style: TextStyle(color: Colors.white),
-              ),
-            )
           ],
-        ));
-      }
-      if (value.forzados.isEmpty) {
-        return const Center(
-          child: Text('No hay forzados ejecutados'),
+                      ),
+                    );
+        }
+
+        // Mostrar lista de forzados ejecutados
+        return ListView.builder(
+          itemCount: forzadosEjecutados.length,
+          itemBuilder: (context, index) {
+            final f = forzadosEjecutados[index];
+            return _cardForzado(f, context);
+          },
         );
-      }
-      return ListView.builder(
-        itemCount: value.forzados
-            .where((element) =>
-                element.estado!.toLowerCase() == 'ejecutado-forzado')
-            .length,
-        itemBuilder: (context, index) {
-          final f = value.forzados
-              .where((element) =>
-                  element.estado!.toLowerCase() == 'ejecutado-forzado')
-              .elementAt(index);
-          return _cardForzado(f, context);
-        },
-      );
-    });
+      },
+    );
   }
 
   Widget _cardForzado(ForzadoItem forzado, BuildContext context) {

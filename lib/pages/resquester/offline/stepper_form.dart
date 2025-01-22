@@ -4,7 +4,6 @@ import 'package:forzado/adapters/adapter_three.dart';
 import 'package:forzado/adapters/adapter_two.dart';
 import 'package:forzado/adapters/forzado.dart';
 import 'package:forzado/core/app_styles.dart';
-import 'package:forzado/core/configs/theme/app_colors.dart';
 import 'package:forzado/data/providers/Stepper/stepper_provider.dart';
 import 'package:forzado/data/providers/dropdown/dropdown_provider_off.dart';
 import 'package:forzado/data/providers/forzados/forzados_provider.dart';
@@ -45,7 +44,7 @@ class _StepperFormOfflineState extends State<StepperFormOffline> {
         Provider.of<DropdownProviderManagerOffline>(context);
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Forzado Offline'),
+        title: const Text('Creación solicitud de forzado'),
       ),
       body: Column(
         children: [
@@ -58,59 +57,72 @@ class _StepperFormOfflineState extends State<StepperFormOffline> {
                     _stepperIcons(stepIndex, stepState), // Iconos de los steps
                 controlsBuilder: (context, details) {
                   bool validation = details.currentStep != 2 ? true : false;
-                  return GestureDetector(
-                    onTap: () async {
-                      // Validar Dropdown
-                      if (details.currentStep == 0
-                          ? forzadosProvider
-                              .validateStepFormOneOff(dropdownProvider)
-                          : details.currentStep == 1
-                              ? forzadosProvider
-                                  .validateStepFormTwoOff(dropdownProvider)
-                              : forzadosProvider
-                                  .validateStepFormThreeOff(dropdownProvider)) {
-                        if (validation) {
-                          details.onStepContinue!();
-                        } else {
-                          final res = await forzadosProvider.sendRequestPostOff(
-                              context, dropdownProvider);
-                          if (!res) {
-                            CustomModal().showModal(
-                                context,
-                                forzadosProvider.errorMessagePostData,
-                                Colors.red,
-                                false);
-                          } else {
-                            final route = MaterialPageRoute(
-                                builder: (_) => CongratulationAnimation(
-                                      page: const StepperFormOffline(),
-                                    ));
-                            Navigator.pushReplacement(context, route);
-                            dropdownProvider.clearValues();
-                            value.setCurrentStepOff(0);
-                          }
-                        }
-                      } else {
-                        CustomModal modal = CustomModal();
-                        modal.showModal(context, 'Completa todos los campos',
-                            Colors.redAccent, false);
-                      }
-                    },
-                    child: AnimatedContainer(
-                      duration: const Duration(milliseconds: 400),
-                      decoration: BoxDecoration(
-                          color: validation
-                              ? const Color(0xff001d39)
-                              : const Color(0xff21378C),
-                          borderRadius: BorderRadius.circular(20)),
-                      padding: const EdgeInsets.all(10),
-                      margin: const EdgeInsets.symmetric(vertical: 20),
-                      child: Center(
-                          child: Text(
-                        validation ? 'Continuar' : 'Finalizar',
-                        style: AppStyles.textStyle,
-                      )),
-                    ),
+                  return Row(
+                    children: [
+                       Container(
+                        width: 70,
+                        child: GestureDetector(
+                          onTap: () => details.onStepCancel!(),
+                          child: const  Icon(Icons.arrow_back_ios),
+                        ),
+                      ),
+                      Expanded(
+                        child: GestureDetector(
+                          onTap: () async {
+                            // Validar Dropdown
+                            if (details.currentStep == 0
+                                ? forzadosProvider
+                                    .validateStepFormOneOff(dropdownProvider)
+                                : details.currentStep == 1
+                                    ? forzadosProvider
+                                        .validateStepFormTwoOff(dropdownProvider)
+                                    : forzadosProvider
+                                        .validateStepFormThreeOff(dropdownProvider)) {
+                              if (validation) {
+                                details.onStepContinue!();
+                              } else {
+                                final res = await forzadosProvider.sendRequestPostOff(
+                                    context, dropdownProvider);
+                                if (!res) {
+                                  CustomModal().showModal(
+                                      context,
+                                      forzadosProvider.errorMessagePostData,
+                                      Colors.red,
+                                      false);
+                                } else {
+                                  final route = MaterialPageRoute(
+                                      builder: (_) => CongratulationAnimation(
+                                            page: const StepperFormOffline(),
+                                          ));
+                                  Navigator.pushReplacement(context, route);
+                                  dropdownProvider.clearValues();
+                                  value.setCurrentStepOff(0);
+                                }
+                              }
+                            } else {
+                              CustomModal modal = CustomModal();
+                              modal.showModal(context, 'Completa todos los campos',
+                                  Colors.redAccent, false);
+                            }
+                          },
+                          child: AnimatedContainer(
+                            duration: const Duration(milliseconds: 400),
+                            decoration: BoxDecoration(
+                                color: validation
+                                    ? const Color(0xff3b82f6)
+                                    : const Color(0xff3b82f6),
+                                borderRadius: BorderRadius.circular(20)),
+                            padding: const EdgeInsets.all(10),
+                            margin: const EdgeInsets.symmetric(vertical: 20),
+                            child: Center(
+                                child: Text(
+                              validation ? 'Continuar' : 'Rezalizar Solicitud',
+                              style: AppStyles.textStyle,
+                            )),
+                          ),
+                        ),
+                      ),
+                    ],
                   );
                 },
                 steps: [
@@ -119,7 +131,7 @@ class _StepperFormOfflineState extends State<StepperFormOffline> {
                       title: const Text(''),
                       content: SizedBox(
                         width: double.infinity,
-                        height: MediaQuery.of(context).size.height * .6,
+                        height: MediaQuery.of(context).size.height * .7,
                         child: ListView(
                           physics: const BouncingScrollPhysics(),
                           shrinkWrap: true,
@@ -135,7 +147,7 @@ class _StepperFormOfflineState extends State<StepperFormOffline> {
                               },
                             ),
                             CustomDropdownButton<modelone.Value>(
-                              hintText: 'Prefijo del Tag o Sub Área *:',
+                              hintText: 'Sub Área (Tag Prefijo) *:',
                               items: dropdownProvider.listPrefijos,
                               selectedItem:
                                   dropdownProvider.currentValueTagPrefijo,
@@ -145,7 +157,7 @@ class _StepperFormOfflineState extends State<StepperFormOffline> {
                               },
                             ),
                             CustomDropdownButton<modelone.Value>(
-                              hintText: 'Tag (centro) *:',
+                              hintText: 'Activo (Tag Centro) *:',
                               items: dropdownProvider.listCentros,
                               selectedItem:
                                   dropdownProvider.currentValueTagCentro,
@@ -254,7 +266,7 @@ class _StepperFormOfflineState extends State<StepperFormOffline> {
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  const Text('Interlock Seguridad *'),
+                                  const Text('¿Es Interlock? *'),
                                   const SizedBox(
                                     height: 5,
                                   ),
@@ -308,7 +320,7 @@ class _StepperFormOfflineState extends State<StepperFormOffline> {
                               },
                             ),
                             CustomDropdownButton<modelTwo.Value>(
-                              hintText: 'Riesgo A *:',
+                              hintText: 'Riesgo a *:',
                               items: dropdownProvider.listRiesgos,
                               selectedItem: dropdownProvider.currentStateRisk,
                               onChanged: (value) {
@@ -316,26 +328,7 @@ class _StepperFormOfflineState extends State<StepperFormOffline> {
                                 // dropdownProvider.defineInterlockbyRiskA();
                               },
                             ),
-                            // CustomDropdownButton<modelTwo.Value>(
-                            //   hintText: 'Probabilidad *:',
-                            //   items: dropdownProvider.listProbabilidades,
-                            //   selectedItem:
-                            //       dropdownProvider.currentStateProbability,
-                            //   onChanged: (value) {
-                            //     dropdownProvider.currentStateProbability =
-                            //         value!;
-                            //     dropdownProvider.defineRisk();
-                            //   },
-                            // ),
-                            // CustomDropdownButton<modelTwo.Value>(
-                            //   hintText: 'Impacto *:',
-                            //   items: dropdownProvider.listImpactos,
-                            //   selectedItem: dropdownProvider.currentStateImpact,
-                            //   onChanged: (value) {
-                            //     dropdownProvider.currentStateImpact = value!;
-                            //     dropdownProvider.defineRisk();
-                            //   },
-                            // ),
+                         
                             Stack(
                               children: [
                                 CustomDropdownButton<modelTwo.Value>(
@@ -391,7 +384,7 @@ class _StepperFormOfflineState extends State<StepperFormOffline> {
                                             ? Container(
                                                 color: Colors.transparent,
                                               )
-                                            : SizedBox())
+                                            : const SizedBox())
                               ],
                             ),
                             Stack(
@@ -493,7 +486,7 @@ class _StepperFormOfflineState extends State<StepperFormOffline> {
             width: double.infinity,
             height: double.infinity,
             decoration: BoxDecoration(
-                color: AppColors.primary,
+                color: Color(0xff3b82f6),
                 borderRadius: BorderRadius.circular(20)),
             child: const Center(
               child: Text(
@@ -507,7 +500,7 @@ class _StepperFormOfflineState extends State<StepperFormOffline> {
                 width: double.infinity,
                 height: double.infinity,
                 decoration: BoxDecoration(
-                    color: AppColors.primary,
+                    color: Color(0xff3b82f6),
                     borderRadius: BorderRadius.circular(20)),
                 child: const Center(
                   child: Text(
@@ -520,7 +513,7 @@ class _StepperFormOfflineState extends State<StepperFormOffline> {
                 width: double.infinity,
                 height: double.infinity,
                 decoration: BoxDecoration(
-                    color: AppColors.primary,
+                    color: Color(0xff3b82f6),
                     borderRadius: BorderRadius.circular(20)),
                 child: const Center(
                   child: Text(

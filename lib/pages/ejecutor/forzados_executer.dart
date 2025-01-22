@@ -25,7 +25,6 @@ class _ListExecuterForzadoState extends State<ListExecuterForzado> {
   }
 
   Future<void> getData() async {
-    print('get forzados ejecutor');
     final providerForzados =
         Provider.of<ForzadosProviderApprove>(context, listen: false);
     await providerForzados.initLoadSolicitudes();
@@ -44,7 +43,7 @@ class _ListExecuterForzadoState extends State<ListExecuterForzado> {
           children: [
             Text(
               '$titulo: ',
-              style: TextStyle(
+              style: const TextStyle(
                 fontWeight: FontWeight.bold,
                 color: primaryColor,
               ),
@@ -68,7 +67,7 @@ class _ListExecuterForzadoState extends State<ListExecuterForzado> {
             borderRadius: BorderRadius.circular(16),
           ),
           backgroundColor: secondaryColor,
-          title: Row(
+          title: const  Row(
             children: [
               Icon(Icons.info, color: primaryColor, size: 28),
               SizedBox(width: 8),
@@ -141,16 +140,9 @@ class _ListExecuterForzadoState extends State<ListExecuterForzado> {
               final route = MaterialPageRoute(builder: (_) => HomeExecuter());
               Navigator.pushAndRemoveUntil(context, route, (r) => false);
             },
-            icon: Icon(Icons.arrow_back_ios_new)),
-        title: Text('Listado de Forzados'),
-        actions: [
-          IconButton(
-            onPressed: () {
-              // TODO: Implementar el evento para abrir el filtro
-            },
-            icon: const Icon(Icons.filter_list),
-          ),
-        ],
+            icon: const Icon(Icons.arrow_back_ios_new)),
+        title: const  Text('Consultas'),
+        
       ),
       body: Consumer<ForzadosProviderApprove>(builder: (context, value, child) {
         return value.loading

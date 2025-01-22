@@ -48,12 +48,7 @@ class _SyncDataState extends State<SyncData> {
     // AdapterThree
     await dataManager.fetchAndFillBox<AdapterThree>(
         'Responsable', AppUrl.getResponsable3);
-    // await dataManager.fetchAndFillBox<AdapterThree>(
-    //     'Solicitante', AppUrl.getSolicitantes3);
-    // await dataManager.fetchAndFillBox<AdapterThree>(
-    //     'Aprobador', AppUrl.getAprobadores);
-    // await dataManager.fetchAndFillBox<AdapterThree>(
-    //     'Ejecutor', AppUrl.getEjecutor);
+ 
     await getForzados(context);
   }
 
@@ -65,7 +60,7 @@ class _SyncDataState extends State<SyncData> {
       final res = await ApiClient().get(AppUrl.getListForzados);
       if (res.statusCode >= 200 && res.statusCode < 300) {
         final decodedJson = json.decode(res.body);
-
+print('llenados');
         if (decodedJson is Map<String, dynamic> &&
             decodedJson['data'] is List) {
           List<dynamic> dataList = decodedJson['data'];
@@ -235,7 +230,7 @@ class _SyncDataState extends State<SyncData> {
                               listen: false);
                       await Future.delayed(const Duration(seconds: 2));
                       await providerDropdownOff.clearAndPopulateBoxes(context);
-
+                      await getForzados(context);
                       // Mostramos el modal después de completar la sincronización
                       CustomModal().showModal(
                           context, 'Sincronizados', Colors.green, true);

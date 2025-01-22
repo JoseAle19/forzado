@@ -25,9 +25,9 @@ class _StepperFormState extends State<StepperForm> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) async {
+      if (mounted) {
       final dropdownProvider =
           Provider.of<DropDownValuesManagerProvider>(context, listen: false);
-      if (mounted) {
         await dropdownProvider.verifyRuleRisk();
         await dropdownProvider.getTagsMatrizRiesgo(context);
         widget.isUpdate != true ? dropdownProvider.clearValues() : null;
@@ -35,7 +35,7 @@ class _StepperFormState extends State<StepperForm> {
     });
   }
 
-  String error = '';
+ 
   @override
   Widget build(BuildContext context) {
     final forzadosProvider = Provider.of<ForzadosProvider>(context);
@@ -44,7 +44,7 @@ class _StepperFormState extends State<StepperForm> {
     final stepperProvider = Provider.of<StepperProvider>(context);
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Forzado'),
+        title: const Text('Creación solicitud de forzado'),
         leading: IconButton(
           onPressed: () {
             dropdownProvider.clearValues();
@@ -66,82 +66,98 @@ class _StepperFormState extends State<StepperForm> {
                     _stepperIcons(stepIndex, stepState), // Iconos de los steps
                 controlsBuilder: (context, details) {
                   bool validation = details.currentStep != 2 ? true : false;
-                  return GestureDetector(
-                    onTap: () async {
-                      if (forzadosProvider.isFetchingPostData) {
-                        return;
-                      }
-                      // Validar Dropdown
-                      if (details.currentStep == 0
-                          ? forzadosProvider
-                              .validateStepFormOne(dropdownProvider)
-                          : details.currentStep == 1
-                              ? forzadosProvider
-                                  .validateStepFormTwo(dropdownProvider)
-                              : forzadosProvider
-                                  .validateStepFormThree(dropdownProvider)) {
-                        if (validation) {
-                          details.onStepContinue!();
-                        } else {
-                          String id = widget.isUpdate == true
-                              ? widget.idForzado.toString()
-                              : '';
-                          final res = await forzadosProvider.sendRequestPost(
-                              context, dropdownProvider, id);
-                          if (!res) {
-                            CustomModal().showModal(
-                                context,
-                                forzadosProvider.errorMessagePostData,
-                                Colors.red,
-                                false);
-                          } else {
-                            final route = MaterialPageRoute(
-                                builder: (_) => CongratulationAnimation(
-                                      page: const StepperForm(),
-                                    ));
-                            Navigator.pushReplacement(context, route);
-                            dropdownProvider.clearValues();
-                            value.setCurrentStep(0);
-                          }
-                        }
-                      } else {
-                        CustomModal modal = CustomModal();
-                        modal.showModal(context, 'Completa todos los campos',
-                            Colors.redAccent, false);
-                      }
-                    },
-                    child: AnimatedContainer(
-                      duration: const Duration(milliseconds: 400),
-                      decoration: BoxDecoration(
-                          color: validation
-                              ? const Color(0xff001d39)
-                              : forzadosProvider.isFetchingPostData
-                                  ? const Color.fromARGB(255, 51, 52, 57)
-                                  : const Color(0xff21378C),
-                          borderRadius: BorderRadius.circular(20)),
-                      padding: const EdgeInsets.all(10),
-                      margin: const EdgeInsets.symmetric(vertical: 20),
-                      child: Center(
-                          child: Text(
-                        validation
-                            ? 'Continuar'
-                            : forzadosProvider.isFetchingPostData == true
-                                ? 'Espera'
-                                : widget.isUpdate == true
-                                    ? 'Actualizar forzado'
-                                    : 'Finalizar',
-                        style: AppStyles.textStyle,
-                      )),
-                    ),
+                  return Row(
+                    children: [
+                      Container(
+                        width: 70,
+                        child: GestureDetector(
+                          onTap: () => details.onStepCancel!(),
+                          child: const  Icon(Icons.arrow_back_ios),
+                        ),
+                      ),
+                      Expanded(
+                        child: GestureDetector(
+                          onTap: () async {
+                            if (forzadosProvider.isFetchingPostData) {
+                              return;
+                            }
+                            // Validar Dropdown
+                            if (details.currentStep == 0
+                                ? forzadosProvider
+                                    .validateStepFormOne(dropdownProvider)
+                                : details.currentStep == 1
+                                    ? forzadosProvider
+                                        .validateStepFormTwo(dropdownProvider)
+                                    : forzadosProvider
+                                        .validateStepFormThree(dropdownProvider)) {
+                              if (validation) {
+                                details.onStepContinue!();
+                              } else {
+                                String id = widget.isUpdate == true
+                                    ? widget.idForzado.toString()
+                                    : '';
+                                final res = await forzadosProvider.sendRequestPost(
+                                    context, dropdownProvider, id);
+                                if (!res) {
+                                  CustomModal().showModal(
+                                      context,
+                                      forzadosProvider.errorMessagePostData,
+                                      Colors.red,
+                                      false);
+                                } else {
+                                  final route = MaterialPageRoute(
+                                      builder: (_) => CongratulationAnimation(
+                                            page: const StepperForm(),
+                                          ));
+                                  Navigator.pushReplacement(context, route);
+                                  dropdownProvider.clearValues();
+                                  value.setCurrentStep(0);
+                                }
+                              }
+                            } else {
+                              CustomModal modal = CustomModal();
+                              modal.showModal(context, 'Completa todos los campos',
+                                  Colors.redAccent, false);
+                            }
+                          },
+                          child: AnimatedContainer(
+                            duration: const Duration(milliseconds: 400),
+                            decoration: BoxDecoration(
+                                color: validation
+                                    ? const Color(0xff3b82f6)
+                                    : forzadosProvider.isFetchingPostData
+                                        ? const Color.fromARGB(255, 51, 52, 57)
+                                        : const Color(0xff3b82f6),
+                                borderRadius: BorderRadius.circular(20)),
+                            padding: const EdgeInsets.all(10),
+                            margin: const EdgeInsets.symmetric(vertical: 20),
+                            child: Center(
+                                child: Text(
+                              validation
+                                  ? 'Continuar'
+                                  : forzadosProvider.isFetchingPostData == true
+                                      ? 'Espera'
+                                      : widget.isUpdate == true
+                                          ? 'Actualizar forzado'
+                                          : 'Realizar Solicitud',
+                              style: AppStyles.textStyle,
+                            )),
+                          ),
+                        ),
+                      ),
+                    ],
                   );
                 },
                 steps: [
                   Step(
+                    stepStyle: const  StepStyle(
+                      color: Color(0xff3b82f6),
+                        ),
                       isActive: value.currentStep == 0,
                       title: const Text(''),
                       content: SizedBox(
                         width: double.infinity,
-                        height: MediaQuery.of(context).size.height * .6,
+                        height: MediaQuery.of(context).size.height * .7,
                         child: ListView(
                           physics: const BouncingScrollPhysics(),
                           shrinkWrap: true,
@@ -157,7 +173,7 @@ class _StepperFormState extends State<StepperForm> {
                               },
                             ),
                             CustomDropdownButton<modelone.Value>(
-                              hintText: 'Prefijo del Tag o Sub Área *:',
+                              hintText: 'Sub Área (Tag Prefijo) *:',
                               items: dropdownProvider.listPrefijos,
                               selectedItem:
                                   dropdownProvider.currentValueTagPrefijo,
@@ -167,7 +183,7 @@ class _StepperFormState extends State<StepperForm> {
                               },
                             ),
                             CustomDropdownButton<modelone.Value>(
-                              hintText: 'Tag (centro) *:',
+                              hintText: 'Activo (Tag Centro) *:',
                               items: dropdownProvider.listCentros,
                               selectedItem:
                                   dropdownProvider.currentValueTagCentro,
@@ -233,6 +249,9 @@ class _StepperFormState extends State<StepperForm> {
                         ),
                       )),
                   Step(
+                     stepStyle: const  StepStyle(
+                      color: Color(0xff3b82f6),
+                        ),
                       isActive: value.currentStep == 1,
                       title: const Text(''),
                       content: SizedBox(
@@ -246,7 +265,7 @@ class _StepperFormState extends State<StepperForm> {
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  const Text('¿Interlock Seguridad? *'),
+                                  const Text('¿Es Interlock? *'),
                                   const SizedBox(
                                     height: 5,
                                   ),
@@ -300,7 +319,7 @@ class _StepperFormState extends State<StepperForm> {
                               },
                             ),
                             CustomDropdownButton<modelTwo.Value>(
-                              hintText: 'Riesgo A *:',
+                              hintText: 'Riesgo a *:',
                               items: dropdownProvider.listRiesgos,
                               selectedItem: dropdownProvider.currentStateRisk,
                               onChanged: (value) {
@@ -394,6 +413,9 @@ class _StepperFormState extends State<StepperForm> {
                         ),
                       )),
                   Step(
+                     stepStyle: const  StepStyle(
+                      color: Color(0xff3b82f6),
+                        ),
                     isActive: value.currentStep == 2,
                     title: const Text(''),
                     content: SizedBox(
@@ -560,7 +582,7 @@ class _StepperFormState extends State<StepperForm> {
             width: double.infinity,
             height: double.infinity,
             decoration: BoxDecoration(
-                color: AppColors.primary,
+                color: const Color(0xff3b82f6),
                 borderRadius: BorderRadius.circular(20)),
             child: const Center(
               child: Text(
@@ -574,7 +596,7 @@ class _StepperFormState extends State<StepperForm> {
                 width: double.infinity,
                 height: double.infinity,
                 decoration: BoxDecoration(
-                    color: AppColors.primary,
+                    color: const Color(0xff3b82f6),
                     borderRadius: BorderRadius.circular(20)),
                 child: const Center(
                   child: Text(
@@ -587,7 +609,7 @@ class _StepperFormState extends State<StepperForm> {
                 width: double.infinity,
                 height: double.infinity,
                 decoration: BoxDecoration(
-                    color: AppColors.primary,
+                    color: const Color(0xff3b82f6),
                     borderRadius: BorderRadius.circular(20)),
                 child: const Center(
                   child: Text(

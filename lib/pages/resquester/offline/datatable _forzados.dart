@@ -259,7 +259,7 @@ class _ForzadosDataTableState extends State<ForzadosDataTable> {
             icon: const Icon(Icons.sync),
           )
         ],
-        title: const Text('Forzados offline'),
+        title: const Text('Solicitudes Pendientes de Sincronizar', style: TextStyle(fontSize: 18),),
       ),
       body: Stack(
         children: [
@@ -279,7 +279,7 @@ class _ForzadosDataTableState extends State<ForzadosDataTable> {
                           ),
                           const SizedBox(height: 16),
                           Text(
-                            'No hay forzados que sincronizar',
+                            'No hay solicitudes pendientes de sincronizar',
                             style: TextStyle(
                               fontSize: 18,
                               color: Colors.grey[600],

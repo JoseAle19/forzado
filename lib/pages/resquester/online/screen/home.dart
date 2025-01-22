@@ -21,12 +21,7 @@ class PageOnline extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: ListView(physics: const BouncingScrollPhysics(), children: [
-        // Colocar el widget de sincronizacion
-        Consumer<AuthProvider>(
-          builder: (context, value, child) {
-            return value.viewModalSync ? widget! : const SizedBox();
-          },
-        ),
+      
         GestureDetector(
           onTap: () {
             final route =
@@ -58,7 +53,7 @@ class PageOnline extends StatelessWidget {
                   height: 5,
                 ),
                 Text(
-                  'Forzado',
+                  'Solicitud de Forzado',
                   style: TextStyle(color: Colors.white),
                 )
               ],
@@ -97,7 +92,7 @@ class PageOnline extends StatelessWidget {
                   height: 5,
                 ),
                 Text(
-                  'Forzados',
+                  'Solicitudes',
                   style: TextStyle(color: Colors.white),
                 )
               ],
@@ -136,7 +131,7 @@ class PageOnline extends StatelessWidget {
                   height: 5,
                 ),
                 Text(
-                  'Retiro Forzado',
+                  'Solicitud Retiro forzado',
                   style: TextStyle(color: Colors.white),
                 )
               ],
@@ -146,13 +141,13 @@ class PageOnline extends StatelessWidget {
         
         Container(
           margin: const EdgeInsets.only(top: 40),
-          padding: const EdgeInsets.symmetric(horizontal: 16),
-          height: 40,
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 5),
+          // height: 40,
           color: const Color(0xff001d39),
           width: double.infinity,
           alignment: Alignment.center,
           child: const Text(
-            'Acciones hechas sin conexión a internet',
+            'Pendientes por sincronizar',
             style: TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.w500,
@@ -161,6 +156,12 @@ class PageOnline extends StatelessWidget {
             textAlign: TextAlign.center,
           ),
         ),
+          // Colocar el widget de sincronizacion
+        Consumer<AuthProvider>(
+          builder: (context, value, child) {
+            return value.viewModalSync ? widget! : const SizedBox();
+          },
+        ),
         GestureDetector(
           onTap: () {
             final route =
@@ -168,7 +169,7 @@ class PageOnline extends StatelessWidget {
             Navigator.push(context, route);
           },
           child: Container(
-            margin: const EdgeInsets.only(top: 20),
+            // margin: const EdgeInsets.only(top: 20),
             padding: const EdgeInsets.all(20),
             width: double.infinity,
             decoration: BoxDecoration(boxShadow: const [
@@ -187,7 +188,7 @@ class PageOnline extends StatelessWidget {
                   height: 5,
                 ),
                 const Text(
-                  'Forzados (Campo)',
+                  'Solicitudes Pendientes a Sincronizar', 
                   style: TextStyle(color: Colors.white),
                 )
               ],
@@ -215,12 +216,12 @@ class PageOnline extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                SvgPicture.asset('assets/svgs/bank.svg'),
+                SvgPicture.asset('assets/svgs/bank.svg',),
                 const SizedBox(
                   height: 5,
                 ),
                 const Text(
-                  'Retiros Forzado (Campo)',
+                  'Solicitudes de Retiro Pendientes a Sincronizar',
                   style: TextStyle(color: Colors.white),
                 )
               ],

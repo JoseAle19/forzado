@@ -112,9 +112,9 @@ class ForzadosProvider with ChangeNotifier {
   String? _errorMessageGetForzados = '';
   String? get errorMessageGetForzados => _errorMessageGetForzados;
   Future<void> getForzados() async {
-    try {
       _loadingGetForzados = true;
       notifyListeners();
+    try {
       final res = await client
           .get(AppUrl.getListForzados)
           .timeout(const Duration(seconds: 10));
