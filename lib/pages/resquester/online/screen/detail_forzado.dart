@@ -2,14 +2,16 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:forzado/core/urls.dart';
+import 'package:forzado/data/providers/dropdown/dropdown_provider.dart';
 import 'package:forzado/data/providers/forzados/forzados_provider.dart';
 import 'package:forzado/models/form/forzado/request_forced_forzado.dart';
 import 'package:forzado/models/forzado/model_forzado.dart';
+import 'package:forzado/models/model_three.dart' as modelThree;
 import 'package:forzado/pages/resquester/home_requester.dart';
 import 'package:forzado/pages/steps_form/congratulation.dart';
 import 'package:forzado/services/api_client.dart';
-import 'package:forzado/services/service_three.dart';
-import 'package:forzado/widgets/custom_dropdown_three.dart';
+import 'package:forzado/widgets/custom_dropdown_button.dart';
+import 'package:forzado/widgets/modal_error.dart';
 import 'package:provider/provider.dart';
 
 // ignore: must_be_immutable
@@ -56,6 +58,15 @@ class _FormRemoveForzadoState extends State<DetailsForzadorRequester> {
   }
 
   Future<void> sendRequestForcedForzado() async {
+    CustomModal modal = CustomModal();
+    if (currentStateapplicant.isEmpty ||
+        currentStateapprover.isEmpty ||
+        currentStateexecutor.isEmpty ||
+        currentValueDescription.isEmpty) {
+      modal.showModal(
+          context, 'Debes de llenar todos los campos', Colors.red, false);
+      return;
+    }
     FormRemoveForzadoQueryParameters data = FormRemoveForzadoQueryParameters(
       solicitanteRetiro: currentStateapplicant,
       aprobadorRetiro: currentStateapprover,
@@ -83,8 +94,12 @@ class _FormRemoveForzadoState extends State<DetailsForzadorRequester> {
       } else {
         print(response.body);
         print('Error en la solicitud: ${response.statusCode}');
+        modal.showModal(context, 'Ocurrio un error: ${response.statusCode}',
+            Colors.red, false);
       }
     } catch (e) {
+      modal.showModal(context, 'Ocurrio un error interno en el servidor',
+          Colors.red, false);
       print('Error en la conexión: $e');
     } finally {
       setState(() {
@@ -95,8 +110,9 @@ class _FormRemoveForzadoState extends State<DetailsForzadorRequester> {
 
   @override
   Widget build(BuildContext context) {
+    final dropdownProvider =
+        Provider.of<DropDownValuesManagerProvider>(context);
     final forzadosProvider = Provider.of<ForzadosProvider>(context);
-    ServiceThree serviceThree = ServiceThree(ApiClient());
     return Scaffold(
       appBar: AppBar(
         title: Hero(
@@ -112,62 +128,119 @@ class _FormRemoveForzadoState extends State<DetailsForzadorRequester> {
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisSize: MainAxisSize.min,
             children: [
-              CustomDropDownButtonThree(
-                service: serviceThree,
-                descriptionField: 'Solicitante Retiro *',
-                hintText: 'Seleccione Solicitante Retiro',
-                endPoint: AppUrl.getSolicitantes3,
-                currentValue: currentStateapplicant,
-                onChanged: (value) =>
-                    _updateCurrentValue(ValuesType.applicant, value),
+              CustomDropdownButton<modelThree.Value>(
+                hintText: 'Solicitante Retiro *:',
+                items: dropdownProvider.listSolicitantes,
+                // selectedItem: dropdownProvider.currentStateApplicant,
+                onChanged: (value) {
+                  _updateCurrentValue(
+                      ValuesType.applicant, value!.id.toString());
+                },
               ),
+              // CustomDropDownButtonThree(
+              //   service: serviceThree,
+              //   descriptionField: 'Solicitante Retiro *',
+              //   hintText: 'Seleccione Solicitante Retiro',
+              //   endPoint: AppUrl.getSolicitantes3,
+              //   currentValue: currentStateapplicant,
+              //   onChanged: (value) =>
+              //       _updateCurrentValue(ValuesType.applicant, value),
+              // ),
               const SizedBox(height: 10),
-              CustomDropDownButtonThree(
-                onChanged: (value) =>
-                    _updateCurrentValue(ValuesType.approver, value),
-                currentValue: currentStateapprover,
-                service: serviceThree,
-                descriptionField: 'Aprobador Retiro (AN)*',
-                hintText: 'Seleccione Aprobador',
-                endPoint: AppUrl.getAprobadores,
+              CustomDropdownButton<modelThree.Value>(
+                hintText: 'Aprobador Retiro *:',
+                items: dropdownProvider.listAprobadores,
+                // selectedItem: dropdownProvider.currentStateApplicant,
+                onChanged: (value) {
+                  _updateCurrentValue(
+                      ValuesType.approver, value!.id.toString());
+                },
               ),
+              // CustomDropDownButtonThree(
+              //   onChanged: (value) =>
+              //       _updateCurrentValue(ValuesType.approver, value),
+              //   currentValue: currentStateapprover,
+              //   service: serviceThree,
+              //   descriptionField: 'Aprobador Retiro (AN)*',
+              //   hintText: 'Seleccione Aprobador',
+              //   endPoint: AppUrl.getAprobadores,
+              // ),
               const SizedBox(height: 10),
-              CustomDropDownButtonThree(
-                onChanged: (value) =>
-                    _updateCurrentValue(ValuesType.executor, value),
-                currentValue: currentStateexecutor,
-                service: serviceThree,
-                descriptionField: 'Ejecutor del Retiro*',
-                hintText: 'Seleccione Ejecutor del Retiro',
-                endPoint: AppUrl.getEjecutor,
+              CustomDropdownButton<modelThree.Value>(
+                hintText: 'Ejecutor del Retiro *:',
+                items: dropdownProvider.listEjecutores,
+                // selectedItem: dropdownProvider.c,
+                onChanged: (value) {
+                  _updateCurrentValue(
+                      ValuesType.executor, value!.id.toString());
+                },
               ),
+              // CustomDropDownButtonThree(
+              //   onChanged: (value) =>
+              //       _updateCurrentValue(ValuesType.executor, value),
+              //   currentValue: currentStateexecutor,
+              //   service: serviceThree,
+              //   descriptionField: 'Ejecutor del Retiro*',
+              //   hintText: 'Seleccione Ejecutor del Retiro',
+              //   endPoint: AppUrl.getEjecutor,
+              // ),
               const SizedBox(height: 20),
-              const Text(
-                'Observaciones',
-                style: TextStyle(fontFamily: 'Hoto Sans'),
-              ),
-              TextFormField(
-                initialValue: currentValueDescription,
-                onChanged: (value) =>
-                    _updateCurrentValue(ValuesType.description, value),
-                maxLength: 100,
-                maxLines: 2,
-                decoration: const InputDecoration(
-                  hintText: 'Agregue una descripción',
-                  border: OutlineInputBorder(),
+              // const Text(
+              //   'Observaciones',
+              //   style: TextStyle(fontFamily: 'Hoto Sans'),
+              // ),
+              Container(
+                // margin: const EdgeInsets.symmetric(vertical: 10),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text('Observaciones *'),
+                    const SizedBox(
+                      height: 5,
+                    ),
+                    TextFormField(
+                      initialValue: currentValueDescription,
+                      onChanged: (value) =>
+                          _updateCurrentValue(ValuesType.description, value),
+                      maxLength: 100,
+                      maxLines: 2,
+                      decoration: InputDecoration(
+                        hintStyle: TextStyle(color: Colors.grey.shade600),
+                        hintText: 'Agregue una descripción',
+                        border: OutlineInputBorder(
+                          borderSide: BorderSide(color: Colors.grey.shade50),
+                          borderRadius:
+                              const BorderRadius.all(Radius.circular(10)),
+                        ),
+                        contentPadding: const EdgeInsets.symmetric(
+                            horizontal: 5, vertical: 15),
+                      ),
+                    )
+                  ],
                 ),
               ),
+
+              // TextFormField(
+              //   initialValue: currentValueDescription,
+              //   onChanged: (value) =>
+              //       _updateCurrentValue(ValuesType.description, value),
+              //   maxLength: 100,
+              //   maxLines: 2,
+              //   decoration: const InputDecoration(
+              //     hintText: 'Agregue una descripción',
+              //     border: OutlineInputBorder(),
+              //   ),
+              // ),
               const SizedBox(height: 20),
               isFetching
                   ? const Center(
                       child: CircularProgressIndicator(),
                     )
                   : GestureDetector(
-                      onTap: () async  {
+                      onTap: () async {
                         if (!isFetching) sendRequestForcedForzado();
-                      await  forzadosProvider.fetchCountForzados();
+                        await forzadosProvider.fetchCountForzados();
                         await forzadosProvider.getForzados();
-                        
                       },
                       child: Container(
                         width: double.infinity,

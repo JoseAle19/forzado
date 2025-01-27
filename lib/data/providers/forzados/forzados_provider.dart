@@ -35,6 +35,7 @@ class ForzadosProvider with ChangeNotifier {
   int _approvedHighCount = 0;
   int _approvedLowCount = 0;
   int _executedHighCount = 0;
+  int _executedLowCount = 0;
   int _finalizedCount = 0;
   int _rejectedHighCount = 0;
   int _rejectedLowCount = 0;
@@ -44,6 +45,7 @@ class ForzadosProvider with ChangeNotifier {
   int get approvedHighCount => _approvedHighCount;
   int get approvedLowCount => _approvedLowCount;
   int get executedHighCount => _executedHighCount;
+  int get executedLowCount => _executedLowCount;
   int get finalizedCount => _finalizedCount;
   int get rejectedHighCount => _rejectedHighCount;
   int get rejectedLowCount => _rejectedLowCount;
@@ -80,6 +82,9 @@ class ForzadosProvider with ChangeNotifier {
         _executedHighCount = decodeData.data
             .where((f) => f.estado!.toLowerCase() == 'ejecutado-alta')
             .length;
+        _executedLowCount = decodeData.data
+            .where((f) => f.estado!.toLowerCase() == 'ejecutado-baja')
+            .length;
         _finalizedCount = decodeData.data
             .where((f) => f.estado!.toLowerCase() == 'finalizado')
             .length;
@@ -112,12 +117,17 @@ class ForzadosProvider with ChangeNotifier {
   String? _errorMessageGetForzados = '';
   String? get errorMessageGetForzados => _errorMessageGetForzados;
   Future<void> getForzados() async {
-      _loadingGetForzados = true;
-      notifyListeners();
+    _loadingGetForzados = true;
+    notifyListeners();
     try {
+      _errorMessageGetForzados = '';
+      _loadingGetForzados = false;
+      print('Reload');
+
+      notifyListeners();
       final res = await client
           .get(AppUrl.getListForzados)
-          .timeout(const Duration(seconds: 10));
+          .timeout(const Duration(seconds: 60));
       if (res.statusCode == 200) {
         ForzadosModel decodeData = forzadosModelFromJson(res.body);
         _forzados = decodeData.data!.map((f) {
@@ -169,8 +179,6 @@ class ForzadosProvider with ChangeNotifier {
               proyectoId: f.proyectoId,
               subarea: f.subarea);
         }).toList();
-        _errorMessageGetForzados = '';
-        notifyListeners();
       }
       if (res.statusCode == 500) {
         _errorMessageGetForzados =

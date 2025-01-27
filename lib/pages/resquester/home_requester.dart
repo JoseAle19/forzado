@@ -25,8 +25,7 @@ class _HomeState extends State<Home> {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       Provider.of<DropDownValuesManagerProvider>(context, listen: false)
-        ..getData()
-        ..getUsersByRole();
+        ..getData();
     });
   }
 
@@ -66,7 +65,7 @@ class _HomeState extends State<Home> {
         ),
         body: Consumer<RequesterHomeProvider>(builder: (context, value, child) {
           return PageView(
-            // physics: const NeverScrollableScrollPhysics(),
+            physics: const NeverScrollableScrollPhysics(),
             controller: value.pageController,
             children: [
               PageOnline(
@@ -92,12 +91,14 @@ class CustomBotttomNavigation extends StatelessWidget {
       builder: (context, value, child) {
         return BottomNavigationBar(
             currentIndex: value.currentIndex,
-            onTap: 1<2 ?null : (index) {
-              value.setIndex(index);
-              Provider.of<RequesterHomeProvider>(context, listen: false)
-                  .pageController
-                  .jumpToPage(index);
-            },
+            onTap: 1 < 2
+                ? null
+                : (index) {
+                    value.setIndex(index);
+                    Provider.of<RequesterHomeProvider>(context, listen: false)
+                        .pageController
+                        .jumpToPage(index);
+                  },
             items: const [
               BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Inicio'),
               BottomNavigationBarItem(

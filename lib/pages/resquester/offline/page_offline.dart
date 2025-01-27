@@ -135,7 +135,7 @@ class _PageOfflineState extends State<PageOffline> {
                     height: 5,
                   ),
                   const Text(
-                    'Solicitudes Pendientes de Sincrnización',
+                    'Solicitudes Pendientes de Sincronización',
                     style: TextStyle(color: Colors.white),
                   )
                 ],
@@ -168,7 +168,7 @@ class _PageOfflineState extends State<PageOffline> {
                     height: 5,
                   ),
                   const Text(
-                    'Solicitudes Retiro Pendientes de Sincrnización',
+                    'Solicitudes Retiro Pendientes de Sincronización',
                     style: TextStyle(color: Colors.white),
                   )
                 ],

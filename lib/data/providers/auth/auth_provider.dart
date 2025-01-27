@@ -2,6 +2,8 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
+import 'package:forzado/core/urls.dart';
 import 'package:forzado/core/utils/preferences_helper.dart';
 import 'package:forzado/data/providers/auth/password_provider.dart';
 import 'package:forzado/models/jwt_model.dart';
@@ -39,15 +41,12 @@ class AuthProvider with ChangeNotifier {
   }
 
   Future<ApiResponse> login(BuildContext context) async {
+    isLoading = true;
+    notifyListeners();
+    ApiClient client = ApiClient();
     final username = usernameController.text.trim();
     final password = passwordController.text.trim();
     CustomModal modal = CustomModal();
-    if (username.isEmpty || password.isEmpty) {
-      return ApiResponse.error(message: 'Completa todos los campos');
-    }
-
-    isLoading = true;
-    notifyListeners();
 
     try {
       final headers = {'Content-Type': 'application/json'};
@@ -63,8 +62,11 @@ class AuthProvider with ChangeNotifier {
             headers: headers,
             body: body,
           )
-          .timeout(const Duration(seconds: 10)); // Timeout de 10 segundos
+          .timeout(const Duration(seconds: 30)); // Timeout de 10 segundos
+      // final res = await client.post(AppUrl.login, body);
+      // print('respuesta del login ${res}');
       isLoading = false;
+      // print('try');
       notifyListeners();
       if (response.statusCode == 200) {
         resetData();

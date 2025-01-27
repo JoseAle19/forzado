@@ -59,11 +59,11 @@ class _StepperFormOfflineState extends State<StepperFormOffline> {
                   bool validation = details.currentStep != 2 ? true : false;
                   return Row(
                     children: [
-                       Container(
+                      Container(
                         width: 70,
                         child: GestureDetector(
                           onTap: () => details.onStepCancel!(),
-                          child: const  Icon(Icons.arrow_back_ios),
+                          child: const Icon(Icons.arrow_back_ios),
                         ),
                       ),
                       Expanded(
@@ -74,15 +74,16 @@ class _StepperFormOfflineState extends State<StepperFormOffline> {
                                 ? forzadosProvider
                                     .validateStepFormOneOff(dropdownProvider)
                                 : details.currentStep == 1
-                                    ? forzadosProvider
-                                        .validateStepFormTwoOff(dropdownProvider)
-                                    : forzadosProvider
-                                        .validateStepFormThreeOff(dropdownProvider)) {
+                                    ? forzadosProvider.validateStepFormTwoOff(
+                                        dropdownProvider)
+                                    : forzadosProvider.validateStepFormThreeOff(
+                                        dropdownProvider)) {
                               if (validation) {
                                 details.onStepContinue!();
                               } else {
-                                final res = await forzadosProvider.sendRequestPostOff(
-                                    context, dropdownProvider);
+                                final res =
+                                    await forzadosProvider.sendRequestPostOff(
+                                        context, dropdownProvider);
                                 if (!res) {
                                   CustomModal().showModal(
                                       context,
@@ -101,8 +102,11 @@ class _StepperFormOfflineState extends State<StepperFormOffline> {
                               }
                             } else {
                               CustomModal modal = CustomModal();
-                              modal.showModal(context, 'Completa todos los campos',
-                                  Colors.redAccent, false);
+                              modal.showModal(
+                                  context,
+                                  'Completa todos los campos',
+                                  Colors.redAccent,
+                                  false);
                             }
                           },
                           child: AnimatedContainer(
@@ -131,7 +135,7 @@ class _StepperFormOfflineState extends State<StepperFormOffline> {
                       title: const Text(''),
                       content: SizedBox(
                         width: double.infinity,
-                        height: MediaQuery.of(context).size.height * .7,
+                        height: MediaQuery.of(context).size.height * .6,
                         child: ListView(
                           physics: const BouncingScrollPhysics(),
                           shrinkWrap: true,
@@ -328,7 +332,6 @@ class _StepperFormOfflineState extends State<StepperFormOffline> {
                                 // dropdownProvider.defineInterlockbyRiskA();
                               },
                             ),
-                         
                             Stack(
                               children: [
                                 CustomDropdownButton<modelTwo.Value>(

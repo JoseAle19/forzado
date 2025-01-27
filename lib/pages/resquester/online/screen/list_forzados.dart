@@ -97,7 +97,7 @@ class _ListForzadosRequesterLowState extends State<ListForzadosRequesterLow> {
     return Consumer<ForzadosProvider>(
       builder: (context, value, child) {
         // Mostrar error si existe un mensaje de error
-        if (value.errorMessageGetForzados?.isNotEmpty == true) {
+        if (value.errorMessageGetForzados?.isEmpty == false) {
           return Center(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -131,27 +131,27 @@ class _ListForzadosRequesterLowState extends State<ListForzadosRequesterLow> {
 
         if (forzadosEjecutados.isEmpty) {
           return Center(
-                      child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Icon(
-              Icons.info_outline,
-              size: 30,
-              color: Colors.grey,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Icon(
+                  Icons.info_outline,
+                  size: 30,
+                  color: Colors.grey,
+                ),
+                const SizedBox(height: 16),
+                Text(
+                  'No hay solicitudes',
+                  style: TextStyle(
+                    fontSize: 15,
+                    color: Colors.grey[600],
+                    fontWeight: FontWeight.bold,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+              ],
             ),
-            const SizedBox(height: 16),
-            Text(
-              'No hay solicitudes',
-              style: TextStyle(
-                fontSize: 15,
-                color: Colors.grey[600],
-                fontWeight: FontWeight.bold,
-              ),
-              textAlign: TextAlign.center,
-            ),
-          ],
-                      ),
-                    );
+          );
         }
 
         // Mostrar lista de forzados ejecutados

@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:forzado/core/configs/theme/app_colors.dart';
@@ -12,11 +14,9 @@ class ListForzadosFlag extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
       appBar: AppBar(
         title: const Text('Solicitudes de Forzado'),
-
       ),
       body: _ListForzadosRequesterLow(),
     );
@@ -33,27 +33,27 @@ class ListForzadosFlag extends StatelessWidget {
 
         if (provider.forzados.isEmpty) {
           return Center(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          const Icon(
-                            Icons.info_outline,
-                            size: 30,
-                            color: Colors.grey,
-                          ),
-                          const SizedBox(height: 16),
-                          Text(
-                            'No hay solicitudes ',
-                            style: TextStyle(
-                              fontSize: 15,
-                              color: Colors.grey[600],
-                              fontWeight: FontWeight.bold,
-                            ),
-                            textAlign: TextAlign.center,
-                          ),
-                        ],
-                      ),
-                    );
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Icon(
+                  Icons.info_outline,
+                  size: 30,
+                  color: Colors.grey,
+                ),
+                const SizedBox(height: 16),
+                Text(
+                  'No hay solicitudes ',
+                  style: TextStyle(
+                    fontSize: 15,
+                    color: Colors.grey[600],
+                    fontWeight: FontWeight.bold,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+              ],
+            ),
+          );
         }
 
         final errorMessage = provider.errorMessageGetForzados;
@@ -95,14 +95,12 @@ class ListForzadosFlag extends StatelessWidget {
   }
 
   Widget _cardForzado(ForzadoItem forzado, BuildContext context) {
-
-
-
-
- const Color primaryColor = AppColors.primary;
+    const Color primaryColor = AppColors.primary;
     const Color secondaryColor = Colors.white;
 
     Widget detalleItem(String titulo, String valor) {
+      String decodedValue = const Utf8Decoder().convert(valor.runes.toList());
+
       return Padding(
         padding: const EdgeInsets.only(bottom: 8.0),
         child: Row(
@@ -117,8 +115,10 @@ class ListForzadosFlag extends StatelessWidget {
             ),
             Expanded(
               child: Text(
-                valor,
+                decodedValue,
+                overflow: TextOverflow.ellipsis,
                 style: const TextStyle(color: Colors.black87),
+                softWrap: true,
               ),
             ),
           ],
@@ -134,7 +134,7 @@ class ListForzadosFlag extends StatelessWidget {
             borderRadius: BorderRadius.circular(16),
           ),
           backgroundColor: secondaryColor,
-          title:const  Row(
+          title: const Row(
             children: [
               Icon(Icons.info, color: primaryColor, size: 28),
               SizedBox(width: 8),
@@ -199,7 +199,6 @@ class ListForzadosFlag extends StatelessWidget {
         ),
       );
     }
-
 
     final isReset = forzado.observadoEjecucion == true ? "Si" : "No";
     return Card(
@@ -268,10 +267,16 @@ class ListForzadosFlag extends StatelessWidget {
                       Navigator.push(context, route);
                     }
                   : null,
-              child: SvgPicture.asset('assets/svgs/edit.svg', width: 20, color :forzado.observadoEjecucion == true? const Color(0xffc8a064) : Colors.grey, ),
+              child: SvgPicture.asset(
+                'assets/svgs/edit.svg',
+                width: 20,
+                color: forzado.observadoEjecucion == true
+                    ? const Color(0xffc8a064)
+                    : Colors.grey,
+              ),
             ),
             // IconButton(
-            //   onPressed: 
+            //   onPressed:
             //   icon: Icon(
             //     Icons.edit,
             //     color: forzado.observadoEjecucion == true
@@ -281,14 +286,13 @@ class ListForzadosFlag extends StatelessWidget {
             //   ),
             //   splashRadius: 20,
             // ),
-             IconButton(
-              onPressed: (){
+            IconButton(
+              onPressed: () {
                 verInformacion(context, forzado);
               },
-              icon: const  Icon(
+              icon: const Icon(
                 Icons.remove_red_eye,
-                color:  Color(0xffc8a064),
-                   
+                color: Color(0xffc8a064),
                 size: 20,
               ),
               splashRadius: 20,

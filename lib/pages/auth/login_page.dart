@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:forzado/core/app_colors.dart';
 import 'package:forzado/data/providers/auth/auth_provider.dart';
+import 'package:forzado/widgets/modal_error.dart';
 import 'package:provider/provider.dart';
 
 class LoginPage extends StatefulWidget {
@@ -72,6 +73,15 @@ class _LoginPageState extends State<LoginPage> {
                           ),
                           GestureDetector(
                             onTap: () async {
+                              if (value.usernameController.text.isEmpty ||
+                                  value.usernameController.text.isEmpty) {
+                                CustomModal().showModal(
+                                    context,
+                                    'Completa todos los campos',
+                                    Colors.red,
+                                    false);
+                                return;
+                              }
                               value.login(context);
                             },
                             child: Container(
@@ -87,7 +97,7 @@ class _LoginPageState extends State<LoginPage> {
                                 'Siguiente',
                                 style: TextStyle(
                                     fontSize: 20,
-                                    letterSpacing: 2,
+                                    // letterSpacing: 2,
                                     color: Colors.white),
                                 textAlign: TextAlign.center,
                               ),

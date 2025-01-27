@@ -21,7 +21,6 @@ class PageOnline extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: ListView(physics: const BouncingScrollPhysics(), children: [
-      
         GestureDetector(
           onTap: () {
             final route =
@@ -138,7 +137,7 @@ class PageOnline extends StatelessWidget {
             ),
           ),
         ),
-        
+
         Container(
           margin: const EdgeInsets.only(top: 40),
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 5),
@@ -156,7 +155,7 @@ class PageOnline extends StatelessWidget {
             textAlign: TextAlign.center,
           ),
         ),
-          // Colocar el widget de sincronizacion
+        // Colocar el widget de sincronizacion
         Consumer<AuthProvider>(
           builder: (context, value, child) {
             return value.viewModalSync ? widget! : const SizedBox();
@@ -169,7 +168,7 @@ class PageOnline extends StatelessWidget {
             Navigator.push(context, route);
           },
           child: Container(
-            // margin: const EdgeInsets.only(top: 20),
+            margin: const EdgeInsets.only(top: 10),
             padding: const EdgeInsets.all(20),
             width: double.infinity,
             decoration: BoxDecoration(boxShadow: const [
@@ -188,7 +187,7 @@ class PageOnline extends StatelessWidget {
                   height: 5,
                 ),
                 const Text(
-                  'Solicitudes Pendientes a Sincronizar', 
+                  'Solicitudes Pendientes a Sincronizar',
                   style: TextStyle(color: Colors.white),
                 )
               ],
@@ -216,7 +215,9 @@ class PageOnline extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                SvgPicture.asset('assets/svgs/bank.svg',),
+                SvgPicture.asset(
+                  'assets/svgs/bank.svg',
+                ),
                 const SizedBox(
                   height: 5,
                 ),

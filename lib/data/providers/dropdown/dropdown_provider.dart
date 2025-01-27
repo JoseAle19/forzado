@@ -290,6 +290,8 @@ class DropDownValuesManagerProvider with ChangeNotifier {
     _isGettingData = true;
     notifyListeners();
     try {
+      await getUsersByRole();
+
       final responses = await Future.wait([
         client.get(AppUrl.gettagPrefijo1),
         client.get(AppUrl.getTagCentro1),
@@ -308,8 +310,7 @@ class DropDownValuesManagerProvider with ChangeNotifier {
 
       for (final response in responses) {
         if (response.statusCode != 200) {
-          throw HttpException(
-              'Error en el servidor: ${response.statusCode}, URL: ${response.request?.url}');
+          throw HttpException('Error en el servidor: ${response.statusCode}');
         }
       }
 
@@ -426,38 +427,6 @@ class DropDownValuesManagerProvider with ChangeNotifier {
     }
   }
 
-// Definir el riesgo según la probabilidad e impacto
-  // void defineRisk() async {
-  //   if (currentStateImpact?.descripcion == null ||
-  //       currentStateProbability?.descripcion == null) {
-  //     return;
-  //   }
-  //   // Obtener los valores normalizados (en mayúsculas)
-  //   final impact = currentStateImpact?.descripcion.toUpperCase();
-  //   final probability = currentStateProbability?.descripcion.toUpperCase();
-  //   final nivel = riskMatrix[impact]?[probability] ?? '';
-  //   final res = riskLevels.firstWhere((element) => element.id == nivel);
-  //   ApiResponseDetailUser? user = await PreferencesHelper().getUser();
-  //   if (user == null) {
-  //     return; // Salir si el usuario es nulo.
-  //   }
-
-  //   if (currentStateRisk?.descripcion.toLowerCase() != 'personas') {
-  //     if (res.descripcion == 'BAJO' && currentValueInterlock == 'NO') {
-  //       // Verificar si el usuario actual no está en la lista de aprobadores
-  //       if (!_listAprobadores.any((element) => element.id == user.id)) {
-  //         _listAprobadores.add(
-  //             modelthird.Value(id: user.id, nombre: user.name, apePaterno: ''));
-  //         notifyListeners();
-  //       }
-  //     } else {
-  //       _listAprobadores.removeWhere((element) => element.id == user.id);
-  //       notifyListeners();
-  //     }
-  //   }
-  //   _currentRisk = res;
-  // }
-
   void defineRisk() async {
     if (currentStateImpact?.descripcion == null ||
         currentStateProbability?.descripcion == null) {
@@ -480,26 +449,6 @@ class DropDownValuesManagerProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  // void validateInterlok() async {
-  //   ApiResponseDetailUser? user = await PreferencesHelper().getUser();
-  //   if (currentValueInterlock == 'NO') {
-  //     addArobbadoresByRole();
-  //     if (user == null) {
-  //       return;
-  //     }
-  //     if (!_listAprobadores.any((element) => element.id == user.id)) {
-  //       _listAprobadores.add(
-  //           modelthird.Value(id: user.id, nombre: user.name, apePaterno: ''));
-  //     }
-  //   } else {
-  //     addAprobadoresByPuesto();
-  //   }
-  //   if (!_listAprobadores.contains(currentStateApprover)) {
-  //     currentStateApprover = null;
-  //   }
-
-  //   notifyListeners();
-  // }
   List<Tags> _listTagsMatriz = [];
   List<Tags> get listTagsMatriz => _listTagsMatriz;
   // String  _errorGetListTagsmatriz = '';

@@ -38,7 +38,6 @@ class AppUrl {
 
   static const String getForzadoByState = "/api/solicitudes/estado";
 
-  // Para traer los usuarios
   static const String getListUsers = "/api/usuarios";
 
   // validar si la regla se puede aplicar o no

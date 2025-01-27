@@ -114,9 +114,21 @@ class ForzadoApprove {
       area: json["area"],
       subarea: json["subarea"],
       tipo: json["tipo"],
-      solicitante: json["solicitante"],
-      aprobador: json["aprobador"],
-      ejecutor: json["ejecutor"],
+      solicitante: utf8.decode(
+          latin1.encode(
+            json["solicitante"],
+          ),
+          allowMalformed: true),
+      aprobador: utf8.decode(
+          latin1.encode(
+            json["aprobador"],
+          ),
+          allowMalformed: true),
+      ejecutor: utf8.decode(
+          latin1.encode(
+            json["ejecutor"],
+          ),
+          allowMalformed: true),
       solicitanteAId: json["solicitanteAId"],
       aprobadorAId: json["aprobadorAId"],
       ejecutorAId: json["ejecutorAId"],
@@ -159,7 +171,7 @@ class ForzadoApprove {
   static String validateEstado(String estado) {
     switch (estado.toUpperCase()) {
       case "PENDIENTE-ALTA":
-      return 'PENDIENTE-FORZADO';
+        return 'PENDIENTE-FORZADO';
       case "PENDIENTE-BAJA":
         return "PENDIENTE-RETIRO";
 
@@ -168,12 +180,11 @@ class ForzadoApprove {
       case "RECHAZADO-ALTA":
         return "RECHAZADO-FORZADO";
 
- case "APROBADO-BAJA":
+      case "APROBADO-BAJA":
         return "APROBADO-RETIRO";
       case "APROBADO-ALTA":
         return "APROBADO-FORZADO";
 
-        
       default:
         return estado;
     }

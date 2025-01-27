@@ -26,8 +26,8 @@ class _StepperFormState extends State<StepperForm> {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       if (mounted) {
-      final dropdownProvider =
-          Provider.of<DropDownValuesManagerProvider>(context, listen: false);
+        final dropdownProvider =
+            Provider.of<DropDownValuesManagerProvider>(context, listen: false);
         await dropdownProvider.verifyRuleRisk();
         await dropdownProvider.getTagsMatrizRiesgo(context);
         widget.isUpdate != true ? dropdownProvider.clearValues() : null;
@@ -35,7 +35,6 @@ class _StepperFormState extends State<StepperForm> {
     });
   }
 
- 
   @override
   Widget build(BuildContext context) {
     final forzadosProvider = Provider.of<ForzadosProvider>(context);
@@ -72,7 +71,7 @@ class _StepperFormState extends State<StepperForm> {
                         width: 70,
                         child: GestureDetector(
                           onTap: () => details.onStepCancel!(),
-                          child: const  Icon(Icons.arrow_back_ios),
+                          child: const Icon(Icons.arrow_back_ios),
                         ),
                       ),
                       Expanded(
@@ -88,16 +87,17 @@ class _StepperFormState extends State<StepperForm> {
                                 : details.currentStep == 1
                                     ? forzadosProvider
                                         .validateStepFormTwo(dropdownProvider)
-                                    : forzadosProvider
-                                        .validateStepFormThree(dropdownProvider)) {
+                                    : forzadosProvider.validateStepFormThree(
+                                        dropdownProvider)) {
                               if (validation) {
                                 details.onStepContinue!();
                               } else {
                                 String id = widget.isUpdate == true
                                     ? widget.idForzado.toString()
                                     : '';
-                                final res = await forzadosProvider.sendRequestPost(
-                                    context, dropdownProvider, id);
+                                final res =
+                                    await forzadosProvider.sendRequestPost(
+                                        context, dropdownProvider, id);
                                 if (!res) {
                                   CustomModal().showModal(
                                       context,
@@ -116,8 +116,11 @@ class _StepperFormState extends State<StepperForm> {
                               }
                             } else {
                               CustomModal modal = CustomModal();
-                              modal.showModal(context, 'Completa todos los campos',
-                                  Colors.redAccent, false);
+                              modal.showModal(
+                                  context,
+                                  'Completa todos los campos',
+                                  Colors.redAccent,
+                                  false);
                             }
                           },
                           child: AnimatedContainer(
@@ -150,14 +153,14 @@ class _StepperFormState extends State<StepperForm> {
                 },
                 steps: [
                   Step(
-                    stepStyle: const  StepStyle(
-                      color: Color(0xff3b82f6),
-                        ),
+                      stepStyle: const StepStyle(
+                        color: Color(0xff3b82f6),
+                      ),
                       isActive: value.currentStep == 0,
                       title: const Text(''),
                       content: SizedBox(
                         width: double.infinity,
-                        height: MediaQuery.of(context).size.height * .7,
+                        height: MediaQuery.of(context).size.height * .6,
                         child: ListView(
                           physics: const BouncingScrollPhysics(),
                           shrinkWrap: true,
@@ -208,7 +211,8 @@ class _StepperFormState extends State<StepperForm> {
                                     maxLength: 100,
                                     maxLines: 2,
                                     decoration: InputDecoration(
-                                      hintStyle: TextStyle(color: Colors.grey.shade600),
+                                      hintStyle: TextStyle(
+                                          color: Colors.grey.shade600),
                                       hintText: widget.isUpdate == true
                                           ? dropdownProvider.currentTagSubfijo
                                           : 'Ingrese el subfijo del tag',
@@ -249,9 +253,9 @@ class _StepperFormState extends State<StepperForm> {
                         ),
                       )),
                   Step(
-                     stepStyle: const  StepStyle(
-                      color: Color(0xff3b82f6),
-                        ),
+                      stepStyle: const StepStyle(
+                        color: Color(0xff3b82f6),
+                      ),
                       isActive: value.currentStep == 1,
                       title: const Text(''),
                       content: SizedBox(
@@ -336,7 +340,8 @@ class _StepperFormState extends State<StepperForm> {
                                       dropdownProvider.currentStateProbability,
                                   onChanged: (value) {
                                     if (dropdownProvider
-                                        .isEnabledRuletagMatriz && widget.isUpdate ==true) {
+                                            .isEnabledRuletagMatriz &&
+                                        widget.isUpdate == true) {
                                       print('no editable');
                                       return;
                                     }
@@ -390,8 +395,28 @@ class _StepperFormState extends State<StepperForm> {
                             Stack(
                               children: [
                                 CustomDropdownButton<modelTwo.Value>(
-                                  backgroundColor: dropdownProvider.currentRisk?.descripcion.toLowerCase() == 'bajo' ? Color(0xffBBF7D0):dropdownProvider.currentRisk?.descripcion.toLowerCase() == 'moderado' ? Color(0xffFEF08A): dropdownProvider.currentRisk?.descripcion.toLowerCase() == 'alto' ? Color(0xffEF4444): Colors.transparent ,
-                                  textColor: dropdownProvider.currentRisk?.descripcion.toLowerCase() == 'alto'? Colors.white : Colors.black,
+                                  backgroundColor: dropdownProvider
+                                              .currentRisk?.descripcion
+                                              .toLowerCase() ==
+                                          'bajo'
+                                      ? Color(0xffBBF7D0)
+                                      : dropdownProvider
+                                                  .currentRisk?.descripcion
+                                                  .toLowerCase() ==
+                                              'moderado'
+                                          ? Color(0xffFEF08A)
+                                          : dropdownProvider
+                                                      .currentRisk?.descripcion
+                                                      .toLowerCase() ==
+                                                  'alto'
+                                              ? Color(0xffEF4444)
+                                              : Colors.transparent,
+                                  textColor: dropdownProvider
+                                              .currentRisk?.descripcion
+                                              .toLowerCase() ==
+                                          'alto'
+                                      ? Colors.white
+                                      : Colors.black,
                                   hintText: 'Riesgo *:',
                                   items: dropdownProvider.riskLevels,
                                   selectedItem: dropdownProvider.currentRisk,
@@ -413,9 +438,9 @@ class _StepperFormState extends State<StepperForm> {
                         ),
                       )),
                   Step(
-                     stepStyle: const  StepStyle(
+                    stepStyle: const StepStyle(
                       color: Color(0xff3b82f6),
-                        ),
+                    ),
                     isActive: value.currentStep == 2,
                     title: const Text(''),
                     content: SizedBox(
@@ -498,7 +523,7 @@ class _StepperFormState extends State<StepperForm> {
                       child: Container(
                         width: 60,
                         // height: 60,
-                        color: Colors.red,
+                        color: Colors.blue,
                         child: Center(
                           child: TextButton(
                             onPressed: null,
@@ -558,8 +583,7 @@ class _StepperFormState extends State<StepperForm> {
             maxLength: 100,
             maxLines: 2,
             decoration: InputDecoration(
-                                                    hintStyle: TextStyle(color: Colors.grey.shade600),
-
+              hintStyle: TextStyle(color: Colors.grey.shade600),
               hintText: widget.isUpdate == true
                   ? dropdownProvider.currentValueDescription
                   : 'Agregue una descripción',
