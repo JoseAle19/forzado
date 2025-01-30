@@ -399,6 +399,28 @@ class _StepperFormOfflineState extends State<StepperFormOffline> {
                                   onChanged: (value) {
                                     dropdownProvider.currentStateRisk = value!;
                                   },
+                                   backgroundColor: dropdownProvider
+                                              .currentRisk?.descripcion
+                                              .toLowerCase() ==
+                                          'bajo'
+                                      ? Color(0xffBBF7D0)
+                                      : dropdownProvider
+                                                  .currentRisk?.descripcion
+                                                  .toLowerCase() ==
+                                              'moderado'
+                                          ? Color(0xffFEF08A)
+                                          : dropdownProvider
+                                                      .currentRisk?.descripcion
+                                                      .toLowerCase() ==
+                                                  'alto'
+                                              ? Color(0xffEF4444)
+                                              : Colors.transparent,
+                                  textColor: dropdownProvider
+                                              .currentRisk?.descripcion
+                                              .toLowerCase() ==
+                                          'alto'
+                                      ? Colors.white
+                                      : Colors.black,
                                 ),
                                 Positioned(
                                     top: 0,

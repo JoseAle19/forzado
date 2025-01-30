@@ -44,10 +44,10 @@ Future<void> getData() async {
                   color: AppColors.primary,
                 ),
               )
-            : value.messageError.isNotEmpty ?
+            : value.messageError.isNotEmpty && value.loading ==false ?
             Center(child: Text(value.messageError),)
             :
-            value.listForzados.isEmpty ? const Center(child: Text('Sin datos'),) :
+            value.listForzados.where((f)=> f.estado!.toUpperCase()=='PENDIENTE-FORZADO' && f.estado!.toUpperCase() =='PENDIENTE-RETIRO').isEmpty ? const Center(child: Text('No Tiene retiros pendientes por Aprobar'),) :
             ListView.separated(
               itemCount: value.listForzados.length,
               separatorBuilder: (BuildContext context, int index) {

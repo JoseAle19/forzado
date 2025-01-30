@@ -27,6 +27,8 @@ class ForzadosProviderApprove with ChangeNotifier {
       if (res.statusCode == 200) {
         final decodeData = modelForzadosApproveFromJson(res.body);
         _listForzados = decodeData.data;
+        _loading = false;
+        _messageError = '';
       } else {
         _messageError = 'Ocurrió un error, intenta más tarde.';
       }
@@ -34,7 +36,8 @@ class ForzadosProviderApprove with ChangeNotifier {
       _messageError = 'Ocurrió un error al procesar la solicitud.';
     } finally {
       _loading = false;
-      notifyListeners();
+      print('solicitudes ${_listForzados.where((f)=> f.estado!.toUpperCase()=='PENDIENTE-FORZADO' && f.estado!.toUpperCase() =='PENDIENTE-RETIRO' ).length}');
+       notifyListeners();
     }
   }
 
