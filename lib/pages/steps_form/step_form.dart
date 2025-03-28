@@ -16,6 +16,7 @@ class StepperForm extends StatefulWidget {
   const StepperForm({super.key, this.isUpdate, this.idForzado});
   final bool? isUpdate;
   final int? idForzado;
+
   @override
   State<StepperForm> createState() => _StepperFormState();
 }
@@ -33,6 +34,47 @@ class _StepperFormState extends State<StepperForm> {
         widget.isUpdate != true ? dropdownProvider.clearValues() : null;
       }
     });
+  }
+
+  // Helper method to check if Step 0 is fully filled
+  bool _isStep0Complete(DropDownValuesManagerProvider dropdownProvider) {
+    return dropdownProvider.currentStateProjectName != null &&
+        dropdownProvider.currentValueTagPrefijo != null &&
+        dropdownProvider.currentValueTagCentro != null &&
+        dropdownProvider.currentTagSubfijo.isNotEmpty &&
+        dropdownProvider.currentValueDescription.isNotEmpty &&
+        dropdownProvider.currentValueTagDisciplina != null &&
+        dropdownProvider.currentValueSlot != null;
+  }
+
+  // Helper method to check if Step 1 is fully filled
+  bool _isStep1Complete(DropDownValuesManagerProvider dropdownProvider) {
+    return dropdownProvider.currentValueInterlock.isNotEmpty &&
+        dropdownProvider.currentStateResponsibility != null &&
+        dropdownProvider.currentStateRisk != null &&
+        dropdownProvider.currentStateProbability != null &&
+        dropdownProvider.currentStateImpact != null &&
+        dropdownProvider.currentRisk != null;
+  }
+
+  // Helper method to check if Step 2 is fully filled
+  bool _isStep2Complete(DropDownValuesManagerProvider dropdownProvider) {
+    return dropdownProvider.currentStateApplicant != null &&
+        dropdownProvider.currentStateApprover != null &&
+        dropdownProvider.currentStateExecutor != null &&
+        dropdownProvider.currentStateTypeForzado != null;
+  }
+
+  // Check if a step can be accessed based on previous steps completion
+  bool _canAccessStep(
+      int stepIndex, DropDownValuesManagerProvider dropdownProvider) {
+    if (stepIndex == 0) return true; // Step 0 is always accessible
+    if (stepIndex == 1) return _isStep0Complete(dropdownProvider);
+    if (stepIndex == 2) {
+      return _isStep0Complete(dropdownProvider) &&
+          _isStep1Complete(dropdownProvider);
+    }
+    return false;
   }
 
   @override
@@ -61,10 +103,16 @@ class _StepperFormState extends State<StepperForm> {
               return Stepper(
                 stepIconHeight: 30,
                 stepIconWidth: 30,
-                stepIconBuilder: (stepIndex, stepState) =>
-                    _stepperIcons(stepIndex, stepState), // Iconos de los steps
+                stepIconBuilder: (stepIndex, stepState) => _stepperIcons(
+                    stepIndex, stepState, dropdownProvider, value),
                 controlsBuilder: (context, details) {
                   bool validation = details.currentStep != 2 ? true : false;
+                  bool isCurrentStepComplete = details.currentStep == 0
+                      ? _isStep0Complete(dropdownProvider)
+                      : details.currentStep == 1
+                          ? _isStep1Complete(dropdownProvider)
+                          : _isStep2Complete(dropdownProvider);
+
                   return Row(
                     children: [
                       Container(
@@ -76,64 +124,73 @@ class _StepperFormState extends State<StepperForm> {
                       ),
                       Expanded(
                         child: GestureDetector(
-                          onTap: () async {
-                            if (forzadosProvider.isFetchingPostData) {
-                              return;
-                            }
-                            // Validar Dropdown
-                            if (details.currentStep == 0
-                                ? forzadosProvider
-                                    .validateStepFormOne(dropdownProvider)
-                                : details.currentStep == 1
-                                    ? forzadosProvider
-                                        .validateStepFormTwo(dropdownProvider)
-                                    : forzadosProvider.validateStepFormThree(
-                                        dropdownProvider)) {
-                              if (validation) {
-                                details.onStepContinue!();
-                              } else {
-                                String id = widget.isUpdate == true
-                                    ? widget.idForzado.toString()
-                                    : '';
-                                final res =
-                                    await forzadosProvider.sendRequestPost(
-                                        context, dropdownProvider, id);
-                                if (!res) {
-                                  CustomModal().showModal(
-                                      context,
-                                      forzadosProvider.errorMessagePostData,
-                                      Colors.red,
-                                      false);
-                                } else {
-                                  final route = MaterialPageRoute(
-                                      builder: (_) => CongratulationAnimation(
-                                            page: const StepperForm(),
-                                          ));
-                                  Navigator.pushReplacement(context, route);
-                                  dropdownProvider.clearValues();
-                                  value.setCurrentStep(0);
+                          onTap: isCurrentStepComplete
+                              ? () async {
+                                  if (forzadosProvider.isFetchingPostData) {
+                                    return;
+                                  }
+                                  if (details.currentStep == 0
+                                      ? forzadosProvider
+                                          .validateStepFormOne(dropdownProvider)
+                                      : details.currentStep == 1
+                                          ? forzadosProvider
+                                              .validateStepFormTwo(
+                                                  dropdownProvider)
+                                          : forzadosProvider
+                                              .validateStepFormThree(
+                                                  dropdownProvider)) {
+                                    if (validation) {
+                                      details.onStepContinue!();
+                                    } else {
+                                      String id = widget.isUpdate == true
+                                          ? widget.idForzado.toString()
+                                          : '';
+                                      final res = await forzadosProvider
+                                          .sendRequestPost(
+                                              context, dropdownProvider, id);
+                                      if (!res) {
+                                        CustomModal().showModal(
+                                            context,
+                                            forzadosProvider
+                                                .errorMessagePostData,
+                                            Colors.red,
+                                            false);
+                                      } else {
+                                        final route = MaterialPageRoute(
+                                            builder: (_) =>
+                                                CongratulationAnimation(
+                                                  page: const StepperForm(),
+                                                ));
+                                        Navigator.pushReplacement(
+                                            context, route);
+                                        dropdownProvider.clearValues();
+                                        value.setCurrentStep(0);
+                                      }
+                                    }
+                                  } else {
+                                    CustomModal modal = CustomModal();
+                                    modal.showModal(
+                                        context,
+                                        'Completa todos los campos',
+                                        Colors.redAccent,
+                                        false);
+                                  }
                                 }
-                              }
-                            } else {
-                              CustomModal modal = CustomModal();
-                              modal.showModal(
-                                  context,
-                                  'Completa todos los campos',
-                                  Colors.redAccent,
-                                  false);
-                            }
-                          },
+                              : null, // Disable if step is incomplete
                           child: AnimatedContainer(
                             duration: const Duration(milliseconds: 400),
                             decoration: BoxDecoration(
                                 color: validation
-                                    ? const Color(0xff3b82f6)
+                                    ? (isCurrentStepComplete
+                                        ? const Color(0xff3b82f6)
+                                        : Colors.grey)
                                     : forzadosProvider.isFetchingPostData
                                         ? const Color.fromARGB(255, 51, 52, 57)
                                         : const Color(0xff3b82f6),
                                 borderRadius: BorderRadius.circular(20)),
                             padding: const EdgeInsets.all(10),
-                            margin: const EdgeInsets.symmetric(vertical: 20),
+                            margin: const EdgeInsets.symmetric(
+                                vertical: 10), // Reduced from 25 to 10
                             child: Center(
                                 child: Text(
                               validation
@@ -143,7 +200,10 @@ class _StepperFormState extends State<StepperForm> {
                                       : widget.isUpdate == true
                                           ? 'Actualizar forzado'
                                           : 'Realizar Solicitud',
-                              style: AppStyles.textStyle,
+                              style: AppStyles.textStyle.copyWith(
+                                  color: isCurrentStepComplete || !validation
+                                      ? Colors.white
+                                      : Colors.black),
                             )),
                           ),
                         ),
@@ -153,9 +213,7 @@ class _StepperFormState extends State<StepperForm> {
                 },
                 steps: [
                   Step(
-                      stepStyle: const StepStyle(
-                        color: Color(0xff3b82f6),
-                      ),
+                      stepStyle: const StepStyle(color: Color(0xff3b82f6)),
                       isActive: value.currentStep == 0,
                       title: const Text(''),
                       content: SizedBox(
@@ -200,9 +258,7 @@ class _StepperFormState extends State<StepperForm> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   const Text('Tag (Sufijo) *'),
-                                  const SizedBox(
-                                    height: 5,
-                                  ),
+                                  const SizedBox(height: 5),
                                   TextFormField(
                                     initialValue:
                                         dropdownProvider.currentTagSubfijo,
@@ -253,9 +309,7 @@ class _StepperFormState extends State<StepperForm> {
                         ),
                       )),
                   Step(
-                      stepStyle: const StepStyle(
-                        color: Color(0xff3b82f6),
-                      ),
+                      stepStyle: const StepStyle(color: Color(0xff3b82f6)),
                       isActive: value.currentStep == 1,
                       title: const Text(''),
                       content: SizedBox(
@@ -270,9 +324,7 @@ class _StepperFormState extends State<StepperForm> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   const Text('¿Es Interlock? *'),
-                                  const SizedBox(
-                                    height: 5,
-                                  ),
+                                  const SizedBox(height: 5),
                                   DropdownButtonFormField(
                                     value: dropdownProvider
                                             .currentValueInterlock.isEmpty
@@ -345,7 +397,6 @@ class _StepperFormState extends State<StepperForm> {
                                       print('no editable');
                                       return;
                                     }
-
                                     dropdownProvider.currentStateProbability =
                                         value!;
                                     dropdownProvider.isEnabledRuleRisk
@@ -358,12 +409,10 @@ class _StepperFormState extends State<StepperForm> {
                                     right: 0,
                                     bottom: 0,
                                     left: 0,
-                                    child:
-                                        dropdownProvider.isEnabledRuletagMatriz
-                                            ? Container(
-                                                color: Colors.transparent,
-                                              )
-                                            : SizedBox())
+                                    child: dropdownProvider
+                                            .isEnabledRuletagMatriz
+                                        ? Container(color: Colors.transparent)
+                                        : SizedBox())
                               ],
                             ),
                             Stack(
@@ -384,12 +433,10 @@ class _StepperFormState extends State<StepperForm> {
                                     right: 0,
                                     bottom: 0,
                                     left: 0,
-                                    child:
-                                        dropdownProvider.isEnabledRuletagMatriz
-                                            ? Container(
-                                                color: Colors.transparent,
-                                              )
-                                            : SizedBox())
+                                    child: dropdownProvider
+                                            .isEnabledRuletagMatriz
+                                        ? Container(color: Colors.transparent)
+                                        : SizedBox())
                               ],
                             ),
                             Stack(
@@ -429,18 +476,14 @@ class _StepperFormState extends State<StepperForm> {
                                     right: 0,
                                     bottom: 0,
                                     left: 0,
-                                    child: Container(
-                                      color: Colors.transparent,
-                                    ))
+                                    child: Container(color: Colors.transparent))
                               ],
                             ),
                           ],
                         ),
                       )),
                   Step(
-                    stepStyle: const StepStyle(
-                      color: Color(0xff3b82f6),
-                    ),
+                    stepStyle: const StepStyle(color: Color(0xff3b82f6)),
                     isActive: value.currentStep == 2,
                     title: const Text(''),
                     content: SizedBox(
@@ -496,7 +539,12 @@ class _StepperFormState extends State<StepperForm> {
                 ],
                 onStepContinue: () {
                   if (value.currentStep != 2) {
-                    value.setCurrentStep(value.currentStep + 1);
+                    bool canContinue = value.currentStep == 0
+                        ? _isStep0Complete(dropdownProvider)
+                        : _isStep1Complete(dropdownProvider);
+                    if (canContinue) {
+                      value.setCurrentStep(value.currentStep + 1);
+                    }
                   }
                 },
                 onStepCancel: () {
@@ -505,7 +553,9 @@ class _StepperFormState extends State<StepperForm> {
                   }
                 },
                 onStepTapped: (stepValue) {
-                  value.setCurrentStep(stepValue);
+                  if (_canAccessStep(stepValue, dropdownProvider)) {
+                    value.setCurrentStep(stepValue);
+                  }
                 },
                 type: StepperType.horizontal,
                 currentStep: value.currentStep,
@@ -516,13 +566,10 @@ class _StepperFormState extends State<StepperForm> {
             builder: (context, value, child) {
               return value.error.isNotEmpty
                   ? Positioned(
-                      // top: 0,
                       left: 0,
                       right: 0,
-                      // bottom: 0,
                       child: Container(
                         width: 60,
-                        // height: 60,
                         color: Colors.blue,
                         child: Center(
                           child: TextButton(
@@ -573,9 +620,7 @@ class _StepperFormState extends State<StepperForm> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const Text('Descripción *'),
-          const SizedBox(
-            height: 5,
-          ),
+          const SizedBox(height: 5),
           TextFormField(
             initialValue: dropdownProvider.currentValueDescription,
             onChanged: (value) =>
@@ -600,47 +645,41 @@ class _StepperFormState extends State<StepperForm> {
     );
   }
 
-  Widget _stepperIcons(stepIndex, stepState) {
-    return stepIndex == 0
-        ? Container(
-            width: double.infinity,
-            height: double.infinity,
-            decoration: BoxDecoration(
-                color: const Color(0xff3b82f6),
-                borderRadius: BorderRadius.circular(20)),
-            child: const Center(
-              child: Text(
-                '1',
-                style: TextStyle(color: Colors.white),
-                textAlign: TextAlign.center,
-              ),
-            ))
-        : stepIndex == 1
-            ? Container(
-                width: double.infinity,
-                height: double.infinity,
-                decoration: BoxDecoration(
-                    color: const Color(0xff3b82f6),
-                    borderRadius: BorderRadius.circular(20)),
-                child: const Center(
-                  child: Text(
-                    '2',
-                    style: TextStyle(color: Colors.white),
-                    textAlign: TextAlign.center,
-                  ),
-                ))
-            : Container(
-                width: double.infinity,
-                height: double.infinity,
-                decoration: BoxDecoration(
-                    color: const Color(0xff3b82f6),
-                    borderRadius: BorderRadius.circular(20)),
-                child: const Center(
-                  child: Text(
-                    '3',
-                    style: TextStyle(color: Colors.white),
-                    textAlign: TextAlign.center,
-                  ),
-                ));
+  Widget _stepperIcons(
+      int stepIndex,
+      StepState stepState,
+      DropDownValuesManagerProvider dropdownProvider,
+      StepperProvider stepperProvider) {
+    bool isCompleted = false;
+    bool isActive = stepperProvider.currentStep == stepIndex;
+
+    if (stepIndex == 0) {
+      isCompleted = _isStep0Complete(dropdownProvider);
+    } else if (stepIndex == 1) {
+      isCompleted = _isStep1Complete(dropdownProvider);
+    } else if (stepIndex == 2) {
+      isCompleted = _isStep2Complete(dropdownProvider);
+    }
+
+    return Container(
+      width: double.infinity,
+      height: double.infinity,
+      decoration: BoxDecoration(
+        color: (isActive || isCompleted)
+            ? const Color.fromARGB(255, 6, 43, 103)
+            : const Color.fromARGB(255, 238, 236, 236),
+        borderRadius: BorderRadius.circular(20),
+      ),
+      child: Center(
+        child: Text(
+          '${stepIndex + 1}',
+          style: TextStyle(
+            color: (isActive || isCompleted) ? Colors.white : Colors.black,
+            fontWeight: FontWeight.bold,
+          ),
+          textAlign: TextAlign.center,
+        ),
+      ),
+    );
   }
 }

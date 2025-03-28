@@ -39,9 +39,9 @@ class _DetailApproveForzadoState extends State<DetailApproveForzado> {
     }
   }
 
-  Future<int> executerAlta(String id, BuildContext  context ) async {
-    
-    final providerForzados= Provider.of<ForzadosProviderApprove>(context,listen: false);
+  Future<int> executerAlta(String id, BuildContext context) async {
+    final providerForzados =
+        Provider.of<ForzadosProviderApprove>(context, listen: false);
     ApiClient client = ApiClient();
 
     final Map<String, dynamic> body = {'id': id};
@@ -50,7 +50,7 @@ class _DetailApproveForzadoState extends State<DetailApproveForzado> {
         isFetching = true;
       });
 
-      String isStateReque = widget.isAlta ? 'alta' : 'baja';
+      String isStateReque = widget.isAlta ? 'forzado' : 'retiro';
       final res = await client.post(
           '/api/solicitudes/${isStateReque}/aprobar', jsonEncode(body));
       if (res.statusCode == 200) {
@@ -78,8 +78,9 @@ class _DetailApproveForzadoState extends State<DetailApproveForzado> {
     }
   }
 
-  Future<int> executerDecline(String id, BuildContext context ) async {
-    final providerForzados= Provider.of<ForzadosProviderApprove>(context, listen: false);
+  Future<int> executerDecline(String id, BuildContext context) async {
+    final providerForzados =
+        Provider.of<ForzadosProviderApprove>(context, listen: false);
     CustomModal modal = CustomModal();
     if (currentValue.isEmpty) {
       modal.showModal(context, 'Selecciona un motivo', Colors.red, false);
@@ -91,7 +92,7 @@ class _DetailApproveForzadoState extends State<DetailApproveForzado> {
       'id': id,
       'observaciones': currentValue.isEmpty
     };
-    String isStateReque = widget.isAlta ? 'alta' : 'baja';
+    String isStateReque = widget.isAlta ? 'forzado' : 'retiro';
 
     try {
       final res = await client.post(
@@ -99,10 +100,10 @@ class _DetailApproveForzadoState extends State<DetailApproveForzado> {
 
       print('respuesta de la peticion ${res.body}');
       if (res.statusCode == 200) {
-                providerForzados.deleteForzadoById(id);
+        providerForzados.deleteForzadoById(id);
 
-         modal.showModal(context, 'Operacion exitosa', Colors.green, true);
-       Navigator.pushReplacement(
+        modal.showModal(context, 'Operacion exitosa', Colors.green, true);
+        Navigator.pushReplacement(
           context,
           MaterialPageRoute(
               builder: (context) => CongratulationAnimation(
@@ -129,8 +130,8 @@ class _DetailApproveForzadoState extends State<DetailApproveForzado> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-         title: const  Text('Detalles de la Solicitud'),
-       ),
+        title: const Text('Detalles de la Solicitud'),
+      ),
       body: Padding(
         padding: const EdgeInsets.all(20),
         child: ListView(
@@ -265,7 +266,7 @@ class _DetailApproveForzadoState extends State<DetailApproveForzado> {
           'Responsable y Riesgo',
           style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
         ),
-         TextInfo(
+        TextInfo(
           title: 'Interlock Seguridad',
           description: widget.detailForzado.interlock.toString(),
         ),
@@ -279,11 +280,11 @@ class _DetailApproveForzadoState extends State<DetailApproveForzado> {
           description:
               widget.detailForzado.riesgoDescripcion ?? 'No especificado',
         ),
-          const TextInfo(
+        const TextInfo(
           title: 'Probabilidad',
           description: 'No especificado',
         ),
-         const TextInfo(
+        const TextInfo(
           title: 'Impacto',
           description: 'No especificado',
         ),
@@ -303,19 +304,18 @@ class _DetailApproveForzadoState extends State<DetailApproveForzado> {
           title: 'Solicitante (AN)',
           description: widget.detailForzado.solicitante ?? 'No especificado',
         ),
-         TextInfo(
+        TextInfo(
           title: 'Aprobador',
-          description: widget.detailForzado.aprobador ??'Sin valor',
+          description: widget.detailForzado.aprobador ?? 'Sin valor',
         ),
         TextInfo(
           title: 'Ejecutor',
-          description: widget.detailForzado.ejecutor ??'Sin valor',
+          description: widget.detailForzado.ejecutor ?? 'Sin valor',
         ),
-       
         TextInfo(
           title: 'Tipo de Forzado',
-          description: widget.detailForzado.tipoForzadoDescripcion ??
-              'No especificado',
+          description:
+              widget.detailForzado.tipoForzadoDescripcion ?? 'No especificado',
         ),
       ],
     );
@@ -369,9 +369,9 @@ class _DetailApproveForzadoState extends State<DetailApproveForzado> {
                                     children: [
                                       CustomDropDownButtonTwo(
                                         service: serviceTwo,
-                                        descriptionField: 'Motivos de la baja',
+                                        descriptionField: 'Motivos del Retiro',
                                         hintText:
-                                            'Selecciona un motivo de baja',
+                                            'Selecciona un motivo del retiro',
                                         endPoint: AppUrl.getMotivoRechazo,
                                         currentValue: currentValue,
                                         onChanged: (value) {
@@ -394,7 +394,8 @@ class _DetailApproveForzadoState extends State<DetailApproveForzado> {
                                           isFetch = true;
                                         });
                                         await executerDecline(
-                                            widget.detailForzado.id.toString(), context);
+                                            widget.detailForzado.id.toString(),
+                                            context);
                                         setState(() {
                                           isFetch = false;
                                         });

@@ -26,7 +26,11 @@ class ListApproveForzado extends StatelessWidget {
     return ListView.separated(
       itemBuilder: (context, index) {
         final forzado = data[index];
-        final state = forzado.estado!.toLowerCase() == 'pendiente-alta'?"PENDIENTE-FORZADO": forzado.estado!.toLowerCase() == 'pendiente-baja'? 'pENDIENTE-RETIRO':'sIN ESTADO';
+        final state = forzado.estado!.toLowerCase() == 'pendiente-forzado'
+            ? "PENDIENTE-FORZADO"
+            : forzado.estado!.toLowerCase() == 'pendiente-retiro'
+                ? 'pENDIENTE-RETIRO'
+                : 'sIN ESTADO';
         return Card(
           elevation: 4,
           margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),

@@ -11,6 +11,9 @@
         "Siguiente",
         "Stateapplicant"
     ],
-    "args": ["--web-port=35739"]
+    "args": [
+        "--web-port=35739"
+    ],
+    "java.configuration.updateBuildConfiguration": "interactive"
 
 }

@@ -170,19 +170,19 @@ class ForzadoApprove {
   // Validación de estado
   static String validateEstado(String estado) {
     switch (estado.toUpperCase()) {
-      case "PENDIENTE-ALTA":
+      case "PENDIENTE-FORZADO":
         return 'PENDIENTE-FORZADO';
-      case "PENDIENTE-BAJA":
+      case "PENDIENTE-RETIRO":
         return "PENDIENTE-RETIRO";
 
-      case "RECHAZADO-BAJA":
+      case "RECHAZADO-RETIRO":
         return "RECHAZADO-RETIRO";
-      case "RECHAZADO-ALTA":
+      case "RECHAZADO-FORZADO":
         return "RECHAZADO-FORZADO";
 
-      case "APROBADO-BAJA":
+      case "APROBADO-RETIRO":
         return "APROBADO-RETIRO";
-      case "APROBADO-ALTA":
+      case "APROBADO-FORZADO":
         return "APROBADO-FORZADO";
 
       default:

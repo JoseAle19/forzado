@@ -48,7 +48,7 @@ class _SyncDataState extends State<SyncData> {
     // AdapterThree
     await dataManager.fetchAndFillBox<AdapterThree>(
         'Responsable', AppUrl.getResponsable3);
- 
+
     await getForzados(context);
   }
 
@@ -60,7 +60,7 @@ class _SyncDataState extends State<SyncData> {
       final res = await ApiClient().get(AppUrl.getListForzados);
       if (res.statusCode >= 200 && res.statusCode < 300) {
         final decodedJson = json.decode(res.body);
-print('llenados');
+        print('llenados');
         if (decodedJson is Map<String, dynamic> &&
             decodedJson['data'] is List) {
           List<dynamic> dataList = decodedJson['data'];
@@ -104,7 +104,7 @@ print('llenados');
 
   Future<void> saveForzadoHive(List<Forzados> list) async {
     final forzadosAlta = list.where((forzado) {
-      return forzado.estado.toLowerCase() == 'ejecutado-alta';
+      return forzado.estado.toLowerCase() == 'ejecutado-forzado';
     }).toList();
     var box = await Hive.openBox<Forzados>('Forzados');
     await box.clear();
@@ -209,7 +209,7 @@ print('llenados');
               ),
               const SizedBox(height: 8.0),
               const Text(
-                "Antes de salir de casa para realizar inspecciones con la app móvil, "
+                "Antes de realizar inspecciones con el App, "
                 "asegúrate de presionar el botón de sincronizar para mantener toda la información actualizada.",
                 style: TextStyle(
                   fontSize: 14.0,

@@ -32,7 +32,7 @@ class _ApproveforzadoState extends State<ShutdownForzado> {
           icon: const Icon(Icons.arrow_back_ios),
         ),
         title: const Text(
-          'Forzados - Pendiente alta/baja',
+          'Forzados - Pendiente forzado/retiro',
           style: TextStyle(fontFamily: 'noto', fontSize: 15),
         ),
       ),
@@ -44,8 +44,8 @@ class _ApproveforzadoState extends State<ShutdownForzado> {
             (value) {
               List<ForzadoM> data = value.data
                   .where((element) =>
-                      element.estado!.toLowerCase() == 'pendiente-baja' ||
-                      element.estado!.toLowerCase() == 'pendiente-alta')
+                      element.estado!.toLowerCase() == 'pendiente-retiro' ||
+                      element.estado!.toLowerCase() == 'pendiente-forzado')
                   .toList();
               return ModelListForzados(
                 success: value.success,

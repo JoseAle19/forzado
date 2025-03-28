@@ -713,7 +713,7 @@ class DropDownValuesManagerProvider with ChangeNotifier {
     ApiClient client = ApiClient();
     try {
       print('cargando');
-      final res = await client.get('/api/solicitudes/alta/$id');
+      final res = await client.get('/api/solicitudes/forzado/$id');
       if (res.statusCode == 200) {
         final decodeData = modelForzadoByIdFromJson(res.body);
         ForzadoId f = decodeData.data![0];

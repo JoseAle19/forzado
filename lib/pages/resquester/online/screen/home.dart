@@ -39,20 +39,20 @@ class PageOnline extends StatelessWidget {
                     offset: Offset(-2.0, 0),
                   ),
                 ],
-                color: const Color(0xff639777),
+                color: const Color.fromARGB(255, 139, 40, 10),
                 borderRadius: BorderRadius.circular(10)),
             child: const Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Icon(
-                  Icons.account_balance,
+                  Icons.arrow_circle_up_rounded,
                   color: Colors.white,
                 ),
                 SizedBox(
                   height: 5,
                 ),
                 Text(
-                  'Solicitud de Forzado',
+                  'Crear Solicitud de Forzado',
                   style: TextStyle(color: Colors.white),
                 )
               ],
@@ -84,14 +84,14 @@ class PageOnline extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Icon(
-                  Icons.account_balance,
+                  Icons.format_list_bulleted_sharp,
                   color: Colors.white,
                 ),
                 SizedBox(
                   height: 5,
                 ),
                 Text(
-                  'Solicitudes',
+                  'Ver Solicitudes',
                   style: TextStyle(color: Colors.white),
                 )
               ],
@@ -117,20 +117,20 @@ class PageOnline extends StatelessWidget {
                     offset: Offset(-2.0, 0),
                   ),
                 ],
-                color: const Color(0xff8B280A),
+                color: const Color.fromARGB(255, 41, 101, 64),
                 borderRadius: BorderRadius.circular(10)),
             child: const Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Icon(
-                  Icons.account_balance,
+                  Icons.arrow_circle_down_rounded,
                   color: Colors.white,
                 ),
                 SizedBox(
                   height: 5,
                 ),
                 Text(
-                  'Solicitud Retiro forzado',
+                  'Crear Solicitud de Retiro',
                   style: TextStyle(color: Colors.white),
                 )
               ],
@@ -139,7 +139,7 @@ class PageOnline extends StatelessWidget {
         ),
 
         Container(
-          margin: const EdgeInsets.only(top: 40),
+          margin: const EdgeInsets.only(top: 20),
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 5),
           // height: 40,
           color: const Color(0xff001d39),
@@ -171,23 +171,29 @@ class PageOnline extends StatelessWidget {
             margin: const EdgeInsets.only(top: 10),
             padding: const EdgeInsets.all(20),
             width: double.infinity,
-            decoration: BoxDecoration(boxShadow: const [
-              BoxShadow(
-                color: Colors.black26,
-                spreadRadius: 2.0,
-                blurRadius: 5.0,
-                offset: Offset(-2.0, 0),
-              ),
-            ], color: Colors.blue, borderRadius: BorderRadius.circular(10)),
-            child: Column(
+            decoration: BoxDecoration(
+                boxShadow: const [
+                  BoxShadow(
+                    color: Colors.black26,
+                    spreadRadius: 2.0,
+                    blurRadius: 5.0,
+                    offset: Offset(-2.0, 0),
+                  ),
+                ],
+                color: const Color.fromARGB(255, 0, 72, 131),
+                borderRadius: BorderRadius.circular(10)),
+            child: const Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                SvgPicture.asset('assets/svgs/bank.svg'),
-                const SizedBox(
+                Icon(
+                  Icons.cloud_upload,
+                  color: Colors.white,
+                ),
+                SizedBox(
                   height: 5,
                 ),
-                const Text(
-                  'Solicitudes Pendientes a Sincronizar',
+                Text(
+                  'Solicitudes de Forzado Pendientes a Sincronizar',
                   style: TextStyle(color: Colors.white),
                 )
               ],
@@ -204,24 +210,28 @@ class PageOnline extends StatelessWidget {
             margin: const EdgeInsets.only(top: 20),
             padding: const EdgeInsets.all(20),
             width: double.infinity,
-            decoration: BoxDecoration(boxShadow: const [
-              BoxShadow(
-                color: Colors.black26,
-                spreadRadius: 2.0,
-                blurRadius: 5.0,
-                offset: Offset(-2.0, 0),
-              ),
-            ], color: Colors.orange, borderRadius: BorderRadius.circular(10)),
-            child: Column(
+            decoration: BoxDecoration(
+                boxShadow: const [
+                  BoxShadow(
+                    color: Colors.black26,
+                    spreadRadius: 2.0,
+                    blurRadius: 5.0,
+                    offset: Offset(-2.0, 0),
+                  ),
+                ],
+                color: const Color.fromARGB(255, 203, 97, 5),
+                borderRadius: BorderRadius.circular(10)),
+            child: const Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                SvgPicture.asset(
-                  'assets/svgs/bank.svg',
+                Icon(
+                  Icons.cloud_upload,
+                  color: Colors.white,
                 ),
-                const SizedBox(
+                SizedBox(
                   height: 5,
                 ),
-                const Text(
+                Text(
                   'Solicitudes de Retiro Pendientes a Sincronizar',
                   style: TextStyle(color: Colors.white),
                 )

@@ -68,31 +68,31 @@ class ForzadosProvider with ChangeNotifier {
       ModelListForzados decodeData = ModelListForzadosFromJson(res.body);
       if (res.statusCode == 200) {
         _pendingHighCount = decodeData.data
-            .where((f) => f.estado!.toLowerCase() == 'pendiente-alta')
+            .where((f) => f.estado!.toLowerCase() == 'pendiente-forzado')
             .length;
         _pendingLowCount = decodeData.data
-            .where((f) => f.estado!.toLowerCase() == 'pendiente-baja')
+            .where((f) => f.estado!.toLowerCase() == 'pendiente-retiro')
             .length;
         _approvedHighCount = decodeData.data
-            .where((f) => f.estado!.toLowerCase() == 'aprobado-alta')
+            .where((f) => f.estado!.toLowerCase() == 'aprobado-forzado')
             .length;
         _approvedLowCount = decodeData.data
-            .where((f) => f.estado!.toLowerCase() == 'aprobado-baja')
+            .where((f) => f.estado!.toLowerCase() == 'aprobado-retiro')
             .length;
         _executedHighCount = decodeData.data
-            .where((f) => f.estado!.toLowerCase() == 'ejecutado-alta')
+            .where((f) => f.estado!.toLowerCase() == 'ejecutado-forzado')
             .length;
         _executedLowCount = decodeData.data
-            .where((f) => f.estado!.toLowerCase() == 'ejecutado-baja')
+            .where((f) => f.estado!.toLowerCase() == 'ejecutado-retiro')
             .length;
         _finalizedCount = decodeData.data
             .where((f) => f.estado!.toLowerCase() == 'finalizado')
             .length;
         _rejectedHighCount = decodeData.data
-            .where((f) => f.estado!.toLowerCase() == 'rechazado-alta')
+            .where((f) => f.estado!.toLowerCase() == 'rechazado-forzado')
             .length;
         _rejectedLowCount = decodeData.data
-            .where((f) => f.estado!.toLowerCase() == 'rechazado-baja')
+            .where((f) => f.estado!.toLowerCase() == 'rechazado-retiro')
             .length;
       } else {
         _errorMessage = decodeData.message.toString();
@@ -132,11 +132,11 @@ class ForzadosProvider with ChangeNotifier {
         ForzadosModel decodeData = forzadosModelFromJson(res.body);
         _forzados = decodeData.data!.map((f) {
           String state = f.estado!.toLowerCase();
-          if (state.contains("baja")) {
-            state = state.replaceAll("baja", "retiro");
+          if (state.contains("retiro")) {
+            state = state.replaceAll("retiro", "retiro");
             print(state);
-          } else if (state.contains("alta")) {
-            state = state.replaceAll("alta", "forzado");
+          } else if (state.contains("forzado")) {
+            state = state.replaceAll("forzado", "forzado");
           }
 
           return ForzadoItem(

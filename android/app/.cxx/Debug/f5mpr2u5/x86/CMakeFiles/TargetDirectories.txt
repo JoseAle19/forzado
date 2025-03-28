@@ -1,0 +1,2 @@
+D:/GoldFields/mobile/forzado/android/app/.cxx/Debug/f5mpr2u5/x86/CMakeFiles/edit_cache.dir
+D:/GoldFields/mobile/forzado/android/app/.cxx/Debug/f5mpr2u5/x86/CMakeFiles/rebuild_cache.dir

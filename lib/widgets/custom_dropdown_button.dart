@@ -18,7 +18,7 @@ class CustomDropdownButton<T extends DropDownItem> extends StatelessWidget {
     this.selectedItem,
     required this.onChanged,
     this.textColor = Colors.black,
-    this.backgroundColor = Colors.transparent,
+    this.backgroundColor = Colors.transparent, MaterialColor? borderColor,
   });
 
   @override

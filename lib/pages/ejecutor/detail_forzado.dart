@@ -357,8 +357,8 @@ class _DetailForzadoScreenState extends State<DetailForzadoScreen> {
     try {
       // Construir la URL basada en el tipo de operación
       final uri = Uri.parse(isAlta
-          ? '${AppUrl.url}${AppUrl.postEjecutarAlta}'
-          : '${AppUrl.url}${AppUrl.postEjecutarBaja}');
+          ? '${AppUrl.url}${AppUrl.postEjecutarforzado}'
+          : '${AppUrl.url}${AppUrl.postEjecutaretiro}');
 
       // Crear una solicitud POST con MultipartRequest para FormData
       final request = http.MultipartRequest('POST', uri)..fields.addAll(body);

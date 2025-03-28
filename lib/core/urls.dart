@@ -23,18 +23,18 @@ class AppUrl {
   static const String getEjecutor = "/api/usuarios";
   static const String getAprobadores = "/api/usuarios/aprobadores";
 
-// Endpoitn de alta de forzado
-  static const String postAddForzado = "/api/solicitudes/alta";
-  static const String postForcedForzado = "/api/solicitudes/baja";
-  static const String getListForzados = "/api/solicitudes/alta";
+// Endpoitn de forzado de forzado
+  static const String postAddForzado = "/api/solicitudes/forzado";
+  static const String postForcedForzado = "/api/solicitudes/retiro";
+  static const String getListForzados = "/api/solicitudes/forzado";
 
-  static const String postEjecutarAlta = "/api/solicitudes/alta/ejecutar";
-  static const String postEjecutarBaja = "/api/solicitudes/baja/ejecutar";
+  static const String postEjecutarforzado = "/api/solicitudes/forzado/ejecutar";
+  static const String postEjecutaretiro = "/api/solicitudes/retiro/ejecutar";
 
   static const String getMotivoRechazo = "/api/maestras/motivo-rechazo";
 
-  static const String getAltaRechazar = "/api/solicitudes/alta/rechazar";
-  static const String getBajaAprobar = "/api/solicitudes/baja/aprobar";
+  static const String getforzadoRechazar = "/api/solicitudes/forzado/rechazar";
+  static const String getretiroAprobar = "/api/solicitudes/retiro/aprobar";
 
   static const String getForzadoByState = "/api/solicitudes/estado";
 
