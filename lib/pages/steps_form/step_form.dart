@@ -223,7 +223,7 @@ class _StepperFormState extends State<StepperForm> {
                           physics: const BouncingScrollPhysics(),
                           shrinkWrap: true,
                           children: [
-                            CustomDropdownButton<modelTwo.Value>(
+                            /*  CustomDropdownButton<modelTwo.Value>(
                               hintText: 'Área de Forzado *:',
                               items: dropdownProvider.listProjects,
                               selectedItem:
@@ -232,7 +232,7 @@ class _StepperFormState extends State<StepperForm> {
                                 dropdownProvider.currentStateProjectName =
                                     value!;
                               },
-                            ),
+                            ), */
                             CustomDropdownButton<modelone.Value>(
                               hintText: 'Sub Área (Tag Prefijo) *:',
                               items: dropdownProvider.listPrefijos,
@@ -285,6 +285,16 @@ class _StepperFormState extends State<StepperForm> {
                                   )
                                 ],
                               ),
+                            ),
+                            CustomDropdownButton<modelTwo.Value>(
+                              hintText: 'Circuito *:',
+                              items: dropdownProvider.listDiciplinas,
+                              selectedItem:
+                                  dropdownProvider.currentValueTagDisciplina,
+                              onChanged: (value) {
+                                dropdownProvider.currentValueTagDisciplina =
+                                    value!;
+                              },
                             ),
                             _inputDescription(dropdownProvider),
                             CustomDropdownButton<modelTwo.Value>(

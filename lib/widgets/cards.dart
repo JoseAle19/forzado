@@ -53,7 +53,7 @@ class CardsDashBoard extends StatelessWidget {
               children: [
                 Expanded(
                   child: DashboardCard(
-                    title: "Pendiente Forzado",
+                    title: "Forzado Pendiente",
                     count: value.pendingHighCount,
                     color: AppColors.earringColor,
                   ),
@@ -61,7 +61,7 @@ class CardsDashBoard extends StatelessWidget {
                 SizedBox(width: 16),
                 Expanded(
                   child: DashboardCard(
-                    title: "Pendiente Retiro",
+                    title: "Retiro Pendiente",
                     count: value.pendingLowCount,
                     color: AppColors.earringColor,
                   ),
@@ -73,7 +73,7 @@ class CardsDashBoard extends StatelessWidget {
               children: [
                 Expanded(
                   child: DashboardCard(
-                    title: "Aprobado Forzado",
+                    title: "Forzado Aprobado",
                     count: value.approvedHighCount,
                     color: AppColors.approvedColor,
                   ),
@@ -81,7 +81,7 @@ class CardsDashBoard extends StatelessWidget {
                 SizedBox(width: 16),
                 Expanded(
                   child: DashboardCard(
-                    title: "Aprobado Retiro",
+                    title: "Retiro Aprobado",
                     count: value.approvedLowCount,
                     color: AppColors.approvedColor,
                   ),
@@ -93,7 +93,7 @@ class CardsDashBoard extends StatelessWidget {
               children: [
                 Expanded(
                   child: DashboardCard(
-                    title: "Ejecutado Forzado",
+                    title: "Forzado Ejecutado",
                     count: value.executedHighCount,
                     color: AppColors.executedColor,
                   ),
@@ -101,7 +101,7 @@ class CardsDashBoard extends StatelessWidget {
                 SizedBox(width: 16),
                 Expanded(
                   child: DashboardCard(
-                    title: "Ejecutado Retiro",
+                    title: "Retiro Ejecutado",
                     count: value.executedHighCount,
                     color: AppColors.executedColor,
                   ),
@@ -113,7 +113,7 @@ class CardsDashBoard extends StatelessWidget {
               children: [
                 Expanded(
                   child: DashboardCard(
-                    title: "Rechazado Forzado",
+                    title: "Forzado Rechazado",
                     count: value.rejectedHighCount,
                     color: AppColors.refusedColor,
                   ),
@@ -121,20 +121,21 @@ class CardsDashBoard extends StatelessWidget {
                 SizedBox(width: 16),
                 Expanded(
                   child: DashboardCard(
-                    title: "Rechazado Retiro",
+                    title: "Retiro Rechazado",
                     count: value.rejectedLowCount,
                     color: AppColors.refusedColor,
                   ),
                 ),
               ],
             ),
+            SizedBox(height: 16),
             Row(
               children: [
                 Expanded(
                   child: DashboardCard(
                     title: "Finalizado",
                     count: value.finalizedCount,
-                    color: AppColors.finalizedColor,
+                    color: const Color.fromARGB(255, 73, 104, 215),
                   ),
                 ),
               ],
