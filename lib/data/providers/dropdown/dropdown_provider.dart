@@ -5,8 +5,10 @@ import 'package:flutter/material.dart';
 import 'package:forzado/adapters/adapter_tags.dart';
 import 'package:forzado/core/urls.dart';
 import 'package:forzado/core/utils/preferences_helper.dart';
+import 'package:forzado/data/providers/maestras.dart';
 import 'package:forzado/models/Boxes.dart';
 import 'package:forzado/models/forzado/model_forzado_id.dart';
+import 'package:forzado/models/mestras/puestos_model.dart' as modelp;
 import 'package:forzado/models/model_flag.dart';
 import 'package:forzado/models/model_one.dart' as modelone;
 import 'package:forzado/models/model_tags_matriz.dart';
@@ -19,6 +21,42 @@ import 'package:forzado/widgets/modal_error.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
 class DropDownValuesManagerProvider with ChangeNotifier {
+MastersProvider? _mastersProvider;
+  bool _disposed = false;
+
+  DropDownValuesManagerProvider(this._mastersProvider);
+
+  void initialize() {
+    // Inicialización segura
+    _mastersProvider?.addListener(_onMasterProviderUpdated);
+  }
+
+  void updateMastersProvider(MastersProvider newProvider) {
+    if (_disposed) return;
+    
+    _mastersProvider?.removeListener(_onMasterProviderUpdated);
+    _mastersProvider = newProvider;
+    _mastersProvider?.addListener(_onMasterProviderUpdated);
+    notifyListeners();
+  }
+
+  void _onMasterProviderUpdated() {
+    if (!_disposed) {
+      notifyListeners();
+    }
+  }
+
+  @override
+  void dispose() {
+    _mastersProvider?.removeListener(_onMasterProviderUpdated);
+    _disposed = true;
+    super.dispose();
+  }
+
+
+ 
+
+
   bool _isEnabledRuleRisk = false;
   bool get isEnabledRuleRisk => _isEnabledRuleRisk;
   List<Value> _users = [];
@@ -45,6 +83,7 @@ class DropDownValuesManagerProvider with ChangeNotifier {
 
 // Getters y Setters para ModelTwo
   List<modeltwo.Value> _listDiciplinas = [];
+  List<modeltwo.Value> _listCircuitos = [];
   List<modeltwo.Value> _listTurnos = [];
   List<modeltwo.Value> _listProbabilidades = [];
   List<modeltwo.Value> _listImpactos = [];
@@ -60,6 +99,11 @@ class DropDownValuesManagerProvider with ChangeNotifier {
   List<modeltwo.Value> get listDiciplinas => _listDiciplinas;
   set listDiciplinas(List<modeltwo.Value> value) {
     _listDiciplinas = value;
+  }
+
+  List<modeltwo.Value> get listCircuitos => _listCircuitos;
+  set listCircuitos(List<modeltwo.Value> value) {
+    _listCircuitos = value;
   }
 
   List<modeltwo.Value> get listTurnos => _listTurnos;
@@ -92,6 +136,8 @@ class DropDownValuesManagerProvider with ChangeNotifier {
   List<modelthird.Value> _listResponsables = [];
   List<modelthird.Value> _listAprobadores = [];
   List<modelthird.Value> _listEjecutores = [];
+  List<modeltwo.Value> _listGrupos = [];
+  List<modelp.Value> _listPuestos = [];
 
   List<modelthird.Value> get listSolicitantes => _listSolicitantes;
   set listSolicitantes(List<modelthird.Value> value) {
@@ -113,16 +159,28 @@ class DropDownValuesManagerProvider with ChangeNotifier {
     _listEjecutores = value;
   }
 
+  List<modeltwo.Value> get listGrupos => _listGrupos;
+  set listGrupos(List<modeltwo.Value> value) {
+    _listGrupos = value;
+  }
+
+  List<modelp.Value> get listPuestos => _listPuestos;
+  set listPuestos(List<modelp.Value> value) {
+    _listPuestos = value;
+  }
+
   modelone.Value? _currentValueTagPrefijo;
   modelone.Value? _currentValueTagCentro;
 
   modeltwo.Value? _currentValueTagDisciplina;
+  modeltwo.Value? _currentValueCircuitos;
   modeltwo.Value? _currentValueSlot;
   modeltwo.Value? _currentStateProbability;
   modeltwo.Value? _currentStateImpact;
   modeltwo.Value? _currentStateRisk;
   modeltwo.Value? _currentStateTypeForzado;
   modeltwo.Value? _currentStateProjectName;
+  modeltwo.Value? _currentStategrupo;
 
   modelthird.Value? _currentStateApplicant;
   modelthird.Value? _currentStateResponsibility;
@@ -180,6 +238,12 @@ class DropDownValuesManagerProvider with ChangeNotifier {
   modeltwo.Value? get currentValueTagDisciplina => _currentValueTagDisciplina;
   set currentValueTagDisciplina(modeltwo.Value? value) {
     _currentValueTagDisciplina = value;
+    notifyListeners();
+  }
+
+  modeltwo.Value? get currentValueCircuitos => _currentValueCircuitos;
+  set currentValueCircuitos(modeltwo.Value? value) {
+    _currentValueCircuitos = value;
     notifyListeners();
   }
 
@@ -251,6 +315,12 @@ class DropDownValuesManagerProvider with ChangeNotifier {
     notifyListeners();
   }
 
+  modeltwo.Value? get currentStateGrupo => _currentStategrupo;
+  set currentStateGrupo(modeltwo.Value? value) {
+    _currentStategrupo = value;
+    notifyListeners();
+  }
+
 // Limpiar los valores de los dropdown
   void clearValues() {
     _currentValueTagPrefijo = null;
@@ -272,6 +342,7 @@ class DropDownValuesManagerProvider with ChangeNotifier {
     _currentRisk = null;
     _isEnabledRuletagMatriz = false;
     _currentValueSubfijo = '';
+    _currentStategrupo = null;
     notifyListeners();
   }
 
@@ -306,6 +377,9 @@ class DropDownValuesManagerProvider with ChangeNotifier {
         client.get(AppUrl.getAprobadores),
         client.get(AppUrl.getEjecutor),
         client.get(AppUrl.getProjects2),
+        client.get(AppUrl.getCircuitos2),
+        client.get(AppUrl.getGrupos),
+        client.get(AppUrl.getPuestos),
       ]).timeout(const Duration(seconds: 60));
 
       for (final response in responses) {
@@ -328,8 +402,14 @@ class DropDownValuesManagerProvider with ChangeNotifier {
       final resImpactos = modeltwo.modelTwoFromJson(responses[7].body);
       final resTipoForzados = modeltwo.modelTwoFromJson(responses[8].body);
       final resProjects = modeltwo.modelTwoFromJson(responses[12].body);
+      final resCircuitos = modeltwo.modelTwoFromJson(responses[13].body);
+      final resGrupos = modeltwo.modelTwoFromJson(responses[14].body);
+      final resPuestos = modelp.puestoModelFromJson(responses[15].body);
       listDiciplinas = resDiciplinas.values;
+      listCircuitos = resCircuitos.values;
+      listGrupos = resGrupos.values;
       listTurnos = resTurnos.values;
+      listPuestos = resPuestos.values!;
       listRiesgos = resRiesgos.values;
       listProbabilidades = resProbabilidades.values;
       listImpactos = resImpactos.values;
@@ -400,7 +480,7 @@ class DropDownValuesManagerProvider with ChangeNotifier {
     },
   };
 
-// validar que la variable que esta en la base e deatos es true o false
+// validar que la variable que esta en la base de datos es true o false
   Future<void> verifyRuleRisk() async {
     ApiClient client = ApiClient();
 
@@ -451,8 +531,6 @@ class DropDownValuesManagerProvider with ChangeNotifier {
 
   List<Tags> _listTagsMatriz = [];
   List<Tags> get listTagsMatriz => _listTagsMatriz;
-  // String  _errorGetListTagsmatriz = '';
-  // String get  errorGetListTagsmatriz =>_errorGetListTagsmatriz;
 
   Future<void> getTagsMatrizRiesgo(BuildContext context) async {
     ApiClient client = ApiClient();
@@ -463,10 +541,8 @@ class DropDownValuesManagerProvider with ChangeNotifier {
         _listTagsMatriz = decodeData.values;
         final boxTags = Hive.box<AdapterTags>(HiveBoxes.tags);
         await boxTags.clear();
-        print('limpio');
         await boxTags.addAll(
             listTagsMatriz.map((t) => AdapterTags.fromJson(t.toJson())));
-        print('lleno');
         notifyListeners();
       } else {
         CustomModal().showModal(
@@ -479,7 +555,7 @@ class DropDownValuesManagerProvider with ChangeNotifier {
     }
   }
 
-// Variable para saber si cumple con un acondicion
+// Variable para saber si cumple con una condicion
   bool _isEnabledRuletagMatriz = false;
   bool get isEnabledRuletagMatriz => _isEnabledRuletagMatriz;
 
@@ -526,7 +602,7 @@ class DropDownValuesManagerProvider with ChangeNotifier {
   }
 
   void validateInterlok() async {
-    if (currentValueInterlock == 'si') {
+    if (_currentValueInterlock == 'si') {
       addAprobadoresByPuesto();
 
       return;
@@ -535,15 +611,13 @@ class DropDownValuesManagerProvider with ChangeNotifier {
         (_currentValueInterlock == 'NO' &&
             _currentStateRisk?.descripcion.toLowerCase() == 'personas')) {
       addAprobadoresByPuesto();
-      print('by puesto');
     } else {
       addArobbadoresByRole();
-      print('by role');
     }
 
     if (isEnabledRuleRisk &&
         _currentRisk?.descripcion.toLowerCase() == 'bajo' &&
-        currentValueInterlock == 'NO' &&
+        _currentValueInterlock == 'NO' &&
         !_listAprobadores
             .any((element) => element.id == currentStateApplicant?.id) &&
         currentStateApplicant != null &&
@@ -555,16 +629,11 @@ class DropDownValuesManagerProvider with ChangeNotifier {
                 '${currentStateApplicant!.nombre} ${currentStateApplicant!.apePaterno ?? ''}',
             apePaterno: ''),
       );
-      print('Agrega al aplicante');
     } else {
-      print('No se aplica la regla del riesgo bajo');
       if (currentStateApplicant != null &&
           listAprobadores.any((a) => a.id == currentStateApplicant!.id)) {
         listAprobadores.remove(currentStateApplicant);
-        print('remueve el solicitante si el riesgo es diferente a bajo');
-      } else {
-        print('a nadie que eliminar');
-      }
+      } else {}
     }
 
     notifyListeners();
@@ -572,7 +641,17 @@ class DropDownValuesManagerProvider with ChangeNotifier {
 
   void addAprobadoresByPuesto() {
     _listAprobadores.clear();
-    for (var user in _users) {
+      final mapaPuestos = {
+      for (var puesto in listPuestos) puesto.descripcion: puesto
+    };
+    final aprobadores = _users.where((usuario) {
+      final puesto = mapaPuestos[usuario.puestoDescripcion];
+      return puesto?.turnos?.contains(this._mastersProvider!.currentShift!.id) ?? false;
+    }).toList();
+    
+    for (var user in aprobadores) {
+      print('Usuario');
+      print(user.puestoDescripcion);
       if (user.puestoDescripcion?.toLowerCase() == "gerente planta proceso") {
         _listAprobadores.add(
           modelthird.Value(
@@ -615,7 +694,14 @@ class DropDownValuesManagerProvider with ChangeNotifier {
 
   void addArobbadoresByRole() {
     _listAprobadores.clear();
-    for (var user in _users) {
+     final mapaPuestos = {
+      for (var puesto in listPuestos) puesto.descripcion: puesto
+    };
+    final aprobadores = _users.where((usuario) {
+      final puesto = mapaPuestos[usuario.puestoDescripcion];
+      return puesto?.turnos?.contains(this._mastersProvider!.currentShift!.id) ?? false;
+    }).toList();
+    for (var user in aprobadores) {
       if (user.roles != null && user.roles!.containsKey('2')) {
         _listAprobadores.add(
           modelthird.Value(
@@ -677,6 +763,7 @@ class DropDownValuesManagerProvider with ChangeNotifier {
               ));
             }
             if (user.roles!.containsKey('2')) {
+ 
               listAprobadores.add(modelthird.Value(
                 id: user.id!,
                 nombre: '${user.nombre!} ${user.apePaterno} ${user.apeMaterno}',
@@ -776,7 +863,6 @@ class DropDownValuesManagerProvider with ChangeNotifier {
           orElse: () => modelthird.Value(id: 0, nombre: 'No encontrado'),
         );
 
-        print('id for ${f.aprobador}');
         for (var i = 0; i < listAprobadores.length; i++) {
           if (listAprobadores[i].id == f.aprobador) {
             final apro = listAprobadores[i];
@@ -812,4 +898,5 @@ class DropDownValuesManagerProvider with ChangeNotifier {
       print('Ocurrió un error: $e');
     }
   }
+ 
 }

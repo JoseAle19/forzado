@@ -15,6 +15,7 @@ import 'package:forzado/data/providers/bottom/bottom_navigationbar_provider.dart
 import 'package:forzado/data/providers/dropdown/dropdown_provider.dart';
 import 'package:forzado/data/providers/dropdown/dropdown_provider_off.dart';
 import 'package:forzado/data/providers/forzados/forzados_provider.dart';
+import 'package:forzado/data/providers/maestras.dart';
 import 'package:forzado/data/providers/offline/list_forzados_ejecutados_provider.dart';
 import 'package:forzado/data/providers/requester_provider.dart';
 import 'package:forzado/data/providers/splash_provider.dart';
@@ -83,14 +84,28 @@ class MyApp extends StatelessWidget {
             create: (_) => ForzadosProvider()
               ..fetchCountForzados()
               ..getForzados()),
-        ChangeNotifierProvider(create: (_) => DropDownValuesManagerProvider()),
         ChangeNotifierProvider(create: (_) => BottomNavigationBarProvider()),
-        ChangeNotifierProvider(create: (_) => DropDownValuesManagerProvider()),
-        ChangeNotifierProvider(create: (_) => DropdownProviderManagerOffline()),
+         ChangeNotifierProvider(create: (_) => DropdownProviderManagerOffline()),
         ChangeNotifierProvider(create: (_) => StepperProvider()),
         ChangeNotifierProvider(create: (_) => UserProvider()),
         ChangeNotifierProvider(create: (_) => ForzadosProviderAjecutor()),
         ChangeNotifierProvider(create: (_) => ForzadosProviderApprove()),
+        ChangeNotifierProvider(create: (_) => MastersProvider()),
+         ChangeNotifierProxyProvider<MastersProvider, DropDownValuesManagerProvider>(
+      create: (context) {
+        // Obtenemos el provider solo si está disponible
+        final mastersProvider = Provider.of<MastersProvider>(context, listen: false);
+        return DropDownValuesManagerProvider(mastersProvider)
+          ..initialize(); // Método de inicialización si es necesario
+      },
+      update: (context, mastersProvider, dropDownManager) {
+        if (dropDownManager == null) {
+          return DropDownValuesManagerProvider(mastersProvider)
+            ..initialize();
+        }
+        return dropDownManager..updateMastersProvider(mastersProvider);
+      },
+    ),
       ],
       child: const MaterialApp(
           debugShowCheckedModeBanner: false,

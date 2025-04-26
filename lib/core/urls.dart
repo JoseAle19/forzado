@@ -10,6 +10,7 @@ class AppUrl {
   static const String getTagCentro1 = "/api/maestras/activo";
 
   static const String getTagDisciplina2 = "/api/maestras/disciplina";
+  static const String getCircuitos2 = "/api/maestras/circuito";
   static const String getTurno2 = "/api/maestras/turno";
   static const String getRechazo2 = "/api/maestras/motivo-rechazo";
   static const String getProbabilidad2 = "/api/maestras/probabilidad";
@@ -44,4 +45,13 @@ class AppUrl {
 
   static const String isEnabledRuleRisk = "/api/parametros-globales";
   static const String tagsMatrizRiesgo = "/api/maestras/tags-matriz-riesgo";
+
+  
+  
+  
+  static const String getGrupos = "/api/maestras/grupo";
+  //Para los turnos
+  static const String getturnos = "/api/maestras/turno";
+  static const String getPuestos = "/api/puesto-turno";
+  
 }

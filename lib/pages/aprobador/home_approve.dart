@@ -34,7 +34,7 @@ class HomeApprove extends StatelessWidget {
                     MaterialPageRoute(builder: (_) => const LoginPage());
                 Navigator.pushAndRemoveUntil(context, route, (route) => false);
               },
-              icon: Icon(Icons.login_rounded))
+              icon: const  Icon(Icons.login_rounded))
         ],
       ),
       body: Padding(

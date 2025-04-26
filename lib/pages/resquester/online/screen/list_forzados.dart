@@ -1,3 +1,5 @@
+// ignore_for_file: unused_element
+
 import 'package:flutter/material.dart';
 import 'package:forzado/core/configs/theme/app_colors.dart';
 import 'package:forzado/data/providers/forzados/forzados_provider.dart';
@@ -17,7 +19,7 @@ class _ListForzadosRequesterLowState extends State<ListForzadosRequesterLow> {
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance!.addPostFrameCallback((_) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
       Provider.of<ForzadosProvider>(context, listen: false).getForzados();
     });
   }

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:forzado/data/providers/auth/auth_provider.dart';
 import 'package:forzado/pages/resquester/offline/datatable%20_forzados.dart';
 import 'package:forzado/pages/resquester/offline/screens/bajas_forzado_offline.dart';
@@ -24,7 +23,7 @@ class PageOnline extends StatelessWidget {
         GestureDetector(
           onTap: () {
             final route =
-                MaterialPageRoute(builder: (_) => const StepperForm());
+                MaterialPageRoute(builder: (_) =>   StepperForm());
             Navigator.push(context, route);
           },
           child: Container(

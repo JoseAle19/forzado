@@ -24,8 +24,8 @@ class _HomeState extends State<Home> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      Provider.of<DropDownValuesManagerProvider>(context, listen: false)
-        ..getData();
+      // Provider.of<DropDownValuesManagerProvider>(context, listen: false)
+        // ..getData();
     });
   }
 

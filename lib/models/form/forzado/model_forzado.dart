@@ -6,7 +6,6 @@ class InsertQueryParameters {
   String tagSubfijo;
   String descripcion;
   String disciplina;
-  String turno;
   String interlockSeguridad;
   String responsable;
   String riesgoA;
@@ -19,6 +18,11 @@ class InsertQueryParameters {
   String autorizacion;
   String tipoForzado;
   String projectName;
+  String circuito;
+  String turno;
+  String grupoA;
+  String fechaFinPlanificada;
+
 
   // Constructor
   InsertQueryParameters({
@@ -42,6 +46,9 @@ class InsertQueryParameters {
     required this.autorizacion,
     required this.tipoForzado,
     required this.projectName,
+    required this.circuito,
+    required this.grupoA,
+    required this.fechaFinPlanificada,
   });
 
   // Método para convertir un objeto a un mapa, útil para enviar en la solicitud POST
@@ -51,7 +58,7 @@ class InsertQueryParameters {
       'usuario': usuario,
       'tagPrefijo': tagPrefijo,
       'tagCentro': tagCentro,
-      'tagSubfijo': tagSubfijo,
+      'tagSufijo': tagSubfijo,
       'descripcion': descripcion,
       'disciplina': disciplina,
       'turno': turno,
@@ -67,6 +74,9 @@ class InsertQueryParameters {
       'autorizacion': autorizacion,
       'tipoForzado': tipoForzado,
       'proyecto': projectName,
+      'circuito': circuito,
+      'grupoA': grupoA,
+      'fechaFinPlanificada': fechaFinPlanificada,
     };
   }
 
@@ -77,7 +87,7 @@ class InsertQueryParameters {
       usuario: map['usuario'] ?? '',
       tagPrefijo: map['tagPrefijo'] ?? '',
       tagCentro: map['tagCentro'] ?? '',
-      tagSubfijo: map['tagSubfijo'] ?? '',
+      tagSubfijo: map['tagSufijo'] ?? '',
       descripcion: map['descripcion'] ?? '',
       disciplina: map['disciplina'] ?? '',
       turno: map['turno'] ?? '',
@@ -93,6 +103,9 @@ class InsertQueryParameters {
       autorizacion: map['autorizacion'] ?? '',
       tipoForzado: map['tipoForzado'] ?? '',
       projectName: map['proyectoId'] ?? '',
+      circuito: map['circuito'] ?? '',
+      grupoA: map['grupoA'] ?? '',
+      fechaFinPlanificada: map['fechaFinPlanificada'] ?? '',
     );
   }
 
@@ -100,7 +113,7 @@ class InsertQueryParameters {
     return {
       'tagPrefijo': tagPrefijo,
       'tagCentro': tagCentro,
-      'tagSubfijo': tagSubfijo,
+      'tagSufijo': tagSubfijo,
       'descripcion': descripcion,
       'disciplina': disciplina,
       'turno': turno,
@@ -115,6 +128,10 @@ class InsertQueryParameters {
       'ejecutor': ejecutor,
       'autorizacion': autorizacion,
       'tipoForzado': tipoForzado,
+      'circuito': circuito,
+      'grupoA': grupoA,
+      'fechaFinPlanificada': fechaFinPlanificada,
+
     };
   }
 }

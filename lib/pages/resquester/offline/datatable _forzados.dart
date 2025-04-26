@@ -11,6 +11,7 @@ import 'package:forzado/models/form/forzado/model_forzado.dart';
 import 'package:forzado/services/api_client.dart';
 import 'package:forzado/widgets/modal_error.dart';
 import 'package:hive/hive.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 class ForzadosDataTable extends StatefulWidget {
@@ -166,6 +167,10 @@ class _ForzadosDataTableState extends State<ForzadosDataTable> {
           autorizacion: 'Default value',
           tipoForzado: forzado.tipoForzadoValue!.id.toString(),
           projectName: forzado.projectValue!.id.toString(),
+          circuito: '',
+          grupoA: '',
+          fechaFinPlanificada:
+              DateFormat('dd/MM/yyyy, HH:mm:ss').format(DateTime.now()),
         );
 
         try {
@@ -259,7 +264,10 @@ class _ForzadosDataTableState extends State<ForzadosDataTable> {
             icon: const Icon(Icons.sync),
           )
         ],
-        title: const Text('Solicitudes Pendientes de Sincronizar', style: TextStyle(fontSize: 18),),
+        title: const Text(
+          'Solicitudes Pendientes de Sincronizar',
+          style: TextStyle(fontSize: 18),
+        ),
       ),
       body: Stack(
         children: [
