@@ -2,8 +2,6 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
-import 'package:forzado/core/urls.dart';
 import 'package:forzado/core/utils/preferences_helper.dart';
 import 'package:forzado/data/providers/auth/password_provider.dart';
 import 'package:forzado/models/jwt_model.dart';
@@ -43,8 +41,7 @@ class AuthProvider with ChangeNotifier {
   Future<ApiResponse> login(BuildContext context) async {
     isLoading = true;
     notifyListeners();
-    ApiClient client = ApiClient();
-    final username = usernameController.text.trim();
+     final username = usernameController.text.trim();
     final password = passwordController.text.trim();
     CustomModal modal = CustomModal();
 
@@ -63,12 +60,11 @@ class AuthProvider with ChangeNotifier {
             body: body,
           )
           .timeout(const Duration(seconds: 30)); // Timeout de 10 segundos
-      // final res = await client.post(AppUrl.login, body);
-      // print('respuesta del login ${res}');
       isLoading = false;
-      // print('try');
       notifyListeners();
       if (response.statusCode == 200) {
+        print('Datos del auth');
+        print(response.body);
         resetData();
         final decodedToken = JwtDecoder.decode(response.body);
         final jwtModel = JwtModel.fromJson(decodedToken);
@@ -124,14 +120,14 @@ class AuthProvider with ChangeNotifier {
 
       if (res.statusCode == 200) {
         ApiResponseDetailUser user = apiResponseDetailUserFromJson(res.body);
+            print(res.body);
         int role = int.parse(user.roles.keys
             .reduce((a, b) => int.parse(a) > int.parse(b) ? a : b));
         if (user.flagNuevoIngreso == 1) {
           showPasswordDialog(context, user.id, () async {
             await PreferencesHelper().setUser(user);
             await checkSession();
-            print('Este es el role: $role');
-            navigateHandleRole(role, context);
+             navigateHandleRole(role, context);
           });
 
           return user;
@@ -140,8 +136,7 @@ class AuthProvider with ChangeNotifier {
           await checkSession();
           int role = int.parse(user.roles.keys
               .reduce((a, b) => int.parse(a) > int.parse(b) ? a : b));
-          print('Este es el role: $role');
-          navigateHandleRole(role, context);
+           navigateHandleRole(role, context);
           return user;
         }
       } else {

@@ -21,7 +21,7 @@ import 'package:forzado/widgets/modal_error.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
 class DropDownValuesManagerProvider with ChangeNotifier {
-MastersProvider? _mastersProvider;
+  MastersProvider? _mastersProvider;
   bool _disposed = false;
 
   DropDownValuesManagerProvider(this._mastersProvider);
@@ -33,7 +33,7 @@ MastersProvider? _mastersProvider;
 
   void updateMastersProvider(MastersProvider newProvider) {
     if (_disposed) return;
-    
+
     _mastersProvider?.removeListener(_onMasterProviderUpdated);
     _mastersProvider = newProvider;
     _mastersProvider?.addListener(_onMasterProviderUpdated);
@@ -52,10 +52,6 @@ MastersProvider? _mastersProvider;
     _disposed = true;
     super.dispose();
   }
-
-
- 
-
 
   bool _isEnabledRuleRisk = false;
   bool get isEnabledRuleRisk => _isEnabledRuleRisk;
@@ -362,7 +358,6 @@ MastersProvider? _mastersProvider;
     notifyListeners();
     try {
       await getUsersByRole();
-
       final responses = await Future.wait([
         client.get(AppUrl.gettagPrefijo1),
         client.get(AppUrl.getTagCentro1),
@@ -641,14 +636,16 @@ MastersProvider? _mastersProvider;
 
   void addAprobadoresByPuesto() {
     _listAprobadores.clear();
-      final mapaPuestos = {
+    final mapaPuestos = {
       for (var puesto in listPuestos) puesto.descripcion: puesto
     };
     final aprobadores = _users.where((usuario) {
       final puesto = mapaPuestos[usuario.puestoDescripcion];
-      return puesto?.turnos?.contains(this._mastersProvider!.currentShift!.id) ?? false;
+      return puesto?.turnos
+              ?.contains(this._mastersProvider!.currentShift!.id) ??
+          false;
     }).toList();
-    
+
     for (var user in aprobadores) {
       print('Usuario');
       print(user.puestoDescripcion);
@@ -694,12 +691,14 @@ MastersProvider? _mastersProvider;
 
   void addArobbadoresByRole() {
     _listAprobadores.clear();
-     final mapaPuestos = {
+    final mapaPuestos = {
       for (var puesto in listPuestos) puesto.descripcion: puesto
     };
     final aprobadores = _users.where((usuario) {
       final puesto = mapaPuestos[usuario.puestoDescripcion];
-      return puesto?.turnos?.contains(this._mastersProvider!.currentShift!.id) ?? false;
+      return puesto?.turnos
+              ?.contains(this._mastersProvider!.currentShift!.id) ??
+          false;
     }).toList();
     for (var user in aprobadores) {
       if (user.roles != null && user.roles!.containsKey('2')) {
@@ -753,7 +752,9 @@ MastersProvider? _mastersProvider;
       if (res.statusCode == 200) {
         final UserModelResponse response = userModelResponseFromJson(res.body);
         _users = response.values!;
-
+       _users =  _users.where((u) {
+          return u.estado! >= 1;
+        }).toList();
         for (final user in _users) {
           if (user.roles != null && user.roles!.isNotEmpty) {
             if (user.roles!.containsKey('1')) {
@@ -763,7 +764,6 @@ MastersProvider? _mastersProvider;
               ));
             }
             if (user.roles!.containsKey('2')) {
- 
               listAprobadores.add(modelthird.Value(
                 id: user.id!,
                 nombre: '${user.nombre!} ${user.apePaterno} ${user.apeMaterno}',
@@ -898,5 +898,4 @@ MastersProvider? _mastersProvider;
       print('Ocurrió un error: $e');
     }
   }
- 
 }

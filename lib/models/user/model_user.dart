@@ -48,6 +48,8 @@ class Value {
   final String? correo;
   final String? usuario;
   final List<int>? turnos; 
+    final int? grupoId;
+    final String? gruponombre;
 
   Value({
     this.id,
@@ -65,7 +67,9 @@ class Value {
     this.puestoDescripcion,
     this.correo,
     this.usuario,
-    this.turnos = const []
+    this.turnos = const [],
+       this.grupoId,
+        this.gruponombre,
   });
 
   factory Value.fromJson(Map<String, dynamic> json) => Value(
@@ -89,6 +93,8 @@ class Value {
           turnos: json["turnos"] != null 
             ? List<int>.from(json["turnos"].map((x) => x))
             : [],
+             grupoId: json["grupoId"],
+        gruponombre: json["gruponombre"],
       );
 
   Map<String, dynamic> toJson() => {
@@ -108,6 +114,8 @@ class Value {
         "correo": correo,
         "usuario": usuario,
          "turnos": List<dynamic>.from(turnos!.map((x) => x)),
+           "grupoId": grupoId,
+        "gruponombre": gruponombre,
       };
 
        Value copyWith({

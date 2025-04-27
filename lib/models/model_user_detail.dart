@@ -18,6 +18,8 @@ class ApiResponseDetailUser {
   final int flagNuevoIngreso;
   final String jwt;
   final String? message;
+  final String? grupo;
+  final String? grupoId;
 
   ApiResponseDetailUser({
     required this.id,
@@ -27,6 +29,8 @@ class ApiResponseDetailUser {
     required this.flagNuevoIngreso,
     required this.jwt,
     this.message,
+    this.grupo,
+    this.grupoId,
   });
 
   factory ApiResponseDetailUser.fromJson(Map<String, dynamic> json) =>
@@ -39,6 +43,8 @@ class ApiResponseDetailUser {
         flagNuevoIngreso: json["flagNuevoIngreso"],
         jwt: json["jwt"],
         message: json["message"],
+        grupo: json["grupo"],
+        grupoId: json["grupoId"],
       );
 
   Map<String, dynamic> toJson() => {
