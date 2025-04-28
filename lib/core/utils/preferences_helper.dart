@@ -15,6 +15,7 @@ class PreferencesHelper {
   }
 
   Future<void> setUser(ApiResponseDetailUser user) async {
+    print('úser');
     print(user.toJson());
     int role = int.parse(
         user.roles.keys.reduce((a, b) => int.parse(a) > int.parse(b) ? a : b));
@@ -24,6 +25,8 @@ class PreferencesHelper {
     await _prefs.setString('area', user.area);
     await _prefs.setInt('rol', role);
     await _prefs.setInt('flag', user.flagNuevoIngreso);
+    await _prefs.setString('grupo', user.grupo??'');
+    await _prefs.setInt('grupoId', user.grupoId??10);
   }
 
   ApiResponseDetailUser? getUser() {

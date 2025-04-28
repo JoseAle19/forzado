@@ -19,6 +19,7 @@ import 'package:forzado/models/user/model_user.dart';
 import 'package:forzado/services/api_client.dart';
 import 'package:forzado/widgets/modal_error.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class DropDownValuesManagerProvider with ChangeNotifier {
   MastersProvider? _mastersProvider;
@@ -634,17 +635,19 @@ class DropDownValuesManagerProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  void addAprobadoresByPuesto() {
+  void addAprobadoresByPuesto() async  {
+     final prefs = await SharedPreferences.getInstance();
+
+     final id = prefs.getInt('grupoId');
     _listAprobadores.clear();
     final mapaPuestos = {
       for (var puesto in listPuestos) puesto.descripcion: puesto
     };
-    final aprobadores = _users.where((usuario) {
-      final puesto = mapaPuestos[usuario.puestoDescripcion];
-      return puesto?.turnos
-              ?.contains(this._mastersProvider!.currentShift!.id) ??
-          false;
-    }).toList();
+   final aprobadores = _users.where((usuario) {
+  final puesto = mapaPuestos[usuario.puestoDescripcion];
+  return (puesto?.turnos?.contains(_mastersProvider!.currentShift!.id) ?? false) &&
+         usuario.grupoId == id;
+}).toList();
 
     for (var user in aprobadores) {
       print('Usuario');
@@ -689,17 +692,19 @@ class DropDownValuesManagerProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  void addArobbadoresByRole() {
+  void addArobbadoresByRole() async {
+     final prefs = await SharedPreferences.getInstance();
+
+     final id = prefs.getInt('grupoId');
     _listAprobadores.clear();
     final mapaPuestos = {
       for (var puesto in listPuestos) puesto.descripcion: puesto
     };
-    final aprobadores = _users.where((usuario) {
-      final puesto = mapaPuestos[usuario.puestoDescripcion];
-      return puesto?.turnos
-              ?.contains(this._mastersProvider!.currentShift!.id) ??
-          false;
-    }).toList();
+   final aprobadores = _users.where((usuario) {
+  final puesto = mapaPuestos[usuario.puestoDescripcion];
+  return (puesto?.turnos?.contains(_mastersProvider!.currentShift!.id) ?? false) &&
+         usuario.grupoId == id;
+}).toList();
     for (var user in aprobadores) {
       if (user.roles != null && user.roles!.containsKey('2')) {
         _listAprobadores.add(
@@ -745,6 +750,8 @@ class DropDownValuesManagerProvider with ChangeNotifier {
   List<modeltwo.Value> get riskLevels => _riskLevels;
 
   Future<void> getUsersByRole() async {
+   
+
     try {
       final res = await ApiClient()
           .get(AppUrl.getListUsers)
@@ -752,7 +759,7 @@ class DropDownValuesManagerProvider with ChangeNotifier {
       if (res.statusCode == 200) {
         final UserModelResponse response = userModelResponseFromJson(res.body);
         _users = response.values!;
-       _users =  _users.where((u) {
+        _users = _users.where((u) {
           return u.estado! >= 1;
         }).toList();
         for (final user in _users) {

@@ -19,7 +19,7 @@ class ApiResponseDetailUser {
   final String jwt;
   final String? message;
   final String? grupo;
-  final String? grupoId;
+  final int? grupoId;
 
   ApiResponseDetailUser({
     required this.id,
@@ -44,7 +44,7 @@ class ApiResponseDetailUser {
         jwt: json["jwt"],
         message: json["message"],
         grupo: json["grupo"],
-        grupoId: json["grupoId"],
+        grupoId: json["grupoid"],
       );
 
   Map<String, dynamic> toJson() => {

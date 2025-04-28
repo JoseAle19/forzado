@@ -63,9 +63,7 @@ class AuthProvider with ChangeNotifier {
       isLoading = false;
       notifyListeners();
       if (response.statusCode == 200) {
-        print('Datos del auth');
-        print(response.body);
-        resetData();
+         resetData();
         final decodedToken = JwtDecoder.decode(response.body);
         final jwtModel = JwtModel.fromJson(decodedToken);
         await getUserByEmail(jwtModel.email, context);
@@ -105,7 +103,7 @@ class AuthProvider with ChangeNotifier {
 
   Future<ApiResponseDetailUser> getUserByEmail(
       String email, BuildContext context) async {
-    print(email);
+    
     try {
       isLoading = true;
       notifyListeners();
@@ -120,8 +118,7 @@ class AuthProvider with ChangeNotifier {
 
       if (res.statusCode == 200) {
         ApiResponseDetailUser user = apiResponseDetailUserFromJson(res.body);
-            print(res.body);
-        int role = int.parse(user.roles.keys
+         int role = int.parse(user.roles.keys
             .reduce((a, b) => int.parse(a) > int.parse(b) ? a : b));
         if (user.flagNuevoIngreso == 1) {
           showPasswordDialog(context, user.id, () async {
@@ -132,6 +129,7 @@ class AuthProvider with ChangeNotifier {
 
           return user;
         } else {
+        ;
           await PreferencesHelper().setUser(user);
           await checkSession();
           int role = int.parse(user.roles.keys
