@@ -12,11 +12,11 @@ class StepOneContent extends StatelessWidget {
   final bool isUpdate;
   final DateTime date;
   const StepOneContent({
-    Key? key,
+    super.key,
     required this.dropdownProvider,
     required this.isUpdate,
     required this.date,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -27,7 +27,7 @@ class StepOneContent extends StatelessWidget {
         Consumer<MastersProvider>(
           builder: (context, provider, child) {
             if (provider.shiftLoaded) {
-              return const Center(child: const CircularProgressIndicator());
+              return const Center(child:   CircularProgressIndicator());
             }
 
             final currentShift = provider.currentShift;

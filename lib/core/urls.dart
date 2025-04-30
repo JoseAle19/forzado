@@ -53,5 +53,10 @@ class AppUrl {
   //Para los turnos
   static const String getturnos = "/api/maestras/turno";
   static const String getPuestos = "/api/puesto-turno";
+
+
+
+  // combinacionaciones de la matriz de riesgo
+  static const String getMatrizRiesgo= "/api/maestras/matriz-riesgo";
   
 }

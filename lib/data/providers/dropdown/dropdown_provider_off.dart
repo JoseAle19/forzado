@@ -689,16 +689,7 @@ class DropdownProviderManagerOffline with ChangeNotifier {
     final idSubArea = currentValueTagPrefijo!.id;
     final idTagCentro = currentValueTagCentro!.id;
     final subfijo = currentValueSubfijo;
-
-    print('idsub $idSubArea idtag $idTagCentro sub $subfijo');
-    for (var element in _tags) {
-      print(element.prefijoId);
-      print('aaaa');
-    }
-    // Verificar si la regla de riesgo bajo está habilitada
-    // final isRiskEnabled = Hive.isBoxOpen('isEnabledRuleRisk')
-    //     ? Hive.box('isEnabledRuleRisk').get('isRuleRiskActive')
-    //     : false;
+ 
     final tag = _tags.firstWhere(
       (tag) =>
           tag.prefijoId == idSubArea &&
@@ -712,9 +703,7 @@ class DropdownProviderManagerOffline with ChangeNotifier {
           probabilidadId: 0000,
           impactoId: 0000), // Devuelve null si no encuentra un elemento
     );
-    print('tag ${tag.sufijo}');
     if (tag.sufijo != 'error') {
-      print('no hay  errror al setear de probabilidad e impacto');
       // setear valores
       final probabilidad =
           listProbabilidades.firstWhere((p) => p.id == tag.probabilidadId);

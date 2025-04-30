@@ -504,6 +504,7 @@ class DropDownValuesManagerProvider with ChangeNotifier {
   }
 
   void defineRisk() async {
+    final matrizRiesgos = _mastersProvider!.matrizRiesgos;
     if (currentStateImpact?.descripcion == null ||
         currentStateProbability?.descripcion == null) {
       return;
@@ -512,16 +513,22 @@ class DropDownValuesManagerProvider with ChangeNotifier {
     // Obtener valores normalizados
     final impact = currentStateImpact?.descripcion.toUpperCase();
     final probability = currentStateProbability?.descripcion.toUpperCase();
-    final nivel = riskMatrix[impact]?[probability] ?? '';
-    final res = riskLevels.firstWhere((element) => element.id == nivel);
+
+    // final nivel = riskMatrix[impact]?[probability] ?? '';
+    // final res = riskLevels.firstWhere((element) => element.id == nivel);
+    final riesgo = matrizRiesgos.firstWhere((m) =>
+        m.impactoDescripcion?.toUpperCase() == impact &&
+        m.probabilidadDescripcion?.toUpperCase() == probability);
+    print(riesgo.riesgoId);
 
     // Verificar si la regla de riesgo está habilitada
     ApiResponseDetailUser? user = await PreferencesHelper().getUser();
     if (user == null) {
       return;
     }
-
-    _currentRisk = res;
+print('valueeeee ${riesgo.riesgoDescripcion}');
+    _currentRisk = modeltwo.Value(
+        id: riesgo.riesgoId!, descripcion: riesgo.riesgoDescripcion!);
     notifyListeners();
   }
 
@@ -635,19 +642,20 @@ class DropDownValuesManagerProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  void addAprobadoresByPuesto() async  {
-     final prefs = await SharedPreferences.getInstance();
+  void addAprobadoresByPuesto() async {
+    final prefs = await SharedPreferences.getInstance();
 
-     final id = prefs.getInt('grupoId');
+    final id = prefs.getInt('grupoId');
     _listAprobadores.clear();
     final mapaPuestos = {
       for (var puesto in listPuestos) puesto.descripcion: puesto
     };
-   final aprobadores = _users.where((usuario) {
-  final puesto = mapaPuestos[usuario.puestoDescripcion];
-  return (puesto?.turnos?.contains(_mastersProvider!.currentShift!.id) ?? false) &&
-         usuario.grupoId == id;
-}).toList();
+    final aprobadores = _users.where((usuario) {
+      final puesto = mapaPuestos[usuario.puestoDescripcion];
+      return (puesto?.turnos?.contains(_mastersProvider!.currentShift!.id) ??
+              false) &&
+          usuario.grupoId == id;
+    }).toList();
 
     for (var user in aprobadores) {
       print('Usuario');
@@ -669,18 +677,31 @@ class DropDownValuesManagerProvider with ChangeNotifier {
         ? false
         : true;
   }
+void _updateCurrentRisk() {
+  final matrizRiesgos = _mastersProvider!.matrizRiesgos;
 
-  void _updateCurrentRisk() {
-    if (_currentStateImpact?.descripcion != null &&
-        _currentStateProbability?.descripcion != null) {
-      final impact = _currentStateImpact!.descripcion.toUpperCase();
-      final probability = _currentStateProbability!.descripcion.toUpperCase();
-      final nivel = riskMatrix[impact]?[probability] ?? '';
-      _currentRisk = riskLevels.firstWhere((element) => element.id == nivel,
-          orElse: () => modeltwo.Value(id: 1, descripcion: ''));
-      notifyListeners();
-    }
+  if (_currentStateImpact?.descripcion != null &&
+      _currentStateProbability?.descripcion != null) {
+    final impact = _currentStateImpact!.descripcion.toUpperCase();
+    final probability = _currentStateProbability!.descripcion.toUpperCase();
+
+    final riesgo = matrizRiesgos.firstWhere(
+      (m) =>
+          m.impactoDescripcion?.toUpperCase() == impact &&
+          m.probabilidadDescripcion?.toUpperCase() == probability,
+      orElse: () => throw Exception("No se encontró combinación de riesgo"),
+    );
+
+    // ⚠️ En lugar de crear uno nuevo, búscalo en riskLevels
+    _currentRisk = _riskLevels.firstWhere(
+      (r) => r.id == riesgo.riesgoId,
+      orElse: () => throw Exception("riesgoId no está en riskLevels"),
+    );
+
+    notifyListeners();
   }
+}
+
 
   void defineInterlockbyRiskA() {
     if (currentStateRisk!.descripcion.isEmpty) return;
@@ -693,18 +714,19 @@ class DropDownValuesManagerProvider with ChangeNotifier {
   }
 
   void addArobbadoresByRole() async {
-     final prefs = await SharedPreferences.getInstance();
+    final prefs = await SharedPreferences.getInstance();
 
-     final id = prefs.getInt('grupoId');
+    final id = prefs.getInt('grupoId');
     _listAprobadores.clear();
     final mapaPuestos = {
       for (var puesto in listPuestos) puesto.descripcion: puesto
     };
-   final aprobadores = _users.where((usuario) {
-  final puesto = mapaPuestos[usuario.puestoDescripcion];
-  return (puesto?.turnos?.contains(_mastersProvider!.currentShift!.id) ?? false) &&
-         usuario.grupoId == id;
-}).toList();
+    final aprobadores = _users.where((usuario) {
+      final puesto = mapaPuestos[usuario.puestoDescripcion];
+      return (puesto?.turnos?.contains(_mastersProvider!.currentShift!.id) ??
+              false) &&
+          usuario.grupoId == id;
+    }).toList();
     for (var user in aprobadores) {
       if (user.roles != null && user.roles!.containsKey('2')) {
         _listAprobadores.add(
@@ -718,46 +740,30 @@ class DropDownValuesManagerProvider with ChangeNotifier {
   }
 
   // Lista manual de combinaciones de riesgo (basado en la tabla de tu imagen)
-  final List<modeltwo.Value> _riskLevels = [
-    modeltwo.Value(id: 1, descripcion: 'ALTO'),
-    modeltwo.Value(id: 11, descripcion: 'MODERADO'),
-    modeltwo.Value(id: 7, descripcion: 'BAJO'),
-    modeltwo.Value(id: 4, descripcion: 'BAJO'),
-    modeltwo.Value(id: 2, descripcion: 'BAJO'),
-    modeltwo.Value(id: 1, descripcion: 'BAJO'),
-    modeltwo.Value(id: 16, descripcion: 'MODERADO'),
-    modeltwo.Value(id: 12, descripcion: 'MODERADO'),
-    modeltwo.Value(id: 8, descripcion: 'MODERADO'),
-    modeltwo.Value(id: 5, descripcion: 'BAJO'),
-    modeltwo.Value(id: 3, descripcion: 'BAJO'),
-    modeltwo.Value(id: 20, descripcion: 'ALTO'),
-    modeltwo.Value(id: 15, descripcion: 'MODERADO'),
-    modeltwo.Value(id: 9, descripcion: 'MODERADO'),
-    modeltwo.Value(id: 6, descripcion: 'BAJO'),
-    modeltwo.Value(id: 3, descripcion: 'BAJO'),
-    modeltwo.Value(id: 24, descripcion: 'ALTO'),
-    modeltwo.Value(id: 22, descripcion: 'ALTO'),
-    modeltwo.Value(id: 17, descripcion: 'MODERADO'),
-    modeltwo.Value(id: 14, descripcion: 'MODERADO'),
-    modeltwo.Value(id: 10, descripcion: 'MODERADO'),
-    modeltwo.Value(id: 25, descripcion: 'ALTO'),
-    modeltwo.Value(id: 23, descripcion: 'ALTO'),
-    modeltwo.Value(id: 21, descripcion: 'ALTO'),
-    modeltwo.Value(id: 19, descripcion: 'ALTO'),
-    modeltwo.Value(id: 18, descripcion: 'ALTO'),
-    modeltwo.Value(id: 13, descripcion: 'MODERADO'),
-  ];
+  List<modeltwo.Value> _riskLevels = [];
   List<modeltwo.Value> get riskLevels => _riskLevels;
 
   Future<void> getUsersByRole() async {
-   
-
+    _mastersProvider!.getTagsMatrizRiesgo();
     try {
       final res = await ApiClient()
-          .get(AppUrl.getListUsers)
+          .get(AppUrl.getListUsers) 
           .timeout(const Duration(seconds: 5));
       if (res.statusCode == 200) {
-        final UserModelResponse response = userModelResponseFromJson(res.body);
+        final mRiesgo = _mastersProvider?.matrizRiesgos;
+        final seenIds = <int>{}; // conjunto para rastrear ids ya agregados
+
+        _riskLevels = mRiesgo!
+            .where((m) => seenIds
+                .add(m.riesgoId!)) // solo se agrega si no estaba en el set
+            .map((m) => modeltwo.Value(
+                  id: m.riesgoId!,
+                  descripcion: m.riesgoDescripcion!,
+                ))
+            .toList();
+
+
+         final UserModelResponse response = userModelResponseFromJson(res.body);
         _users = response.values!;
         _users = _users.where((u) {
           return u.estado! >= 1;
@@ -806,7 +812,6 @@ class DropDownValuesManagerProvider with ChangeNotifier {
   Future<void> fillDataUpdate(int id) async {
     ApiClient client = ApiClient();
     try {
-      print('cargando');
       final res = await client.get('/api/solicitudes/forzado/$id');
       if (res.statusCode == 200) {
         final decodeData = modelForzadoByIdFromJson(res.body);

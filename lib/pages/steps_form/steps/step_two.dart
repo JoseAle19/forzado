@@ -92,7 +92,7 @@ class StepTwoContent extends StatelessWidget {
             if (!(dropdownProvider.isEnabledRuletagMatriz && isUpdate)) {
               dropdownProvider.currentStateProbability = v!;
               if (dropdownProvider.isEnabledRuleRisk) {
-                dropdownProvider.defineRisk();
+                // dropdownProvider.defineRisk();
               }
             }
           },
@@ -104,7 +104,7 @@ class StepTwoContent extends StatelessWidget {
           selectedItem: dropdownProvider.currentStateImpact,
           onChanged: (v) {
             dropdownProvider.currentStateImpact = v!;
-            dropdownProvider.defineRisk();
+            // dropdownProvider.defineRisk();
           },
         ),
         const SizedBox(height: 10),
@@ -127,7 +127,7 @@ class StepTwoContent extends StatelessWidget {
               dropdownProvider.currentRisk?.descripcion.toLowerCase() == 'alto'
                   ? Colors.white
                   : Colors.black,
-          onChanged: (v) => dropdownProvider.currentStateRisk = v!,
+          onChanged: (value) => null,
         ),
       ],
     );

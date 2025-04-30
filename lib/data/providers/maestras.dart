@@ -1,12 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:forzado/core/urls.dart';
+import 'package:forzado/models/mestras/matriz_riesgo_model.dart';
 import 'package:forzado/models/model_shift.dart' as shift;
 import 'package:forzado/services/api_client.dart';
 import 'package:intl/intl.dart';
 
 class MastersProvider with ChangeNotifier {
-  List<shift.Value> _turnos = [];
+   List<shift.Value> _turnos = [];
+   List<MatrizRiesgoValue> _matrizRiesgos = [];
+
   List<shift.Value> get turnos => _turnos;
+  List<MatrizRiesgoValue> get matrizRiesgos  => _matrizRiesgos;
+
+  
   bool _shiftLoaded = false;
   bool get shiftLoaded => _shiftLoaded;
   
@@ -26,7 +32,13 @@ class MastersProvider with ChangeNotifier {
 
   }
 
-
+  Future<void> getTagsMatrizRiesgo() async {
+      ApiClient client = ApiClient();
+      final response = await client.get(AppUrl.getMatrizRiesgo);
+      final decodedata = matrizRiesgoFromJson(response.body);
+      _matrizRiesgos  = decodedata.values ?? [];
+    
+  }   
 
   Future<void> getShifts() async {
     _shiftLoaded = true;
@@ -35,13 +47,13 @@ class MastersProvider with ChangeNotifier {
     try {
       ApiClient client = ApiClient();
       final res = await client.get(AppUrl.getturnos);
-      final decodeData = shift.shiftModelFromJson(res.body);
+        final decodeData = shift.shiftModelFromJson(res.body);
       _turnos = decodeData.values ?? [];
       
       // Determinar turno actual después de cargar
       _determineCurrentShift();
       formatDate();
-      _shiftLoaded = false;
+       _shiftLoaded = false;
       notifyListeners();
     } catch (e) {
       _shiftLoaded = false;
@@ -49,7 +61,9 @@ class MastersProvider with ChangeNotifier {
       throw e;
     }
   }
-
+String normalizar(String texto) {
+  return texto.characters.toString();
+}
   void _determineCurrentShift() {
     final now = DateTime.now();
     final currentTime = TimeOfDay.fromDateTime(now);
@@ -60,14 +74,12 @@ class MastersProvider with ChangeNotifier {
       
       if (_isTimeInShift(currentTime, startTime, endTime)) {
         _currentShift = turno;
-        _shiftType = turno.descripcion; // 'DIA' o 'NOCHE'
-        print('Turno actual: ${turno.id} - ${turno.descripcion}');
-        notifyListeners();
+        _shiftType = normalizar(turno.descripcion??'--'); // 'DIA' o 'NOCHE'
+         notifyListeners();
         return;
       }
     }
     
-    print('No se encontró turno para la hora actual');
   }
 
   TimeOfDay _parseTimeString(String timeStr) {
