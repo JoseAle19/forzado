@@ -86,7 +86,6 @@ class ListForzadosFlag extends StatelessWidget {
           itemCount: provider.forzados.length,
           itemBuilder: (context, index) {
             final forzado = provider.forzados[index];
-            print(forzado.observadoEjecucion);
             return _cardForzado(forzado, context);
           },
         );
@@ -108,7 +107,7 @@ class ListForzadosFlag extends StatelessWidget {
           children: [
             Text(
               '$titulo: ',
-              style: TextStyle(
+              style:      const TextStyle(
                 fontWeight: FontWeight.bold,
                 color: primaryColor,
               ),

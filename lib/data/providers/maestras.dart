@@ -19,6 +19,7 @@ class MastersProvider with ChangeNotifier {
   // Nuevas propiedades para el turno actual
   shift.Value? _currentShift;
   shift.Value? get currentShift => _currentShift;
+  
   String? _shiftType; // 'DIA' o 'NOCHE'
   String? get shiftType => _shiftType;
 

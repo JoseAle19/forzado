@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:forzado/adapters/adapter_forzados.dart';
 import 'package:forzado/adapters/adapter_one.dart';
 import 'package:forzado/adapters/adapter_tags.dart';
@@ -27,6 +28,7 @@ import 'package:forzado/pages/ejecutor/provider/forzados_provider.dart';
 import 'package:hive_flutter/adapters.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:provider/provider.dart';
+
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -108,6 +110,14 @@ class MyApp extends StatelessWidget {
     ),
       ],
       child: const MaterialApp(
+          localizationsDelegates: const [
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
+      supportedLocales: const [
+        Locale('es', ''), // español
+       ],
           debugShowCheckedModeBanner: false,
           title: 'Forzados',
           home: HomePage()),

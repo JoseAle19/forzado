@@ -18,7 +18,6 @@ import 'package:forzado/services/api_client.dart';
 import 'package:forzado/widgets/modal_error.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:http/http.dart' as http;
-import 'package:intl/intl.dart';
 
 class ForzadosProvider with ChangeNotifier {
   bool _isFetch = false;
@@ -124,7 +123,6 @@ class ForzadosProvider with ChangeNotifier {
     try {
       _errorMessageGetForzados = '';
       _loadingGetForzados = false;
-      print('Reload');
 
       notifyListeners();
       final res = await client
@@ -181,6 +179,14 @@ class ForzadosProvider with ChangeNotifier {
               proyectoId: f.proyectoId,
               subarea: f.subarea);
         }).toList();
+
+        _forzados.sort((a, b) {
+          DateTime dateA =
+              DateTime.tryParse(a.fecha?.toString() ?? '') ?? DateTime(1900);
+          DateTime dateB =
+              DateTime.tryParse(b.fecha?.toString() ?? '') ?? DateTime(1900);
+          return dateB.compareTo(dateA); // descendente
+        });
       }
       if (res.statusCode == 500) {
         _errorMessageGetForzados =
@@ -209,8 +215,11 @@ class ForzadosProvider with ChangeNotifier {
   String _errorMessagePost = '';
   String get errorMessagePostData => _errorMessagePost;
 
-  Future<bool> sendRequestPost(BuildContext context,
-      DropDownValuesManagerProvider dropdownProvider, String id, MastersProvider mastersProvider) async {
+  Future<bool> sendRequestPost(
+      BuildContext context,
+      DropDownValuesManagerProvider dropdownProvider,
+      String id,
+      MastersProvider mastersProvider) async {
     final data = InsertQueryParameters(
         id: id.toString(),
         usuario: PreferencesHelper().getUser()!.id.toString(),
@@ -234,8 +243,7 @@ class ForzadosProvider with ChangeNotifier {
         projectName: 'Default value',
         circuito: dropdownProvider.currentValueCircuitos!.id.toString(),
         grupoA: dropdownProvider.currentStateGrupo!.id.toString(),
-        fechaFinPlanificada: mastersProvider.date.toString()
-        );
+        fechaFinPlanificada: dropdownProvider.date);
     try {
       ApiClient client = ApiClient();
       _isFecthingPostData = true;
@@ -440,29 +448,29 @@ class ForzadosProvider with ChangeNotifier {
     return true;
   }
 
-  void updateForzado(DropDownValuesManagerProvider dropdownProvider) {
-    final data = InsertQueryParameters(
-      // id: ,
-      usuario: PreferencesHelper().getUser()!.id.toString(),
-      tagPrefijo: dropdownProvider.currentValueTagPrefijo!.id.toString(),
-      tagCentro: dropdownProvider.currentValueTagCentro!.id.toString(),
-      tagSubfijo: dropdownProvider.currentTagSubfijo,
-      descripcion: dropdownProvider.currentValueDescription,
-      disciplina: dropdownProvider.currentValueTagDisciplina!.id.toString(),
-      turno: dropdownProvider.currentValueSlot!.id.toString(),
-      interlockSeguridad: dropdownProvider.currentValueInterlock,
-      responsable: dropdownProvider.currentStateResponsibility!.id.toString(),
-      riesgoA: dropdownProvider.currentStateRisk!.id.toString(),
-      riesgo: dropdownProvider.currentRisk!.id.toString(),
-      probabilidad: dropdownProvider.currentStateProbability!.id.toString(),
-      impacto: dropdownProvider.currentStateImpact!.id.toString(),
-      solicitante: dropdownProvider.currentStateApplicant!.id.toString(),
-      aprobador: dropdownProvider.currentStateApprover!.id.toString(),
-      ejecutor: dropdownProvider.currentStateExecutor!.id.toString(),
-      autorizacion: 'Default value',
-      tipoForzado: dropdownProvider.currentStateTypeForzado!.id.toString(),
-      projectName: dropdownProvider.currentStateProjectName!.id.toString(),
-      circuito: '', grupoA: '', fechaFinPlanificada: DateFormat('dd/MM/yyyy, HH:mm:ss').format(DateTime.now()),
-    );
-  }
+  // void updateForzado(DropDownValuesManagerProvider dropdownProvider) {
+  //   final data = InsertQueryParameters(
+  //     // id: ,
+  //     usuario: PreferencesHelper().getUser()!.id.toString(),
+  //     tagPrefijo: dropdownProvider.currentValueTagPrefijo!.id.toString(),
+  //     tagCentro: dropdownProvider.currentValueTagCentro!.id.toString(),
+  //     tagSubfijo: dropdownProvider.currentTagSubfijo,
+  //     descripcion: dropdownProvider.currentValueDescription,
+  //     disciplina: dropdownProvider.currentValueTagDisciplina!.id.toString(),
+  //     turno: dropdownProvider.currentValueSlot!.id.toString(),
+  //     interlockSeguridad: dropdownProvider.currentValueInterlock,
+  //     responsable: dropdownProvider.currentStateResponsibility!.id.toString(),
+  //     riesgoA: dropdownProvider.currentStateRisk!.id.toString(),
+  //     riesgo: dropdownProvider.currentRisk!.id.toString(),
+  //     probabilidad: dropdownProvider.currentStateProbability!.id.toString(),
+  //     impacto: dropdownProvider.currentStateImpact!.id.toString(),
+  //     solicitante: dropdownProvider.currentStateApplicant!.id.toString(),
+  //     aprobador: dropdownProvider.currentStateApprover!.id.toString(),
+  //     ejecutor: dropdownProvider.currentStateExecutor!.id.toString(),
+  //     autorizacion: 'Default value',
+  //     tipoForzado: dropdownProvider.currentStateTypeForzado!.id.toString(),
+  //     projectName: dropdownProvider.currentStateProjectName!.id.toString(),
+  //     circuito: '', grupoA: '', fechaFinPlanificada: DateFormat('dd/MM/yyyy, HH:mm:ss').format(DateTime.now()),
+  //   );
+  // }
 }

@@ -34,10 +34,10 @@ class _StepperFormState extends State<StepperForm> {
         final mastersProvider =
             Provider.of<MastersProvider>(context, listen: false);
             await mastersProvider.getShifts();
-        await dropdownProvider.verifyRuleRisk();
+        // await dropdownProvider.verifyRuleRisk();
         await dropdownProvider.getTagsMatrizRiesgo(context);
         widget.isUpdate != true ? dropdownProvider.clearValues() : null;
-        // dropdownProvider.filtrarUsuariosPorTurno(mastersProvider.currentShift!.id);
+        dropdownProvider.seleccionarSolicitante();
        }
     });
     dateNow = DateTime.now();

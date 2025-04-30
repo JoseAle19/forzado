@@ -15,8 +15,6 @@ class PreferencesHelper {
   }
 
   Future<void> setUser(ApiResponseDetailUser user) async {
-    print('úser');
-    print(user.toJson());
     int role = int.parse(
         user.roles.keys.reduce((a, b) => int.parse(a) > int.parse(b) ? a : b));
     await _prefs.setBool('logged', true);

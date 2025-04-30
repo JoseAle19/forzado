@@ -88,13 +88,13 @@ class _ListForzadosRequesterLowState extends State<ListForzadosRequesterLow> {
 
   Widget _futureListForzadosRequesterLow() {
     return Consumer<ForzadosProvider>(builder: (context, value, child) {
-      print('holaaa ${value.loadingGetForzados}');
-      return value.loadingGetForzados
+       return value.loadingGetForzados
           ? const Center(child: CircularProgressIndicator())
           : _ListForzadosRequesterLow();
     });
   }
 
+  // ignore: non_constant_identifier_names
   Widget _ListForzadosRequesterLow() {
     return Consumer<ForzadosProvider>(
       builder: (context, value, child) {

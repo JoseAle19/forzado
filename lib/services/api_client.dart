@@ -18,6 +18,7 @@ class ApiClient {
     Map<String, dynamic> bodyMap = jsonDecode(body);
     bodyMap['usuario'] = user?.id ?? 0;
     String updatedBody = jsonEncode(bodyMap);
+   
     return http.post(url, body: updatedBody, headers: _headers());
   }
 

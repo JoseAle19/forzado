@@ -11,6 +11,7 @@ class FormRemoveForzadoQueryParameters {
   final String aprobadorRetiro;
   final String ejecutorRetiro;
   final String observaciones;
+  final String tipoGrupoB;
   final String id;
 
   FormRemoveForzadoQueryParameters({
@@ -19,6 +20,7 @@ class FormRemoveForzadoQueryParameters {
     required this.ejecutorRetiro,
     required this.observaciones,
     required this.id,
+    required this.tipoGrupoB,
   });
 
   factory FormRemoveForzadoQueryParameters.fromJson(Map<String, dynamic> json) =>
@@ -27,7 +29,8 @@ class FormRemoveForzadoQueryParameters {
         aprobadorRetiro: json["aprobadorRetiro"],
         ejecutorRetiro: json["ejecutorRetiro"],
         observaciones: json["observaciones"],
-        id: json["id"],
+        id: json["id"], 
+        tipoGrupoB: 'tipoGrupoB',
       );
 
   Map<String, dynamic> toJson() => {
@@ -36,5 +39,6 @@ class FormRemoveForzadoQueryParameters {
         "ejecutorRetiro": ejecutorRetiro,
         "observaciones": observaciones,
         "id": id,
+        "tipoGrupoB": tipoGrupoB,
       };
 }

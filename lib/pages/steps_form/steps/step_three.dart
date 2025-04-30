@@ -25,7 +25,7 @@ class StepThreeContent extends StatelessWidget {
       physics: const BouncingScrollPhysics(),
       shrinkWrap: true,
       children: [
-       Consumer<MastersProvider>(
+        Consumer<MastersProvider>(
           builder: (context, provider, child) {
             if (provider.shiftLoaded) {
               return const Center(child: const CircularProgressIndicator());
@@ -39,12 +39,13 @@ class StepThreeContent extends StatelessWidget {
             return Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                    Text('Fecha y Hora de la Solicitud: ${provider.date}',
-              style: const TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
+                Text(
+                  'Fecha y Hora de la Solicitud: ${provider.date}',
+                  style: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
                 Text('Turno actual: ${provider.shiftType}'),
                 // Text('ID: ${currentShift.id}'),
               ],
@@ -69,12 +70,45 @@ class StepThreeContent extends StatelessWidget {
           selectedItem: dropdownProvider.currentStateGrupo,
           onChanged: (v) => dropdownProvider.currentStateGrupo = v!,
         ),
-        CustomDropdownButton<modelTwo.Value>(
-          hintText: 'Tipo de Forzado *:',
-          items: dropdownProvider.listTipoDeForzados,
-          selectedItem: dropdownProvider.currentStateTypeForzado,
-          onChanged: (v) => dropdownProvider.currentStateTypeForzado = v!,
-        ),
+        Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text(
+                'Fecha fin planificada:',
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(height: 6),
+              Text(
+                dropdownProvider.date,
+                style: const TextStyle(
+                  fontSize: 15,
+                  color: Colors.grey,
+                ),
+              ),
+              const SizedBox(height: 16),
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton.icon(
+                  onPressed: () => dropdownProvider.selectDate(context),
+                  icon: const Icon(Icons.calendar_today),
+                  label: const Text('Seleccionar Fecha'),
+                  style: ElevatedButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(vertical: 14),
+                    textStyle: const TextStyle(fontSize: 16),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        )
       ],
     );
   }

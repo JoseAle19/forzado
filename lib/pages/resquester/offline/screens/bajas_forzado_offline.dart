@@ -31,7 +31,7 @@ class _BajasForzadoOfflineState extends State<BajasForzadoOffline> {
       ),
       builder: (context) {
         return Padding(
-          padding: EdgeInsets.symmetric(horizontal: 16, vertical: 24),
+          padding: const  EdgeInsets.symmetric(horizontal: 16, vertical: 24),
           child: SingleChildScrollView(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -41,7 +41,7 @@ class _BajasForzadoOfflineState extends State<BajasForzadoOffline> {
                   child: Container(
                     height: 4,
                     width: 50,
-                    margin: EdgeInsets.only(bottom: 16),
+                    margin: const EdgeInsets.only(bottom: 16),
                     decoration: BoxDecoration(
                       color: Colors.grey[300],
                       borderRadius: BorderRadius.circular(10),
@@ -76,7 +76,7 @@ class _BajasForzadoOfflineState extends State<BajasForzadoOffline> {
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.blueAccent,
                       padding:
-                          EdgeInsets.symmetric(horizontal: 32, vertical: 12),
+                          const  EdgeInsets.symmetric(horizontal: 32, vertical: 12),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(8),
                       ),
@@ -103,7 +103,7 @@ class _BajasForzadoOfflineState extends State<BajasForzadoOffline> {
         children: [
           Text(
             '$title ',
-            style: TextStyle(
+            style:           const TextStyle(
               fontWeight: FontWeight.bold,
               fontSize: 16,
             ),
@@ -111,7 +111,7 @@ class _BajasForzadoOfflineState extends State<BajasForzadoOffline> {
           Expanded(
             child: Text(
               value,
-              style: TextStyle(fontSize: 16),
+              style:           const TextStyle(fontSize: 16),
             ),
           ),
         ],
@@ -140,7 +140,7 @@ class _BajasForzadoOfflineState extends State<BajasForzadoOffline> {
       aprobadorRetiro: forzado.idApprover.toString(),
       ejecutorRetiro: forzado.idExecutor.toString(),
       observaciones: forzado.descripcion.toString(),
-      id: forzado.id_forzado.toString(),
+      id: forzado.id_forzado.toString(), tipoGrupoB: 'default value',
     );
     ApiClient client = ApiClient();
     final res =

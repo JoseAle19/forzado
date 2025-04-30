@@ -19,6 +19,7 @@ import 'package:forzado/models/user/model_user.dart';
 import 'package:forzado/services/api_client.dart';
 import 'package:forzado/widgets/modal_error.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class DropDownValuesManagerProvider with ChangeNotifier {
@@ -63,6 +64,14 @@ class DropDownValuesManagerProvider with ChangeNotifier {
   // getters
   bool get isLoading => _isLoadingGetUsers;
   String get errorMessage => _errorMessageGetUsers;
+
+  String _dateNow = '0000/00/00';
+
+  String get date => _dateNow;
+
+  set setDate(String value) {
+    _dateNow = value;
+  }
 
 // Getters y Setters para ModelOne
   List<modelone.Value> _listPrefijos = [];
@@ -514,19 +523,15 @@ class DropDownValuesManagerProvider with ChangeNotifier {
     final impact = currentStateImpact?.descripcion.toUpperCase();
     final probability = currentStateProbability?.descripcion.toUpperCase();
 
-    // final nivel = riskMatrix[impact]?[probability] ?? '';
-    // final res = riskLevels.firstWhere((element) => element.id == nivel);
     final riesgo = matrizRiesgos.firstWhere((m) =>
         m.impactoDescripcion?.toUpperCase() == impact &&
         m.probabilidadDescripcion?.toUpperCase() == probability);
     print(riesgo.riesgoId);
 
-    // Verificar si la regla de riesgo está habilitada
     ApiResponseDetailUser? user = await PreferencesHelper().getUser();
     if (user == null) {
       return;
     }
-print('valueeeee ${riesgo.riesgoDescripcion}');
     _currentRisk = modeltwo.Value(
         id: riesgo.riesgoId!, descripcion: riesgo.riesgoDescripcion!);
     notifyListeners();
@@ -552,7 +557,6 @@ print('valueeeee ${riesgo.riesgoDescripcion}');
             context, 'Ocurrió un error inesperado', Colors.red, false);
       }
     } catch (e) {
-      print(e);
       CustomModal()
           .showModal(context, 'Ocurrió un error inesperado', Colors.red, false);
     }
@@ -677,31 +681,37 @@ print('valueeeee ${riesgo.riesgoDescripcion}');
         ? false
         : true;
   }
-void _updateCurrentRisk() {
-  final matrizRiesgos = _mastersProvider!.matrizRiesgos;
 
-  if (_currentStateImpact?.descripcion != null &&
-      _currentStateProbability?.descripcion != null) {
-    final impact = _currentStateImpact!.descripcion.toUpperCase();
-    final probability = _currentStateProbability!.descripcion.toUpperCase();
+  void _updateCurrentRisk() {
+    final matrizRiesgos = _mastersProvider!.matrizRiesgos;
 
-    final riesgo = matrizRiesgos.firstWhere(
-      (m) =>
-          m.impactoDescripcion?.toUpperCase() == impact &&
-          m.probabilidadDescripcion?.toUpperCase() == probability,
-      orElse: () => throw Exception("No se encontró combinación de riesgo"),
-    );
+    if (_riskLevels.isEmpty ||
+        _currentStateImpact?.descripcion == null ||
+        _currentStateProbability?.descripcion == null) {
+      return; // ❌ No continuar si no está todo listo
+    }
 
-    // ⚠️ En lugar de crear uno nuevo, búscalo en riskLevels
-    _currentRisk = _riskLevels.firstWhere(
-      (r) => r.id == riesgo.riesgoId,
-      orElse: () => throw Exception("riesgoId no está en riskLevels"),
-    );
+    if (_currentStateImpact?.descripcion != null &&
+        _currentStateProbability?.descripcion != null) {
+      final impact = _currentStateImpact!.descripcion.toUpperCase();
+      final probability = _currentStateProbability!.descripcion.toUpperCase();
 
-    notifyListeners();
+      final riesgo = matrizRiesgos.firstWhere(
+        (m) =>
+            m.impactoDescripcion?.toUpperCase() == impact &&
+            m.probabilidadDescripcion?.toUpperCase() == probability,
+        orElse: () => throw Exception("No se encontró combinación de riesgo"),
+      );
+
+      // ⚠️ En lugar de crear uno nuevo, búscalo en riskLevels
+      _currentRisk = _riskLevels.firstWhere(
+        (r) => r.id == riesgo.riesgoId,
+        orElse: () => throw Exception("riesgoId no está en riskLevels"),
+      );
+
+      notifyListeners();
+    }
   }
-}
-
 
   void defineInterlockbyRiskA() {
     if (currentStateRisk!.descripcion.isEmpty) return;
@@ -744,10 +754,10 @@ void _updateCurrentRisk() {
   List<modeltwo.Value> get riskLevels => _riskLevels;
 
   Future<void> getUsersByRole() async {
-    _mastersProvider!.getTagsMatrizRiesgo();
+    await _mastersProvider!.getTagsMatrizRiesgo();
     try {
       final res = await ApiClient()
-          .get(AppUrl.getListUsers) 
+          .get(AppUrl.getListUsers)
           .timeout(const Duration(seconds: 5));
       if (res.statusCode == 200) {
         final mRiesgo = _mastersProvider?.matrizRiesgos;
@@ -762,35 +772,44 @@ void _updateCurrentRisk() {
                 ))
             .toList();
 
-
-         final UserModelResponse response = userModelResponseFromJson(res.body);
+        final UserModelResponse response = userModelResponseFromJson(res.body);
         _users = response.values!;
         _users = _users.where((u) {
           return u.estado! >= 1;
         }).toList();
+
         for (final user in _users) {
           if (user.roles != null && user.roles!.isNotEmpty) {
-            if (user.roles!.containsKey('1')) {
+            final id = user.id!;
+            final nombreCompleto =
+                '${user.nombre!} ${user.apePaterno} ${user.apeMaterno}';
+
+            if (user.roles!.containsKey('1') &&
+                !listSolicitantes.any((u) => u.id == id)) {
               listSolicitantes.add(modelthird.Value(
-                id: user.id!,
-                nombre: '${user.nombre!} ${user.apePaterno} ${user.apeMaterno}',
+                id: id,
+                nombre: nombreCompleto,
               ));
             }
-            if (user.roles!.containsKey('2')) {
+
+            if (user.roles!.containsKey('2') &&
+                !listAprobadores.any((u) => u.id == id)) {
               listAprobadores.add(modelthird.Value(
-                id: user.id!,
-                nombre: '${user.nombre!} ${user.apePaterno} ${user.apeMaterno}',
+                id: id,
+                nombre: nombreCompleto,
                 apePaterno: user.apePaterno!,
               ));
             }
-            if (user.roles!.containsKey('3')) {
+
+            if (user.roles!.containsKey('3') &&
+                !listEjecutores.any((u) => u.id == id)) {
               listEjecutores.add(modelthird.Value(
-                id: user.id!,
-                nombre: '${user.nombre!} ${user.apePaterno} ${user.apeMaterno}',
+                id: id,
+                nombre: nombreCompleto,
                 apePaterno: user.apePaterno!,
               ));
             }
-          } else {}
+          }
         }
       } else if (res.statusCode == 401) {
         _errorMessageGetUsers = 'Error al obtener los usuarios';
@@ -908,6 +927,40 @@ void _updateCurrentRisk() {
       }
     } catch (e) {
       print('Ocurrió un error: $e');
+    }
+  }
+
+//Seleccionar solicitante loggeado en el drodown
+
+  void seleccionarSolicitante() async {
+    print('hola');
+    ApiResponseDetailUser? _user = PreferencesHelper().getUser();
+
+    final solicitante = listSolicitantes.firstWhere((u) => u.id == _user!.id,
+        orElse: () => throw Exception("No se encontró el usuario"));
+
+    currentStateApplicant = solicitante;
+  }
+
+  void formatDate() {
+    final formattedDate =
+        DateFormat('dd/MM/yyyy, HH:mm:ss').format(DateTime.now());
+    _dateNow = formattedDate;
+  }
+
+  Future<void> selectDate(BuildContext context) async {
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime(2000),
+      lastDate: DateTime(2101),
+      locale: const Locale('es', ''), // español
+    );
+
+    if (picked != null) {
+      final formatted = DateFormat('yyyy/MM/dd').format(picked);
+      setDate = formatted;
+      notifyListeners();
     }
   }
 }
