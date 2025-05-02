@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:forzado/core/utils/preferences_helper.dart';
 import 'package:forzado/data/providers/auth/auth_provider.dart';
 import 'package:forzado/data/providers/bottom/bottom_navigationbar_provider.dart';
- import 'package:forzado/data/providers/requester_provider.dart';
+import 'package:forzado/data/providers/requester_provider.dart';
 import 'package:forzado/pages/auth/login_page.dart';
 import 'package:forzado/pages/resquester/offline/page_offline.dart';
 import 'package:forzado/pages/resquester/online/screen/home.dart';
@@ -22,8 +22,7 @@ class _HomeState extends State<Home> {
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-    });
+    WidgetsBinding.instance.addPostFrameCallback((_) {});
   }
 
   @override
@@ -62,7 +61,8 @@ class _HomeState extends State<Home> {
         ),
         body: Consumer<RequesterHomeProvider>(builder: (context, value, child) {
           return PageView(
-             controller: value.pageController,
+            physics: const  NeverScrollableScrollPhysics(),
+            controller: value.pageController,
             children: [
               PageOnline(
                 widget: Container(
@@ -84,23 +84,27 @@ class CustomBotttomNavigation extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Consumer<BottomNavigationBarProvider>(
-      builder: (context, value, child) {
-        return BottomNavigationBar(
-            currentIndex: value.currentIndex,
-            onTap: 1 < 2
-                ? null
-                : (index) {
-                    value.setIndex(index);
-                    Provider.of<RequesterHomeProvider>(context, listen: false)
-                        .pageController
-                        .jumpToPage(index);
-                  },
-            items: const [
-              BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Inicio'),
-              BottomNavigationBarItem(
-                  icon: Icon(Icons.person), label: 'Perfil'),
-            ]);
-      },
-    );
+        builder: (context, value, child) {
+      return const SafeArea(
+           child: BottomAppBar(
+            // height: 100,
+            elevation: 0,
+            shape:   CircularNotchedRectangle(),
+            child: SizedBox(
+              height: kBottomNavigationBarHeight,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Column(
+                     children: [
+                     Icon((Icons.home),),
+                        Text('Inicio'),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ));
+    });
   }
 }

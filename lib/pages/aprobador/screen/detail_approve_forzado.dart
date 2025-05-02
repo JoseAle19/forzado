@@ -308,10 +308,7 @@ class _DetailApproveForzadoState extends State<DetailApproveForzado> {
           title: 'Aprobador',
           description: widget.detailForzado.aprobador ?? 'Sin valor',
         ),
-        TextInfo(
-          title: 'Ejecutor',
-          description: widget.detailForzado.ejecutor ?? 'Sin valor',
-        ),
+       
         TextInfo(
           title: 'Tipo de Forzado',
           description:

@@ -160,22 +160,12 @@ class AuthProvider with ChangeNotifier {
         final route = MaterialPageRoute(builder: (_) => const HomeExecuter());
         Navigator.pushReplacement(context, route);
         break;
-      // case 7:
-      //   final route = MaterialPageRoute(builder: (_) => const HomeExecuter());
-      //   Navigator.pushReplacement(context, route);
-      //   break;
+    
       case 2:
         final route = MaterialPageRoute(builder: (_) => const HomeApprove());
         Navigator.pushReplacement(context, route);
         break;
-      // case 6:
-      //   final route = MaterialPageRoute(builder: (_) => const HomeApprove());
-      //   Navigator.pushReplacement(context, route);
-      //   break;
-      // case 2:
-      //   final route = MaterialPageRoute(builder: (_) => const Home());
-      //   Navigator.pushReplacement(context, route);
-      //   break;
+      
       case 1:
         final route = MaterialPageRoute(builder: (_) => const Home());
         Navigator.pushReplacement(context, route);

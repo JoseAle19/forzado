@@ -26,6 +26,16 @@ class ForzadosProviderApprove with ChangeNotifier {
 
       if (res.statusCode == 200) {
         final decodeData = modelForzadosApproveFromJson(res.body);
+
+
+        decodeData.data.sort((a, b) {
+  final fA = a.fecha;
+  final fB = b.fecha;
+  if (fA == null && fB == null) return 0;
+  if (fA == null) return 1;
+  if (fB == null) return -1;
+  return fB.compareTo(fA);     
+});
         _listForzados = decodeData.data;
         _loading = false;
         _messageError = '';
@@ -33,11 +43,11 @@ class ForzadosProviderApprove with ChangeNotifier {
         _messageError = 'Ocurrió un error, intenta más tarde.';
       }
     } catch (e) {
+      debugPrint('Este es el errro que da al procesar el fecth ${e}');
       _messageError = 'Ocurrió un error al procesar la solicitud.';
     } finally {
       _loading = false;
-      print('solicitudes ${_listForzados.where((f)=> f.estado!.toUpperCase()=='PENDIENTE-FORZADO' && f.estado!.toUpperCase() =='PENDIENTE-RETIRO' ).length}');
-       notifyListeners();
+        notifyListeners();
     }
   }
 

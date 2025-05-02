@@ -1,5 +1,26 @@
 import 'dart:convert';
+import 'dart:convert' show utf8, latin1;
 
+// --- Helpers para parsing seguro ---
+T? parseNullable<T>(dynamic value, T Function(dynamic) parser) {
+  if (value == null) return null;
+  try {
+    return parser(value);
+  } catch (_) {
+    return null;
+  }
+}
+
+String? parseString(dynamic v) =>
+    v == null ? null : v.toString();
+
+int? parseInt(dynamic v) =>
+    v == null ? null : (v is int ? v : int.tryParse(v.toString()));
+
+DateTime? parseDateTime(dynamic v) =>
+    v == null ? null : DateTime.tryParse(v.toString());
+
+// --- Modelo principal ---
 ModelForzadosApprove modelForzadosApproveFromJson(String str) =>
     ModelForzadosApprove.fromJson(json.decode(str));
 
@@ -16,15 +37,16 @@ class ModelForzadosApprove {
 
   factory ModelForzadosApprove.fromJson(Map<String, dynamic> json) =>
       ModelForzadosApprove(
-        success: json["success"] ?? false,
-        message: json["message"] ?? "No message",
-        data: json["data"] != null
-            ? List<ForzadoApprove>.from(
-                json["data"].map((x) => ForzadoApprove.fromJson(x)))
-            : [],
+        success: parseNullable(json["success"], (v) => v == true) ?? false,
+        message: parseString(json["message"]) ?? "No message",
+        data: (json["data"] as List?)
+                ?.map((e) => ForzadoApprove.fromJson(e as Map<String, dynamic>))
+                .toList() ??
+            [],
       );
 }
 
+// --- Submodelo con validación de nulls ---
 class ForzadoApprove {
   final int? id;
   final String? nombre;
@@ -40,10 +62,10 @@ class ForzadoApprove {
   final int? solicitanteBId;
   final int? aprobadorBId;
   final int? ejecutorBId;
-  String? estado; // Dinámico
+  final String? estado; // ya validado más abajo
   final DateTime? fecha;
   final String? descripcion;
-  String? estadoSolicitud; // Dinámico
+  final String? estadoSolicitud;
   final DateTime? fechaRealizacion;
   final dynamic fechaCierre;
   final String? usuarioCreacion;
@@ -105,86 +127,69 @@ class ForzadoApprove {
   });
 
   factory ForzadoApprove.fromJson(Map<String, dynamic> json) {
-    String? estado = json["estado"];
-    estado = estado != null ? validateEstado(estado) : null;
+    // estado viene como String, validamos si no es null
+    final rawEstado = parseString(json["estado"]);
+    final estado = rawEstado != null ? validateEstado(rawEstado) : null;
 
     return ForzadoApprove(
-      id: json["id"],
-      nombre: json["nombre"],
-      area: json["area"],
-      subarea: json["subarea"],
-      tipo: json["tipo"],
-      solicitante: utf8.decode(
-          latin1.encode(
-            json["solicitante"],
-          ),
-          allowMalformed: true),
-      aprobador: utf8.decode(
-          latin1.encode(
-            json["aprobador"],
-          ),
-          allowMalformed: true),
-      ejecutor: utf8.decode(
-          latin1.encode(
-            json["ejecutor"],
-          ),
-          allowMalformed: true),
-      solicitanteAId: json["solicitanteAId"],
-      aprobadorAId: json["aprobadorAId"],
-      ejecutorAId: json["ejecutorAId"],
-      solicitanteBId: json["solicitanteBId"],
-      aprobadorBId: json["aprobadorBId"],
-      ejecutorBId: json["ejecutorBId"],
+      id: parseInt(json["id"]),
+      nombre: parseString(json["nombre"]),
+      area: parseString(json["area"]),
+      subarea: parseString(json["subarea"]),
+      tipo: parseString(json["tipo"]),
+      solicitante: parseNullable(json["solicitante"], (v) =>
+          utf8.decode(latin1.encode(v.toString()), allowMalformed: true)),
+      aprobador: parseNullable(json["aprobador"], (v) =>
+          utf8.decode(latin1.encode(v.toString()), allowMalformed: true)),
+      ejecutor: parseNullable(json["ejecutor"], (v) =>
+          utf8.decode(latin1.encode(v.toString()), allowMalformed: true)),
+      solicitanteAId: parseInt(json["solicitanteAId"]),
+      aprobadorAId: parseInt(json["aprobadorAId"]),
+      ejecutorAId: parseInt(json["ejecutorAId"]),
+      solicitanteBId: parseInt(json["solicitanteBId"]),
+      aprobadorBId: parseInt(json["aprobadorBId"]),
+      ejecutorBId: parseInt(json["ejecutorBId"]),
       estado: estado,
-      fecha: json["fecha"] != null ? DateTime.parse(json["fecha"]) : null,
-      descripcion: json["descripcion"],
-      estadoSolicitud: json["estadoSolicitud"],
-      fechaRealizacion: json["fechaRealizacion"] != null
-          ? DateTime.parse(json["fechaRealizacion"])
-          : null,
-      fechaCierre: json["fechaCierre"],
-      usuarioCreacion: json["usuarioCreacion"],
-      fechaCreacion: json["fechaCreacion"] != null
-          ? DateTime.parse(json["fechaCreacion"])
-          : null,
-      usuarioModificacion: json["usuarioModificacion"],
-      fechaModificacion: json["fechaModificacion"] != null
-          ? DateTime.parse(json["fechaModificacion"])
-          : null,
-      subareaCodigo: json["subareaCodigo"],
-      subareaDescripcion: json["subareaDescripcion"],
-      disciplinaDescripcion: json["disciplinaDescripcion"],
-      turnoDescripcion: json["turnoDescripcion"],
-      motivoRechazoDescripcion: json["motivoRechazoDescripcion"],
-      tipoForzadoDescripcion: json["tipoForzadoDescripcion"],
-      tagCentroCodigo: json["tagCentroCodigo"],
-      tagCentroDescripcion: json["tagCentroDescripcion"],
-      responsableNombre: json["responsableNombre"],
-      riesgoDescripcion: json["riesgoDescripcion"],
-      interlock: json["interlock"],
-      proyectoDescripcion: json["proyectoDescripcion"],
-      proyectoId: json["proyectoId"],
+      fecha: parseDateTime(json["fecha"]),
+      descripcion: parseString(json["descripcion"]),
+      estadoSolicitud: parseString(json["estadoSolicitud"]),
+      fechaRealizacion: parseDateTime(json["fechaRealizacion"]),
+      fechaCierre: json["fechaCierre"], // si quieres DateTime, aplica parseDateTime
+      usuarioCreacion: parseString(json["usuarioCreacion"]),
+      fechaCreacion: parseDateTime(json["fechaCreacion"]),
+      usuarioModificacion: parseString(json["usuarioModificacion"]),
+      fechaModificacion: parseDateTime(json["fechaModificacion"]),
+      subareaCodigo: parseString(json["subareaCodigo"]),
+      subareaDescripcion: parseString(json["subareaDescripcion"]),
+      disciplinaDescripcion: parseString(json["disciplinaDescripcion"]),
+      turnoDescripcion: parseString(json["turnoDescripcion"]),
+      motivoRechazoDescripcion: parseString(json["motivoRechazoDescripcion"]),
+      tipoForzadoDescripcion: parseString(json["tipoForzadoDescripcion"]),
+      tagCentroCodigo: parseString(json["tagCentroCodigo"]),
+      tagCentroDescripcion: parseString(json["tagCentroDescripcion"]),
+      responsableNombre: parseString(json["responsableNombre"]),
+      riesgoDescripcion: parseString(json["riesgoDescripcion"]),
+      interlock: parseInt(json["interlock"]),
+      proyectoDescripcion: parseString(json["proyectoDescripcion"]),
+      proyectoId: parseInt(json["proyectoId"]),
     );
   }
 
-  // Validación de estado
+  // Validación de estado (igual que antes)
   static String validateEstado(String estado) {
     switch (estado.toUpperCase()) {
       case "PENDIENTE-FORZADO":
         return 'PENDIENTE-FORZADO';
       case "PENDIENTE-RETIRO":
         return "PENDIENTE-RETIRO";
-
       case "RECHAZADO-RETIRO":
         return "RECHAZADO-RETIRO";
       case "RECHAZADO-FORZADO":
         return "RECHAZADO-FORZADO";
-
       case "APROBADO-RETIRO":
         return "APROBADO-RETIRO";
       case "APROBADO-FORZADO":
         return "APROBADO-FORZADO";
-
       default:
         return estado;
     }
