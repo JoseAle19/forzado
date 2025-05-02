@@ -4,8 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:forzado/core/utils/preferences_helper.dart';
 import 'package:forzado/data/providers/auth/auth_provider.dart';
 import 'package:forzado/data/providers/bottom/bottom_navigationbar_provider.dart';
-import 'package:forzado/data/providers/dropdown/dropdown_provider.dart';
-import 'package:forzado/data/providers/requester_provider.dart';
+ import 'package:forzado/data/providers/requester_provider.dart';
 import 'package:forzado/pages/auth/login_page.dart';
 import 'package:forzado/pages/resquester/offline/page_offline.dart';
 import 'package:forzado/pages/resquester/online/screen/home.dart';
@@ -24,8 +23,6 @@ class _HomeState extends State<Home> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      // Provider.of<DropDownValuesManagerProvider>(context, listen: false)
-        // ..getData();
     });
   }
 
@@ -65,8 +62,7 @@ class _HomeState extends State<Home> {
         ),
         body: Consumer<RequesterHomeProvider>(builder: (context, value, child) {
           return PageView(
-            // physics: const NeverScrollableScrollPhysics(),
-            controller: value.pageController,
+             controller: value.pageController,
             children: [
               PageOnline(
                 widget: Container(

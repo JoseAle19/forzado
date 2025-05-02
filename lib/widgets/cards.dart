@@ -58,7 +58,7 @@ class CardsDashBoard extends StatelessWidget {
                     color: AppColors.earringColor,
                   ),
                 ),
-                SizedBox(width: 16),
+                const SizedBox(width: 16),
                 Expanded(
                   child: DashboardCard(
                     title: "Retiro Pendiente",
@@ -68,7 +68,7 @@ class CardsDashBoard extends StatelessWidget {
                 ),
               ],
             ),
-            SizedBox(height: 16),
+            const SizedBox(height: 16),
             Row(
               children: [
                 Expanded(
@@ -78,7 +78,7 @@ class CardsDashBoard extends StatelessWidget {
                     color: AppColors.approvedColor,
                   ),
                 ),
-                SizedBox(width: 16),
+                const SizedBox(width: 16),
                 Expanded(
                   child: DashboardCard(
                     title: "Retiro Aprobado",
@@ -88,27 +88,8 @@ class CardsDashBoard extends StatelessWidget {
                 ),
               ],
             ),
-            SizedBox(height: 16),
-            Row(
-              children: [
-                Expanded(
-                  child: DashboardCard(
-                    title: "Forzado Ejecutado",
-                    count: value.executedHighCount,
-                    color: AppColors.executedColor,
-                  ),
-                ),
-                SizedBox(width: 16),
-                Expanded(
-                  child: DashboardCard(
-                    title: "Retiro Ejecutado",
-                    count: value.executedHighCount,
-                    color: AppColors.executedColor,
-                  ),
-                ),
-              ],
-            ),
-            SizedBox(height: 16),
+            const SizedBox(height: 16),
+            
             Row(
               children: [
                 Expanded(
@@ -118,7 +99,7 @@ class CardsDashBoard extends StatelessWidget {
                     color: AppColors.refusedColor,
                   ),
                 ),
-                SizedBox(width: 16),
+                const SizedBox(width: 16),
                 Expanded(
                   child: DashboardCard(
                     title: "Retiro Rechazado",
@@ -128,7 +109,27 @@ class CardsDashBoard extends StatelessWidget {
                 ),
               ],
             ),
-            SizedBox(height: 16),
+
+            const SizedBox(height: 16),
+            Row(
+              children: [
+                Expanded(
+                  child: DashboardCard(
+                    title: "Forzado Ejecutado",
+                    count: value.executedHighCount,
+                    color: AppColors.executedColor,
+                  ),
+                ),
+                  // Expanded(
+                  //   child: DashboardCard(
+                  //     title: "Retiro Ejecutado",
+                  //     count: value.executedHighCount,
+                  //     color: AppColors.executedColor,
+                  //   ),
+                  // ),
+              ],
+            ),
+            const SizedBox(height: 16),
             Row(
               children: [
                 Expanded(
@@ -163,7 +164,7 @@ class DashboardCard extends StatelessWidget {
         print('Card tapped: $title');
       },
       child: AnimatedContainer(
-        duration: Duration(milliseconds: 300),
+        duration: const Duration(milliseconds: 300),
         curve: Curves.easeInOut,
         padding: const EdgeInsets.all(16.0),
         decoration: BoxDecoration(
@@ -173,12 +174,12 @@ class DashboardCard extends StatelessWidget {
             BoxShadow(
               color: Colors.black.withOpacity(0.15),
               blurRadius: 10,
-              offset: Offset(3, 3), // Sombra desplazada hacia abajo y derecha
+              offset: const Offset(3, 3), // Sombra desplazada hacia abajo y derecha
             ),
             BoxShadow(
               color: Colors.white.withOpacity(0.1),
               blurRadius: 10,
-              offset: Offset(-3, -3), // Efecto de luz superior izquierda
+              offset: const Offset(-3, -3), // Efecto de luz superior izquierda
             ),
           ],
         ),

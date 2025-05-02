@@ -225,8 +225,8 @@ class _FormRemoveForzadoState extends State<DetailsForzadorRequester> {
       appBar: AppBar(
         title: Hero(
           tag: widget.detailForzado.id.toString(),
-          child: const Text(
-            'Retiro del forzado'
+          child: Text(
+            _fixEncoding(widget.detailForzado.descripcion ?? 'No hay descripción'),
           ),
         ),
         centerTitle: true,
