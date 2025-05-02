@@ -109,7 +109,8 @@ class MyApp extends StatelessWidget {
       },
     ),
       ],
-      child: const MaterialApp(
+      child:   MaterialApp(
+          theme: ThemeData(fontFamily: 'NotoSans'),
           localizationsDelegates: const [
         GlobalMaterialLocalizations.delegate,
         GlobalWidgetsLocalizations.delegate,
@@ -120,7 +121,7 @@ class MyApp extends StatelessWidget {
        ],
           debugShowCheckedModeBanner: false,
           title: 'Forzados',
-          home: HomePage()),
+          home: const HomePage()),
 
     );
   }

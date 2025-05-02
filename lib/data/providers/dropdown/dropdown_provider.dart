@@ -19,6 +19,7 @@ import 'package:forzado/models/user/model_user.dart';
 import 'package:forzado/services/api_client.dart';
 import 'package:forzado/widgets/modal_error.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:http/http.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -963,4 +964,137 @@ class DropDownValuesManagerProvider with ChangeNotifier {
       notifyListeners();
     }
   }
+
+
+String _currentRequest = '';
+String get currentRequest => _currentRequest;
+set currentRequest(String value) {
+  _currentRequest = value;
+  notifyListeners(); // Notificar a los listeners cuando cambia
+}
+  Future<void> getData2() async {
+  final client = ApiClient();
+  _error = '';
+  _isGettingData = true;
+  notifyListeners();
+
+  try {
+    currentRequest = 'Obteniendo usuarios';
+    await getUsersByRole();
+    
+    currentRequest = 'Espera.....';
+    await _fetchAllData(client);
+  } on TimeoutException {
+    _error = 'Tiempo de espera agotado. Inténtelo de nuevo más tarde.';
+  } on SocketException {
+    _error = 'Error de conexión. Verifique su conexión a internet.';
+  } on HttpException catch (e) {
+    _error = 'Error en el servidor: ${e.message}';
+  } on FormatException {
+    _error = 'Error en el formato de los datos. Verifique la respuesta de la API.';
+  } catch (e) {
+    _error = 'Ocurrió un error desconocido: $e';
+  } finally {
+    _isGettingData = false;
+    currentRequest = ''; // Limpiar al finalizar
+    notifyListeners();
+  }
+}
+
+Future<void> _fetchAllData(ApiClient client) async {
+  final requests = [
+    _RequestInfo(AppUrl.gettagPrefijo1, 'Obteniendo prefijos'),
+    _RequestInfo(AppUrl.getTagCentro1, 'Obteniendo centros'),
+    _RequestInfo(AppUrl.getTagDisciplina2, 'Obteniendo disciplinas'),
+    _RequestInfo(AppUrl.getTurno2, 'Obteniendo turnos'),
+    _RequestInfo(AppUrl.getResponsable3, 'Obteniendo responsables'),
+    _RequestInfo(AppUrl.getRiesgoA2, 'Obteniendo riesgos'),
+    _RequestInfo(AppUrl.getProbabilidad2, 'Obteniendo probabilidades'),
+    _RequestInfo(AppUrl.getImpacto2, 'Obteniendo impactos'),
+    _RequestInfo(AppUrl.getTipoForzado2, 'Obteniendo tipos de forzado'),
+    _RequestInfo(AppUrl.getSolicitantes3, 'Obteniendo solicitantes'),
+    _RequestInfo(AppUrl.getAprobadores, 'Obteniendo aprobadores'),
+    _RequestInfo(AppUrl.getEjecutor, 'Obteniendo ejecutores'),
+    _RequestInfo(AppUrl.getProjects2, 'Obteniendo proyectos'),
+    _RequestInfo(AppUrl.getCircuitos2, 'Obteniendo circuitos'),
+    _RequestInfo(AppUrl.getGrupos, 'Obteniendo grupos'),
+    _RequestInfo(AppUrl.getPuestos, 'Obteniendo puestos'),
+  ];
+
+  // Ejecutar todas las peticiones con seguimiento
+  final responses = await Future.wait(
+    requests.map((reqInfo) async {
+      currentRequest = reqInfo.description;
+      final response = await client.get(reqInfo.url);
+      return response;
+    })
+  ).timeout(const Duration(seconds: 60));
+
+  // Verificar códigos de estado
+  for (int i = 0; i < responses.length; i++) {
+    if (responses[i].statusCode != 200) {
+      throw HttpException('Error al ${requests[i].description}: ${responses[i].statusCode}');
+    }
+  }
+
+   currentRequest = 'Procesando prefijos y centros';
+  _processModelOneResponses(responses);
+  _processModelTwoResponses(responses);
+  _processModelThreeResponses(responses);
+  _processPuestoModelResponse(responses);
+}
+
+
+
+void _processModelOneResponses(List<Response> responses) {
+  final resPrefijos = modelone.modelOneFromJson(responses[0].body);
+  final resCentros = modelone.modelOneFromJson(responses[1].body);
+  listPrefijos = resPrefijos.values;
+  listCentros = resCentros.values;
+}
+
+void _processModelTwoResponses(List<Response> responses) {
+  currentRequest = 'Procesando datos secundarios';
+  final resDiciplinas = modeltwo.modelTwoFromJson(responses[2].body);
+  final resTurnos = modeltwo.modelTwoFromJson(responses[3].body);
+  final resRiesgos = modeltwo.modelTwoFromJson(responses[5].body);
+  final resProbabilidades = modeltwo.modelTwoFromJson(responses[6].body);
+  final resImpactos = modeltwo.modelTwoFromJson(responses[7].body);
+  final resTipoForzados = modeltwo.modelTwoFromJson(responses[8].body);
+  final resProjects = modeltwo.modelTwoFromJson(responses[12].body);
+  final resCircuitos = modeltwo.modelTwoFromJson(responses[13].body);
+  final resGrupos = modeltwo.modelTwoFromJson(responses[14].body);
+
+  listDiciplinas = resDiciplinas.values;
+  listCircuitos = resCircuitos.values;
+  listGrupos = resGrupos.values;
+  listTurnos = resTurnos.values;
+  listRiesgos = resRiesgos.values;
+  listProbabilidades = resProbabilidades.values;
+  listImpactos = resImpactos.values;
+  listTipoDeForzados = resTipoForzados.values;
+  listProjects = resProjects.values;
+}
+
+void _processModelThreeResponses(List<Response> responses) {
+  currentRequest = 'Procesando responsables';
+  final resResponsables = modelthird.modelThreeFromJson(responses[4].body);
+  listResponsables = resResponsables.values;
+}
+
+void _processPuestoModelResponse(List<Response> responses) {
+  currentRequest = 'Procesando puestos';
+  final resPuestos = modelp.puestoModelFromJson(responses[15].body);
+  listPuestos = resPuestos.values!;
+}
+}
+
+
+ 
+ // Clase auxiliar para manejar la información de las peticiones
+class _RequestInfo {
+  final String url;
+  final String description;
+
+  _RequestInfo(this.url, this.description);
 }

@@ -4,6 +4,8 @@
 
 import 'dart:convert';
 
+import 'package:flutter/material.dart';
+
 ForzadosModel forzadosModelFromJson(String str) =>
     ForzadosModel.fromJson(json.decode(str));
 
@@ -118,7 +120,10 @@ class ForzadoItem {
     this.proyectoId,
     this.observadoEjecucion,
   });
-
+static debugIbnput(dynamic data){
+  debugPrint('Ínput descripcion: ${data}');
+  return data;
+}
   factory ForzadoItem.fromJson(Map<String, dynamic> json) => ForzadoItem(
         id: json["id"] ?? 0,
         nombre: json["nombre"] ?? "",
@@ -136,7 +141,7 @@ class ForzadoItem {
         ejecutorBId: json["ejecutorBId"] ?? 0,
         estado: json["estado"] ?? "",
         fecha: json["fecha"] == null ? null : DateTime.tryParse(json["fecha"]),
-        descripcion: json["descripcion"] ?? "",
+        descripcion: debugIbnput(json["descripcion"] ?? ""),
         estadoSolicitud: json["estadoSolicitud"] ?? "",
         fechaRealizacion: json["fechaRealizacion"] == null
             ? null
@@ -206,4 +211,5 @@ class ForzadoItem {
         "proyectoId": proyectoId,
         "observadoEjecucion": observadoEjecucion,
       };
+      
 }

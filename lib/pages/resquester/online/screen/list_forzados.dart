@@ -161,6 +161,9 @@ class _ListForzadosRequesterLowState extends State<ListForzadosRequesterLow> {
           itemCount: forzadosEjecutados.length,
           itemBuilder: (context, index) {
             final f = forzadosEjecutados[index];
+
+                debugPrint('🔴 descripcion: ${f.descripcion}');
+
             return _cardForzado(f, context);
           },
         );
@@ -184,7 +187,7 @@ class _ListForzadosRequesterLowState extends State<ListForzadosRequesterLow> {
               radius: 30,
               backgroundColor: Colors.blue.shade100,
               child: Text(
-                '${forzado.id}',
+                '${forzado.id}' ,
                 style: const TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
@@ -198,7 +201,7 @@ class _ListForzadosRequesterLowState extends State<ListForzadosRequesterLow> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'ID: ${forzado.id}',
+                    'ID: ${forzado.id} ',
                     style: const TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.bold,

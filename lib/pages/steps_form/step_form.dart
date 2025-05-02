@@ -30,15 +30,15 @@ class _StepperFormState extends State<StepperForm> {
       if (mounted) {
         final dropdownProvider =
             Provider.of<DropDownValuesManagerProvider>(context, listen: false);
-        await dropdownProvider.getData();
+        await dropdownProvider.getData2();
         final mastersProvider =
             Provider.of<MastersProvider>(context, listen: false);
-            await mastersProvider.getShifts();
+        await mastersProvider.getShifts();
         // await dropdownProvider.verifyRuleRisk();
         await dropdownProvider.getTagsMatrizRiesgo(context);
         widget.isUpdate != true ? dropdownProvider.clearValues() : null;
         dropdownProvider.seleccionarSolicitante();
-       }
+      }
     });
     dateNow = DateTime.now();
   }
@@ -88,9 +88,8 @@ class _StepperFormState extends State<StepperForm> {
     final forzadosProvider = Provider.of<ForzadosProvider>(context);
     final dropdownProvider =
         Provider.of<DropDownValuesManagerProvider>(context);
-        // provider de las maestras en este caso es de turnos
-    final mastersProvider =
-        Provider.of<MastersProvider>(context);
+    // provider de las maestras en este caso es de turnos
+    final mastersProvider = Provider.of<MastersProvider>(context);
     final stepperProvider = Provider.of<StepperProvider>(context);
     return Scaffold(
       appBar: AppBar(
@@ -156,7 +155,10 @@ class _StepperFormState extends State<StepperForm> {
                                           : '';
                                       final res = await forzadosProvider
                                           .sendRequestPost(
-                                              context, dropdownProvider, id, mastersProvider);
+                                              context,
+                                              dropdownProvider,
+                                              id,
+                                              mastersProvider);
                                       if (!res) {
                                         CustomModal().showModal(
                                             context,
@@ -310,13 +312,128 @@ class _StepperFormState extends State<StepperForm> {
                       ))
                   : value.isGettingdata
                       ? Container(
-                          width: double.infinity,
-                          height: double.infinity,
-                          color: const Color.fromARGB(184, 0, 0, 0),
-                          child: const Center(
-                              child: CircularProgressIndicator(
-                            color: AppColors.primary,
-                          )))
+                          color: const Color.fromARGB(147, 0, 0, 0),
+                          height: double.maxFinite,
+                          width: double.maxFinite,
+                          child: Center(
+                            child: Container(
+                              padding: const EdgeInsets.all(20),
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(15),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black.withOpacity(0.2),
+                                    blurRadius: 10,
+                                    spreadRadius: 3,
+                                  ),
+                                ],
+                              ),
+                              width: MediaQuery.of(context).size.width * 0.8,
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  // Indicador circular con color dinámico
+                                  SizedBox(
+                                    width: 60,
+                                    height: 60,
+                                    child: Stack(
+                                      alignment: Alignment.center,
+                                      children: [
+                                        if (value.isGettingdata)
+                                          CircularProgressIndicator(
+                                            valueColor:
+                                                AlwaysStoppedAnimation<Color>(
+                                              value.currentRequest
+                                                      .contains('Error')
+                                                  ? Colors.red
+                                                  : Colors.blueAccent,
+                                            ),
+                                            strokeWidth: 5,
+                                          )
+                                        else
+                                          Icon(
+                                            value.currentRequest
+                                                    .contains('Error')
+                                                ? Icons.error_outline
+                                                : Icons.check_circle_outline,
+                                            size: 50,
+                                            color: value.currentRequest
+                                                    .contains('Error')
+                                                ? Colors.red
+                                                : Colors.green,
+                                          ),
+                                      ],
+                                    ),
+                                  ),
+
+                                  const SizedBox(height: 20),
+
+                                  // Título del estado
+                                  Text(
+                                    value.isGettingdata
+                                        ? 'Procesando...'
+                                        : value.currentRequest.contains('Error')
+                                            ? 'Error'
+                                            : 'Completado',
+                                    style: TextStyle(
+                                      fontSize: 22,
+                                      fontWeight: FontWeight.bold,
+                                      color:
+                                          value.currentRequest.contains('Error')
+                                              ? Colors.red
+                                              : Colors.black,
+                                    ),
+                                  ),
+
+                                  const SizedBox(height: 15),
+
+                                  // Descripción detallada
+                                  Text(
+                                    value.currentRequest,
+                                    textAlign: TextAlign.center,
+                                    style: const TextStyle(
+                                      fontSize: 16,
+                                      color: Colors.black87,
+                                    ),
+                                  ),
+
+                                  const SizedBox(height: 20),
+
+                                  // Barra de progreso lineal (opcional)
+                                  if (value.isGettingdata)
+                                    LinearProgressIndicator(
+                                      backgroundColor: Colors.grey[200],
+                                      valueColor: AlwaysStoppedAnimation<Color>(
+                                        Theme.of(context).primaryColor,
+                                      ),
+                                      minHeight: 6,
+                                    ),
+
+                                  // Botón para reintentar en caso de error
+                                  if (value.currentRequest.contains('Error'))
+                                    Padding(
+                                      padding: const EdgeInsets.only(top: 20),
+                                      child: ElevatedButton(
+                                        style: ElevatedButton.styleFrom(
+                                          backgroundColor: Colors.redAccent,
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(20),
+                                          ),
+                                        ),
+                                        onPressed: () {},
+                                        child: const Text(
+                                          'Reintentar',
+                                          style: TextStyle(color: Colors.white),
+                                        ),
+                                      ),
+                                    ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        )
                       : const SizedBox();
             },
           )

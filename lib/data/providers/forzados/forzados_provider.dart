@@ -129,7 +129,10 @@ class ForzadosProvider with ChangeNotifier {
           .get(AppUrl.getListForzados)
           .timeout(const Duration(seconds: 60));
       if (res.statusCode == 200) {
-        ForzadosModel decodeData = forzadosModelFromJson(res.body);
+          final jsonString = utf8.decode(res.bodyBytes);
+
+  // 2) Parseas con tu helper generado por json_serializable o similar
+  ForzadosModel decodeData = forzadosModelFromJson(jsonString);
         _forzados = decodeData.data!.map((f) {
           String state = f.estado!.toLowerCase();
           if (state.contains("retiro")) {
