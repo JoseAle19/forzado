@@ -1,8 +1,7 @@
+
 import 'package:flutter/material.dart';
-import 'package:forzado/pages/aprobador/home_approve.dart';
-import 'package:forzado/pages/ejecutor/home_executor.dart';
-import 'package:forzado/pages/resquester/home_requester.dart';
 import 'package:forzado/pages/auth/login_page.dart';
+import 'package:forzado/pages/main_home.dart';
 import 'package:forzado/pages/onboarding/onboardig.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -10,6 +9,7 @@ class SplashProvider with ChangeNotifier {
   bool? hasAcceptedOnboarding;
   bool? isUserLoggedIn;
   int? userRole;
+  List<int>? roles;
   Widget? nextPage;
 
   Future<void> loadInitialData() async {
@@ -17,33 +17,24 @@ class SplashProvider with ChangeNotifier {
     hasAcceptedOnboarding = prefs.getBool('aceptOm');
     isUserLoggedIn = prefs.getBool('logged');
     userRole = prefs.getInt('rol');
+    roles = prefs.getStringList('roles')?.map((s) => int.parse(s)).toList();
     nextPage = _determineNextPage();
     notifyListeners();
   }
 
   Widget _determineNextPage() {
     if (hasAcceptedOnboarding == true) {
-      return isUserLoggedIn == true
-          ? _navigateHandleRole(userRole ?? 10)
+      return isUserLoggedIn == true && roles != null
+          ? _navigateHandleRole(roles)
           : const LoginPage();
     } else {
       return const OnBoardigpage();
     }
   }
 
-  Widget _navigateHandleRole(int role) {
-    switch (role) {
-      case 3:
-      case 7:
-        return const HomeExecuter();
-      case 2:
-      case 6:
-        return const HomeApprove();
-      case 5:
-      case 1:
-        return const Home();
-      default:
-        return const LoginPage();
-    }
+  Widget _navigateHandleRole(List<int>? roles) {
+    
+     return MainHomePage(roles: roles!,);
+     
   }
 }

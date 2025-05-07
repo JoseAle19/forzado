@@ -3,7 +3,6 @@ import 'package:forzado/core/utils/preferences_helper.dart';
 import 'package:forzado/data/providers/auth/auth_provider.dart';
 import 'package:forzado/pages/aprobador/screen/list_approve.dart';
 import 'package:forzado/pages/auth/login_page.dart';
-import 'package:forzado/pages/resquester/home_requester.dart';
 import 'package:forzado/widgets/cards.dart';
 import 'package:provider/provider.dart';
 
@@ -13,8 +12,7 @@ class HomeApprove extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      bottomNavigationBar: const CustomBotttomNavigation(),
-      appBar: AppBar(
+       appBar: AppBar(
         automaticallyImplyLeading: false,
         title: Consumer<AuthProvider>(
           builder: (context, value, child) => Text(
@@ -24,8 +22,6 @@ class HomeApprove extends StatelessWidget {
           ),
         ),
         actions: [
-          const IconButton(
-              onPressed: null, icon: Icon(Icons.notifications_none_outlined)),
           IconButton(
               onPressed: () async {
                 await PreferencesHelper().clear();

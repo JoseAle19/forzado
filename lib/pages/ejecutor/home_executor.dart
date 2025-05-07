@@ -5,7 +5,6 @@ import 'package:forzado/core/utils/preferences_helper.dart';
 import 'package:forzado/data/providers/auth/auth_provider.dart';
 import 'package:forzado/pages/auth/login_page.dart';
 import 'package:forzado/pages/ejecutor/forzados_executer.dart';
-import 'package:forzado/pages/resquester/home_requester.dart';
 import 'package:forzado/widgets/cards.dart';
 import 'package:provider/provider.dart';
 
@@ -14,8 +13,7 @@ class HomeExecuter extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      bottomNavigationBar: const CustomBotttomNavigation(),
-      appBar: AppBar(
+       appBar: AppBar(
         automaticallyImplyLeading: false,
         title: Consumer<AuthProvider>(builder: (context, value, child) {
           String name = utf8.decode(latin1.encode(value.user!.name),

@@ -95,10 +95,9 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => MastersProvider()),
          ChangeNotifierProxyProvider<MastersProvider, DropDownValuesManagerProvider>(
       create: (context) {
-        // Obtenemos el provider solo si está disponible
         final mastersProvider = Provider.of<MastersProvider>(context, listen: false);
         return DropDownValuesManagerProvider(mastersProvider)
-          ..initialize(); // Método de inicialización si es necesario
+          ..initialize();
       },
       update: (context, mastersProvider, dropDownManager) {
         if (dropDownManager == null) {
@@ -117,7 +116,7 @@ class MyApp extends StatelessWidget {
         GlobalCupertinoLocalizations.delegate,
       ],
       supportedLocales: const [
-        Locale('es', ''), // español
+        Locale('es', ''), 
        ],
           debugShowCheckedModeBanner: false,
           title: 'Forzados',

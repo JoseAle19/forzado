@@ -36,6 +36,8 @@ class Tags {
     final String sufijo;
     final int probabilidadId;
     final int impactoId;
+    final int riesgoAId;
+    
 
     Tags({
         required this.id,
@@ -44,6 +46,7 @@ class Tags {
         required this.sufijo,
         required this.probabilidadId,
         required this.impactoId,
+        required this.riesgoAId,
     });
 
     factory Tags.fromJson(Map<String, dynamic> json) => Tags(
@@ -53,6 +56,7 @@ class Tags {
         sufijo: json["sufijo"],
         probabilidadId: json["probabilidadId"],
         impactoId: json["impactoId"],
+        riesgoAId: json["riesgoAId"],
     );
 
     Map<String, dynamic> toJson() => {
@@ -62,5 +66,6 @@ class Tags {
         "sufijo": sufijo,
         "probabilidadId": probabilidadId,
         "impactoId": impactoId,
+        "riesgoAId": riesgoAId,
     };
 }

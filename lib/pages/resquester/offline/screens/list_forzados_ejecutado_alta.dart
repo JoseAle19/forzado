@@ -40,7 +40,7 @@ class ListForzadosEjecutadoAlta extends StatelessWidget {
             itemBuilder: (BuildContext context, int index) {
               print(forzados[index].estado);
               Forzados forzado = forzados[index];
-              final state = forzado.estado!.toLowerCase() == 'ejecutado-alta'
+              final state = forzado.estado.toLowerCase() == 'ejecutado-alta'
                   ? 'Ejecutado-forzado'
                   : 'sin estado';
               return Card(

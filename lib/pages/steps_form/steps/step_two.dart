@@ -108,27 +108,33 @@ class StepTwoContent extends StatelessWidget {
           },
         ),
         const SizedBox(height: 10),
-        CustomDropdownButton<modelTwo.Value>(
-          hintText: 'Riesgo *:',
-          items: dropdownProvider.riskLevels,
-          selectedItem: dropdownProvider.currentRisk,
-          backgroundColor:
-              dropdownProvider.currentRisk?.descripcion.toLowerCase() == 'bajo'
-                  ? const Color(0xffBBF7D0)
-                  : dropdownProvider.currentRisk?.descripcion.toLowerCase() ==
-                          'moderado'
-                      ? const Color(0xffFEF08A)
-                      : dropdownProvider.currentRisk?.descripcion
-                                  .toLowerCase() ==
-                              'alto'
-                          ? const Color(0xffEF4444)
-                          : Colors.transparent,
-          textColor:
-              dropdownProvider.currentRisk?.descripcion.toLowerCase() == 'alto'
-                  ? Colors.white
-                  : Colors.black,
-          onChanged: (value) => null,
-        ),
+       AbsorbPointer(
+  absorbing: true, // Esto deshabilita todas las interacciones
+  child: Opacity(
+    opacity: 0.7, // Le da un efecto de deshabilitado
+    child: CustomDropdownButton<modelTwo.Value>(
+      hintText: 'Riesgo *:',
+      items: dropdownProvider.riskLevels,
+      selectedItem: dropdownProvider.currentRisk,
+      backgroundColor:
+          dropdownProvider.currentRisk?.descripcion.toLowerCase() == 'bajo'
+              ? const Color(0xffBBF7D0)
+              : dropdownProvider.currentRisk?.descripcion.toLowerCase() ==
+                      'moderado'
+                  ? const Color(0xffFEF08A)
+                  : dropdownProvider.currentRisk?.descripcion
+                              .toLowerCase() ==
+                          'alto'
+                      ? const Color(0xffEF4444)
+                      : Colors.transparent,
+      textColor:
+          dropdownProvider.currentRisk?.descripcion.toLowerCase() == 'alto'
+              ? Colors.white
+              : Colors.black,
+      onChanged: (value) => null,
+    ),
+  ),
+)
       ],
     );
   }

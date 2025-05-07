@@ -7,10 +7,8 @@ import 'package:forzado/data/providers/auth/password_provider.dart';
 import 'package:forzado/models/jwt_model.dart';
 import 'package:forzado/models/login.dart';
 import 'package:forzado/models/model_user_detail.dart';
-import 'package:forzado/pages/aprobador/home_approve.dart';
 import 'package:forzado/pages/auth/widgets/new_password.dart';
-import 'package:forzado/pages/ejecutor/home_executor.dart';
-import 'package:forzado/pages/resquester/home_requester.dart';
+import 'package:forzado/pages/main_home.dart';
 import 'package:forzado/services/api_client.dart';
 import 'package:forzado/widgets/modal_error.dart';
 import 'package:http/http.dart' as http;
@@ -124,17 +122,15 @@ class AuthProvider with ChangeNotifier {
           showPasswordDialog(context, user.id, () async {
             await PreferencesHelper().setUser(user);
             await checkSession();
-             navigateHandleRole(role, context);
+                        navigateHandleRole(user.roles.keys.toList(), context);
           });
 
           return user;
         } else {
-        ;
+      
           await PreferencesHelper().setUser(user);
           await checkSession();
-          int role = int.parse(user.roles.keys
-              .reduce((a, b) => int.parse(a) > int.parse(b) ? a : b));
-           navigateHandleRole(role, context);
+           navigateHandleRole(user.roles.keys.toList(), context);
           return user;
         }
       } else {
@@ -154,23 +150,11 @@ class AuthProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  void navigateHandleRole(int role, BuildContext context) {
-    switch (role) {
-      case 3:
-        final route = MaterialPageRoute(builder: (_) => const HomeExecuter());
+  void navigateHandleRole(List<String> rolesAsString, BuildContext context) {
+    List<int> roles = rolesAsString.map((s) => int.parse(s)).toList();
+
+        final route = MaterialPageRoute(builder: (_) =>     MainHomePage(roles: roles,));
         Navigator.pushReplacement(context, route);
-        break;
-    
-      case 2:
-        final route = MaterialPageRoute(builder: (_) => const HomeApprove());
-        Navigator.pushReplacement(context, route);
-        break;
-      
-      case 1:
-        final route = MaterialPageRoute(builder: (_) => const Home());
-        Navigator.pushReplacement(context, route);
-        break;
-    }
   }
 
   void showPasswordDialog(

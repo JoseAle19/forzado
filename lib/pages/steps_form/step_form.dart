@@ -30,13 +30,13 @@ class _StepperFormState extends State<StepperForm> {
       if (mounted) {
         final dropdownProvider =
             Provider.of<DropDownValuesManagerProvider>(context, listen: false);
+        widget.isUpdate != true ? dropdownProvider.clearValues() : null;
         await dropdownProvider.getData2();
         final mastersProvider =
             Provider.of<MastersProvider>(context, listen: false);
         await mastersProvider.getShifts();
         // await dropdownProvider.verifyRuleRisk();
         await dropdownProvider.getTagsMatrizRiesgo(context);
-        widget.isUpdate != true ? dropdownProvider.clearValues() : null;
         dropdownProvider.seleccionarSolicitante();
       }
     });

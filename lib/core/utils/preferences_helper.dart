@@ -17,11 +17,17 @@ class PreferencesHelper {
   Future<void> setUser(ApiResponseDetailUser user) async {
     int role = int.parse(
         user.roles.keys.reduce((a, b) => int.parse(a) > int.parse(b) ? a : b));
+
+
+        List<String> roles =  user.roles.keys.toList();
+
+
     await _prefs.setBool('logged', true);
     await _prefs.setInt('id', user.id);
     await _prefs.setString('username', user.name);
     await _prefs.setString('area', user.area);
     await _prefs.setInt('rol', role);
+    await _prefs.setStringList('roles', roles);
     await _prefs.setInt('flag', user.flagNuevoIngreso);
     await _prefs.setString('grupo', user.grupo??'');
     await _prefs.setInt('grupoId', user.grupoId??10);
@@ -32,6 +38,7 @@ class PreferencesHelper {
     final String? username = _prefs.getString('username');
     final String? area = _prefs.getString('area');
     final int? role = _prefs.getInt('rol');
+    final List<String>? roles = _prefs.getStringList('roles');
     final int? flagNuevoIngreso = _prefs.getInt('flag');
 
     // Si alguno de los valores esenciales es nulo, devuelve null

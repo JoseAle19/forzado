@@ -350,6 +350,7 @@ class DropDownValuesManagerProvider with ChangeNotifier {
     _isEnabledRuletagMatriz = false;
     _currentValueSubfijo = '';
     _currentStategrupo = null;
+    _currentValueCircuitos =null;
     notifyListeners();
   }
 
@@ -577,7 +578,8 @@ class DropDownValuesManagerProvider with ChangeNotifier {
 
     final idSubArea = currentValueTagPrefijo!.id;
     final idTagCentro = currentValueTagCentro!.id;
-    final subfijo = currentTagSubfijo;
+    // Cambios 60/05/25
+     final subfijo = currentTagSubfijo;
 
     final tag = _listTagsMatriz.firstWhere(
       (tag) =>
@@ -590,6 +592,7 @@ class DropDownValuesManagerProvider with ChangeNotifier {
           centroId: 0000,
           sufijo: 'error',
           probabilidadId: 0000,
+          riesgoAId: 0000,
           impactoId: 0000), // Devuelve null si no encuentra un elemento
     );
     if (tag.sufijo != 'error') {
@@ -597,8 +600,11 @@ class DropDownValuesManagerProvider with ChangeNotifier {
       final probabilidad =
           listProbabilidades.firstWhere((p) => p.id == tag.probabilidadId);
       final impacto = listImpactos.firstWhere((i) => i.id == tag.impactoId);
+      final riesgoA = _listRiesgos.firstWhere((r) => r.id == tag.riesgoAId);
+
       currentStateProbability = probabilidad;
       currentStateImpact = impacto;
+      currentStateRisk  = riesgoA;
       _isEnabledRuletagMatriz = true;
     } else {
       _isEnabledRuletagMatriz = false;
@@ -949,21 +955,43 @@ class DropDownValuesManagerProvider with ChangeNotifier {
     _dateNow = formattedDate;
   }
 
-  Future<void> selectDate(BuildContext context) async {
-    final DateTime? picked = await showDatePicker(
-      context: context,
-      initialDate: DateTime.now(),
-      firstDate: DateTime(2000),
-      lastDate: DateTime(2101),
-      locale: const Locale('es', ''), // español
-    );
+Future<void> selectDate(BuildContext context) async {
+  final DateTime? pickedDate = await showDatePicker(
+    context: context,
+    initialDate: DateTime.now(),
+    firstDate: DateTime(2000),
+    lastDate: DateTime(2101),
+    locale: const Locale('es', ''), // español
+  );
 
-    if (picked != null) {
-      final formatted = DateFormat('yyyy/MM/dd').format(picked);
-      setDate = formatted;
-      notifyListeners();
-    }
-  }
+  if (pickedDate == null) return; // usuario canceló
+  final TimeOfDay? pickedTime = await showTimePicker(
+    context: context,
+    initialTime: TimeOfDay.now(),
+    builder: (context, child) {
+      return MediaQuery(
+        data: MediaQuery.of(context).copyWith(alwaysUse24HourFormat: true),
+        child: child!,
+      );
+    },
+  );
+
+  if (pickedTime == null) return; // usuario canceló
+
+  final DateTime combined = DateTime(
+    pickedDate.year,
+    pickedDate.month,
+    pickedDate.day,
+    pickedTime.hour,
+    pickedTime.minute,
+  );
+
+  final formatted = DateFormat('yyyy/MM/dd HH:mm').format(combined);
+
+  setDate = formatted;
+  notifyListeners();
+}
+
 
 
 String _currentRequest = '';

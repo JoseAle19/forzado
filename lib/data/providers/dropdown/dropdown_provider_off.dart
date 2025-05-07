@@ -255,8 +255,7 @@ class DropdownProviderManagerOffline with ChangeNotifier {
 
 // Limpiar los valores de los dropdown
   void clearValues() {
-    print('limpiar calores de los drop');
-    _currentValueTagPrefijo = null;
+     _currentValueTagPrefijo = null;
     _currentValueTagCentro = null;
     _currentValueTagDisciplina = null;
     _currentValueSlot = null;
@@ -390,15 +389,7 @@ class DropdownProviderManagerOffline with ChangeNotifier {
     notifyListeners();
   }
 
-  // void defineInterlockbyRiskA() {
-  //   if (currentStateRisk!.descripcion.isEmpty) return;
-  //   if (currentStateRisk!.descripcion.toLowerCase() == 'personas') {
-  //     addAprobadoresByPuesto();
-  //   } else {
-  //     addArobbadoresByRole();
-  //   }
-  //   notifyListeners();
-  // }
+  
 
   void addAprobadoresByPuesto() {
     _listAprobadores.clear();
@@ -712,7 +703,6 @@ class DropdownProviderManagerOffline with ChangeNotifier {
       currentStateImpact = impacto;
       _isEnabledRuletagMatriz = true;
     } else {
-      print('no setear');
       _isEnabledRuletagMatriz = false;
       currentStateProbability = null;
       currentStateImpact = null;
