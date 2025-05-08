@@ -177,7 +177,7 @@ class _DetailApproveForzadoState extends State<DetailApproveForzado> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          widget.detailForzado.id.toString(),
+          'Id: ${widget.detailForzado.id.toString()}',
           style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
         ),
         Text(
@@ -268,7 +268,7 @@ class _DetailApproveForzadoState extends State<DetailApproveForzado> {
         ),
         TextInfo(
           title: 'Interlock Seguridad',
-          description: widget.detailForzado.interlock.toString(),
+          description: widget.detailForzado.interlock! >= 1? 'SI':'NO',
         ),
         TextInfo(
           title: 'Responsable',
@@ -280,14 +280,17 @@ class _DetailApproveForzadoState extends State<DetailApproveForzado> {
           description:
               widget.detailForzado.riesgoDescripcion ?? 'No especificado',
         ),
-        const TextInfo(
+          TextInfo(
           title: 'Probabilidad',
-          description: 'No especificado',
+            description:
+              widget.detailForzado.probabilidadDescripcion ?? 'No especificado',
         ),
-        const TextInfo(
+          TextInfo(
           title: 'Impacto',
-          description: 'No especificado',
+            description:
+              widget.detailForzado.impactoDescripcion ?? 'No especificado',
         ),
+          
       ],
     );
   }
@@ -309,11 +312,7 @@ class _DetailApproveForzadoState extends State<DetailApproveForzado> {
           description: widget.detailForzado.aprobador ?? 'Sin valor',
         ),
        
-        TextInfo(
-          title: 'Tipo de Forzado',
-          description:
-              widget.detailForzado.tipoForzadoDescripcion ?? 'No especificado',
-        ),
+       
       ],
     );
   }

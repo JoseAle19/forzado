@@ -85,6 +85,8 @@ class ForzadoApprove {
   final int? interlock;
   final String? proyectoDescripcion;
   final int? proyectoId;
+  final String? probabilidadDescripcion;
+  final String? impactoDescripcion;
 
   ForzadoApprove({
     this.id,
@@ -124,6 +126,7 @@ class ForzadoApprove {
     this.interlock,
     this.proyectoDescripcion,
     this.proyectoId,
+    this.probabilidadDescripcion, this.impactoDescripcion
   });
 
   factory ForzadoApprove.fromJson(Map<String, dynamic> json) {
@@ -172,6 +175,8 @@ class ForzadoApprove {
       interlock: parseInt(json["interlock"]),
       proyectoDescripcion: parseString(json["proyectoDescripcion"]),
       proyectoId: parseInt(json["proyectoId"]),
+      probabilidadDescripcion: parseString(json["probabilidadDescripcion"]),
+      impactoDescripcion: parseString(json["impactoDescripcion"]),
     );
   }
 

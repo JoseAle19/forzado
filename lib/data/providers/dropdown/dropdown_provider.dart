@@ -669,9 +669,7 @@ class DropDownValuesManagerProvider with ChangeNotifier {
     }).toList();
 
     for (var user in aprobadores) {
-      print('Usuario');
-      print(user.puestoDescripcion);
-      if (user.puestoDescripcion?.toLowerCase() == "gerente planta proceso") {
+       if (user.puestoDescripcion?.toLowerCase() == "gerente planta proceso") {
         _listAprobadores.add(
           modelthird.Value(
             id: user.id!,
@@ -940,9 +938,8 @@ class DropDownValuesManagerProvider with ChangeNotifier {
 //Seleccionar solicitante loggeado en el drodown
 
   void seleccionarSolicitante() async {
-    print('hola');
-    ApiResponseDetailUser? _user = PreferencesHelper().getUser();
-
+     ApiResponseDetailUser? _user = PreferencesHelper().getUser();
+  
     final solicitante = listSolicitantes.firstWhere((u) => u.id == _user!.id,
         orElse: () => throw Exception("No se encontró el usuario"));
 

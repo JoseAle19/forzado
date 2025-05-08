@@ -15,6 +15,7 @@ class _MainHomePageState extends State<MainHomePage>
     with SingleTickerProviderStateMixin {
   late final List<Widget> _pages;
   late final List<BottomNavigationBarItem> _items;
+  late final  List<int> effectiveRoles;
 
   AnimationController? _animationController;
 
@@ -23,7 +24,9 @@ class _MainHomePageState extends State<MainHomePage>
   @override
   void initState() {
     super.initState();
+    // print(roles);
 
+    
     final roleMap = <int, MapEntry<String, Widget>>{
       1: const MapEntry('Solicitante', Home()),
       2: const MapEntry('Aprobador', HomeApprove()),
@@ -31,12 +34,17 @@ class _MainHomePageState extends State<MainHomePage>
       4: const MapEntry('Aprobador Interlock', HomeApprove()),
       5: const MapEntry('Administrador', Home()),
     };
-    final allExceptAdmin = roleMap.keys.where((r) => r != 5).toList();
-
-    final effectiveRoles = widget.roles.contains(5)
+    final allExceptAdmin = widget.roles.where((r) => r != 5).toList().where(roleMap.containsKey)
+      .toList(growable: false);
+    effectiveRoles = widget.roles.contains(5)
         ? allExceptAdmin
         : widget.roles.where(roleMap.containsKey).toList();
 
+      //    effectiveRoles = widget.roles
+      // .where(roleMap.containsKey)
+      // .toList(growable: false);
+
+  
     _pages =
         effectiveRoles.map((r) => roleMap[r]!.value).toList(growable: false);
 
@@ -97,6 +105,8 @@ class _MainHomePageState extends State<MainHomePage>
 
   @override
   Widget build(BuildContext context) {
+        final currentRole = effectiveRoles[_currentIndex];
+
     if (_pages.isEmpty) {
       return Scaffold(
         backgroundColor: Colors.grey.shade100,
@@ -152,9 +162,9 @@ class _MainHomePageState extends State<MainHomePage>
         height: 70,
         decoration: BoxDecoration(
           gradient: LinearGradient(
-            colors: [
-              _colorForRole(widget.roles[_currentIndex]).withOpacity(0.9),
-              _colorForRole(widget.roles[_currentIndex]).withOpacity(0.7),
+             colors: [
+              _colorForRole(currentRole).withOpacity(0.9),
+              _colorForRole(currentRole).withOpacity(0.7),
             ],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
