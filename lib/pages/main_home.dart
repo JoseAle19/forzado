@@ -136,7 +136,7 @@ class _MainHomePageState extends State<MainHomePage>
 
   @override
   Widget build(BuildContext context) {
-    if (!isRequester) {
+    if (!isRequester && !isConnected ) {
       return Scaffold(
         backgroundColor: Colors.grey.shade100,
         body: Center(

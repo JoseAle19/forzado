@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:forzado/adapters/adapter_forzados.dart';
 import 'package:forzado/data/providers/dropdown/dropdown_provider_off.dart';
 import 'package:forzado/models/model_one.dart' as modelone;
-import 'package:forzado/models/model_two.dart' as modelTwo;
 import 'package:forzado/models/model_three.dart' as modelthird;
+import 'package:forzado/models/model_two.dart' as modelTwo;
 import 'package:forzado/widgets/custom_dropdown_button.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:provider/provider.dart';
 
 class StepperForm extends StatefulWidget {
@@ -64,21 +66,26 @@ class _StepperFormState extends State<StepperForm> {
     return provider.currentValueSubfijo.isNotEmpty &&
         provider.currentValueTagPrefijo != null &&
         provider.currentValueTagCentro != null &&
+        provider.currentValueTagDisciplina != null &&
+        provider.currentValueCircuitos != null &&
         provider.currentValueDescription.isNotEmpty;
   }
 
   bool _isStep1Complete(DropdownProviderManagerOffline provider) {
     bool riskValid = provider.isRiskAssessmentAutoSet ||
-        (provider.currentStateProbability != null &&
-            provider.currentStateImpact != null &&
-            provider.currentRiskA != null);
+        (provider.currentValueInterlock == 1 ||
+            provider.currentValueInterlock == 0 &&
+                provider.currentStateResponsibility != null &&
+                provider.currentStateProbability != null &&
+                provider.currentStateImpact != null &&
+                provider.currentRiskA != null);
 
     return riskValid;
   }
 
   bool _isStep2Complete(DropdownProviderManagerOffline provider) {
     return provider.currentStateApplicant != null &&
-        provider.currentStateResponsibility != null &&
+        provider.currentGrupo != null &&
         provider.currentStateApprover != null;
   }
 
@@ -95,7 +102,7 @@ class _StepperFormState extends State<StepperForm> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Crear solicitud ${provider.currentShift?.descripcion}'),
+        title: const Text('Crear solicitud'),
       ),
       body: Stepper(
         stepIconHeight: 30,
@@ -137,7 +144,8 @@ class _StepperFormState extends State<StepperForm> {
                                   'Formulario enviado con éxito',
                                   Colors.green,
                                   true);
-                              // Aquí iría tu lógica de envío real
+
+                              // todo:
                             }
                           } else {
                             _modal.showModal(
@@ -259,6 +267,20 @@ class _StepOneContent extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Fecha y Hora de la Solicitud: ${dropdownProvider.date}',
+              style: const TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+            Text('Turno actual: ${dropdownProvider.shiftType}'),
+            // Text('ID: ${currentShift.id}'),
+          ],
+        ),
         const SizedBox(height: 16),
         CustomDropdownButton<modelone.Value>(
           hintText: 'Sub Área (Tag Prefijo) *',
@@ -273,6 +295,7 @@ class _StepOneContent extends StatelessWidget {
           selectedItem: dropdownProvider.currentValueTagCentro,
           onChanged: (v) => dropdownProvider.currentValueTagCentro = v!,
         ),
+        const SizedBox(height: 16),
         TextFormField(
           // initialValue: ,
           onChanged: (v) => dropdownProvider.currentValueSubfijo = v,
@@ -302,7 +325,7 @@ class _StepOneContent extends StatelessWidget {
         AbsorbPointer(
           absorbing: false,
           child: Opacity(
-            opacity:  1,
+            opacity: 1,
             child: CustomDropdownButton<modelTwo.Value>(
               hintText: 'Disciplina *',
               items: dropdownProvider.listDiciplinas,
@@ -314,7 +337,7 @@ class _StepOneContent extends StatelessWidget {
         AbsorbPointer(
           absorbing: false,
           child: Opacity(
-            opacity:  1,
+            opacity: 1,
             child: CustomDropdownButton<modelTwo.Value>(
               hintText: 'Circuito *',
               items: dropdownProvider.listCircuitos,
@@ -344,6 +367,21 @@ class _StepTwoContent extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Fecha y Hora de la Solicitud: ${dropdownProvider.date}',
+              style: const TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+            Text('Turno actual: ${dropdownProvider.shiftType}'),
+            // Text('ID: ${currentShift.id}'),
+          ],
+        ),
+        const SizedBox(height: 16),
         AbsorbPointer(
           absorbing: dropdownProvider.isRiskAssessmentAutoSet,
           child: Opacity(
@@ -366,7 +404,7 @@ class _StepTwoContent extends StatelessWidget {
         AbsorbPointer(
           absorbing: false,
           child: Opacity(
-            opacity:  1,
+            opacity: 1,
             child: CustomDropdownButton<modelthird.Value>(
               hintText: 'Gerencia Responsable *',
               items: dropdownProvider.listResponsables,
@@ -469,13 +507,27 @@ class _StepThreeContent extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Fecha y Hora de la Solicitud: ${dropdownProvider.date}',
+              style: const TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+            Text('Turno actual: ${dropdownProvider.shiftType}'),
+            // Text('ID: ${currentShift.id}'),
+          ],
+        ),
+        const SizedBox(height: 16),
         CustomDropdownButton<modelthird.Value>(
           hintText: 'Solicitante *',
           items: dropdownProvider.listSolicitantes,
           selectedItem: dropdownProvider.currentStateApplicant,
           onChanged: (v) => dropdownProvider.currentStateApplicant = v!,
         ),
-        
         const SizedBox(height: 16),
         CustomDropdownButton<modelthird.Value>(
           hintText: 'Aprobador *',

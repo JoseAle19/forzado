@@ -38,7 +38,7 @@ class StepOneContent extends StatelessWidget {
             return Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                    Text('Fecha y Hora de la Solicitud: ${provider.date}',
+                    Text('Fecha y Hora de la Solicitud: ${provider.date }',
               style: const TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.w600,

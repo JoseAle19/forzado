@@ -657,20 +657,24 @@ class DropdownProviderManagerOffline with ChangeNotifier {
   }
 
   void _determineCurrentShift() {
-    final now = DateTime.now();
-    final currentTime = TimeOfDay.fromDateTime(now);
-    final _turnos = Hive.box<ShiftValue>('shiftBox').values;
+    try {
+      final now = DateTime.now();
+      final currentTime = TimeOfDay.fromDateTime(now);
+      final _turnos = Hive.box<ShiftValue>('shiftBox').values;
+       formatDate();
+      for (final turno in _turnos) {
+        final startTime = _parseTimeString(turno.horaInicio!);
+        final endTime = _parseTimeString(turno.horaFin!);
 
-    for (final turno in _turnos) {
-      final startTime = _parseTimeString(turno.horaInicio!);
-      final endTime = _parseTimeString(turno.horaFin!);
-
-      if (_isTimeInShift(currentTime, startTime, endTime)) {
-        _currentShift = turno;
-        _shiftType = normalizar(turno.descripcion ?? '--'); // 'DIA' o 'NOCHE'
-        notifyListeners();
-        return;
+        if (_isTimeInShift(currentTime, startTime, endTime)) {
+          _currentShift = turno;
+          _shiftType = normalizar(turno.descripcion ?? '--'); // 'DIA' o 'NOCHE'
+          notifyListeners();
+          return;
+        }
       }
+    } catch (e) {
+      print('ocurrio un error ${e}');
     }
   }
 
@@ -704,7 +708,7 @@ class DropdownProviderManagerOffline with ChangeNotifier {
   void addAprobadoresByPuesto() async {
     final prefs = await SharedPreferences.getInstance();
     final id = prefs.getInt('grupoId');
-    
+
     final boxShifts = Hive.box<PuestoValue>('staffPosition').values.toList();
     final boxUsers = Hive.box<AdapterUser>('users').values.toList();
 
@@ -727,21 +731,20 @@ class DropdownProviderManagerOffline with ChangeNotifier {
           id: user.id!,
           nombre: '${user.nombre!} ${user.apePaterno!} ${user.apeMaterno!}',
         );
-        
+
         if (!idsAgregados.contains(nuevoAprobador.id)) {
           idsAgregados.add(nuevoAprobador.id);
           nuevosAprobadores.add(nuevoAprobador);
         }
       }
     }
-    
+
     listAprobadores
       ..clear()
       ..addAll(nuevosAprobadores);
-}
+  }
 
-
- void addArobbadoresByRole() async {
+  void addArobbadoresByRole() async {
     final boxUsers = Hive.box<AdapterUser>('users').values.toList();
     final boxShifts = Hive.box<PuestoValue>('staffPosition').values.toList();
     final prefs = await SharedPreferences.getInstance();
@@ -766,23 +769,22 @@ class DropdownProviderManagerOffline with ChangeNotifier {
           id: user.id!,
           nombre: '${user.nombre!} ${user.apePaterno!} ${user.apeMaterno!}',
         );
-        
+
         if (!idsAgregados.contains(nuevoAprobador.id)) {
           idsAgregados.add(nuevoAprobador.id);
           nuevosAprobadores.add(nuevoAprobador);
         }
       }
     }
-    
+
     listAprobadores
       ..clear()
       ..addAll(nuevosAprobadores);
-}
+  }
 
-
-void validateInterlok() async {
+  void validateInterlok() async {
     if (_currentValueInterlock == 1) {
-       addAprobadoresByPuesto();
+      addAprobadoresByPuesto();
       notifyListeners();
       return;
     }
@@ -790,16 +792,17 @@ void validateInterlok() async {
     if (_currentValueInterlock == 1 ||
         (_currentValueInterlock == 0 &&
             _currentRiskA?.descripcion.toLowerCase() == 'personas')) {
-       addAprobadoresByPuesto();
+      addAprobadoresByPuesto();
     } else {
-       addArobbadoresByRole();
+      addArobbadoresByRole();
     }
 
     // Manejo seguro del solicitante como aprobador
     if (currentStateApplicant != null) {
-      final solicitanteValue =modelthird.Value(
+      final solicitanteValue = modelthird.Value(
         id: currentStateApplicant!.id,
-        nombre: '${currentStateApplicant!.nombre} ${currentStateApplicant!.apePaterno ?? ''}',
+        nombre:
+            '${currentStateApplicant!.nombre} ${currentStateApplicant!.apePaterno ?? ''}',
         apePaterno: '',
       );
 
@@ -819,18 +822,18 @@ void validateInterlok() async {
     // Eliminar duplicados por si acaso
     final uniqueAprobadores = <modelthird.Value>[];
     final ids = <int>{};
-    
+
     for (var aprobador in listAprobadores) {
       if (!ids.contains(aprobador.id)) {
         ids.add(aprobador.id);
         uniqueAprobadores.add(aprobador);
       }
     }
-    
+
     listAprobadores
       ..clear()
       ..addAll(uniqueAprobadores);
 
     notifyListeners();
-}
+  }
 }

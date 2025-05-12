@@ -52,7 +52,7 @@ class MastersProvider with ChangeNotifier {
       final box = Hive.box<ShiftValue>('shiftBox');
       await box.clear();
       for (var item in decodeData.values ?? []) {
-        box.add(ShiftValue.fromJson(item.toJson()));
+      await   box.add(ShiftValue.fromJson(item.toJson()));
       }
       _turnos = decodeData.values ?? [];
 
