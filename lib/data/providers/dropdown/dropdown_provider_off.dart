@@ -258,8 +258,8 @@ class DropdownProviderManagerOffline with ChangeNotifier {
     _currentStateExecutor = null;
 
     // Reset string values
-    _currentValueDescription = '';
-    _currentValueSubfijo = '';
+    currentValueDescription = '';
+    currentValueSubfijo = '';
     _currentValueInterlock = null;
 
     // Cancel and clear debounce timer if it exists

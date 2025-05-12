@@ -63,7 +63,8 @@ class _StepperFormState extends State<StepperForm> {
   bool _isStep0Complete(DropdownProviderManagerOffline provider) {
     return provider.currentValueSubfijo.isNotEmpty &&
         provider.currentValueTagPrefijo != null &&
-        provider.currentValueTagCentro != null;
+        provider.currentValueTagCentro != null &&
+        provider.currentValueDescription.isNotEmpty;
   }
 
   bool _isStep1Complete(DropdownProviderManagerOffline provider) {
@@ -273,7 +274,7 @@ class _StepOneContent extends StatelessWidget {
           onChanged: (v) => dropdownProvider.currentValueTagCentro = v!,
         ),
         TextFormField(
-          initialValue: dropdownProvider.currentValueSubfijo,
+          // initialValue: ,
           onChanged: (v) => dropdownProvider.currentValueSubfijo = v,
           maxLength: 100,
           maxLines: 2,
@@ -286,22 +287,22 @@ class _StepOneContent extends StatelessWidget {
           ),
         ),
         TextFormField(
-          initialValue: dropdownProvider.currentValueSubfijo,
-          onChanged: (v) => dropdownProvider.currentValueSubfijo = v,
+          // initialValue: 'Agrega una descripción ',
+          onChanged: (v) => dropdownProvider.currentValueDescription = v,
           maxLength: 100,
-          maxLines: 2,
+          maxLines: 4,
           decoration: InputDecoration(
             labelText: 'Descripción *',
-            hintText: dropdownProvider.currentValueSubfijo,
+            hintText: dropdownProvider.currentValueDescription,
             border: const OutlineInputBorder(),
             contentPadding:
                 const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
           ),
         ),
         AbsorbPointer(
-          absorbing: dropdownProvider.isRiskAssessmentAutoSet,
+          absorbing: false,
           child: Opacity(
-            opacity: dropdownProvider.isRiskAssessmentAutoSet ? 0.5 : 1,
+            opacity:  1,
             child: CustomDropdownButton<modelTwo.Value>(
               hintText: 'Disciplina *',
               items: dropdownProvider.listDiciplinas,
@@ -311,9 +312,9 @@ class _StepOneContent extends StatelessWidget {
           ),
         ),
         AbsorbPointer(
-          absorbing: dropdownProvider.isRiskAssessmentAutoSet,
+          absorbing: false,
           child: Opacity(
-            opacity: dropdownProvider.isRiskAssessmentAutoSet ? 0.5 : 1,
+            opacity:  1,
             child: CustomDropdownButton<modelTwo.Value>(
               hintText: 'Circuito *',
               items: dropdownProvider.listCircuitos,
@@ -363,9 +364,9 @@ class _StepTwoContent extends StatelessWidget {
         ),
         const SizedBox(height: 16),
         AbsorbPointer(
-          absorbing: dropdownProvider.isRiskAssessmentAutoSet,
+          absorbing: false,
           child: Opacity(
-            opacity: dropdownProvider.isRiskAssessmentAutoSet ? 0.5 : 1,
+            opacity:  1,
             child: CustomDropdownButton<modelthird.Value>(
               hintText: 'Gerencia Responsable *',
               items: dropdownProvider.listResponsables,
