@@ -35,7 +35,6 @@ class _StepperFormState extends State<StepperForm> {
         final mastersProvider =
             Provider.of<MastersProvider>(context, listen: false);
         await mastersProvider.getShifts();
-        // await dropdownProvider.verifyRuleRisk();
         await dropdownProvider.getTagsMatrizRiesgo(context);
         dropdownProvider.seleccionarSolicitante();
       }

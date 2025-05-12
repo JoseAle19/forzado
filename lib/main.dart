@@ -1,12 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:forzado/adapters/adapter_forzados.dart';
+import 'package:forzado/adapters/adapter_matriz_riesgo.dart';
 import 'package:forzado/adapters/adapter_one.dart';
+import 'package:forzado/adapters/adapter_shifts.dart';
+import 'package:forzado/adapters/adapter_tag_forzado.dart';
 import 'package:forzado/adapters/adapter_tags.dart';
 import 'package:forzado/adapters/adapter_three.dart';
 import 'package:forzado/adapters/adapter_two.dart';
 import 'package:forzado/adapters/forzado.dart';
 import 'package:forzado/adapters/forzado_baja.dart';
+import 'package:forzado/adapters/staff_position.dart';
 import 'package:forzado/adapters/user_adapter.dart';
 import 'package:forzado/core/utils/preferences_helper.dart';
 import 'package:forzado/data/providers/Stepper/stepper_provider.dart';
@@ -29,7 +33,6 @@ import 'package:hive_flutter/adapters.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:provider/provider.dart';
 
-
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await PreferencesHelper().init();
@@ -42,6 +45,9 @@ void main() async {
   Hive.registerAdapter(ForzadoBajaAdapter());
   Hive.registerAdapter(AdapterUserAdapter());
   Hive.registerAdapter(AdapterTagsAdapter());
+  Hive.registerAdapter(AdapterMatrizRiesgoAdapter());
+  Hive.registerAdapter(AdapterTagForzadoAdapter());
+  Hive.registerAdapter(PuestoValueAdapter());
 
   // Abre las cajas para cada modelo
   await Hive.openBox<AdapterOne>('TagPrefijo');
@@ -49,11 +55,23 @@ void main() async {
 
   await Hive.openBox<AdapterTwo>('Disciplina');
   await Hive.openBox<AdapterTwo>('Turno');
+  await Hive.openBox<AdapterTwo>('grupo-ejecucion');
+  // este es el de riesgoA
   await Hive.openBox<AdapterTwo>('Riesgo');
+  // este adapter es el dropdown el que no es editable
+  await Hive.openBox<AdapterMatrizRiesgo>('matriz-riesgo');
+  await Hive.openBox<AdapterTagForzado>('tags-matriz-riesgo');
+  Hive.registerAdapter(ShiftValueAdapter());
+
+
+  
+  await Hive.openBox<ShiftValue>('shiftBox');
+  await Hive.openBox<PuestoValue>('staffPosition');
+
   await Hive.openBox<AdapterTwo>('Probabilidad');
   await Hive.openBox<AdapterTwo>('Impacto');
   await Hive.openBox<AdapterTwo>('Tipo');
-  await Hive.openBox<AdapterTwo>('projects');
+  await Hive.openBox<AdapterTwo>('circuitos');
 
   await Hive.openBox<AdapterThree>('Responsable');
   await Hive.openBox<AdapterThree>('Solicitante');
@@ -87,41 +105,41 @@ class MyApp extends StatelessWidget {
               ..fetchCountForzados()
               ..getForzados()),
         ChangeNotifierProvider(create: (_) => BottomNavigationBarProvider()),
-         ChangeNotifierProvider(create: (_) => DropdownProviderManagerOffline()),
+        ChangeNotifierProvider(create: (_) => DropdownProviderManagerOffline()),
         ChangeNotifierProvider(create: (_) => StepperProvider()),
         ChangeNotifierProvider(create: (_) => UserProvider()),
         ChangeNotifierProvider(create: (_) => ForzadosProviderAjecutor()),
         ChangeNotifierProvider(create: (_) => ForzadosProviderApprove()),
         ChangeNotifierProvider(create: (_) => MastersProvider()),
-         ChangeNotifierProxyProvider<MastersProvider, DropDownValuesManagerProvider>(
-      create: (context) {
-        final mastersProvider = Provider.of<MastersProvider>(context, listen: false);
-        return DropDownValuesManagerProvider(mastersProvider)
-          ..initialize();
-      },
-      update: (context, mastersProvider, dropDownManager) {
-        if (dropDownManager == null) {
-          return DropDownValuesManagerProvider(mastersProvider)
-            ..initialize();
-        }
-        return dropDownManager..updateMastersProvider(mastersProvider);
-      },
-    ),
+        ChangeNotifierProxyProvider<MastersProvider,
+            DropDownValuesManagerProvider>(
+          create: (context) {
+            final mastersProvider =
+                Provider.of<MastersProvider>(context, listen: false);
+            return DropDownValuesManagerProvider(mastersProvider)..initialize();
+          },
+          update: (context, mastersProvider, dropDownManager) {
+            if (dropDownManager == null) {
+              return DropDownValuesManagerProvider(mastersProvider)
+                ..initialize();
+            }
+            return dropDownManager..updateMastersProvider(mastersProvider);
+          },
+        ),
       ],
-      child:   MaterialApp(
+      child: MaterialApp(
           theme: ThemeData(fontFamily: 'NotoSans'),
           localizationsDelegates: const [
-        GlobalMaterialLocalizations.delegate,
-        GlobalWidgetsLocalizations.delegate,
-        GlobalCupertinoLocalizations.delegate,
-      ],
-      supportedLocales: const [
-        Locale('es', ''), 
-       ],
+            GlobalMaterialLocalizations.delegate,
+            GlobalWidgetsLocalizations.delegate,
+            GlobalCupertinoLocalizations.delegate,
+          ],
+          supportedLocales: const [
+            Locale('es', ''),
+          ],
           debugShowCheckedModeBanner: false,
           title: 'Forzados',
           home: const HomePage()),
-
     );
   }
 }

@@ -28,7 +28,7 @@ class _PageOfflineState extends State<PageOffline> {
   Future<void> getData() async {
     final dropdownProviderOff =
         Provider.of<DropdownProviderManagerOffline>(context, listen: false);
-    await dropdownProviderOff.getDataHive();
+    // await dropdownProviderOff.getDataHive();
   }
 
   @override
@@ -41,7 +41,7 @@ class _PageOfflineState extends State<PageOffline> {
           GestureDetector(
             onTap: () {
               final route =
-                  MaterialPageRoute(builder: (_) => const StepperFormOffline());
+                  MaterialPageRoute(builder: (_) => const StepperForm());
               Navigator.push(context, route);
             },
             child: Container(

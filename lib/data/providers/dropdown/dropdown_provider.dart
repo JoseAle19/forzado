@@ -350,7 +350,7 @@ class DropDownValuesManagerProvider with ChangeNotifier {
     _isEnabledRuletagMatriz = false;
     _currentValueSubfijo = '';
     _currentStategrupo = null;
-    _currentValueCircuitos =null;
+    _currentValueCircuitos = null;
     notifyListeners();
   }
 
@@ -579,7 +579,7 @@ class DropDownValuesManagerProvider with ChangeNotifier {
     final idSubArea = currentValueTagPrefijo!.id;
     final idTagCentro = currentValueTagCentro!.id;
     // Cambios 60/05/25
-     final subfijo = currentTagSubfijo;
+    final subfijo = currentTagSubfijo;
 
     final tag = _listTagsMatriz.firstWhere(
       (tag) =>
@@ -593,7 +593,8 @@ class DropDownValuesManagerProvider with ChangeNotifier {
           sufijo: 'error',
           probabilidadId: 0000,
           riesgoAId: 0000,
-          impactoId: 0000), // Devuelve null si no encuentra un elemento
+          impactoId: 0000,
+          interlock: 0000), // Devuelve null si no encuentra un elemento
     );
     if (tag.sufijo != 'error') {
       // setear valores
@@ -604,7 +605,7 @@ class DropDownValuesManagerProvider with ChangeNotifier {
 
       currentStateProbability = probabilidad;
       currentStateImpact = impacto;
-      currentStateRisk  = riesgoA;
+      currentStateRisk = riesgoA;
       _isEnabledRuletagMatriz = true;
     } else {
       _isEnabledRuletagMatriz = false;
@@ -669,7 +670,7 @@ class DropDownValuesManagerProvider with ChangeNotifier {
     }).toList();
 
     for (var user in aprobadores) {
-       if (user.puestoDescripcion?.toLowerCase() == "gerente planta proceso") {
+      if (user.puestoDescripcion?.toLowerCase() == "gerente planta proceso") {
         _listAprobadores.add(
           modelthird.Value(
             id: user.id!,
@@ -693,7 +694,7 @@ class DropDownValuesManagerProvider with ChangeNotifier {
     if (_riskLevels.isEmpty ||
         _currentStateImpact?.descripcion == null ||
         _currentStateProbability?.descripcion == null) {
-      return; // ❌ No continuar si no está todo listo
+      return;
     }
 
     if (_currentStateImpact?.descripcion != null &&
@@ -938,8 +939,8 @@ class DropDownValuesManagerProvider with ChangeNotifier {
 //Seleccionar solicitante loggeado en el drodown
 
   void seleccionarSolicitante() async {
-     ApiResponseDetailUser? _user = PreferencesHelper().getUser();
-  
+    ApiResponseDetailUser? _user = PreferencesHelper().getUser();
+
     final solicitante = listSolicitantes.firstWhere((u) => u.id == _user!.id,
         orElse: () => throw Exception("No se encontró el usuario"));
 
@@ -952,171 +953,167 @@ class DropDownValuesManagerProvider with ChangeNotifier {
     _dateNow = formattedDate;
   }
 
-Future<void> selectDate(BuildContext context) async {
-  final DateTime? pickedDate = await showDatePicker(
-    context: context,
-    initialDate: DateTime.now(),
-    firstDate: DateTime(2000),
-    lastDate: DateTime(2101),
-    locale: const Locale('es', ''), // español
-  );
+  Future<void> selectDate(BuildContext context) async {
+    final DateTime? pickedDate = await showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime(2000),
+      lastDate: DateTime(2101),
+      locale: const Locale('es', ''), // español
+    );
 
-  if (pickedDate == null) return; // usuario canceló
-  final TimeOfDay? pickedTime = await showTimePicker(
-    context: context,
-    initialTime: TimeOfDay.now(),
-    builder: (context, child) {
-      return MediaQuery(
-        data: MediaQuery.of(context).copyWith(alwaysUse24HourFormat: true),
-        child: child!,
-      );
-    },
-  );
+    if (pickedDate == null) return; // usuario canceló
+    final TimeOfDay? pickedTime = await showTimePicker(
+      context: context,
+      initialTime: TimeOfDay.now(),
+      builder: (context, child) {
+        return MediaQuery(
+          data: MediaQuery.of(context).copyWith(alwaysUse24HourFormat: true),
+          child: child!,
+        );
+      },
+    );
 
-  if (pickedTime == null) return; // usuario canceló
+    if (pickedTime == null) return; // usuario canceló
 
-  final DateTime combined = DateTime(
-    pickedDate.year,
-    pickedDate.month,
-    pickedDate.day,
-    pickedTime.hour,
-    pickedTime.minute,
-  );
+    final DateTime combined = DateTime(
+      pickedDate.year,
+      pickedDate.month,
+      pickedDate.day,
+      pickedTime.hour,
+      pickedTime.minute,
+    );
 
-  final formatted = DateFormat('yyyy/MM/dd HH:mm').format(combined);
+    final formatted = DateFormat('yyyy/MM/dd HH:mm').format(combined);
 
-  setDate = formatted;
-  notifyListeners();
-}
-
-
-
-String _currentRequest = '';
-String get currentRequest => _currentRequest;
-set currentRequest(String value) {
-  _currentRequest = value;
-  notifyListeners(); // Notificar a los listeners cuando cambia
-}
-  Future<void> getData2() async {
-  final client = ApiClient();
-  _error = '';
-  _isGettingData = true;
-  notifyListeners();
-
-  try {
-    currentRequest = 'Obteniendo usuarios';
-    await getUsersByRole();
-    
-    currentRequest = 'Espera.....';
-    await _fetchAllData(client);
-  } on TimeoutException {
-    _error = 'Tiempo de espera agotado. Inténtelo de nuevo más tarde.';
-  } on SocketException {
-    _error = 'Error de conexión. Verifique su conexión a internet.';
-  } on HttpException catch (e) {
-    _error = 'Error en el servidor: ${e.message}';
-  } on FormatException {
-    _error = 'Error en el formato de los datos. Verifique la respuesta de la API.';
-  } catch (e) {
-    _error = 'Ocurrió un error desconocido: $e';
-  } finally {
-    _isGettingData = false;
-    currentRequest = ''; // Limpiar al finalizar
+    setDate = formatted;
     notifyListeners();
   }
-}
 
-Future<void> _fetchAllData(ApiClient client) async {
-  final requests = [
-    _RequestInfo(AppUrl.gettagPrefijo1, 'Obteniendo prefijos'),
-    _RequestInfo(AppUrl.getTagCentro1, 'Obteniendo centros'),
-    _RequestInfo(AppUrl.getTagDisciplina2, 'Obteniendo disciplinas'),
-    _RequestInfo(AppUrl.getTurno2, 'Obteniendo turnos'),
-    _RequestInfo(AppUrl.getResponsable3, 'Obteniendo responsables'),
-    _RequestInfo(AppUrl.getRiesgoA2, 'Obteniendo riesgos'),
-    _RequestInfo(AppUrl.getProbabilidad2, 'Obteniendo probabilidades'),
-    _RequestInfo(AppUrl.getImpacto2, 'Obteniendo impactos'),
-    _RequestInfo(AppUrl.getTipoForzado2, 'Obteniendo tipos de forzado'),
-    _RequestInfo(AppUrl.getSolicitantes3, 'Obteniendo solicitantes'),
-    _RequestInfo(AppUrl.getAprobadores, 'Obteniendo aprobadores'),
-    _RequestInfo(AppUrl.getEjecutor, 'Obteniendo ejecutores'),
-    _RequestInfo(AppUrl.getProjects2, 'Obteniendo proyectos'),
-    _RequestInfo(AppUrl.getCircuitos2, 'Obteniendo circuitos'),
-    _RequestInfo(AppUrl.getGrupos, 'Obteniendo grupos'),
-    _RequestInfo(AppUrl.getPuestos, 'Obteniendo puestos'),
-  ];
+  String _currentRequest = '';
+  String get currentRequest => _currentRequest;
+  set currentRequest(String value) {
+    _currentRequest = value;
+    notifyListeners(); // Notificar a los listeners cuando cambia
+  }
 
-  // Ejecutar todas las peticiones con seguimiento
-  final responses = await Future.wait(
-    requests.map((reqInfo) async {
-      currentRequest = reqInfo.description;
-      final response = await client.get(reqInfo.url);
-      return response;
-    })
-  ).timeout(const Duration(seconds: 60));
+  Future<void> getData2() async {
+    final client = ApiClient();
+    _error = '';
+    _isGettingData = true;
+    notifyListeners();
 
-  // Verificar códigos de estado
-  for (int i = 0; i < responses.length; i++) {
-    if (responses[i].statusCode != 200) {
-      throw HttpException('Error al ${requests[i].description}: ${responses[i].statusCode}');
+    try {
+      currentRequest = 'Obteniendo usuarios';
+      await getUsersByRole();
+
+      currentRequest = 'Espera.....';
+      await _fetchAllData(client);
+    } on TimeoutException {
+      _error = 'Tiempo de espera agotado. Inténtelo de nuevo más tarde.';
+    } on SocketException {
+      _error = 'Error de conexión. Verifique su conexión a internet.';
+    } on HttpException catch (e) {
+      _error = 'Error en el servidor: ${e.message}';
+    } on FormatException {
+      _error =
+          'Error en el formato de los datos. Verifique la respuesta de la API.';
+    } catch (e) {
+      _error = 'Ocurrió un error desconocido: $e';
+    } finally {
+      _isGettingData = false;
+      currentRequest = ''; // Limpiar al finalizar
+      notifyListeners();
     }
   }
 
-   currentRequest = 'Procesando prefijos y centros';
-  _processModelOneResponses(responses);
-  _processModelTwoResponses(responses);
-  _processModelThreeResponses(responses);
-  _processPuestoModelResponse(responses);
-}
+  Future<void> _fetchAllData(ApiClient client) async {
+    final requests = [
+      _RequestInfo(AppUrl.gettagPrefijo1, 'Obteniendo prefijos'),
+      _RequestInfo(AppUrl.getTagCentro1, 'Obteniendo centros'),
+      _RequestInfo(AppUrl.getTagDisciplina2, 'Obteniendo disciplinas'),
+      _RequestInfo(AppUrl.getTurno2, 'Obteniendo turnos'),
+      _RequestInfo(AppUrl.getResponsable3, 'Obteniendo responsables'),
+      _RequestInfo(AppUrl.getRiesgoA2, 'Obteniendo riesgos'),
+      _RequestInfo(AppUrl.getProbabilidad2, 'Obteniendo probabilidades'),
+      _RequestInfo(AppUrl.getImpacto2, 'Obteniendo impactos'),
+      _RequestInfo(AppUrl.getTipoForzado2, 'Obteniendo tipos de forzado'),
+      _RequestInfo(AppUrl.getSolicitantes3, 'Obteniendo solicitantes'),
+      _RequestInfo(AppUrl.getAprobadores, 'Obteniendo aprobadores'),
+      _RequestInfo(AppUrl.getEjecutor, 'Obteniendo ejecutores'),
+      _RequestInfo(AppUrl.getProjects2, 'Obteniendo proyectos'),
+      _RequestInfo(AppUrl.getCircuitos2, 'Obteniendo circuitos'),
+      _RequestInfo(AppUrl.getGrupos, 'Obteniendo grupos'),
+      _RequestInfo(AppUrl.getPuestos, 'Obteniendo puestos'),
+    ];
 
+    // Ejecutar todas las peticiones con seguimiento
+    final responses = await Future.wait(requests.map((reqInfo) async {
+      currentRequest = reqInfo.description;
+      final response = await client.get(reqInfo.url);
+      return response;
+    })).timeout(const Duration(seconds: 60));
 
+    // Verificar códigos de estado
+    for (int i = 0; i < responses.length; i++) {
+      if (responses[i].statusCode != 200) {
+        throw HttpException(
+            'Error al ${requests[i].description}: ${responses[i].statusCode}');
+      }
+    }
 
-void _processModelOneResponses(List<Response> responses) {
-  final resPrefijos = modelone.modelOneFromJson(responses[0].body);
-  final resCentros = modelone.modelOneFromJson(responses[1].body);
-  listPrefijos = resPrefijos.values;
-  listCentros = resCentros.values;
-}
+    currentRequest = 'Procesando prefijos y centros';
+    _processModelOneResponses(responses);
+    _processModelTwoResponses(responses);
+    _processModelThreeResponses(responses);
+    _processPuestoModelResponse(responses);
+  }
 
-void _processModelTwoResponses(List<Response> responses) {
-  currentRequest = 'Procesando datos secundarios';
-  final resDiciplinas = modeltwo.modelTwoFromJson(responses[2].body);
-  final resTurnos = modeltwo.modelTwoFromJson(responses[3].body);
-  final resRiesgos = modeltwo.modelTwoFromJson(responses[5].body);
-  final resProbabilidades = modeltwo.modelTwoFromJson(responses[6].body);
-  final resImpactos = modeltwo.modelTwoFromJson(responses[7].body);
-  final resTipoForzados = modeltwo.modelTwoFromJson(responses[8].body);
-  final resProjects = modeltwo.modelTwoFromJson(responses[12].body);
-  final resCircuitos = modeltwo.modelTwoFromJson(responses[13].body);
-  final resGrupos = modeltwo.modelTwoFromJson(responses[14].body);
+  void _processModelOneResponses(List<Response> responses) {
+    final resPrefijos = modelone.modelOneFromJson(responses[0].body);
+    final resCentros = modelone.modelOneFromJson(responses[1].body);
+    listPrefijos = resPrefijos.values;
+    listCentros = resCentros.values;
+  }
 
-  listDiciplinas = resDiciplinas.values;
-  listCircuitos = resCircuitos.values;
-  listGrupos = resGrupos.values;
-  listTurnos = resTurnos.values;
-  listRiesgos = resRiesgos.values;
-  listProbabilidades = resProbabilidades.values;
-  listImpactos = resImpactos.values;
-  listTipoDeForzados = resTipoForzados.values;
-  listProjects = resProjects.values;
-}
+  void _processModelTwoResponses(List<Response> responses) {
+    currentRequest = 'Procesando datos secundarios';
+    final resDiciplinas = modeltwo.modelTwoFromJson(responses[2].body);
+    final resTurnos = modeltwo.modelTwoFromJson(responses[3].body);
+    final resRiesgos = modeltwo.modelTwoFromJson(responses[5].body);
+    final resProbabilidades = modeltwo.modelTwoFromJson(responses[6].body);
+    final resImpactos = modeltwo.modelTwoFromJson(responses[7].body);
+    final resTipoForzados = modeltwo.modelTwoFromJson(responses[8].body);
+    final resProjects = modeltwo.modelTwoFromJson(responses[12].body);
+    final resCircuitos = modeltwo.modelTwoFromJson(responses[13].body);
+    final resGrupos = modeltwo.modelTwoFromJson(responses[14].body);
 
-void _processModelThreeResponses(List<Response> responses) {
-  currentRequest = 'Procesando responsables';
-  final resResponsables = modelthird.modelThreeFromJson(responses[4].body);
-  listResponsables = resResponsables.values;
-}
-
-void _processPuestoModelResponse(List<Response> responses) {
-  currentRequest = 'Procesando puestos';
-  final resPuestos = modelp.puestoModelFromJson(responses[15].body);
-  listPuestos = resPuestos.values!;
-}
-}
-
+    listDiciplinas = resDiciplinas.values;
+    listCircuitos = resCircuitos.values;
+    listGrupos = resGrupos.values;
+    listTurnos = resTurnos.values;
+    listRiesgos = resRiesgos.values;
+    listProbabilidades = resProbabilidades.values;
+    listImpactos = resImpactos.values;
+    listTipoDeForzados = resTipoForzados.values;
+    listProjects = resProjects.values;
 
  
- // Clase auxiliar para manejar la información de las peticiones
+  }
+
+  void _processModelThreeResponses(List<Response> responses) {
+    currentRequest = 'Procesando responsables';
+    final resResponsables = modelthird.modelThreeFromJson(responses[4].body);
+    listResponsables = resResponsables.values;
+  }
+
+  void _processPuestoModelResponse(List<Response> responses) {
+    currentRequest = 'Procesando puestos';
+    final resPuestos = modelp.puestoModelFromJson(responses[15].body);
+    listPuestos = resPuestos.values!;
+  }
+}
+
 class _RequestInfo {
   final String url;
   final String description;

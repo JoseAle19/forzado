@@ -46,6 +46,8 @@ class AdapterUser extends HiveObject {
   final int? id;
   @HiveField(15)
   final String? nombre;
+  @HiveField(16)
+  final int? grupoId;
 
   AdapterUser({
     this.apePaterno,
@@ -63,5 +65,6 @@ class AdapterUser extends HiveObject {
     this.usuario,
     this.id,
     this.nombre,
+    this.grupoId,
   });
 }

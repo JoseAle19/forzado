@@ -32,13 +32,14 @@ class AdapterUserAdapter extends TypeAdapter<AdapterUser> {
       usuario: fields[12] as String?,
       id: fields[14] as int?,
       nombre: fields[15] as String?,
+      grupoId: fields[16] as int?,
     );
   }
 
   @override
   void write(BinaryWriter writer, AdapterUser obj) {
     writer
-      ..writeByte(15)
+      ..writeByte(16)
       ..writeByte(0)
       ..write(obj.apePaterno)
       ..writeByte(1)
@@ -68,7 +69,9 @@ class AdapterUserAdapter extends TypeAdapter<AdapterUser> {
       ..writeByte(14)
       ..write(obj.id)
       ..writeByte(15)
-      ..write(obj.nombre);
+      ..write(obj.nombre)
+      ..writeByte(16)
+      ..write(obj.grupoId);
   }
 
   @override

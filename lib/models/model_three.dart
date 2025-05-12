@@ -61,5 +61,19 @@ class Value implements DropDownItem {
         "nombre": nombre,
         "apePaterno": apePaterno,
       };
+
+       @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+    return other is Value && other.id == id;
+  }
+
+  @override
+  int get hashCode => id.hashCode;
+
+  @override
+  String toString() {
+    return 'Value{id: $id, nombre: $nombre}';
+  }
       
 }

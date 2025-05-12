@@ -57,6 +57,7 @@ class PreferencesHelper {
       roles: {role.toString(): 'role'},
       flagNuevoIngreso: flagNuevoIngreso,
       jwt: '0',
+      
     );
   }
 

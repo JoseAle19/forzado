@@ -37,6 +37,7 @@ class Tags {
     final int probabilidadId;
     final int impactoId;
     final int riesgoAId;
+    final int interlock;
     
 
     Tags({
@@ -47,6 +48,7 @@ class Tags {
         required this.probabilidadId,
         required this.impactoId,
         required this.riesgoAId,
+        required this.interlock,
     });
 
     factory Tags.fromJson(Map<String, dynamic> json) => Tags(
@@ -57,6 +59,7 @@ class Tags {
         probabilidadId: json["probabilidadId"],
         impactoId: json["impactoId"],
         riesgoAId: json["riesgoAId"],
+        interlock: json["interlock"],
     );
 
     Map<String, dynamic> toJson() => {

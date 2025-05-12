@@ -1,712 +1,836 @@
 import 'dart:async';
+import 'dart:convert';
 
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
+import 'package:forzado/adapters/adapter_matriz_riesgo.dart';
 import 'package:forzado/adapters/adapter_one.dart';
-import 'package:forzado/adapters/adapter_tags.dart';
+import 'package:forzado/adapters/adapter_shifts.dart';
+import 'package:forzado/adapters/adapter_tag_forzado.dart';
 import 'package:forzado/adapters/adapter_three.dart';
 import 'package:forzado/adapters/adapter_two.dart';
+import 'package:forzado/adapters/staff_position.dart';
 import 'package:forzado/adapters/user_adapter.dart';
-import 'package:forzado/core/utils/preferences_helper.dart';
+import 'package:forzado/core/urls.dart';
 import 'package:forzado/data/providers/dropdown/dropdown_provider.dart';
-import 'package:forzado/models/Boxes.dart';
+import 'package:forzado/data/providers/maestras.dart';
+import 'package:forzado/models/mestras/puestos_model.dart' as modelp;
 import 'package:forzado/models/model_one.dart' as modelone;
-import 'package:forzado/models/model_three.dart' as modelThree;
+import 'package:forzado/models/model_tags_matriz.dart';
 import 'package:forzado/models/model_three.dart' as modelthird;
 import 'package:forzado/models/model_two.dart' as modeltwo;
-import 'package:forzado/models/model_user_detail.dart';
 import 'package:forzado/models/user/model_user.dart' as modeluser;
+import 'package:forzado/services/api_client.dart';
+import 'package:forzado/widgets/modal_error.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class DropdownProviderManagerOffline with ChangeNotifier {
-// Getters y Setters para ModelOne
-  List<modelone.Value> _listPrefijos = [];
-  List<modelone.Value> _listCentros = [];
-
-  List<modelone.Value> get listPrefijos => _listPrefijos;
-  set listPrefijos(List<modelone.Value> value) {
-    _listPrefijos = value;
+// Controla si los valores de evaluación de riesgo son establecidos automáticamente por reglas
+  bool _isRiskAssessmentAutoSet = false;
+  bool get isRiskAssessmentAutoSet => _isRiskAssessmentAutoSet;
+  set isRiskAssessmentAutoSet(bool value) {
+    _isRiskAssessmentAutoSet = value;
+    notifyListeners();
   }
 
-  List<modelone.Value> get listCentros => _listCentros;
-  set listCentros(List<modelone.Value> value) {
-    _listCentros = value;
-  }
-
-// Getters y Setters para ModelTwo
-  List<modeltwo.Value> _listDiciplinas = [];
-  List<modeltwo.Value> _listTurnos = [];
-  List<modeltwo.Value> _listProbabilidades = [];
-  List<modeltwo.Value> _listImpactos = [];
-  List<modeltwo.Value> _listRiesgos = [];
-  List<modeltwo.Value> _listTipoDeForzados = [];
-  List<modeltwo.Value> _listprojects = [];
-
-  List<modeltwo.Value> get listProjects => _listprojects;
-  set listProjects(List<modeltwo.Value> value) {
-    _listprojects = value;
-  }
-
-  List<modeltwo.Value> get listDiciplinas => _listDiciplinas;
-  set listDiciplinas(List<modeltwo.Value> value) {
-    _listDiciplinas = value;
-  }
-
-  List<modeltwo.Value> get listTurnos => _listTurnos;
-  set listTurnos(List<modeltwo.Value> value) {
-    _listTurnos = value;
-  }
-
-  List<modeltwo.Value> get listProbabilidades => _listProbabilidades;
-  set listProbabilidades(List<modeltwo.Value> value) {
-    _listProbabilidades = value;
-  }
-
-  List<modeltwo.Value> get listImpactos => _listImpactos;
-  set listImpactos(List<modeltwo.Value> value) {
-    _listImpactos = value;
-  }
-
-  List<modeltwo.Value> get listRiesgos => _listRiesgos;
-  set listRiesgos(List<modeltwo.Value> value) {
-    _listRiesgos = value;
-  }
-
-  List<modeltwo.Value> get listTipoDeForzados => _listTipoDeForzados;
-  set listTipoDeForzados(List<modeltwo.Value> value) {
-    _listTipoDeForzados = value;
-  }
-
-// Getters y Setters para ModelThird
-  List<modelthird.Value> _listSolicitantes = [];
-  List<modelthird.Value> _listResponsables = [];
-  List<modelthird.Value> _listAprobadores = [];
-  List<modelthird.Value> _listEjecutores = [];
-
-  List<modelthird.Value> get listSolicitantes => _listSolicitantes;
-  set listSolicitantes(List<modelthird.Value> value) {
-    _listSolicitantes = value;
-  }
-
-  List<modelthird.Value> get listResponsables => _listResponsables;
-  set listResponsables(List<modelthird.Value> value) {
-    _listResponsables = value;
-  }
-
-  List<modelthird.Value> get listAprobadores => _listAprobadores;
-  set listAprobadores(List<modelthird.Value> value) {
-    _listAprobadores = value;
-  }
-
-  List<modelthird.Value> get listEjecutores => _listEjecutores;
-  set listEjecutores(List<modelthird.Value> value) {
-    _listEjecutores = value;
-  }
+  // === ModelOne ===
+  List<modelone.Value> listPrefijos = [];
+  List<modelone.Value> listCentros = [];
 
   modelone.Value? _currentValueTagPrefijo;
   modelone.Value? _currentValueTagCentro;
 
+  modelone.Value? get currentValueTagPrefijo => _currentValueTagPrefijo;
+  set currentValueTagPrefijo(modelone.Value? v) {
+    if (v != _currentValueTagPrefijo) {
+      _currentValueTagPrefijo = v;
+      _updateTagValues();
+      notifyListeners();
+    }
+  }
+
+  modelone.Value? get currentValueTagCentro => _currentValueTagCentro;
+  set currentValueTagCentro(modelone.Value? v) {
+    if (v != _currentValueTagCentro) {
+      _currentValueTagCentro = v;
+      _updateTagValues();
+      notifyListeners();
+    }
+  }
+
+  // === ModelTwo ===
+  List<modeltwo.Value> listDiciplinas = [];
+  List<modeltwo.Value> listProbabilidades = [];
+  List<modeltwo.Value> listImpactos = [];
+  List<modeltwo.Value> listRiesgos = [];
+  List<modeltwo.Value> listMatrizRiesgo = [];
+  List<modeltwo.Value> listCircuitos = [];
+  List<modeltwo.Value> listGrupos = [];
+  List<modelp.Value> listPuestos = [];
+
   modeltwo.Value? _currentValueTagDisciplina;
-  modeltwo.Value? _currentValueSlot;
   modeltwo.Value? _currentStateProbability;
   modeltwo.Value? _currentStateImpact;
-  modeltwo.Value? _currentStateRisk;
-  modeltwo.Value? _currentStateTypeForzado;
-  modeltwo.Value? _currentStateProjectName;
+  modeltwo.Value? _currentValueCircuitos;
+  modeltwo.Value? _currentRiskA;
+  modeltwo.Value? _currentRisk;
+  modeltwo.Value? _currentValueGrupo;
+
+  modeltwo.Value? get currentValueTagDisciplina => _currentValueTagDisciplina;
+  set currentValueTagDisciplina(modeltwo.Value? v) {
+    if (v != _currentValueTagDisciplina) {
+      _currentValueTagDisciplina = v;
+      notifyListeners();
+    }
+  }
+
+  modeltwo.Value? get currentStateProbability => _currentStateProbability;
+  set currentStateProbability(modeltwo.Value? v) {
+    if (v != _currentStateProbability) {
+      _currentStateProbability = v;
+      definirRiesgo();
+      validateInterlok();
+      notifyListeners();
+    }
+  }
+
+  modeltwo.Value? get currentStateImpact => _currentStateImpact;
+  set currentStateImpact(modeltwo.Value? v) {
+    if (v != _currentStateImpact) {
+      _currentStateImpact = v;
+      definirRiesgo();
+      validateInterlok();
+      notifyListeners();
+    }
+  }
+
+  modeltwo.Value? get currentValueCircuitos => _currentValueCircuitos;
+  set currentValueCircuitos(modeltwo.Value? v) {
+    if (v != _currentValueCircuitos) {
+      _currentValueCircuitos = v;
+      notifyListeners();
+    }
+  }
+
+  modeltwo.Value? get currentRiskA => _currentRiskA;
+  set currentRiskA(modeltwo.Value? v) {
+    if (v != _currentRiskA) {
+      _currentRiskA = v;
+      validateInterlok();
+      notifyListeners();
+    }
+  }
+
+  modeltwo.Value? get currentRisk => _currentRisk;
+  set currentRisk(modeltwo.Value? v) {
+    if (v != _currentRisk) {
+      _currentRisk = v;
+      validateInterlok();
+      notifyListeners();
+    }
+  }
+
+  modeltwo.Value? get currentGrupo => _currentValueGrupo;
+  set currentGrupo(modeltwo.Value? v) {
+    if (v != _currentValueGrupo) {
+      _currentValueGrupo = v;
+      notifyListeners();
+    }
+  }
+
+  // === ModelThree ===
+  List<modelthird.Value> listSolicitantes = [];
+  List<modelthird.Value> listResponsables = [];
+  List<modelthird.Value> listAprobadores = [];
 
   modelthird.Value? _currentStateApplicant;
   modelthird.Value? _currentStateResponsibility;
   modelthird.Value? _currentStateApprover;
   modelthird.Value? _currentStateExecutor;
 
-  String _currentValueDescription = '';
-  String _currentValueSubfijo = '';
-  String _currentValueInterlock = '';
-  modeltwo.Value? _currentRisk;
-
-  modeltwo.Value? get currentRisk => _currentRisk;
-  set currentRisk(modeltwo.Value? value) {
-    _currentRisk = value;
-    notifyListeners();
-  }
-
-  String get currentValueDescription => _currentValueDescription;
-  set currentValueDescription(String value) {
-    _currentValueDescription = value;
-    notifyListeners();
-  }
-
-  String get currentValueSubfijo => _currentValueSubfijo;
-  set currentValueSubfijo(String value) {
-    _currentValueSubfijo = value;
-    validateValues();
-    notifyListeners();
-  }
-
-  String get currentValueInterlock => _currentValueInterlock;
-  set currentValueInterlock(String value) {
-    _currentValueInterlock = value;
-    validateInterlok();
-    notifyListeners();
-  }
-
-  // Getters para ModelOne
-  modelone.Value? get currentValueTagPrefijo => _currentValueTagPrefijo;
-  set currentValueTagPrefijo(modelone.Value? value) {
-    _currentValueTagPrefijo = value;
-    validateValues();
-
-    notifyListeners();
-  }
-
-  modelone.Value? get currentValueTagCentro => _currentValueTagCentro;
-  set currentValueTagCentro(modelone.Value? value) {
-    _currentValueTagCentro = value;
-    validateValues();
-
-    notifyListeners();
-  }
-
-  // Getters para ModelTwo
-  modeltwo.Value? get currentValueTagDisciplina => _currentValueTagDisciplina;
-  set currentValueTagDisciplina(modeltwo.Value? value) {
-    _currentValueTagDisciplina = value;
-    notifyListeners();
-  }
-
-  modeltwo.Value? get currentValueSlot => _currentValueSlot;
-  set currentValueSlot(modeltwo.Value? value) {
-    _currentValueSlot = value;
-    notifyListeners();
-  }
-
-  modeltwo.Value? get currentStateProbability => _currentStateProbability;
-  set currentStateProbability(modeltwo.Value? value) {
-    _currentStateProbability = value;
-    validateInterlok();
-
-    defineRisk();
-
-    notifyListeners();
-  }
-
-  modeltwo.Value? get currentStateImpact => _currentStateImpact;
-  set currentStateImpact(modeltwo.Value? value) {
-    _currentStateImpact = value;
-    validateInterlok();
-
-    defineRisk();
-    notifyListeners();
-  }
-
-  modeltwo.Value? get currentStateRisk => _currentStateRisk;
-  set currentStateRisk(modeltwo.Value? value) {
-    _currentStateRisk = value;
-    validateInterlok();
-
-    notifyListeners();
-  }
-
-  modeltwo.Value? get currentStateTypeForzado => _currentStateTypeForzado;
-  set currentStateTypeForzado(modeltwo.Value? value) {
-    _currentStateTypeForzado = value;
-    notifyListeners();
-  }
-
-  modeltwo.Value? get currentStateProjectName => _currentStateProjectName;
-  set currentStateProjectName(modeltwo.Value? value) {
-    _currentStateProjectName = value;
-    notifyListeners();
-  }
-
-  // Getters para ModelThird
   modelthird.Value? get currentStateApplicant => _currentStateApplicant;
-  set currentStateApplicant(modelthird.Value? value) {
-    _currentStateApplicant = value;
-    validateInterlok();
-
-    notifyListeners();
+  set currentStateApplicant(modelthird.Value? v) {
+    if (v != _currentStateApplicant) {
+      _currentStateApplicant = v;
+      validateInterlok();
+      notifyListeners();
+    }
   }
 
   modelthird.Value? get currentStateResponsibility =>
       _currentStateResponsibility;
-  set currentStateResponsibility(modelthird.Value? value) {
-    _currentStateResponsibility = value;
-    notifyListeners();
+  set currentStateResponsibility(modelthird.Value? v) {
+    if (v != _currentStateResponsibility) {
+      _currentStateResponsibility = v;
+      notifyListeners();
+    }
   }
 
   modelthird.Value? get currentStateApprover => _currentStateApprover;
-  set currentStateApprover(modelthird.Value? value) {
-    _currentStateApprover = value;
-    notifyListeners();
+  set currentStateApprover(modelthird.Value? v) {
+    if (v != _currentStateApprover) {
+      _currentStateApprover = v;
+      notifyListeners();
+    }
   }
 
   modelthird.Value? get currentStateExecutor => _currentStateExecutor;
-  set currentStateExecutor(modelthird.Value? value) {
-    _currentStateExecutor = value;
-    notifyListeners();
-  }
-
-  List<modeluser.Value> _usersOff = [];
-  List<modeluser.Value> get usersOff => _usersOff;
-  set usersOff(List<modeluser.Value> value) {
-    _usersOff = value;
-  }
-
-// Limpiar los valores de los dropdown
-  void clearValues() {
-     _currentValueTagPrefijo = null;
-    _currentValueTagCentro = null;
-    _currentValueTagDisciplina = null;
-    _currentValueSlot = null;
-    _currentStateProbability = null;
-    _currentStateImpact = null;
-    _currentStateRisk = null;
-    _currentStateTypeForzado = null;
-    _currentStateApplicant = null;
-    _currentStateResponsibility = null;
-    _currentStateApprover = null;
-    _currentStateExecutor = null;
-    _currentValueDescription = '';
-    _currentValueInterlock = '';
-    _currentStateProjectName = null;
-    _currentRisk = null;
-    currentValueSubfijo = '';
-    notifyListeners();
-  }
-
-// Mapa para definir el riesgo según el impacto y la probabilidad
-  Map<String, Map<String, int>> riskMatrix = {
-    'INSIGNIFICANTE': {
-      'CASI SEGURO': 11,
-      'PROBABLE': 7,
-      'POSIBLE': 4,
-      'IMPROBABLE': 2,
-      'RARO': 1,
-    },
-    'MENOR': {
-      'CASI SEGURO': 16,
-      'PROBABLE': 12,
-      'POSIBLE': 8,
-      'IMPROBABLE': 5,
-      'RARO': 3,
-    },
-    'MODERADO': {
-      'CASI SEGURO': 20,
-      'PROBABLE': 15,
-      'POSIBLE': 13,
-      'IMPROBABLE': 9,
-      'RARO': 6,
-    },
-    'MAYOR': {
-      'CASI SEGURO': 24,
-      'PROBABLE': 22,
-      'POSIBLE': 17,
-      'IMPROBABLE': 14,
-      'RARO': 10,
-    },
-    'EXTREMO': {
-      'CASI SEGURO': 25,
-      'PROBABLE': 23,
-      'POSIBLE': 21,
-      'IMPROBABLE': 19,
-      'RARO': 18,
-    },
-  };
-
-// Definir el riesgo según la probabilidad e impacto
-  void defineRisk() async {
-    if (currentStateImpact?.descripcion == null ||
-        currentStateProbability?.descripcion == null) {
-      return;
-    }
-    // Obtener los valores normalizados (en mayúsculas)
-    final impact = currentStateImpact?.descripcion.toUpperCase();
-    final probability = currentStateProbability?.descripcion.toUpperCase();
-    final nivel = riskMatrix[impact]?[probability] ?? '';
-    final res = riskLevels.firstWhere((element) => element.id == nivel);
-    ApiResponseDetailUser? user = await PreferencesHelper().getUser();
-    if (user == null) {
-      return; // Salir si el usuario es nulo.
-    }
-    if (res.descripcion == 'BAJO' && currentValueInterlock == 'NO' && currentStateRisk?.descripcion.toLowerCase() != 'personas') {
-      // Verificar si el usuario actual no está en la lista de aprobadores
-      if (!_listAprobadores.any((element) => element.id == user.id)) {
-        _listAprobadores.add(
-            modelthird.Value(id: user.id, nombre: user.name, apePaterno: ''));
-        notifyListeners();
-      }
-    } else {
-      _listAprobadores.removeWhere((element) => element.id == user.id);
+  set currentStateExecutor(modelthird.Value? v) {
+    if (v != _currentStateExecutor) {
+      _currentStateExecutor = v;
       notifyListeners();
     }
-    _currentRisk = res;
   }
 
-  void validateInterlok() async {
-    if (currentValueInterlock == 'si') {
-      print('interlock si');
-      addAprobadoresByPuesto();
-    } else {
-            print('interlock no');
-      if (currentStateRisk?.descripcion.toLowerCase() == 'personas' &&
-          currentValueInterlock == 'NO') {
-            print('interlock no y personas');
-        addAprobadoresByPuesto();
-       }
+  // === ModelUser ===
+  List<modeluser.Value> usersOff = [];
 
-     
-      if (_currentRisk?.descripcion.toLowerCase() == 'bajo' &&
-          currentValueInterlock != 'si' &&
-          !_listAprobadores
-              .any((element) => element.id == currentStateApplicant?.id) &&
-          currentStateApplicant != null &&
-          currentStateRisk?.descripcion.toLowerCase() != 'personas') {
-        _listAprobadores.add(
-          modelthird.Value(
-              id: currentStateApplicant!.id,
-              nombre:
-                  '${currentStateApplicant!.nombre} ${currentStateApplicant!.apePaterno ?? ''}',
-              apePaterno: ''),
-        );
-        print('Agrega al aplicante');
-      } else {
-        print('No se aplica la regla del riesgo bajo');
-        if (currentStateApplicant != null &&
-            listAprobadores.any((a) => a.id == currentStateApplicant!.id)) {
-          listAprobadores.remove(currentStateApplicant);
-          print('remueve el solicitante si el riesgo es diferente a bajo');
-        } else {
-          print('a nadie que eliminar');
-        }
-      }
+  // === Otros campos simples ===
+  String _currentValueDescription = '';
+  String _currentValueSubfijo = '';
+  int? _currentValueInterlock = null;
 
-      if (!_listAprobadores.contains(currentStateApprover)) {
-        currentStateApprover = null;
-      }
-    }
-
-    notifyListeners();
-  }
-
-  
-
-  void addAprobadoresByPuesto() {
-    _listAprobadores.clear();
-    for (var i = 0; i < _usersOff.length; i++) {
-      if (_usersOff[i].puestoDescripcion!.toLowerCase() ==
-          "GERENTE PLANTA PROCESO".toLowerCase()) {
-        _listAprobadores.add(modelthird.Value(
-          id: _usersOff[i].id!,
-          nombre:
-              '${_usersOff[i].nombre!} ${_usersOff[i].apePaterno!} ${_usersOff[i].apeMaterno!}',
-        ));
-      }
+  String get currentValueDescription => _currentValueDescription;
+  set currentValueDescription(String v) {
+    if (v != _currentValueDescription) {
+      _currentValueDescription = v;
+      notifyListeners();
     }
   }
 
-  void addArobbadoresByRole() {
+// Datos de la busqueda
+  AdapterTagForzado? _resultado;
+  AdapterTagForzado? get resultado => _resultado;
+  String get currentValueSubfijo => _currentValueSubfijo;
+  Timer? _debounce;
+
+  set currentValueSubfijo(String v) {
+    if (v != _currentValueSubfijo) {
+      _currentValueSubfijo = v;
+
+      _updateTagValues();
+    }
+  }
+
+  int? get currentValueInterlock => _currentValueInterlock;
+  set currentValueInterlock(int? v) {
+    if (v != _currentValueInterlock) {
+      _currentValueInterlock = v;
+      validateInterlok();
+      notifyListeners();
+    }
+  }
+
+  // === Limpieza de valores ===
+  void resetAll() {
+    // Clear all lists
+    listPrefijos.clear();
+    listCentros.clear();
+    listDiciplinas.clear();
+    listProbabilidades.clear();
+    listImpactos.clear();
+    listRiesgos.clear();
+    listMatrizRiesgo.clear();
+    listCircuitos.clear();
+    listGrupos.clear();
+    listPuestos.clear();
+    listSolicitantes.clear();
+    listResponsables.clear();
     listAprobadores.clear();
-    for (var i = 0; i < _usersOff.length; i++) {
-      if (_usersOff[i].roles!.containsKey('2')) {
-        listAprobadores.add(modelthird.Value(
-          id: _usersOff[i].id!,
-          nombre:
-              '${_usersOff[i].nombre!} ${_usersOff[i].apePaterno!} ${_usersOff[i].apeMaterno!}',
-        ));
-      }
-    }
+    usersOff.clear();
+
+    // Reset all current value properties to null
+    _currentValueTagPrefijo = null;
+    _currentValueTagCentro = null;
+    _currentValueTagDisciplina = null;
+    _currentStateProbability = null;
+    _currentStateImpact = null;
+    _currentValueCircuitos = null;
+    _currentRiskA = null;
+    _currentRisk = null;
+    _currentValueGrupo = null;
+    _currentStateApplicant = null;
+    _currentStateResponsibility = null;
+    currentStateApprover = null;
+    _currentStateExecutor = null;
+
+    // Reset string values
+    _currentValueDescription = '';
+    _currentValueSubfijo = '';
+    _currentValueInterlock = null;
+
+    // Cancel and clear debounce timer if it exists
+    _debounce?.cancel();
+    _debounce = null;
+
+    // Reset resultado
+    _resultado = null;
+
+// flags
+    isRiskAssessmentAutoSet = false;
+    // Notify listeners
+    notifyListeners();
   }
 
-  // Lista manual de combinaciones de riesgo (basado en la tabla de tu imagen)
-  final List<modeltwo.Value> _riskLevels = [
-    modeltwo.Value(id: 1, descripcion: 'ALTO'),
-    modeltwo.Value(id: 11, descripcion: 'MODERADO'),
-    modeltwo.Value(id: 7, descripcion: 'BAJO'),
-    modeltwo.Value(id: 4, descripcion: 'BAJO'),
-    modeltwo.Value(id: 2, descripcion: 'BAJO'),
-    modeltwo.Value(id: 1, descripcion: 'BAJO'),
-    modeltwo.Value(id: 16, descripcion: 'MENOR MODERADO'),
-    modeltwo.Value(id: 12, descripcion: 'MODERADO'),
-    modeltwo.Value(id: 8, descripcion: 'MODERADO'),
-    modeltwo.Value(id: 5, descripcion: 'BAJO'),
-    modeltwo.Value(id: 3, descripcion: 'BAJO'),
-    modeltwo.Value(id: 20, descripcion: 'MODERADO ALTO'),
-    modeltwo.Value(id: 15, descripcion: 'MODERADO'),
-    modeltwo.Value(id: 9, descripcion: 'MODERADO'),
-    modeltwo.Value(id: 6, descripcion: 'BAJO'),
-    modeltwo.Value(id: 3, descripcion: 'BAJO'),
-    modeltwo.Value(id: 24, descripcion: 'MAYOR ALTO'),
-    modeltwo.Value(id: 22, descripcion: 'ALTO'),
-    modeltwo.Value(id: 17, descripcion: 'MODERADO'),
-    modeltwo.Value(id: 14, descripcion: 'MODERADO'),
-    modeltwo.Value(id: 10, descripcion: 'MODERADO'),
-    modeltwo.Value(id: 25, descripcion: 'EXTREMO ALTO'),
-    modeltwo.Value(id: 23, descripcion: 'ALTO'),
-    modeltwo.Value(id: 21, descripcion: 'ALTO'),
-    modeltwo.Value(id: 19, descripcion: 'ALTO'),
-    modeltwo.Value(id: 18, descripcion: 'ALTO'),
-    modeltwo.Value(id: 13, descripcion: 'MODERADO'),
-  ];
-  List<modeltwo.Value> get riskLevels => _riskLevels;
-
-  List<modelone.Value> convertList(List<AdapterOne> list) {
-    return list
-        .map((item) => modelone.Value(
-            id: item.id, descripcion: item.descripcion, codigo: item.codigo))
-        .toList();
+  // Se hace fectching de datos de los usaurips
+  Future<void> pushUsers(BuildContext c) async {
+    final provider =
+        Provider.of<DropDownValuesManagerProvider>(c, listen: false);
+    await provider.getData2();
+    // print('users');
+    await saveDataForm1(c);
+    // print('form 1');
+    await saveDataForm2(c);
+    // print('form 2');
+    saveDataForm3(c);
+    // print('form 3');
+    saveDataMasters(c);
+    // print('maestras');
+    saveUsersToHive(provider);
   }
 
-  List<modeltwo.Value> convertListTwo(List<AdapterTwo> value) {
-    return value
-        .map((item) =>
-            modeltwo.Value(id: item.id, descripcion: item.descripcion))
-        .toList();
-  }
+//Llenar los datos del primer form
+  Future<void> saveDataForm1(BuildContext c) async {
+    final client = ApiClient();
 
-  List<modelThree.Value> ConvertListThree(List<AdapterThree> value) {
-    return value
-        .map((item) => modelThree.Value(id: item.id, nombre: item.nombre))
-        .toList();
-  }
+    final boxTagPrefijo = Hive.box<AdapterOne>('TagPrefijo');
+    final boxTagCentro = Hive.box<AdapterOne>('TagCentro');
+    final boxDisciplina = Hive.box<AdapterTwo>('Disciplina');
+    final boxCircuitos = Hive.box<AdapterTwo>('circuitos');
 
-  List<AdapterTags> _tags = [];
-  Future<void> getDataHive() async {
     try {
-      // Obtener datos desde Hive
-      final listProjectsBox =
-          Hive.box<AdapterTwo>(HiveBoxes.projects).values.toList();
-      print('Proyectos ${listProjectsBox}');
-      final listPrefijosBox =
-          Hive.box<AdapterOne>(HiveBoxes.tagPrefijo).values.toList();
-      final listCentrosBox =
-          Hive.box<AdapterOne>(HiveBoxes.tagCentro).values.toList();
-      final listDisciplinasBox =
-          Hive.box<AdapterTwo>(HiveBoxes.disciplina).values.toList();
-      final listTurnosBox =
-          Hive.box<AdapterTwo>(HiveBoxes.turno).values.toList();
-      final listResponsablesBox =
-          Hive.box<AdapterThree>(HiveBoxes.responsable).values.toList();
-      final listRiesgosABox =
-          Hive.box<AdapterTwo>(HiveBoxes.riesgo).values.toList();
-      final listProbabilidadesBox =
-          Hive.box<AdapterTwo>(HiveBoxes.probabilidad).values.toList();
-      final listImpactosBox =
-          Hive.box<AdapterTwo>(HiveBoxes.impacto).values.toList();
-      final listSolicitantesBox =
-          Hive.box<AdapterThree>(HiveBoxes.solicitante).values.toList();
-      final listAprobadoresBox =
-          Hive.box<AdapterThree>(HiveBoxes.aprobador).values.toList();
-      final listEjecutoresBox =
-          Hive.box<AdapterThree>(HiveBoxes.ejecutor).values.toList();
-      final listTipodeForzadosBox =
-          Hive.box<AdapterTwo>(HiveBoxes.tipo).values.toList();
-      final listUsersBox =
-          Hive.box<AdapterUser>(HiveBoxes.users).values.toList();
-      if (!Hive.isBoxOpen(HiveBoxes.tags)) return;
-      _tags = Hive.box<AdapterTags>(HiveBoxes.tags).values.toList();
-      print('tags ${_tags.length}');
-      // Procesar datos obtenidos
-      listProjects = convertListTwo(listProjectsBox);
-      listPrefijos = convertList(listPrefijosBox);
-      listCentros = convertList(listCentrosBox);
-      listDiciplinas = convertListTwo(listDisciplinasBox);
-      listTurnos = convertListTwo(listTurnosBox);
-      listResponsables = ConvertListThree(listResponsablesBox);
-      listRiesgos = convertListTwo(listRiesgosABox);
-      listProbabilidades = convertListTwo(listProbabilidadesBox);
-      listImpactos = convertListTwo(listImpactosBox);
-      listSolicitantes = ConvertListThree(listSolicitantesBox);
-      listAprobadores = ConvertListThree(listAprobadoresBox);
-      listEjecutores = ConvertListThree(listEjecutoresBox);
-      listTipoDeForzados = convertListTwo(listTipodeForzadosBox);
-      usersOff = listUsersBox.map((u) {
-        return modeluser.Value(
-          id: u.id,
-          apeMaterno: u.apeMaterno,
-          apePaterno: u.apePaterno, // Corregido
-          areaDescripcion: u.areaDescripcion,
-          areaId: u.areaId,
-          correo: u.correo,
-          dni: u.dni,
-          estado: u.estado,
-          nombre: u.nombre,
-          puestoDescripcion: u.puestoDescripcion,
-          puestoId: u.puestoId,
-          rolDescripcion: u.rolDescripcion,
-          rolId: u.rolId,
-          roles: u.roles,
-          usuario: u.usuario,
-        );
-      }).toList();
-      print('not error');
+      final responses = await Future.wait([
+        client.get(AppUrl.gettagPrefijo1),
+        client.get(AppUrl.getTagCentro1),
+        client.get(AppUrl.getTagDisciplina2),
+        client.get(AppUrl.getCircuitos2),
+      ]).timeout(const Duration(seconds: 60));
+
+      final prefijosModel = modelone.modelOneFromJson(responses[0].body).values;
+      final centrosModel = modelone.modelOneFromJson(responses[1].body).values;
+      final disciplinasModel =
+          modeltwo.modelTwoFromJson(responses[2].body).values;
+      final circuitosModel =
+          modeltwo.modelTwoFromJson(responses[3].body).values;
+
+      // Convertir modelos a Adapters
+      final prefijos =
+          prefijosModel.map((v) => AdapterOne.fromValue(v)).toList();
+      final centros = centrosModel.map((v) => AdapterOne.fromValue(v)).toList();
+      final disciplinas =
+          disciplinasModel.map((v) => AdapterTwo.fromValue(v)).toList();
+      final circuitos =
+          circuitosModel.map((v) => AdapterTwo.fromValue(v)).toList();
+
+      // Limpiar cajas (opcional)
+      await boxTagPrefijo.clear();
+      await boxTagCentro.clear();
+      await boxDisciplina.clear();
+      await boxCircuitos.clear();
+
+      // Guardar en Hive
+      await Future.wait([
+        boxTagPrefijo.addAll(prefijos),
+        boxTagCentro.addAll(centros),
+        boxDisciplina.addAll(disciplinas),
+        boxCircuitos.addAll(circuitos),
+      ]);
     } catch (e) {
-      print('Error: $e');
+      CustomModal modal = CustomModal();
+      modal.showModal(c, 'Ocurrio un error, form 1', Colors.red, false);
     }
   }
 
-  Future<void> clearAndPopulateBoxes(BuildContext context) async {
-    final valuesDropdownOn =
-        Provider.of<DropDownValuesManagerProvider>(context, listen: false);
+  Future<void> saveDataForm2(BuildContext c) async {
+    final client = ApiClient();
 
-    valuesDropdownOn.verifyRuleRisk();
-    valuesDropdownOn.getTagsMatrizRiesgo(context);
+    final boxRiesgo = Hive.box<AdapterTwo>('Riesgo');
+    final boxMatrizRiesgo =
+        Hive.box<AdapterMatrizRiesgo>('matriz-riesgo'); // matriz riesgo
+    final boxProbabilidad = Hive.box<AdapterTwo>('Probabilidad');
+    final boxImpacto = Hive.box<AdapterTwo>('Impacto');
 
-    await populateBox(
-        HiveBoxes.projects,
-        valuesDropdownOn.listProjects.map((i) {
-          return AdapterTwo(id: i.id, descripcion: i.descripcion);
-        }).toList());
+    try {
+      final responses = await Future.wait([
+        client.get(AppUrl.getRiesgoA2), // Riesgos generales
+        client.get(AppUrl.getMatrizRiesgo), // Matriz de riesgo
+        client.get(AppUrl.getProbabilidad2), // Probabilidad
+        client.get(AppUrl.getImpacto2), // Impacto
+      ]).timeout(const Duration(seconds: 60));
 
-    await populateBox(
-        HiveBoxes.tagPrefijo,
-        valuesDropdownOn.listPrefijos.map((i) {
-          return AdapterOne(
-              codigo: i.codigo, descripcion: i.descripcion, id: i.id);
-        }).toList());
+      // Parseo de modelos
+      final riesgosModel = modeltwo.modelTwoFromJson(responses[0].body).values;
+      final probabilidadModel =
+          modeltwo.modelTwoFromJson(responses[2].body).values;
+      final impactoModel = modeltwo.modelTwoFromJson(responses[3].body).values;
 
-    await populateBox(
-        HiveBoxes.tagCentro,
-        valuesDropdownOn.listCentros.map((i) {
-          return AdapterOne(
-              codigo: i.codigo, descripcion: i.descripcion, id: i.id);
-        }).toList());
+      // Convertir modelos a Adapters
+      final riesgos = riesgosModel.map((v) => AdapterTwo.fromValue(v)).toList();
+      final matrizRiesgoJson =
+          (json.decode(responses[1].body)['values'] as List)
+              .map((e) => AdapterMatrizRiesgo.fromJson(e))
+              .toList();
 
-    await populateBox(
-        HiveBoxes.disciplina,
-        valuesDropdownOn.listDiciplinas.map((i) {
-          return AdapterTwo(id: i.id, descripcion: i.descripcion);
-        }).toList());
+      final probabilidades =
+          probabilidadModel.map((v) => AdapterTwo.fromValue(v)).toList();
+      final impactos =
+          impactoModel.map((v) => AdapterTwo.fromValue(v)).toList();
 
-    await populateBox(
-        HiveBoxes.turno,
-        valuesDropdownOn.listTurnos.map((i) {
-          return AdapterTwo(id: i.id, descripcion: i.descripcion);
-        }).toList());
-    await populateBox(
-        HiveBoxes.responsable,
-        valuesDropdownOn.listResponsables.map((i) {
-          return AdapterThree(id: i.id, nombre: '${i.nombre} ${i.apePaterno}');
-        }).toList());
+      // Limpiar cajas
+      await boxRiesgo.clear();
+      await boxMatrizRiesgo.clear();
+      await boxProbabilidad.clear();
+      await boxImpacto.clear();
 
-    await populateBox(
-        HiveBoxes.riesgo,
-        valuesDropdownOn.listRiesgos.map((i) {
-          return AdapterTwo(id: i.id, descripcion: i.descripcion);
-        }).toList());
+      // Guardar en Hive
+      await Future.wait([
+        boxRiesgo.addAll(riesgos),
+        boxMatrizRiesgo.addAll(matrizRiesgoJson),
+        boxProbabilidad.addAll(probabilidades),
+        boxImpacto.addAll(impactos),
+      ]);
+    } catch (e) {
+      CustomModal modal = CustomModal();
+      modal.showModal(c, 'Ocurrió un error al guardar datos del formulario 2.',
+          Colors.red, false);
+    }
+  }
 
-    await populateBox(
-        HiveBoxes.probabilidad,
-        valuesDropdownOn.listProbabilidades.map((i) {
-          return AdapterTwo(id: i.id, descripcion: i.descripcion);
-        }).toList());
+  Future<void> saveDataForm3(BuildContext c) async {
+    final boxGrupoEjecucion = Hive.box<AdapterTwo>('grupo-ejecucion');
+    final client = ApiClient();
+    try {
+      final res = await client.get(AppUrl.getGrupos);
 
-    await populateBox(
-        HiveBoxes.impacto,
-        valuesDropdownOn.listImpactos.map((i) {
-          return AdapterTwo(id: i.id, descripcion: i.descripcion);
-        }).toList());
+      final gruposEjecucionModel = modeltwo.modelTwoFromJson(res.body).values;
+      final gruposEjecucion =
+          gruposEjecucionModel.map((v) => AdapterTwo.fromValue(v)).toList();
+      await boxGrupoEjecucion.clear();
+      await Future.wait([
+        boxGrupoEjecucion.addAll(gruposEjecucion),
+      ]);
+    } catch (e) {
+      CustomModal modal = CustomModal();
+      modal.showModal(c, 'Ocurrio un error, form 3', Colors.red, false);
+    }
+  }
 
-    await populateBox(
-        HiveBoxes.tipo,
-        valuesDropdownOn.listTipoDeForzados.map((i) {
-          return AdapterTwo(id: i.id, descripcion: i.descripcion);
-        }).toList());
+  Future<void> saveUsersToHive(DropDownValuesManagerProvider provider) async {
+    // Abre las cajas
+    final boxSolicitante = Hive.box<AdapterThree>('Solicitante');
+    final boxResponsable = Hive.box<AdapterThree>('Responsable');
+    final boxAprobador = Hive.box<AdapterThree>('Aprobador');
+    final boxEjecutor = Hive.box<AdapterThree>('Ejecutor');
+    final boxUsers = Hive.box<AdapterUser>('users');
 
-    await populateBox(
-        HiveBoxes.solicitante,
-        valuesDropdownOn.listSolicitantes.map((i) {
-          return AdapterThree(id: i.id, nombre: '${i.nombre} ');
-        }).toList());
+    await boxSolicitante.clear();
+    await boxResponsable.clear();
+    await boxAprobador.clear();
+    await boxEjecutor.clear();
+    await boxUsers.clear();
 
-    await populateBox(
-        HiveBoxes.aprobador,
-        valuesDropdownOn.listAprobadores.map((i) {
-          return AdapterThree(id: i.id, nombre: '${i.nombre} ');
-        }).toList());
+    for (var v in provider.listSolicitantes) {
+      boxSolicitante.add(AdapterThree.fromValue(v));
+    }
+    for (var v in provider.listResponsables) {
+      boxResponsable.add(AdapterThree.fromValue(v));
+    }
+    for (var v in provider.listAprobadores) {
+      boxAprobador.add(AdapterThree.fromValue(v));
+    }
+    for (var v in provider.listEjecutores) {
+      boxEjecutor.add(AdapterThree.fromValue(v));
+    }
 
-    await populateBox(
-        HiveBoxes.ejecutor,
-        valuesDropdownOn.listEjecutores.map((i) {
-          return AdapterThree(id: i.id, nombre: '${i.nombre} ');
-        }).toList());
+    // Guardar todos los usuarios completos
+    for (var u in provider.users) {
+      boxUsers.add(AdapterUser(
+          apePaterno: u.apePaterno,
+          apeMaterno: u.apeMaterno,
+          areaId: u.areaId,
+          areaDescripcion: u.areaDescripcion,
+          rolId: u.rolId,
+          rolDescripcion: u.rolDescripcion,
+          roles: u.roles,
+          estado: u.estado,
+          dni: u.dni,
+          puestoId: u.puestoId,
+          puestoDescripcion: u.puestoDescripcion,
+          correo: u.correo,
+          usuario: u.usuario,
+          id: u.id,
+          nombre: u.nombre,
+          grupoId: u.grupoId));
+    }
+  }
 
-    await populateBox(
-        HiveBoxes.users,
-        valuesDropdownOn.users.map((i) {
-          return AdapterUser(
-            id: i.id,
-            apeMaterno: i.apeMaterno,
-            apePaterno: i.apePaterno,
-            areaDescripcion: i.areaDescripcion,
-            areaId: i.areaId,
-            correo: i.correo,
-            dni: i.dni,
-            estado: i.estado,
-            nombre: i.nombre,
-            puestoDescripcion: i.puestoDescripcion,
-            puestoId: i.puestoId,
-            rolDescripcion: i.rolDescripcion,
-            rolId: i.rolId,
-            roles: i.roles,
-            usuario: i.usuario,
-          );
-        }).toList());
+  Future<void> saveDataMasters(BuildContext c) async {
+    final client = ApiClient();
+    final boxTagsMtarizRiesgo =
+        Hive.box<AdapterTagForzado>('tags-matriz-riesgo');
+
+    final maestrasProvider = Provider.of<MastersProvider>(c, listen: false);
+    final providerDropOn =
+        Provider.of<DropDownValuesManagerProvider>(c, listen: false);
+    await maestrasProvider.getShifts();
+
+    try {
+      final res = await client.get(AppUrl.tagsMatrizRiesgo);
+      final tagMatrizRiesgoModel = modelTagsMatrizFromJson(res.body).values;
+      final tagsMatrizRiesgo = tagMatrizRiesgoModel
+          .map((v) => AdapterTagForzado.fromModel(v))
+          .toList();
+      await boxTagsMtarizRiesgo.clear();
+      await Future.wait([
+        boxTagsMtarizRiesgo.addAll(tagsMatrizRiesgo),
+      ]);
+
+      // Agregar los turnos a la caja
+      final boxPuestos = Hive.box<PuestoValue>('staffPosition');
+      await boxPuestos.clear();
+
+      await boxPuestos.addAll(providerDropOn.listPuestos
+          .map((lt) => PuestoValue.fromJson(lt))
+          .toList());
+    } catch (e) {
+      CustomModal modal = CustomModal();
+      modal.showModal(c, 'Ocurrio un error, form 3', Colors.red, false);
+    }
+  }
+
+  Future<void> loadDataPromHive() async {
+    resetAll();
+    _determineCurrentShift();
+
+    // tag subfijo
+    // descripcion
+    final boxPrefijos = Hive.box<AdapterOne>('TagPrefijo');
+    final boxCentros = Hive.box<AdapterOne>('TagCentro');
+    final boxCircuitos = Hive.box<AdapterTwo>('circuitos');
+    final boxDiciplina = Hive.box<AdapterTwo>('Disciplina');
+
+    // interlock
+    final boxResponsable = Hive.box<AdapterThree>('Responsable');
+    final boxRiesgo = Hive.box<AdapterTwo>('Riesgo');
+    final boxProbabilidad = Hive.box<AdapterTwo>('Probabilidad');
+    final boxImpacto = Hive.box<AdapterTwo>('Impacto');
+    final boxMatrizRiesgo = Hive.box<AdapterMatrizRiesgo>('matriz-riesgo');
+
+    final boxSolicitante = Hive.box<AdapterThree>('Solicitante');
+    final boxAprobador = Hive.box<AdapterThree>('Aprobador');
+    final boxGrupoEjecucion = Hive.box<AdapterTwo>('grupo-ejecucion');
+
+// Datos del form 2
+
+    listResponsables = boxResponsable.values
+        .map((e) => modelthird.Value(id: e.id, nombre: e.nombre))
+        .toList();
+
+    listRiesgos = boxRiesgo.values
+        .map((e) => modeltwo.Value(id: e.id, descripcion: e.descripcion))
+        .toList();
+    listProbabilidades = boxProbabilidad.values
+        .map((e) => modeltwo.Value(id: e.id, descripcion: e.descripcion))
+        .toList();
+    listImpactos = boxImpacto.values
+        .map((e) => modeltwo.Value(id: e.id, descripcion: e.descripcion))
+        .toList();
+
+    final Set<int> idsUnicos = {};
+    listMatrizRiesgo = boxMatrizRiesgo.values.where((e) {
+      final isNew = !idsUnicos.contains(e.riesgoId);
+      idsUnicos.add(e.riesgoId);
+      return isNew;
+    }).map((e) {
+      return modeltwo.Value(id: e.riesgoId, descripcion: e.riesgoDescripcion);
+    }).toList();
+
+    // Datos del form 3
+    listSolicitantes = boxSolicitante.values
+        .map((e) => modelthird.Value(id: e.id, nombre: e.nombre))
+        .toList();
+    listAprobadores = boxAprobador.values
+        .map((e) => modelthird.Value(id: e.id, nombre: e.nombre))
+        .toList();
+    listGrupos = boxGrupoEjecucion.values
+        .map((e) => modeltwo.Value(id: e.id, descripcion: e.descripcion))
+        .toList();
+// Datos del form 1
+    listPrefijos = boxPrefijos.values
+        .map((e) => modelone.Value(
+            id: e.id, codigo: e.codigo, descripcion: e.descripcion))
+        .toList();
+    listCentros = boxCentros.values
+        .map((e) => modelone.Value(
+            id: e.id, codigo: e.codigo, descripcion: e.descripcion))
+        .toList();
+    listDiciplinas = boxDiciplina.values
+        .map((e) => modeltwo.Value(id: e.id, descripcion: e.descripcion))
+        .toList();
+    listCircuitos = boxCircuitos.values
+        .map((e) => modeltwo.Value(id: e.id, descripcion: e.descripcion))
+        .toList();
 
     notifyListeners();
   }
 
-  Future<void> populateBox<T>(String boxName, List<T> data) async {
-    try {
-      final box = Hive.box<T>(boxName);
-      await box.clear();
-      await box.addAll(data);
-    } catch (e, stackTrace) {
-      print('Error al poblar la caja $boxName: $e');
-      print('StackTrace: $stackTrace');
+  void _runDebounced(Duration delay, VoidCallback callback) {
+    if (_debounce?.isActive ?? false) {
+      print('[DEBUG] Debounce anterior cancelado');
+      _debounce!.cancel();
     }
+
+    _debounce = Timer(delay, callback);
   }
 
-  bool _isEnabledRuletagMatriz = false;
-  bool get isEnabledRuletagMatriz => _isEnabledRuletagMatriz;
-
-  void validateValues() async {
-    if (currentValueTagPrefijo == null ||
-        currentValueTagCentro == null ||
-        currentValueSubfijo == '') {
+  // Definir el riesgo (No riesgo A)
+  void definirRiesgo() {
+    final boxMatrizRiesgo = Hive.box<AdapterMatrizRiesgo>('matriz-riesgo');
+    if (currentStateImpact == null || currentStateProbability == null) {
+      currentRisk = null;
+      notifyListeners();
       return;
     }
 
-    final idSubArea = currentValueTagPrefijo!.id;
-    final idTagCentro = currentValueTagCentro!.id;
-    final subfijo = currentValueSubfijo;
- 
-    final tag = _tags.firstWhere(
-      (tag) =>
-          tag.prefijoId == idSubArea &&
-          tag.centroId == idTagCentro &&
-          tag.sufijo == subfijo,
-      orElse: () => AdapterTags(
-          id: 0000,
-          prefijoId: 0000,
-          centroId: 0000,
-          sufijo: 'error',
-          probabilidadId: 0000,
-          impactoId: 0000), // Devuelve null si no encuentra un elemento
-    );
-    if (tag.sufijo != 'error') {
-      // setear valores
-      final probabilidad =
-          listProbabilidades.firstWhere((p) => p.id == tag.probabilidadId);
-      final impacto = listImpactos.firstWhere((i) => i.id == tag.impactoId);
-      currentStateProbability = probabilidad;
-      currentStateImpact = impacto;
-      _isEnabledRuletagMatriz = true;
-    } else {
-      _isEnabledRuletagMatriz = false;
-      currentStateProbability = null;
-      currentStateImpact = null;
-      currentRisk = null;
+    final _res = boxMatrizRiesgo.values.firstWhereOrNull((mr) =>
+            mr.impactoId == currentStateImpact!.id &&
+            mr.probabilidadId == currentStateProbability!.id // << Corregido
+        );
+    currentRisk = _res != null
+        ? listMatrizRiesgo.firstWhereOrNull(
+            (item) => item.id == _res.riesgoId,
+          )
+        : null;
+
+    notifyListeners();
+  }
+
+  void _updateTagValues() {
+    _runDebounced(const Duration(milliseconds: 300), () {
+      final box = Hive.box<AdapterTagForzado>('tags-matriz-riesgo');
+
+      _resultado = box.values.firstWhereOrNull((tg) =>
+          tg.sufijo == currentValueSubfijo &&
+          tg.prefijoId == currentValueTagPrefijo?.id &&
+          tg.centroId == currentValueTagCentro?.id);
+
+      if (_resultado != null) {
+        final probabilidad = listProbabilidades
+            .firstWhereOrNull((p) => p.id == _resultado!.probabilidadId);
+        final impacto =
+            listImpactos.firstWhereOrNull((i) => i.id == _resultado!.impactoId);
+        final riesgoA =
+            listRiesgos.firstWhereOrNull((r) => r.id == _resultado!.riesgoAId);
+
+        currentRiskA = riesgoA;
+        currentStateProbability = probabilidad;
+        currentStateImpact = impacto;
+        currentValueInterlock = _resultado!.interlock;
+        isRiskAssessmentAutoSet = true;
+      } else {
+        currentRiskA = null;
+        currentStateProbability = null;
+        currentStateImpact = null;
+        currentValueInterlock = null;
+        isRiskAssessmentAutoSet = false;
+      }
+
+      notifyListeners();
+    });
+  }
+
+  String? _shiftType; // 'DIA' o 'NOCHE'
+  String? get shiftType => _shiftType;
+
+  String _dateNow = '0000/00/00';
+  String? get date => _dateNow;
+  ShiftValue? _currentShift;
+  ShiftValue? get currentShift => _currentShift;
+
+  void formatDate() {
+    final formattedDate =
+        DateFormat('dd/MM/yyyy, HH:mm:ss').format(DateTime.now());
+    _dateNow = formattedDate;
+  }
+
+  void _determineCurrentShift() {
+    final now = DateTime.now();
+    final currentTime = TimeOfDay.fromDateTime(now);
+    final _turnos = Hive.box<ShiftValue>('shiftBox').values;
+
+    for (final turno in _turnos) {
+      final startTime = _parseTimeString(turno.horaInicio!);
+      final endTime = _parseTimeString(turno.horaFin!);
+
+      if (_isTimeInShift(currentTime, startTime, endTime)) {
+        _currentShift = turno;
+        _shiftType = normalizar(turno.descripcion ?? '--'); // 'DIA' o 'NOCHE'
+        notifyListeners();
+        return;
+      }
     }
   }
+
+  String normalizar(String texto) {
+    return texto.characters.toString();
+  }
+
+  TimeOfDay _parseTimeString(String timeStr) {
+    final parts = timeStr.split(':');
+    return TimeOfDay(
+      hour: int.parse(parts[0]),
+      minute: int.parse(parts[1]),
+    );
+  }
+
+  bool _isTimeInShift(TimeOfDay current, TimeOfDay start, TimeOfDay end) {
+    final nowInMinutes = current.hour * 60 + current.minute;
+    final startInMinutes = start.hour * 60 + start.minute;
+    final endInMinutes = end.hour * 60 + end.minute;
+
+    if (startInMinutes <= endInMinutes) {
+      // Turno normal (mismo día)
+      return nowInMinutes >= startInMinutes && nowInMinutes <= endInMinutes;
+    } else {
+      // Turno que cruza medianoche (ej. 19:00-06:59)
+      return nowInMinutes >= startInMinutes || nowInMinutes <= endInMinutes;
+    }
+  }
+
+// Esto define la lista de aprobadores por: puesto al que pertenece, por el turno y por el grupo
+  void addAprobadoresByPuesto() async {
+    final prefs = await SharedPreferences.getInstance();
+    final id = prefs.getInt('grupoId');
+    
+    final boxShifts = Hive.box<PuestoValue>('staffPosition').values.toList();
+    final boxUsers = Hive.box<AdapterUser>('users').values.toList();
+
+    final mapaPuestos = {
+      for (var puesto in boxShifts) puesto.descripcion: puesto
+    };
+
+    final aprobadores = boxUsers.where((usuario) {
+      final puesto = mapaPuestos[usuario.puestoDescripcion];
+      return (puesto?.turnos?.contains(currentShift!.id) ?? false) &&
+          usuario.grupoId == id;
+    }).toList();
+
+    final nuevosAprobadores = <modelthird.Value>[];
+    final idsAgregados = <int>{};
+
+    for (var user in aprobadores) {
+      if (user.puestoDescripcion?.toLowerCase() == "gerente planta proceso") {
+        final nuevoAprobador = modelthird.Value(
+          id: user.id!,
+          nombre: '${user.nombre!} ${user.apePaterno!} ${user.apeMaterno!}',
+        );
+        
+        if (!idsAgregados.contains(nuevoAprobador.id)) {
+          idsAgregados.add(nuevoAprobador.id);
+          nuevosAprobadores.add(nuevoAprobador);
+        }
+      }
+    }
+    
+    listAprobadores
+      ..clear()
+      ..addAll(nuevosAprobadores);
+}
+
+
+ void addArobbadoresByRole() async {
+    final boxUsers = Hive.box<AdapterUser>('users').values.toList();
+    final boxShifts = Hive.box<PuestoValue>('staffPosition').values.toList();
+    final prefs = await SharedPreferences.getInstance();
+    final id = prefs.getInt('grupoId');
+
+    final mapaPuestos = {
+      for (var puesto in boxShifts) puesto.descripcion: puesto
+    };
+
+    final aprobadores = boxUsers.where((usuario) {
+      final puesto = mapaPuestos[usuario.puestoDescripcion];
+      return (puesto?.turnos?.contains(currentShift!.id) ?? false) &&
+          usuario.grupoId == id;
+    }).toList();
+
+    final nuevosAprobadores = <modelthird.Value>[];
+    final idsAgregados = <int>{};
+
+    for (var user in aprobadores) {
+      if (user.roles != null && user.roles!.containsKey('2')) {
+        final nuevoAprobador = modelthird.Value(
+          id: user.id!,
+          nombre: '${user.nombre!} ${user.apePaterno!} ${user.apeMaterno!}',
+        );
+        
+        if (!idsAgregados.contains(nuevoAprobador.id)) {
+          idsAgregados.add(nuevoAprobador.id);
+          nuevosAprobadores.add(nuevoAprobador);
+        }
+      }
+    }
+    
+    listAprobadores
+      ..clear()
+      ..addAll(nuevosAprobadores);
+}
+
+
+void validateInterlok() async {
+    if (_currentValueInterlock == 1) {
+       addAprobadoresByPuesto();
+      notifyListeners();
+      return;
+    }
+
+    if (_currentValueInterlock == 1 ||
+        (_currentValueInterlock == 0 &&
+            _currentRiskA?.descripcion.toLowerCase() == 'personas')) {
+       addAprobadoresByPuesto();
+    } else {
+       addArobbadoresByRole();
+    }
+
+    // Manejo seguro del solicitante como aprobador
+    if (currentStateApplicant != null) {
+      final solicitanteValue =modelthird.Value(
+        id: currentStateApplicant!.id,
+        nombre: '${currentStateApplicant!.nombre} ${currentStateApplicant!.apePaterno ?? ''}',
+        apePaterno: '',
+      );
+
+      if (_currentRisk?.descripcion.toLowerCase() == 'bajo' &&
+          _currentValueInterlock == 0 &&
+          _currentRiskA?.descripcion.toLowerCase() != 'personas') {
+        // Agregar solo si no existe
+        if (!listAprobadores.any((a) => a.id == solicitanteValue.id)) {
+          listAprobadores.add(solicitanteValue);
+        }
+      } else {
+        // Remover si existe
+        listAprobadores.removeWhere((a) => a.id == solicitanteValue.id);
+      }
+    }
+
+    // Eliminar duplicados por si acaso
+    final uniqueAprobadores = <modelthird.Value>[];
+    final ids = <int>{};
+    
+    for (var aprobador in listAprobadores) {
+      if (!ids.contains(aprobador.id)) {
+        ids.add(aprobador.id);
+        uniqueAprobadores.add(aprobador);
+      }
+    }
+    
+    listAprobadores
+      ..clear()
+      ..addAll(uniqueAprobadores);
+
+    notifyListeners();
+}
 }

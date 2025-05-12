@@ -360,22 +360,18 @@ class ForzadosProvider with ChangeNotifier {
     if (dropdownProvider.currentValueTagDisciplina == null) {
       return false;
     }
-    if (dropdownProvider.currentValueSlot == null) {
-      return false;
-    }
+   
     return true;
   }
 
   bool validateStepFormTwoOff(DropdownProviderManagerOffline dropdownProvider) {
-    if (dropdownProvider.currentValueInterlock.isEmpty) {
+    if (dropdownProvider.currentValueInterlock == null) {
       return false;
     }
     if (dropdownProvider.currentStateResponsibility == null) {
       return false;
     }
-    if (dropdownProvider.currentStateRisk == null) {
-      return false;
-    }
+   
     if (dropdownProvider.currentStateProbability == null) {
       return false;
     }
@@ -397,9 +393,7 @@ class ForzadosProvider with ChangeNotifier {
     if (dropdownProvider.currentStateExecutor == null) {
       return false;
     }
-    if (dropdownProvider.currentStateTypeForzado == null) {
-      return false;
-    }
+   
     return true;
   }
 
@@ -411,21 +405,18 @@ class ForzadosProvider with ChangeNotifier {
       // Abrir la caja
       final data = Forzado(
           usuario: PreferencesHelper().getUser()!.id.toString(),
-          projectValue:
-              AdapterTwo.fromValue(dropdownProvider.currentStateProjectName!),
           descripcion: dropdownProvider.currentValueDescription,
-          interlock: dropdownProvider.currentValueInterlock,
+          interlock: dropdownProvider.currentValueInterlock == 0 ?'Si':'No',
           tagPrefijoValue:
               AdapterOne.fromValue(dropdownProvider.currentValueTagPrefijo!),
           tagCentroValue:
               AdapterOne.fromValue(dropdownProvider.currentValueTagCentro!),
           disciplinaValue:
               AdapterTwo.fromValue(dropdownProvider.currentValueTagDisciplina!),
-          turnoValue: AdapterTwo.fromValue(dropdownProvider.currentValueSlot!),
+      
           responsableValue: AdapterThree.fromValue(
               dropdownProvider.currentStateResponsibility!),
-          riesgoAValue:
-              AdapterTwo.fromValue(dropdownProvider.currentStateRisk!),
+          
           probabilidadValue:
               AdapterTwo.fromValue(dropdownProvider.currentStateProbability!),
           impactoValue:
@@ -437,8 +428,8 @@ class ForzadosProvider with ChangeNotifier {
               AdapterThree.fromValue(dropdownProvider.currentStateApprover!),
           ejecutorValue:
               AdapterThree.fromValue(dropdownProvider.currentStateExecutor!),
-          tipoForzadoValue:
-              AdapterTwo.fromValue(dropdownProvider.currentStateTypeForzado!));
+           
+              );
       CustomModal modal = CustomModal();
       // Guardar los datos en la caja
       await box.add(data);

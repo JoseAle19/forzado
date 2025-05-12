@@ -111,72 +111,7 @@ class _SyncDataState extends State<SyncData> {
     await box.addAll(forzadosAlta);
   }
 
-  // Future<void> fillListByRole(BuildContext context) async {
-  //   final boxSolicitante = Hive.isBoxOpen('Solicitante')
-  //       ? Hive.box<AdapterThree>('Solicitante')
-  //       : await Hive.openBox('Solicitante');
-
-  //   final boxAprobador = Hive.isBoxOpen('Aprobador')
-  //       ? Hive.box<AdapterThree>('Aprobador')
-  //       : await Hive.openBox('Aprobador');
-
-  //   final boxEjecutor = Hive.isBoxOpen('Ejecutor')
-  //       ? Hive.box<AdapterThree>('Ejecutor')
-  //       : await Hive.openBox('Ejecutor');
-
-  //   // Limpiar contenido previo de las cajas
-  //   await boxSolicitante.clear();
-  //   await boxAprobador.clear();
-  //   await boxEjecutor.clear();
-
-  //   final dropdownProvider =
-  //       Provider.of<DropDownValuesManagerProvider>(context, listen: false);
-  // }
-
-  // Future<void> fillTags(BuildContext context) async {
-  //   final dropdownProviderOn =
-  //       Provider.of<DropDownValuesManagerProvider>(context, listen: false);
-
-  //   await await Hive.box<AdapterTwo>(HiveBoxes.projects).clear();
-  //   Hive.box<AdapterTwo>(HiveBoxes.projects).addAll(dropdownProviderOn
-  //       .listProjects
-  //       .map((tag) => AdapterTwo(id: tag.id, descripcion: tag.descripcion)));
-
-  //   await Hive.box<AdapterOne>(HiveBoxes.tagPrefijo).clear();
-  //   await Hive.box<AdapterOne>(HiveBoxes.tagPrefijo).addAll(
-  //       dropdownProviderOn.listPrefijos.map((tag) => AdapterOne(
-  //           id: tag.id, codigo: tag.codigo, descripcion: tag.descripcion)));
-
-  //   await Hive.box<AdapterOne>(HiveBoxes.tagCentro).clear();
-  //   await Hive.box<AdapterOne>(HiveBoxes.tagCentro).addAll(
-  //       dropdownProviderOn.listCentros.map((tag) => AdapterOne(
-  //           id: tag.id, codigo: tag.codigo, descripcion: tag.descripcion)));
-
-  //   await Hive.box<AdapterTwo>(HiveBoxes.riesgo).clear();
-  //   await Hive.box<AdapterTwo>(HiveBoxes.riesgo).addAll(dropdownProviderOn
-  //       .listRiesgos
-  //       .map((tag) => AdapterTwo(id: tag.id, descripcion: tag.descripcion)));
-  //   await Hive.box<AdapterUser>(HiveBoxes.users).clear();
-  //   await Hive.box<AdapterUser>(HiveBoxes.users).addAll(dropdownProviderOn.users
-  //       .map((tag) => AdapterUser(
-  //           id: tag.id,
-  //           apeMaterno: tag.apeMaterno,
-  //           apePaterno: tag.apeMaterno,
-  //           areaDescripcion: tag.areaDescripcion,
-  //           areaId: tag.areaId,
-  //           correo: tag.correo,
-  //           dni: tag.dni,
-  //           estado: tag.estado,
-  //           nombre: tag.nombre,
-  //           puestoDescripcion: tag.puestoDescripcion,
-  //           puestoId: tag.puestoId,
-  //           rolDescripcion: tag.rolDescripcion,
-  //           rolId: tag.rolId,
-  //           roles: tag.roles,
-  //           usuario: tag.usuario)));
-
-  //   // El segundo modelo
-  // }
+  
 
   @override
   Widget build(BuildContext context) {
@@ -228,13 +163,21 @@ class _SyncDataState extends State<SyncData> {
                       final providerDropdownOff =
                           Provider.of<DropdownProviderManagerOffline>(context,
                               listen: false);
+
+                               print('no click');
+                             await   providerDropdownOff.pushUsers(context);
+                               print('click');
+ 
+
+
                       await Future.delayed(const Duration(seconds: 2));
-                      await providerDropdownOff.clearAndPopulateBoxes(context);
+                      // await providerDropdownOff.clearAndPopulateBoxes(context);
                       await getForzados(context);
                       // Mostramos el modal después de completar la sincronización
                       CustomModal().showModal(
                           context, 'Sincronizados', Colors.green, true);
                     } catch (e) {
+                      print('Ocurrio un error ${e}');
                       CustomModal().showModal(
                           context, 'Ocurrió un error', Colors.red, false);
                     } finally {

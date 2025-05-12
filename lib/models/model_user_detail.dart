@@ -20,7 +20,8 @@ class ApiResponseDetailUser {
   final String? message;
   final String? grupo;
   final int? grupoId;
-
+  
+ 
   ApiResponseDetailUser({
     required this.id,
     required this.name,

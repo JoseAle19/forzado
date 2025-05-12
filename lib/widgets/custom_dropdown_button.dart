@@ -10,6 +10,7 @@ class CustomDropdownButton<T extends DropDownItem> extends StatelessWidget {
   final ValueChanged<T?> onChanged;
   final Color textColor;
   final Color backgroundColor;
+  final Color? borderColor;
 
   const CustomDropdownButton({
     super.key,
@@ -18,7 +19,8 @@ class CustomDropdownButton<T extends DropDownItem> extends StatelessWidget {
     this.selectedItem,
     required this.onChanged,
     this.textColor = Colors.black,
-    this.backgroundColor = Colors.transparent, MaterialColor? borderColor,
+    this.backgroundColor = Colors.transparent,
+    this.borderColor,
   });
 
   @override

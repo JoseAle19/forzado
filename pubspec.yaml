@@ -28,17 +28,18 @@ environment:
 # the latest version available on pub.dev. To see which dependencies have newer
 # versions available, run `flutter pub outdated`.
 dependencies:
+  collection: ^1.19.0
   connectivity_plus: ^6.1.0
   cupertino_icons: ^1.0.6
   easy_stepper: ^0.8.5+1
   flutter:
     sdk: flutter
   flutter_launcher_icons: ^0.14.3
+  flutter_localization: ^0.3.2
   flutter_svg: ^2.0.15
   hive_flutter: ^1.1.0
   http: ^1.2.2
   intl: any
-  flutter_localization: ^0.3.2
   jwt_decoder: ^2.0.1
   provider: ^6.1.2
   shared_preferences: ^2.3.3
@@ -83,8 +84,8 @@ flutter:
   fonts:
     - family: NotoSans
       fonts:
-       - asset: assets/fonts/NotoSans-Regular.ttf
-       - asset: assets/fonts/NotoSans-Bold.ttf
-         weight: 900
+        - asset: assets/fonts/NotoSans-Regular.ttf
+        - asset: assets/fonts/NotoSans-Bold.ttf
+          weight: 900
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/custom-fonts/#from-packages
