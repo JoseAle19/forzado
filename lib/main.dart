@@ -40,7 +40,6 @@ void main() async {
   Hive.registerAdapter(AdapterOneAdapter());
   Hive.registerAdapter(AdapterTwoAdapter());
   Hive.registerAdapter(AdapterThreeAdapter());
-  Hive.registerAdapter(ForzadoAdapter());
   Hive.registerAdapter(ForzadosAdapter());
   Hive.registerAdapter(ForzadoBajaAdapter());
   Hive.registerAdapter(AdapterUserAdapter());
@@ -49,6 +48,7 @@ void main() async {
   Hive.registerAdapter(AdapterTagForzadoAdapter());
   Hive.registerAdapter(PuestoValueAdapter());
 
+  Hive.registerAdapter(ForzadoAdapter());
   // Abre las cajas para cada modelo
   await Hive.openBox<AdapterOne>('TagPrefijo');
   await Hive.openBox<AdapterOne>('TagCentro');
@@ -80,6 +80,7 @@ void main() async {
   await Hive.openBox<AdapterUser>('users');
   await Hive.openBox<ForzadoBaja>('forzadoBajaBox');
   await Hive.openBox<Forzados>('Forzados');
+
   await Hive.openBox<Forzado>('Forzado');
 
   await Hive.openBox('isEnabledRuleRisk');

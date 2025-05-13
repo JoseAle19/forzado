@@ -1,198 +1,170 @@
-import 'package:forzado/adapters/adapter_one.dart';
-import 'package:forzado/adapters/adapter_three.dart';
-import 'package:forzado/adapters/adapter_two.dart';
+library forzado;
+
 import 'package:hive/hive.dart';
 
 part 'forzado.g.dart';
 
 @HiveType(typeId: 3)
 class Forzado extends HiveObject {
+  // Campos con ID y descripción
   @HiveField(0)
-  String? tagPrefijo;
+  int? tagPrefijoId;
 
   @HiveField(1)
-  String? tagCentro;
+  String? tagPrefijoDescripcion;
 
   @HiveField(2)
-  String? descripcion;
+  int? tagCentroId;
 
   @HiveField(3)
-  String? disciplina;
+  String? tagCentroDescripcion;
 
   @HiveField(4)
-  String? turno;
+  int? tagDisciplinaId;
 
   @HiveField(5)
-  String? iterlockSeguridad;
+  String? tagDisciplinaDescripcion;
 
+  // Repite el patrón para los demás campos...
   @HiveField(6)
-  String? responsable;
+  int? probabilityId;
 
   @HiveField(7)
-  String? riesgoA;
+  String? probabilityDescripcion;
 
   @HiveField(8)
-  String? probabilidad;
+  int? impactId;
 
   @HiveField(9)
-  String? impacto;
+  String? impactDescripcion;
 
   @HiveField(10)
-  String? riesgo;
+  int? circuitosId;
 
   @HiveField(11)
-  String? solicitante;
+  String? circuitosDescripcion;
 
   @HiveField(12)
-  String? aprobador;
+  int? riskAId;
 
   @HiveField(13)
-  String? ejecutor;
+  String? riskADescripcion;
 
   @HiveField(14)
-  String? autorizacion;
+  int? riskId;
 
   @HiveField(15)
-  String? tipoDeForzado;
+  String? riskDescripcion;
+
   @HiveField(16)
-  String? interlock;
-  // Descripciones
+  int? grupoId;
+
   @HiveField(17)
-  String? tagPrefijoDescription;
+  String? grupoDescripcion;
 
   @HiveField(18)
-  String? tagCentroDescription;
+  int? applicantId;
 
   @HiveField(19)
-  String? descripcionDescription;
+  String? applicantDescripcion;
 
   @HiveField(20)
-  String? disciplinaDescription;
+  int? responsibilityId;
 
   @HiveField(21)
-  String? turnoDescription;
+  String? responsibilityDescripcion;
 
   @HiveField(22)
-  String? iterlockSeguridadDescription;
+  int? approverId;
 
   @HiveField(23)
-  String? responsableDescription;
+  String? approverDescripcion;
 
+  // Campos originales
   @HiveField(24)
-  String? riesgoADescription;
+  String description;
 
   @HiveField(25)
-  String? probabilidadDescription;
+  String subfijo;
 
   @HiveField(26)
-  String? impactoDescription;
-
+  int? interlock;
   @HiveField(27)
-  String? riesgoDescription;
-
+  int? idUsuario;
   @HiveField(28)
-  String? solicitanteDescription;
-
+  String? dateRequest;
   @HiveField(29)
-  String? aprobadorDescription;
-
+  String? usuarioDescription;
   @HiveField(30)
-  String? ejecutorDescription;
-
+  int? shiftId;
   @HiveField(31)
-  String? autorizacionDescription;
+  String? shiftDescription;
 
-  @HiveField(32)
-  String? tipoDeForzadoDescription;
-  @HiveField(33)
-  String? interlockDescription;
-  @HiveField(34)
-  String? status;
-  @HiveField(35)
-  String? usuario;
-  @HiveField(36)
-  String? projectName;
-
-  @HiveField(37)
-  AdapterTwo? projectValue;
-  @HiveField(38)
-  AdapterOne? tagPrefijoValue;
-  @HiveField(39)
-  AdapterOne? tagCentroValue;
-  @HiveField(40)
-  AdapterTwo? disciplinaValue;
-  @HiveField(41)
-  AdapterTwo? turnoValue;
-  @HiveField(42)
-  AdapterThree? responsableValue;
-  @HiveField(43)
-  AdapterTwo? probabilidadValue;
-  @HiveField(44)
-  AdapterTwo? impactoValue;
-  @HiveField(45)
-  AdapterTwo? riesgoValue;
-  @HiveField(46)
-  AdapterThree? solicitanteValue;
-  @HiveField(47)
-  AdapterThree? aprobadorValue;
-  @HiveField(48)
-  AdapterThree? ejecutorValue;
-  @HiveField(49)
-  AdapterTwo? tipoForzadoValue;
-  @HiveField(50)
-  AdapterTwo? riesgoAValue;
 
   Forzado({
-    this.tagPrefijo,
-    this.tagCentro,
-    this.descripcion,
-    this.disciplina,
-    this.turno,
-    this.iterlockSeguridad,
-    this.responsable,
-    this.riesgoA,
-    this.probabilidad,
-    this.impacto,
-    this.riesgo,
-    this.solicitante,
-    this.aprobador,
-    this.ejecutor,
-    this.autorizacion,
-    this.tipoDeForzado,
+    this.tagPrefijoId,
+    this.tagPrefijoDescripcion,
+    this.tagCentroId,
+    this.tagCentroDescripcion,
+    this.tagDisciplinaId,
+    this.tagDisciplinaDescripcion,
+    this.probabilityId,
+    this.probabilityDescripcion,
+    this.impactId,
+    this.impactDescripcion,
+    this.circuitosId,
+    this.circuitosDescripcion,
+    this.riskAId,
+    this.riskADescripcion,
+    this.riskId,
+    this.riskDescripcion,
+    this.grupoId,
+    this.grupoDescripcion,
+    this.applicantId,
+    this.applicantDescripcion,
+    this.responsibilityId,
+    this.responsibilityDescripcion,
+    this.approverId,
+    this.approverDescripcion,
+    this.description = '',
+    this.subfijo = '',
     this.interlock,
-    this.tagPrefijoDescription,
-    this.tagCentroDescription,
-    this.descripcionDescription,
-    this.disciplinaDescription,
-    this.turnoDescription,
-    this.iterlockSeguridadDescription,
-    this.responsableDescription,
-    this.riesgoADescription,
-    this.probabilidadDescription,
-    this.impactoDescription,
-    this.riesgoDescription,
-    this.solicitanteDescription,
-    this.aprobadorDescription,
-    this.ejecutorDescription,
-    this.autorizacionDescription,
-    this.tipoDeForzadoDescription,
-    this.interlockDescription,
-    this.status,
-    this.usuario,
-    this.projectName,
-    this.projectValue,
-    this.tagPrefijoValue,
-    this.tagCentroValue,
-    this.disciplinaValue,
-    this.turnoValue,
-    this.responsableValue,
-    this.probabilidadValue,
-    this.impactoValue,
-    this.riesgoValue,
-    this.solicitanteValue,
-    this.aprobadorValue,
-    this.ejecutorValue,
-    this.tipoForzadoValue,
-    this.riesgoAValue,
+    this.idUsuario,
+    this.dateRequest,
+    this.shiftDescription,
+    this.shiftId,
+    this.usuarioDescription
   });
+
+  factory Forzado.fromJson(Map<String, dynamic> json) => Forzado(
+        tagPrefijoId: json['tagPrefijo']?['id'] as int?,
+        tagPrefijoDescripcion: json['tagPrefijo']?['descripcion'] as String?,
+        tagCentroId: json['tagCentro']?['id'] as int?,
+        tagCentroDescripcion: json['tagCentro']?['descripcion'] as String?,
+        tagDisciplinaId: json['tagDisciplina']?['id'] as int?,
+        tagDisciplinaDescripcion:
+            json['tagDisciplina']?['descripcion'] as String?,
+        probabilityId: json['probability']?['id'] as int?,
+        probabilityDescripcion: json['probability']?['descripcion'] as String?,
+        impactId: json['impact']?['id'] as int?,
+        impactDescripcion: json['impact']?['descripcion'] as String?,
+        circuitosId: json['circuitos']?['id'] as int?,
+        circuitosDescripcion: json['circuitos']?['descripcion'] as String?,
+        riskAId: json['riskA']?['id'] as int?,
+        riskADescripcion: json['riskA']?['descripcion'] as String?,
+        riskId: json['risk']?['id'] as int?,
+        riskDescripcion: json['risk']?['descripcion'] as String?,
+        grupoId: json['grupo']?['id'] as int?,
+        grupoDescripcion: json['grupo']?['descripcion'] as String?,
+        applicantId: json['applicant']?['id'] as int?,
+        applicantDescripcion: json['applicant']?['descripcion'] as String?,
+        responsibilityId: json['responsibility']?['id'] as int?,
+        responsibilityDescripcion:
+            json['responsibility']?['descripcion'] as String?,
+        approverId: json['approver']?['id'] as int?,
+        approverDescripcion: json['approver']?['descripcion'] as String?,
+        description: json['description'] as String? ?? '',
+        subfijo: json['subfijo'] as String? ?? '',
+        interlock: json['interlock'] as int?,
+      );
 }

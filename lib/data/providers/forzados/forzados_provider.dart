@@ -2,10 +2,6 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:forzado/adapters/adapter_one.dart';
-import 'package:forzado/adapters/adapter_three.dart';
-import 'package:forzado/adapters/adapter_two.dart';
-import 'package:forzado/adapters/forzado.dart';
 import 'package:forzado/core/urls.dart';
 import 'package:forzado/core/utils/preferences_helper.dart';
 import 'package:forzado/data/providers/dropdown/dropdown_provider.dart';
@@ -15,8 +11,6 @@ import 'package:forzado/models/form/forzado/model_forzado.dart';
 import 'package:forzado/models/forzado/model_forzado.dart';
 import 'package:forzado/models/remove_forzado/model_list_remove.dart';
 import 'package:forzado/services/api_client.dart';
-import 'package:forzado/widgets/modal_error.dart';
-import 'package:hive_flutter/hive_flutter.dart';
 import 'package:http/http.dart' as http;
 
 class ForzadosProvider with ChangeNotifier {
@@ -129,10 +123,10 @@ class ForzadosProvider with ChangeNotifier {
           .get(AppUrl.getListForzados)
           .timeout(const Duration(seconds: 60));
       if (res.statusCode == 200) {
-          final jsonString = utf8.decode(res.bodyBytes);
+        final jsonString = utf8.decode(res.bodyBytes);
 
-  // 2) Parseas con tu helper generado por json_serializable o similar
-  ForzadosModel decodeData = forzadosModelFromJson(jsonString);
+        // 2) Parseas con tu helper generado por json_serializable o similar
+        ForzadosModel decodeData = forzadosModelFromJson(jsonString);
         _forzados = decodeData.data!.map((f) {
           String state = f.estado!.toLowerCase();
           if (state.contains("retiro")) {
@@ -360,7 +354,7 @@ class ForzadosProvider with ChangeNotifier {
     if (dropdownProvider.currentValueTagDisciplina == null) {
       return false;
     }
-   
+
     return true;
   }
 
@@ -371,7 +365,7 @@ class ForzadosProvider with ChangeNotifier {
     if (dropdownProvider.currentStateResponsibility == null) {
       return false;
     }
-   
+
     if (dropdownProvider.currentStateProbability == null) {
       return false;
     }
@@ -393,78 +387,9 @@ class ForzadosProvider with ChangeNotifier {
     if (dropdownProvider.currentStateExecutor == null) {
       return false;
     }
-   
+
     return true;
   }
 
-  Future<bool> sendRequestPostOff(BuildContext context,
-      DropdownProviderManagerOffline dropdownProvider) async {
-    Box<Forzado> box = await Hive.box<Forzado>('Forzado');
 
-    try {
-      // Abrir la caja
-      final data = Forzado(
-          usuario: PreferencesHelper().getUser()!.id.toString(),
-          descripcion: dropdownProvider.currentValueDescription,
-          interlock: dropdownProvider.currentValueInterlock == 0 ?'Si':'No',
-          tagPrefijoValue:
-              AdapterOne.fromValue(dropdownProvider.currentValueTagPrefijo!),
-          tagCentroValue:
-              AdapterOne.fromValue(dropdownProvider.currentValueTagCentro!),
-          disciplinaValue:
-              AdapterTwo.fromValue(dropdownProvider.currentValueTagDisciplina!),
-      
-          responsableValue: AdapterThree.fromValue(
-              dropdownProvider.currentStateResponsibility!),
-          
-          probabilidadValue:
-              AdapterTwo.fromValue(dropdownProvider.currentStateProbability!),
-          impactoValue:
-              AdapterTwo.fromValue(dropdownProvider.currentStateImpact!),
-          riesgoValue: AdapterTwo.fromValue(dropdownProvider.currentRisk!),
-          solicitanteValue:
-              AdapterThree.fromValue(dropdownProvider.currentStateApplicant!),
-          aprobadorValue:
-              AdapterThree.fromValue(dropdownProvider.currentStateApprover!),
-          ejecutorValue:
-              AdapterThree.fromValue(dropdownProvider.currentStateExecutor!),
-           
-              );
-      CustomModal modal = CustomModal();
-      // Guardar los datos en la caja
-      await box.add(data);
-      modal.showModal(context, 'Forzado agregado', Colors.blue, true);
-    } catch (e) {
-      CustomModal modal = CustomModal();
-      modal.showModal(context, 'Forzado no agregado', Colors.red, false);
-      print('Error abriendo caja: $e');
-    }
-    return true;
-  }
-
-  // void updateForzado(DropDownValuesManagerProvider dropdownProvider) {
-  //   final data = InsertQueryParameters(
-  //     // id: ,
-  //     usuario: PreferencesHelper().getUser()!.id.toString(),
-  //     tagPrefijo: dropdownProvider.currentValueTagPrefijo!.id.toString(),
-  //     tagCentro: dropdownProvider.currentValueTagCentro!.id.toString(),
-  //     tagSubfijo: dropdownProvider.currentTagSubfijo,
-  //     descripcion: dropdownProvider.currentValueDescription,
-  //     disciplina: dropdownProvider.currentValueTagDisciplina!.id.toString(),
-  //     turno: dropdownProvider.currentValueSlot!.id.toString(),
-  //     interlockSeguridad: dropdownProvider.currentValueInterlock,
-  //     responsable: dropdownProvider.currentStateResponsibility!.id.toString(),
-  //     riesgoA: dropdownProvider.currentStateRisk!.id.toString(),
-  //     riesgo: dropdownProvider.currentRisk!.id.toString(),
-  //     probabilidad: dropdownProvider.currentStateProbability!.id.toString(),
-  //     impacto: dropdownProvider.currentStateImpact!.id.toString(),
-  //     solicitante: dropdownProvider.currentStateApplicant!.id.toString(),
-  //     aprobador: dropdownProvider.currentStateApprover!.id.toString(),
-  //     ejecutor: dropdownProvider.currentStateExecutor!.id.toString(),
-  //     autorizacion: 'Default value',
-  //     tipoForzado: dropdownProvider.currentStateTypeForzado!.id.toString(),
-  //     projectName: dropdownProvider.currentStateProjectName!.id.toString(),
-  //     circuito: '', grupoA: '', fechaFinPlanificada: DateFormat('dd/MM/yyyy, HH:mm:ss').format(DateTime.now()),
-  //   );
-  // }
 }

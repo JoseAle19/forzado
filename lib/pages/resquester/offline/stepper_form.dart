@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:forzado/adapters/adapter_forzados.dart';
 import 'package:forzado/data/providers/dropdown/dropdown_provider_off.dart';
 import 'package:forzado/models/model_one.dart' as modelone;
 import 'package:forzado/models/model_three.dart' as modelthird;
 import 'package:forzado/models/model_two.dart' as modelTwo;
 import 'package:forzado/widgets/custom_dropdown_button.dart';
-import 'package:hive_flutter/hive_flutter.dart';
 import 'package:provider/provider.dart';
 
 class StepperForm extends StatefulWidget {
@@ -139,13 +137,24 @@ class _StepperFormState extends State<StepperForm> {
                               details.onStepContinue!();
                             } else {
                               // Lógica para enviar el formulario
-                              _modal.showModal(
-                                  context,
-                                  'Formulario enviado con éxito',
-                                  Colors.green,
-                                  true);
 
-                              // todo:
+                              try {
+                                await provider.sendRequestPostOff(context);
+                                CustomModal modal = CustomModal();
+                                modal.showModal(
+                                    context,
+                                    'Se guardo tu solicitud',
+                                    Colors.greenAccent,
+                                    true);
+                                provider.resetAll();
+                              } catch (e) {
+                                 CustomModal modal = CustomModal();
+                                modal.showModal(
+                                    context,
+                                    'Ocurrio un error al guardar',
+                                    Colors.redAccent,
+                                    false);
+                              }
                             }
                           } else {
                             _modal.showModal(
@@ -542,6 +551,45 @@ class _StepThreeContent extends StatelessWidget {
           selectedItem: dropdownProvider.currentGrupo,
           onChanged: (v) => dropdownProvider.currentGrupo = v!,
         ),
+        Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text(
+                'Fecha fin planificada:',
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(height: 6),
+              Text(
+                dropdownProvider.datep!,
+                style: const TextStyle(
+                  fontSize: 15,
+                  color: Colors.grey,
+                ),
+              ),
+              const SizedBox(height: 16),
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton.icon(
+                  onPressed: () => dropdownProvider.selectDate(context),
+                  icon: const Icon(Icons.calendar_today),
+                  label: const Text('Seleccionar Fecha'),
+                  style: ElevatedButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(vertical: 14),
+                    textStyle: const TextStyle(fontSize: 16),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        )
       ],
     );
   }

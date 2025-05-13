@@ -28,7 +28,7 @@ class _MainHomePageState extends State<MainHomePage>
   // provider para verificar la conexion a internet
 
   void veryfyUserLoggedAndConnection(BuildContext c, List<int> roles) {
-    final esRequester = roles.contains(3) || roles.contains(4);
+    final esRequester = roles.contains(1);
     setState(() {
       isRequester = esRequester;
     });

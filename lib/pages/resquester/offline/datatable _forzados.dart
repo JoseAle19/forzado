@@ -11,7 +11,6 @@ import 'package:forzado/models/form/forzado/model_forzado.dart';
 import 'package:forzado/services/api_client.dart';
 import 'package:forzado/widgets/modal_error.dart';
 import 'package:hive/hive.dart';
-import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 class ForzadosDataTable extends StatefulWidget {
@@ -25,6 +24,7 @@ class _ForzadosDataTableState extends State<ForzadosDataTable> {
   List<Forzado> listForzado = [];
   bool isLoading = false;
   bool isSync = false;
+
   void verInformacion(BuildContext context, Forzado forzado) {
     showDialog(
       context: context,
@@ -49,40 +49,47 @@ class _ForzadosDataTableState extends State<ForzadosDataTable> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              detalleItem('usuario', forzado.usuario.toString()),
+              detalleItem('Usuario',
+                  '${forzado.usuarioDescription} | ${forzado.idUsuario.toString()}'?? 'No definido'),
               detalleItem(
-                  'Nombre del proyecto', forzado.projectValue?.descripcion),
-              detalleItem('Centro', forzado.tagCentroValue?.descripcion),
-              detalleItem('Descripción', forzado.descripcion),
-              detalleItem('Disciplina', forzado.disciplinaValue?.descripcion),
-              detalleItem('Turno', forzado.turnoValue?.descripcion),
-              detalleItem('Interlock Seguridad', forzado.interlock),
-              detalleItem('Responsable', forzado.responsableValue?.nombre),
-              detalleItem('Riesgo A', forzado.riesgoAValue?.descripcion),
+                  'Prefijo', forzado.tagPrefijoDescripcion ?? 'No definido'),
               detalleItem(
-                  'Probabilidad', forzado.probabilidadValue?.descripcion),
-              detalleItem('Impacto', forzado.impactoValue?.descripcion),
-              detalleItem('Riesgo', forzado.riesgoValue?.descripcion),
+                  'Centro', forzado.tagCentroDescripcion ?? 'No definido'),
+              detalleItem('Descripción', forzado.description),
+              detalleItem('Disciplina',
+                  forzado.tagDisciplinaDescripcion ?? 'No definido'),
               detalleItem(
-                  'Solicitante',
-                  utf8.decode(
-                      latin1.encode(
-                          forzado.solicitanteValue?.nombre ?? 'No value'),
-                      allowMalformed: true)),
+                  'Interlock Seguridad', forzado.interlock == 0 ? 'No' : 'SI'),
+              detalleItem('Responsable',
+                  forzado.responsibilityDescripcion ?? 'No definido'),
               detalleItem(
-                  'Aprobador',
-                  utf8.decode(
-                      latin1
-                          .encode(forzado.aprobadorValue?.nombre ?? 'No value'),
-                      allowMalformed: true)),
+                  'Riesgo A', forzado.riskADescripcion ?? 'No definido'),
+              detalleItem('Probabilidad',
+                  forzado.probabilityDescripcion ?? 'No definido'),
               detalleItem(
-                  'Ejecutor',
-                  utf8.decode(
-                      latin1
-                          .encode(forzado.ejecutorValue?.nombre ?? 'No value'),
-                      allowMalformed: true)),
+                  'Impacto', forzado.impactDescripcion ?? 'No definido'),
+              detalleItem('Riesgo', forzado.riskDescripcion ?? 'No definido'),
               detalleItem(
-                  'Tipo de Forzado', forzado.tipoForzadoValue?.descripcion),
+                'Solicitante',
+                utf8.decode(
+                  latin1.encode(forzado.applicantDescripcion ?? 'No definido'),
+                  allowMalformed: true,
+                ),
+              ),
+              detalleItem(
+                'Aprobador',
+                utf8.decode(
+                  latin1.encode(forzado.approverDescripcion ?? 'No definido'),
+                  allowMalformed: true,
+                ),
+              ),
+              detalleItem(
+                'Fecha Planificada',
+                utf8.decode(
+                  latin1.encode(forzado.dateRequest ?? 'No definido'),
+                  allowMalformed: true,
+                ),
+              ),
             ],
           ),
         ),
@@ -139,7 +146,7 @@ class _ForzadosDataTableState extends State<ForzadosDataTable> {
         Provider.of<ForzadosProvider>(context, listen: false);
     CustomModal modal = CustomModal();
 
-    Box<Forzado> box = await Hive.box<Forzado>('Forzado');
+    Box<Forzado> box =   Hive.box<Forzado>('Forzado');
 
     setState(() {
       isSync = true;
@@ -148,29 +155,28 @@ class _ForzadosDataTableState extends State<ForzadosDataTable> {
     try {
       for (var forzado in box.values) {
         final data = InsertQueryParameters(
-          usuario: forzado.usuario!,
-          tagPrefijo: forzado.tagPrefijoValue!.id.toString(),
-          tagCentro: forzado.tagCentroValue!.id.toString(),
-          tagSubfijo: 'Default value',
-          descripcion: forzado.descripcion!,
-          disciplina: forzado.disciplinaValue!.id.toString(),
-          turno: forzado.turnoValue!.id.toString(),
-          interlockSeguridad: forzado.interlock!,
-          responsable: forzado.responsableValue!.id.toString(),
-          riesgoA: forzado.riesgoAValue!.id.toString(),
-          riesgo: forzado.riesgoValue!.id.toString(),
-          probabilidad: forzado.probabilidadValue!.id.toString(),
-          impacto: forzado.impactoValue!.id.toString(),
-          solicitante: forzado.solicitanteValue!.id.toString(),
-          aprobador: forzado.aprobadorValue!.id.toString(),
-          ejecutor: forzado.ejecutorValue!.id.toString(),
+          usuario: forzado.idUsuario?.toString() ?? 'No definido',
+          tagPrefijo: forzado.tagPrefijoId?.toString() ?? 'No definido',
+          tagCentro: forzado.tagCentroId?.toString() ?? 'No definido',
+          tagSubfijo: forzado.subfijo,
+          descripcion: forzado.description,
+          disciplina: forzado.tagDisciplinaId?.toString() ?? 'No definido',
+          turno: forzado.shiftId?.toString() ?? 'No definido',
+          interlockSeguridad: forzado.interlock == 0 ? 'NO' : 'SI',
+          responsable: forzado.responsibilityId?.toString() ?? 'No definido',
+          riesgoA: forzado.riskAId?.toString() ?? 'No definido',
+          riesgo: forzado.riskId?.toString() ?? 'No definido',
+          probabilidad: forzado.probabilityId?.toString() ?? 'No definido',
+          impacto: forzado.impactId?.toString() ?? 'No definido',
+          solicitante: forzado.applicantId?.toString() ?? 'No definido',
+          aprobador: forzado.approverId?.toString() ?? 'No definido',
           autorizacion: 'Default value',
-          tipoForzado: forzado.tipoForzadoValue!.id.toString(),
-          projectName: forzado.projectValue!.id.toString(),
-          circuito: '',
-          grupoA: '',
-          fechaFinPlanificada:
-              DateFormat('dd/MM/yyyy, HH:mm:ss').format(DateTime.now()),
+          tipoForzado: 'Default value',
+          projectName: 'Default Value',
+          circuito: forzado.circuitosId?.toString() ?? 'No definido',
+          grupoA: forzado.grupoId?.toString() ?? 'No definido',
+          fechaFinPlanificada: forzado.dateRequest?.toString() ?? 'No definido',
+          ejecutor: 'Default Value',
         );
 
         try {
@@ -179,7 +185,6 @@ class _ForzadosDataTableState extends State<ForzadosDataTable> {
               AppUrl.postAddForzado, json.encode(data.toMap()));
 
           if (res.statusCode == 200) {
-            // Elimina el objeto sincronizado del Box
             await box.delete(forzado.key);
             setState(() {
               listForzado.remove(forzado);
@@ -212,13 +217,11 @@ class _ForzadosDataTableState extends State<ForzadosDataTable> {
   }
 
   void loadForzados() async {
-    Box<Forzado> box = await Hive.box<Forzado>('Forzado');
-
+    Box<Forzado> box = Hive.box<Forzado>('Forzado');
     setState(() {
       isLoading = true;
     });
     try {
-      // Puedes trabajar directamente con el iterable `box.values`
       listForzado = box.values.toList();
     } catch (e) {
       print('Error al cargar los datos: $e');
@@ -232,13 +235,12 @@ class _ForzadosDataTableState extends State<ForzadosDataTable> {
   Future<void> deleteForzadoBox() async {
     try {
       var box = await Hive.openBox<Forzado>(HiveBoxes.forzado);
-
       await box.clear();
-
       setState(() {
         listForzado.clear();
       });
     } catch (e) {
+      print('Error al eliminar forzados: $e');
     } finally {
       try {
         if (Hive.isBoxOpen(HiveBoxes.forzado)) {
@@ -256,10 +258,6 @@ class _ForzadosDataTableState extends State<ForzadosDataTable> {
       appBar: AppBar(
         actions: [
           IconButton(
-            // onPressed: () async {
-            //   final box = await Hive.box<Forzado>(HiveBoxes.forzado);
-            //   box.clear();
-            // },
             onPressed: () => sincronizarInformacion(context),
             icon: const Icon(Icons.sync),
           )
@@ -307,14 +305,14 @@ class _ForzadosDataTableState extends State<ForzadosDataTable> {
                               vertical: 8, horizontal: 16),
                           child: ListTile(
                             title: Text(
-                              'Proyecto: ${forzado.projectValue?.descripcion}',
+                              'Usuario: ${forzado.usuarioDescription ?? 'No definido'}',
                               style:
                                   const TextStyle(fontWeight: FontWeight.bold),
                             ),
                             subtitle: Text(
-                                'Centro: ${forzado.tagCentroValue?.descripcion ?? 'no value'}'),
+                                'Centro: ${forzado.tagCentroDescripcion ?? 'No definido'}'),
                             trailing: Wrap(
-                              spacing: 8, // Espaciado entre botones
+                              spacing: 8,
                               children: [
                                 IconButton(
                                   icon: const Icon(Icons.info_outline,
@@ -329,10 +327,9 @@ class _ForzadosDataTableState extends State<ForzadosDataTable> {
                         );
                       },
                     ),
-          // Indicador de carga
           if (isSync)
             Container(
-              color: Colors.black.withOpacity(0.5), // Fondo semitransparente
+              color: Colors.black.withOpacity(0.5),
               child: const Center(
                 child: Column(
                   mainAxisSize: MainAxisSize.min,

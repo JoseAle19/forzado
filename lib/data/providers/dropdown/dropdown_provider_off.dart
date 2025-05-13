@@ -9,9 +9,11 @@ import 'package:forzado/adapters/adapter_shifts.dart';
 import 'package:forzado/adapters/adapter_tag_forzado.dart';
 import 'package:forzado/adapters/adapter_three.dart';
 import 'package:forzado/adapters/adapter_two.dart';
+import 'package:forzado/adapters/forzado.dart';
 import 'package:forzado/adapters/staff_position.dart';
 import 'package:forzado/adapters/user_adapter.dart';
 import 'package:forzado/core/urls.dart';
+import 'package:forzado/core/utils/preferences_helper.dart';
 import 'package:forzado/data/providers/dropdown/dropdown_provider.dart';
 import 'package:forzado/data/providers/maestras.dart';
 import 'package:forzado/models/mestras/puestos_model.dart' as modelp;
@@ -661,7 +663,7 @@ class DropdownProviderManagerOffline with ChangeNotifier {
       final now = DateTime.now();
       final currentTime = TimeOfDay.fromDateTime(now);
       final _turnos = Hive.box<ShiftValue>('shiftBox').values;
-       formatDate();
+      formatDate();
       for (final turno in _turnos) {
         final startTime = _parseTimeString(turno.horaInicio!);
         final endTime = _parseTimeString(turno.horaFin!);
@@ -835,5 +837,124 @@ class DropdownProviderManagerOffline with ChangeNotifier {
       ..addAll(uniqueAprobadores);
 
     notifyListeners();
+  }
+
+  // para selecciona fecha de ejecucion
+
+  String _dateNowP = 'yyyy/mm/dd';
+  String? get datep => _dateNowP;
+
+  set setDate(String value) {
+    _dateNowP = value;
+  }
+
+  Future<void> selectDate(BuildContext context) async {
+    final DateTime? pickedDate = await showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime(2000),
+      lastDate: DateTime(2101),
+      locale: const Locale('es', ''), // español
+    );
+
+    if (pickedDate == null) return; // usuario canceló
+    final TimeOfDay? pickedTime = await showTimePicker(
+      context: context,
+      initialTime: TimeOfDay.now(),
+      builder: (context, child) {
+        return MediaQuery(
+          data: MediaQuery.of(context).copyWith(alwaysUse24HourFormat: true),
+          child: child!,
+        );
+      },
+    );
+
+    if (pickedTime == null) return; // usuario canceló
+
+    final DateTime combined = DateTime(
+      pickedDate.year,
+      pickedDate.month,
+      pickedDate.day,
+      pickedTime.hour,
+      pickedTime.minute,
+    );
+
+    final formatted = DateFormat('yyyy/MM/dd HH:mm').format(combined);
+
+    setDate = formatted;
+    notifyListeners();
+  }
+
+  // funcion para guardar la solicitud en lo9cal
+
+  Future<bool> sendRequestPostOff(BuildContext context) async {
+    Box<Forzado> box = await Hive.box<Forzado>('Forzado');
+ 
+      // Abrir la caja
+      final data = Forzado(
+        // Tag Prefijo
+        tagPrefijoId: currentValueTagPrefijo?.id,
+        tagPrefijoDescripcion: currentValueTagPrefijo?.descripcion,
+
+        // Tag Centro
+        tagCentroId: currentValueTagCentro?.id,
+        tagCentroDescripcion: currentValueTagCentro?.descripcion,
+
+        // Tag Disciplina
+        tagDisciplinaId: currentValueTagDisciplina?.id,
+        tagDisciplinaDescripcion: currentValueTagDisciplina?.descripcion,
+
+        // Probability
+        probabilityId: currentStateProbability?.id,
+        probabilityDescripcion: currentStateProbability?.descripcion,
+
+        // Impact
+        impactId: currentStateImpact?.id,
+        impactDescripcion: currentStateImpact?.descripcion,
+
+        // Circuitos
+        circuitosId: currentValueCircuitos?.id,
+        circuitosDescripcion: currentValueCircuitos?.descripcion,
+
+        // Risk A
+        riskAId: currentRiskA?.id,
+        riskADescripcion: currentRiskA?.descripcion,
+
+        // Risk
+        riskId: currentRisk?.id,
+        riskDescripcion: currentRisk?.descripcion,
+
+        // Grupo
+        grupoId: currentGrupo?.id,
+        grupoDescripcion: currentGrupo?.descripcion,
+
+        // Applicant
+        applicantId: currentStateApplicant?.id,
+        applicantDescripcion:
+            '${currentStateApplicant?.nombre}',
+
+        // Responsibility
+        responsibilityId: currentStateResponsibility?.id,
+        responsibilityDescripcion:
+            '${currentStateResponsibility?.nombre}',
+
+        // Approver
+        approverId: currentStateApprover?.id,
+        approverDescripcion:
+            '${currentStateApprover?.nombre}',
+
+        // Campos directos
+        description: currentValueDescription,
+        subfijo: currentValueSubfijo,
+        interlock: currentValueInterlock,
+        idUsuario: PreferencesHelper().getUser()!.id,
+        dateRequest: datep,
+        shiftDescription: currentShift!.descripcion,
+        shiftId: currentShift!.id,
+        usuarioDescription: PreferencesHelper().getUser()!.name,
+      );
+        await box.add(data);
+    
+    return true;
   }
 }
