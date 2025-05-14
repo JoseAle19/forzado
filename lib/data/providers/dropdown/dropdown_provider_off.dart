@@ -468,6 +468,15 @@ class DropdownProviderManagerOffline with ChangeNotifier {
           nombre: u.nombre,
           grupoId: u.grupoId));
     }
+
+
+    provider.users.forEach((s){
+
+      print('Solicitante nombre ${s.nombre}');
+      
+      print('Solicitante descripcion ${s.puestoDescripcion}');
+      
+    });
   }
 
   Future<void> saveDataMasters(BuildContext c) async {
@@ -588,7 +597,7 @@ class DropdownProviderManagerOffline with ChangeNotifier {
     listCircuitos = boxCircuitos.values
         .map((e) => modeltwo.Value(id: e.id, descripcion: e.descripcion))
         .toList();
-
+    
     notifyListeners();
   }
 
