@@ -343,7 +343,7 @@ class DropdownProviderManagerOffline with ChangeNotifier {
       ]);
     } catch (e) {
       CustomModal modal = CustomModal();
-      modal.showModal(c, 'Ocurrio un error, form 1', Colors.red, false);
+      modal.showModal(c, 'Ocurrio un error.', Colors.red, false);
     }
   }
 
@@ -397,8 +397,7 @@ class DropdownProviderManagerOffline with ChangeNotifier {
       ]);
     } catch (e) {
       CustomModal modal = CustomModal();
-      modal.showModal(c, 'Ocurrió un error al guardar datos del formulario 2.',
-          Colors.red, false);
+      modal.showModal(c, 'Ocurrió un error.', Colors.red, false);
     }
   }
 
@@ -418,7 +417,7 @@ class DropdownProviderManagerOffline with ChangeNotifier {
     } catch (e) {
       CustomModal modal = CustomModal();
       debugPrint('Este es el error ${e}');
-      modal.showModal(c, 'Ocurrio un error, form 3', Colors.red, false);
+      modal.showModal(c, 'Ocurrio un error.', Colors.red, false);
     }
   }
 
@@ -480,28 +479,40 @@ class DropdownProviderManagerOffline with ChangeNotifier {
     final providerDropOn =
         Provider.of<DropDownValuesManagerProvider>(c, listen: false);
     await maestrasProvider.getShifts();
-
     try {
       final res = await client.get(AppUrl.tagsMatrizRiesgo);
+ 
+
       final tagMatrizRiesgoModel = modelTagsMatrizFromJson(res.body).values;
+ 
+
       final tagsMatrizRiesgo = tagMatrizRiesgoModel
           .map((v) => AdapterTagForzado.fromModel(v))
           .toList();
+ 
+      tagsMatrizRiesgo
+          .forEach((tag) => print(tag.toJson()));
+
       await boxTagsMtarizRiesgo.clear();
       await Future.wait([
         boxTagsMtarizRiesgo.addAll(tagsMatrizRiesgo),
       ]);
 
-      // Agregar los turnos a la caja
+    
+      final puestosConvertidos = providerDropOn.listPuestos
+          .map((lt) => PuestoValue.fromJson(lt))
+          .toList();
+
+      puestosConvertidos
+          .forEach((puesto) => print(puesto.toJson())); 
+
       final boxPuestos = Hive.box<PuestoValue>('staffPosition');
       await boxPuestos.clear();
-
-      await boxPuestos.addAll(providerDropOn.listPuestos
-          .map((lt) => PuestoValue.fromJson(lt))
-          .toList());
-    } catch (e) {
+      await boxPuestos.addAll(puestosConvertidos);
+    } catch (e, stackTrace) {
+   
       CustomModal modal = CustomModal();
-      modal.showModal(c, 'Ocurrio un error, form 3', Colors.red, false);
+      modal.showModal(c, 'Ocurrio un error.', Colors.red, false);
     }
   }
 
@@ -891,80 +902,74 @@ class DropdownProviderManagerOffline with ChangeNotifier {
 
   Future<bool> sendRequestPostOff(BuildContext context) async {
     Box<Forzado> box = await Hive.box<Forzado>('Forzado');
- 
-      // Abrir la caja
-      final data = Forzado(
-        // Tag Prefijo
-        tagPrefijoId: currentValueTagPrefijo?.id,
-        tagPrefijoDescripcion: currentValueTagPrefijo?.descripcion,
 
-        // Tag Centro
-        tagCentroId: currentValueTagCentro?.id,
-        tagCentroDescripcion: currentValueTagCentro?.descripcion,
+    // Abrir la caja
+    final data = Forzado(
+      // Tag Prefijo
+      tagPrefijoId: currentValueTagPrefijo?.id,
+      tagPrefijoDescripcion: currentValueTagPrefijo?.descripcion,
 
-        // Tag Disciplina
-        tagDisciplinaId: currentValueTagDisciplina?.id,
-        tagDisciplinaDescripcion: currentValueTagDisciplina?.descripcion,
+      // Tag Centro
+      tagCentroId: currentValueTagCentro?.id,
+      tagCentroDescripcion: currentValueTagCentro?.descripcion,
 
-        // Probability
-        probabilityId: currentStateProbability?.id,
-        probabilityDescripcion: currentStateProbability?.descripcion,
+      // Tag Disciplina
+      tagDisciplinaId: currentValueTagDisciplina?.id,
+      tagDisciplinaDescripcion: currentValueTagDisciplina?.descripcion,
 
-        // Impact
-        impactId: currentStateImpact?.id,
-        impactDescripcion: currentStateImpact?.descripcion,
+      // Probability
+      probabilityId: currentStateProbability?.id,
+      probabilityDescripcion: currentStateProbability?.descripcion,
 
-        // Circuitos
-        circuitosId: currentValueCircuitos?.id,
-        circuitosDescripcion: currentValueCircuitos?.descripcion,
+      // Impact
+      impactId: currentStateImpact?.id,
+      impactDescripcion: currentStateImpact?.descripcion,
 
-        // Risk A
-        riskAId: currentRiskA?.id,
-        riskADescripcion: currentRiskA?.descripcion,
+      // Circuitos
+      circuitosId: currentValueCircuitos?.id,
+      circuitosDescripcion: currentValueCircuitos?.descripcion,
 
-        // Risk
-        riskId: currentRisk?.id,
-        riskDescripcion: currentRisk?.descripcion,
+      // Risk A
+      riskAId: currentRiskA?.id,
+      riskADescripcion: currentRiskA?.descripcion,
 
-        // Grupo
-        grupoId: currentGrupo?.id,
-        grupoDescripcion: currentGrupo?.descripcion,
+      // Risk
+      riskId: currentRisk?.id,
+      riskDescripcion: currentRisk?.descripcion,
 
-        // Applicant
-        applicantId: currentStateApplicant?.id,
-        applicantDescripcion:
-            '${currentStateApplicant?.nombre}',
+      // Grupo
+      grupoId: currentGrupo?.id,
+      grupoDescripcion: currentGrupo?.descripcion,
 
-        // Responsibility
-        responsibilityId: currentStateResponsibility?.id,
-        responsibilityDescripcion:
-            '${currentStateResponsibility?.nombre}',
+      // Applicant
+      applicantId: currentStateApplicant?.id,
+      applicantDescripcion: '${currentStateApplicant?.nombre}',
 
-        // Approver
-        approverId: currentStateApprover?.id,
-        approverDescripcion:
-            '${currentStateApprover?.nombre}',
+      // Responsibility
+      responsibilityId: currentStateResponsibility?.id,
+      responsibilityDescripcion: '${currentStateResponsibility?.nombre}',
 
-        // Campos directos
-        description: currentValueDescription,
-        subfijo: currentValueSubfijo,
-        interlock: currentValueInterlock,
-        idUsuario: PreferencesHelper().getUser()!.id,
-        dateRequest: datep,
-        shiftDescription: currentShift!.descripcion,
-        shiftId: currentShift!.id,
-        usuarioDescription: PreferencesHelper().getUser()!.name,
-      );
-        await box.add(data);
-    
+      // Approver
+      approverId: currentStateApprover?.id,
+      approverDescripcion: '${currentStateApprover?.nombre}',
+
+      // Campos directos
+      description: currentValueDescription,
+      subfijo: currentValueSubfijo,
+      interlock: currentValueInterlock,
+      idUsuario: PreferencesHelper().getUser()!.id,
+      dateRequest: datep,
+      shiftDescription: currentShift!.descripcion,
+      shiftId: currentShift!.id,
+      usuarioDescription: PreferencesHelper().getUser()!.name,
+    );
+    await box.add(data);
+
     return true;
   }
 
-
-
   // settear el solicitante, quien es el loggeado
 
-  
   void seleccionarSolicitante() async {
     ApiResponseDetailUser? _user = PreferencesHelper().getUser();
 

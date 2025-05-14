@@ -98,7 +98,7 @@ class ListForzadosFlag extends StatelessWidget {
     const Color secondaryColor = Colors.white;
 
     Widget detalleItem(String titulo, String valor) {
-      String decodedValue = const Utf8Decoder().convert(valor.runes.toList());
+      String decodedValue = valor;
 
       return Padding(
         padding: const EdgeInsets.only(bottom: 8.0),

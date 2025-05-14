@@ -114,4 +114,32 @@ factory AdapterTagForzado.fromModel(Tags tag) {
       interlockDescripcion: json['interlockDescripcion'],
     );
   }
+  Map<String, dynamic> toJson() => {
+    'id': id,
+    'prefijoId': prefijoId,
+    'centroId': centroId,
+    'sufijo': sufijo,
+    'probabilidadDescripcion': probabilidadDescripcion,
+    'impactoDescripcion': impactoDescripcion,
+    'probabilidadId': probabilidadId,
+    'impactoId': impactoId,
+    'descripcion': descripcion,
+    'tagConcat': tagConcat,
+    'prefijoCodigo': prefijoCodigo,
+    'prefijoDescripcion': prefijoDescripcion,
+    'centroCodigo': centroCodigo,
+    'centroDescripcion': centroDescripcion,
+    'interlock': interlock,
+    'riesgoAId': riesgoAId,
+    'riesgoADescripcion': riesgoADescripcion,
+    'interlockDescripcion': interlockDescripcion,
+  };
+
+
+   static int? _parseInt(dynamic value) {
+    if (value == null) return null;
+    if (value is int) return value;
+    if (value is String) return int.tryParse(value);
+    return null;
+  }
 }
