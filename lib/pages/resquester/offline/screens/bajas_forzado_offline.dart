@@ -59,15 +59,12 @@ class _BajasForzadoOfflineState extends State<BajasForzadoOffline> {
                 const SizedBox(height: 16),
                 buildDetailRow('ID:', item.id.toString()),
                 buildDetailRow('Descripción:', item.descripcion.toString()),
-                buildDetailRow('ID Aplicante:', item.idApplicant.toString()),
-                buildDetailRow(
+                 buildDetailRow(
                     'Aplicante:', item.descripcionApplicant.toString()),
-                buildDetailRow('ID aprobador:', item.idApprover.toString()),
-                buildDetailRow(
+                 buildDetailRow(
                     'Aprobador:', item.descripcionApprover.toString()),
-                buildDetailRow('ID ejecutor:', item.idExecutor.toString()),
-                buildDetailRow(
-                    'Ejecutor:', item.descripcionExecutor.toString()),
+                 buildDetailRow(
+                    'Grupo:', item.descripcionExecutor.toString()),
                 buildDetailRow('ID Forzado:', item.id_forzado.toString()),
                 const SizedBox(height: 24),
                 Center(
@@ -140,7 +137,8 @@ class _BajasForzadoOfflineState extends State<BajasForzadoOffline> {
       aprobadorRetiro: forzado.idApprover.toString(),
       ejecutorRetiro: forzado.idExecutor.toString(),
       observaciones: forzado.descripcion.toString(),
-      id: forzado.id_forzado.toString(), tipoGrupoB: 'default value',
+      id: forzado.id_forzado.toString(), 
+      tipoGrupoB: forzado.idExecutor.toString(),
     );
     ApiClient client = ApiClient();
     final res =

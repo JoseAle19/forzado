@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:forzado/adapters/adapter_forzados.dart';
 import 'package:forzado/adapters/adapter_three.dart';
+import 'package:forzado/adapters/adapter_two.dart';
 import 'package:forzado/adapters/forzado_baja.dart';
 import 'package:forzado/core/utils/preferences_helper.dart';
 import 'package:forzado/data/providers/offline/list_forzados_ejecutados_provider.dart';
@@ -9,6 +10,7 @@ import 'package:forzado/models/model_user_detail.dart';
 import 'package:forzado/pages/resquester/offline/screens/list_forzados_ejecutado_alta.dart';
 import 'package:forzado/pages/steps_form/congratulation.dart';
 import 'package:forzado/widgets/drop_down_offline/custom_drop_three.dart';
+import 'package:forzado/widgets/drop_down_offline/custom_drop_two.dart';
 import 'package:forzado/widgets/modal_error.dart';
 import 'package:hive_flutter/adapters.dart';
 import 'package:provider/provider.dart';
@@ -43,7 +45,7 @@ class _FormBajaForzadoState extends State<FormBajaForzado> {
 
   AdapterThree currentValueapplicant = AdapterThree(id: 0, nombre: '');
   AdapterThree currentValueapprover = AdapterThree(id: 0, nombre: '');
-  AdapterThree currentValueexecutor = AdapterThree(id: 0, nombre: '');
+  AdapterTwo currentValueTeam = AdapterTwo(id: 0, descripcion: '');
 
   void _updateCurrentValue(ValueType valueType, dynamic newValue) {
     setState(() {
@@ -55,7 +57,7 @@ class _FormBajaForzadoState extends State<FormBajaForzado> {
           currentValueapprover = newValue;
           break;
         case ValueType.executor:
-          currentValueexecutor = newValue;
+          currentValueTeam = newValue;
           break;
         case ValueType.description:
           currentValueDescription = newValue;
@@ -80,14 +82,11 @@ class _FormBajaForzadoState extends State<FormBajaForzado> {
   void seleccionarSolicitante() async {
     ApiResponseDetailUser? _user = PreferencesHelper().getUser();
     final box = Hive.box<AdapterThree>('Solicitante').values.toList();
-      CustomModal modal = CustomModal();
 
     final solicitante = box.firstWhere((u) => u.id == _user!.id,
         orElse: () => AdapterThree(id: 000, nombre: 'error'));
     if (solicitante.nombre.toLowerCase() == 'error') {
-        modal.showModal(context, 'Error al settear el solicitante', Colors.redAccent, false)        ;
     } else {
-        modal.showModal(context, 'Seteado', Colors.greenAccent, true)          ;
     currentValueapplicant = solicitante;
     }
   }
@@ -128,14 +127,24 @@ class _FormBajaForzadoState extends State<FormBajaForzado> {
                 onChanged: (value) =>
                     _updateCurrentValue(ValueType.approver, value),
               ),
-              CustomDropDownButtonThreeOff(
-                box: HiveBoxes.ejecutor,
-                descriptionField: 'Ejecutor *',
-                hintText: 'Seleccione Ejecutor',
-                currentValue: currentValueexecutor,
+              CustomDropDownButtonTwoOff(
+                box: 'grupo-ejecucion',
+                descriptionField: 'Grupo de Ejecución *',
+                hintText: 'Seleccione Grupo',
+                currentValue: currentValueTeam,
                 onChanged: (value) =>
                     _updateCurrentValue(ValueType.executor, value),
               ),
+
+//  CustomDropdownButton<modelTwo.Value>(
+//           hintText: 'Grupo de Ejecución *:',
+//           items: dropdownProvider.listGrupos,
+//           selectedItem: dropdownProvider.currentStateGrupo,
+//           onChanged: (v) => dropdownProvider.currentStateGrupo = v!,
+//         ),
+
+
+
               const SizedBox(height: 20),
               const Text(
                 'Observaciones',
@@ -161,7 +170,7 @@ class _FormBajaForzadoState extends State<FormBajaForzado> {
                   if (currentValueDescription.isEmpty ||
                       currentValueapplicant.nombre.isEmpty ||
                       currentValueapprover.nombre.isEmpty ||
-                      currentValueexecutor.nombre.isEmpty) {
+                      currentValueTeam.descripcion.isEmpty) {
                     CustomModal modal = CustomModal();
                     modal.showModal(context, 'Completa todos los campos',
                         Colors.red, false);
@@ -174,8 +183,8 @@ class _FormBajaForzadoState extends State<FormBajaForzado> {
                     descripcionApplicant: currentValueapplicant.nombre,
                     idApprover: currentValueapprover.id,
                     descripcionApprover: currentValueapprover.nombre,
-                    idExecutor: currentValueexecutor.id,
-                    descripcionExecutor: currentValueexecutor.nombre,
+                    idExecutor: currentValueTeam.id,
+                    descripcionExecutor: currentValueTeam.descripcion,
                     id_forzado: widget.detailForzado.id,
                   );
 

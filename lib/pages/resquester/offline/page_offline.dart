@@ -20,16 +20,16 @@ class _PageOfflineState extends State<PageOffline> {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       if (mounted) {
-        getData();
+        // getData();
       }
     });
   }
 
-  Future<void> getData() async {
-    final dropdownProviderOff =
-        Provider.of<DropdownProviderManagerOffline>(context, listen: false);
-    // await dropdownProviderOff.getDataHive();
-  }
+  // Future<void> getData() async {
+  //   final dropdownProviderOff =
+  //       Provider.of<DropdownProviderManagerOffline>(context, listen: false);
+  //   // await dropdownProviderOff.getDataHive();
+  // }
 
   @override
   Widget build(BuildContext context) {

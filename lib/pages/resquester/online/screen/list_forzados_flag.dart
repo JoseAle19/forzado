@@ -253,11 +253,11 @@ class ListForzadosFlag extends StatelessWidget {
             const SizedBox(width: 8),
             GestureDetector(
               onTap: forzado.observadoEjecucion == true
-                  ? () {
+                  ? () async {
                       final dropdownProvider =
                           Provider.of<DropDownValuesManagerProvider>(context,
                               listen: false);
-                      dropdownProvider.fillDataUpdate(forzado.id!);
+                    await  dropdownProvider.fillDataUpdate(forzado.id!);
                       final route = MaterialPageRoute(
                           builder: (context) => StepperForm(
                                 isUpdate: true,

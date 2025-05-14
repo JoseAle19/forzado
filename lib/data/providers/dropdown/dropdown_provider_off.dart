@@ -519,7 +519,7 @@ class DropdownProviderManagerOffline with ChangeNotifier {
       await boxPuestos.clear();
       await boxPuestos.addAll(puestosConvertidos);
     } catch (e, stackTrace) {
-   
+   print('${stackTrace} 😎');
       CustomModal modal = CustomModal();
       modal.showModal(c, 'Ocurrio un error.', Colors.red, false);
     }
@@ -697,8 +697,9 @@ class DropdownProviderManagerOffline with ChangeNotifier {
           return;
         }
       }
-    } catch (e) {
-      print('ocurrio un error ${e}');
+    } catch (e, stackTrace) {
+    
+      print('ocurrio un error ${e} stack 😎 ${stackTrace}');
     }
   }
 

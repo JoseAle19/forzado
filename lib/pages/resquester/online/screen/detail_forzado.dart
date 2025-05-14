@@ -134,7 +134,7 @@ class _FormRemoveForzadoState extends State<DetailsForzadorRequester> {
           final dropdownProvider = Provider.of<DropDownValuesManagerProvider>(
               context,
               listen: false);
-          await dropdownProvider.getData();
+          await dropdownProvider.getData2();
           debugPrint(
               '✅ Lista de solicitantes cargada (${dropdownProvider.listSolicitantes.length} elementos)');
 

@@ -351,7 +351,26 @@ class DropDownValuesManagerProvider with ChangeNotifier {
     _currentValueSubfijo = '';
     _currentStategrupo = null;
     _currentValueCircuitos = null;
-    notifyListeners();
+
+    // Limpiar las listas
+
+    _listPrefijos =[];
+    _listCentros =[];
+    _listDiciplinas =[];
+    _listCircuitos =[];
+    _listTurnos =[];
+    _listProbabilidades =[];
+    _listImpactos =[];
+    _listRiesgos =[];
+    _listTipoDeForzados =[];
+    _listprojects =[];
+    _listSolicitantes =[];
+    _listResponsables =[];
+    _listAprobadores =[];
+    _listEjecutores =[];
+    _listGrupos =[];
+    _listPuestos =[];
+     notifyListeners();
   }
 
   // variable para el error
@@ -363,90 +382,7 @@ class DropDownValuesManagerProvider with ChangeNotifier {
 
   // Llenar los dropdown co informacion de la api
 
-  Future<void> getData() async {
-    ApiClient client = ApiClient();
-    _error = '';
-    _isGettingData = true;
-    notifyListeners();
-    try {
-      await getUsersByRole();
-      final responses = await Future.wait([
-        client.get(AppUrl.gettagPrefijo1),
-        client.get(AppUrl.getTagCentro1),
-        client.get(AppUrl.getTagDisciplina2),
-        client.get(AppUrl.getTurno2),
-        client.get(AppUrl.getResponsable3),
-        client.get(AppUrl.getRiesgoA2),
-        client.get(AppUrl.getProbabilidad2),
-        client.get(AppUrl.getImpacto2),
-        client.get(AppUrl.getTipoForzado2),
-        client.get(AppUrl.getSolicitantes3),
-        client.get(AppUrl.getAprobadores),
-        client.get(AppUrl.getEjecutor),
-        client.get(AppUrl.getProjects2),
-        client.get(AppUrl.getCircuitos2),
-        client.get(AppUrl.getGrupos),
-        client.get(AppUrl.getPuestos),
-      ]).timeout(const Duration(seconds: 60));
-
-      for (final response in responses) {
-        if (response.statusCode != 200) {
-          throw HttpException('Error en el servidor: ${response.statusCode}');
-        }
-      }
-
-      // Procesar respuestas para ModelOne
-      final resPrefijos = modelone.modelOneFromJson(responses[0].body);
-      final resCentros = modelone.modelOneFromJson(responses[1].body);
-      listPrefijos = resPrefijos.values;
-      listCentros = resCentros.values;
-
-      // Procesar respuestas para ModelTwo
-      final resDiciplinas = modeltwo.modelTwoFromJson(responses[2].body);
-      final resTurnos = modeltwo.modelTwoFromJson(responses[3].body);
-      final resRiesgos = modeltwo.modelTwoFromJson(responses[5].body);
-      final resProbabilidades = modeltwo.modelTwoFromJson(responses[6].body);
-      final resImpactos = modeltwo.modelTwoFromJson(responses[7].body);
-      final resTipoForzados = modeltwo.modelTwoFromJson(responses[8].body);
-      final resProjects = modeltwo.modelTwoFromJson(responses[12].body);
-      final resCircuitos = modeltwo.modelTwoFromJson(responses[13].body);
-      final resGrupos = modeltwo.modelTwoFromJson(responses[14].body);
-      final resPuestos = modelp.puestoModelFromJson(responses[15].body);
-      listDiciplinas = resDiciplinas.values;
-      listCircuitos = resCircuitos.values;
-      listGrupos = resGrupos.values;
-      listTurnos = resTurnos.values;
-      listPuestos = resPuestos.values!;
-      listRiesgos = resRiesgos.values;
-      listProbabilidades = resProbabilidades.values;
-      listImpactos = resImpactos.values;
-      listTipoDeForzados = resTipoForzados.values;
-      listProjects = resProjects.values;
-      final resResponsables = modelthird.modelThreeFromJson(responses[4].body);
-      listResponsables = resResponsables.values;
-
-      notifyListeners();
-    } on TimeoutException {
-      _error = 'Tiempo de espera agotado. Inténtelo de nuevo más tarde.';
-      notifyListeners();
-    } on SocketException {
-      _error = 'Error de conexión. Verifique su conexión a internet.';
-      notifyListeners();
-    } on HttpException catch (e) {
-      _error = 'Error en el servidor: ${e.message}';
-      notifyListeners();
-    } on FormatException {
-      _error =
-          'Error en el formato de los datos. Verifique la respuesta de la API.';
-      notifyListeners();
-    } catch (e) {
-      _error = 'Ocurrió un error desconocido: $e';
-      notifyListeners();
-    } finally {
-      _isGettingData = false;
-      notifyListeners();
-    }
-  }
+ 
 
 // Mapa para definir el riesgo según el impacto y la probabilidad
   Map<String, Map<String, int>> riskMatrix = {

@@ -176,8 +176,8 @@ class _SyncDataState extends State<SyncData> {
                       // Mostramos el modal después de completar la sincronización
                       CustomModal().showModal(
                           context, 'Sincronizados', Colors.green, true);
-                    } catch (e) {
-                      print('Ocurrio un error ${e}');
+                    } catch (e, stackTrace) {
+                      print('Ocurrio un error ${e} stack 😎 ${stackTrace}');
                       CustomModal().showModal(
                           context, 'Ocurrió un error', Colors.red, false);
                     } finally {

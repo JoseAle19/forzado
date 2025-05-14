@@ -26,7 +26,18 @@ class ListForzadosEjecutadoAlta extends StatelessWidget {
       body: ValueListenableBuilder(
         valueListenable: box.listenable(),
         builder: (BuildContext context, dynamic value, Widget? child) {
-          final forzados = box.values.toList();
+          if (!box.isOpen) {
+            return const Center(child: Text('Error: Caja no disponible'));
+          }
+
+          final forzados = box.values.toList()
+            ..sort((a, b) {
+              // Manejo de fechas nulas (asigna fecha muy antigua si es null)
+              final fechaA = a.fecha ?? DateTime(1970);
+              final fechaB = b.fecha ?? DateTime(1970);
+              return fechaB.compareTo(
+                  fechaA); // Orden descendente (más reciente primero)
+            });
           if (forzados.isEmpty) {
             return const Center(
               child: Text('Sin informacion'),
@@ -38,9 +49,8 @@ class ListForzadosEjecutadoAlta extends StatelessWidget {
               return const SizedBox.shrink();
             },
             itemBuilder: (BuildContext context, int index) {
-              print(forzados[index].estado);
               Forzados forzado = forzados[index];
-              final state = forzado.estado.toLowerCase() == 'ejecutado-alta'
+              final state = forzado.estado.toLowerCase() == 'ejecutado-forzado'
                   ? 'Ejecutado-forzado'
                   : 'sin estado';
               return Card(

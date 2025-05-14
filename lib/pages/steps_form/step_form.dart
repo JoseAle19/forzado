@@ -27,10 +27,13 @@ class _StepperFormState extends State<StepperForm> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      if (mounted) {
-        final dropdownProvider =
-            Provider.of<DropDownValuesManagerProvider>(context, listen: false);
-        widget.isUpdate != true ? dropdownProvider.clearValues() : null;
+       if (mounted) {
+      final dropdownProvider =
+          Provider.of<DropDownValuesManagerProvider>(context, listen: false);
+
+      // Solo si no es update, limpiamos y cargamos desde cero
+      if (widget.isUpdate != true) {
+        dropdownProvider.clearValues();
         await dropdownProvider.getData2();
         final mastersProvider =
             Provider.of<MastersProvider>(context, listen: false);
@@ -38,6 +41,7 @@ class _StepperFormState extends State<StepperForm> {
         await dropdownProvider.getTagsMatrizRiesgo(context);
         dropdownProvider.seleccionarSolicitante();
       }
+    }
     });
     dateNow = DateTime.now();
   }
@@ -296,7 +300,7 @@ class _StepperFormState extends State<StepperForm> {
                                 ),
                                 GestureDetector(
                                   onTap: () {
-                                    value.getData();
+                                    value.getData2();
                                   },
                                   child: const Text('Reintentar',
                                       style: TextStyle(
