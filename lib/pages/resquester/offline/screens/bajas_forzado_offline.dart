@@ -181,9 +181,9 @@ class _BajasForzadoOfflineState extends State<BajasForzadoOffline> {
                 icon: const Icon(Icons.delete))
           ],
         ),
-        body: Center(
+        body: Center( 
           child: ValueListenableBuilder(
-            valueListenable: box.listenable(),
+            valueListenable: box.listenable(), 
             builder: (BuildContext context, dynamic value, Widget? snapshot) {
               List<ForzadoBaja> forzados = box.values.toList();
 
