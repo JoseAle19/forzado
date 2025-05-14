@@ -21,6 +21,7 @@ import 'package:forzado/models/model_one.dart' as modelone;
 import 'package:forzado/models/model_tags_matriz.dart';
 import 'package:forzado/models/model_three.dart' as modelthird;
 import 'package:forzado/models/model_two.dart' as modeltwo;
+import 'package:forzado/models/model_user_detail.dart';
 import 'package:forzado/models/user/model_user.dart' as modeluser;
 import 'package:forzado/services/api_client.dart';
 import 'package:forzado/widgets/modal_error.dart';
@@ -282,15 +283,15 @@ class DropdownProviderManagerOffline with ChangeNotifier {
     final provider =
         Provider.of<DropDownValuesManagerProvider>(c, listen: false);
     await provider.getData2();
-    // print('users');
+    print('users');
     await saveDataForm1(c);
-    // print('form 1');
+    print('form 1');
     await saveDataForm2(c);
-    // print('form 2');
-    saveDataForm3(c);
-    // print('form 3');
-    saveDataMasters(c);
-    // print('maestras');
+    print('form 2');
+    await saveDataForm3(c);
+    print('form 3');
+    await saveDataMasters(c);
+    print('maestras');
     saveUsersToHive(provider);
   }
 
@@ -416,6 +417,7 @@ class DropdownProviderManagerOffline with ChangeNotifier {
       ]);
     } catch (e) {
       CustomModal modal = CustomModal();
+      debugPrint('Este es el error ${e}');
       modal.showModal(c, 'Ocurrio un error, form 3', Colors.red, false);
     }
   }
@@ -956,5 +958,19 @@ class DropdownProviderManagerOffline with ChangeNotifier {
         await box.add(data);
     
     return true;
+  }
+
+
+
+  // settear el solicitante, quien es el loggeado
+
+  
+  void seleccionarSolicitante() async {
+    ApiResponseDetailUser? _user = PreferencesHelper().getUser();
+
+    final solicitante = listSolicitantes.firstWhere((u) => u.id == _user!.id,
+        orElse: () => throw Exception("No se encontró el usuario"));
+
+    currentStateApplicant = solicitante;
   }
 }

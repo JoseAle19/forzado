@@ -27,6 +27,8 @@ class _StepperFormState extends State<StepperForm> {
     Future.microtask(() {
       Provider.of<DropdownProviderManagerOffline>(context, listen: false)
           .loadDataPromHive();
+      Provider.of<DropdownProviderManagerOffline>(context, listen: false)
+          .seleccionarSolicitante();
     });
   }
 
@@ -147,6 +149,7 @@ class _StepperFormState extends State<StepperForm> {
                                     Colors.greenAccent,
                                     true);
                                 provider.resetAll();
+                                    Navigator.pop(context);
                               } catch (e) {
                                  CustomModal modal = CustomModal();
                                 modal.showModal(

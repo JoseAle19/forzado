@@ -53,7 +53,7 @@ class AuthProvider with ChangeNotifier {
       final response = await http
           .post(
             Uri.parse(
-                'https://sntps2jn-3001.brs.devtunnels.ms/api/mobile/auth'),
+                'https://forzados.goldfields.cl/api/mobile/auth'),
             headers: headers,
             body: body,
           )
