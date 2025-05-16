@@ -18,14 +18,13 @@ class _ListForzadosApproState extends State<ListForzadosAppro> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-     if (mounted) {
+      if (mounted) {
         await getData();
       }
     });
   }
 
-
-Future<void> getData() async {
+  Future<void> getData() async {
     final providerForzados =
         Provider.of<ForzadosProviderApprove>(context, listen: false);
     await providerForzados.initLoadSolicitudes();
@@ -35,7 +34,7 @@ Future<void> getData() async {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title:  Text(widget.isAlta ? "Consultas":"Consultas"),
+        title: Text(widget.isAlta ? "Consultas" : "Consultas"),
       ),
       body: Consumer<ForzadosProviderApprove>(builder: (context, value, child) {
         return value.loading
@@ -44,96 +43,122 @@ Future<void> getData() async {
                   color: AppColors.primary,
                 ),
               )
-            : value.messageError.isNotEmpty && value.loading ==false ?
-            Center(child: Text(value.messageError),)
-            :
-            value.listForzados.where((f)=> f.estado!.toUpperCase()=='PENDIENTE-FORZADO' && f.estado!.toUpperCase() !='PENDIENTE-RETIRO').isEmpty ? const Center(child: Text('No Tiene retiros pendientes por Aprobar'),) :
-            ListView.separated(
-              itemCount: value.listForzados.length,
-              separatorBuilder: (BuildContext context, int index) {
-                ForzadoApprove  forzado = value.listForzados[index];
-                return forzado.estado?.toUpperCase() != 'PENDIENTE-FORZADO'&& forzado.estado?.toUpperCase() != 'PENDIENTE-RETIRO' ? const SizedBox.shrink() :const Divider();
-              },
-              itemBuilder: (BuildContext context, int index) {
-                ForzadoApprove  forzado = value.listForzados[index];
-              
-              
-                return forzado.estado?.toUpperCase() != 'PENDIENTE-FORZADO'&& forzado.estado?.toUpperCase() != 'PENDIENTE-RETIRO' ? const SizedBox.shrink() :  Card(
-                    elevation: 4,
-                    margin:
-                        const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: Padding(
-                      padding: const EdgeInsets.all(16),
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          CircleAvatar(
-                            radius: 30,
-                            backgroundColor: Colors.blue.shade100,
-                            child: Text(
-                              '${forzado.id}',
-                              style: const TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.blue,
-                              ),
-                            ),
-                          ),
-                          const SizedBox(width: 16),
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  'ID: ${forzado.id}',
-                                  style: const TextStyle(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.bold,
-                                    color: Color(0xFF333333),
+            : value.messageError.isNotEmpty && value.loading == false
+                ? Center(
+                    child: Text(value.messageError),
+                  )
+                : value.listForzados.where((f) {
+                    if (widget.isAlta) {
+                      return f.estado!.toUpperCase() == 'PENDIENTE-FORZADO';
+                    } else {
+                      return f.estado!.toUpperCase() == 'PENDIENTE-RETIRO';
+                    }
+                  }).isEmpty
+                    ? const Center(
+                        child: Text('No Tiene retiros pendientes por Aprobar'),
+                      )
+                    : ListView.builder(
+                        itemCount: value.listForzados.where((f) {
+                          if (widget.isAlta) {
+                            return f.estado!.toUpperCase() ==
+                                'PENDIENTE-FORZADO';
+                          } else {
+                            return f.estado!.toUpperCase() ==
+                                'PENDIENTE-RETIRO';
+                          }
+                        }).length,
+                      
+                        itemBuilder: (BuildContext context, int index) {
+                          ForzadoApprove forzado = value.listForzados.where((f) {
+                          if (widget.isAlta) {
+                            return f.estado!.toUpperCase() ==
+                                'PENDIENTE-FORZADO';
+                          } else {
+                            return f.estado!.toUpperCase() ==
+                                'PENDIENTE-RETIRO';
+                          }
+                        }).toList()[index];
+                          print('Forzado---->  ${forzado.estado}');
+
+                          return  Card(
+                                  elevation: 4,
+                                  margin: const EdgeInsets.symmetric(
+                                      horizontal: 12, vertical: 4),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(12),
                                   ),
-                                ),
-                                const SizedBox(height: 4),
-                                // Descripción
-                                Text(
-                                  forzado.estado!,
-                                  maxLines: 2,
-                                  overflow: TextOverflow.ellipsis,
-                                  style: const TextStyle(
-                                    fontSize: 14,
-                                    color: Color(0xFF666666),
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(16),
+                                    child: Row(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.center,
+                                      children: [
+                                        CircleAvatar(
+                                          radius: 30,
+                                          backgroundColor: Colors.blue.shade100,
+                                          child: Text(
+                                            '${forzado.id}',
+                                            style: const TextStyle(
+                                              fontSize: 18,
+                                              fontWeight: FontWeight.bold,
+                                              color: Colors.blue,
+                                            ),
+                                          ),
+                                        ),
+                                        const SizedBox(width: 16),
+                                        Expanded(
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Text(
+                                                'ID: ${forzado.id}',
+                                                style: const TextStyle(
+                                                  fontSize: 16,
+                                                  fontWeight: FontWeight.bold,
+                                                  color: Color(0xFF333333),
+                                                ),
+                                              ),
+                                              const SizedBox(height: 4),
+                                              // Descripción
+                                              Text(
+                                                forzado.estado!,
+                                                maxLines: 2,
+                                                overflow: TextOverflow.ellipsis,
+                                                style: const TextStyle(
+                                                  fontSize: 14,
+                                                  color: Color(0xFF666666),
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                        const SizedBox(width: 8),
+                                        IconButton(
+                                          onPressed: () {
+                                            Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                builder: (context) =>
+                                                    DetailApproveForzado(
+                                                        detailForzado: forzado,
+                                                        isAlta: widget.isAlta),
+                                              ),
+                                            );
+                                          },
+                                          icon: const Icon(
+                                            Icons.arrow_forward_ios,
+                                            color: Colors.blue,
+                                            size: 20,
+                                          ),
+                                          splashRadius: 20,
+                                        ),
+                                      ],
+                                    ),
                                   ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          const SizedBox(width: 8),
-                          IconButton(
-                            onPressed: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => DetailApproveForzado(
-                                      detailForzado: forzado,
-                                      isAlta: widget.isAlta),
-                                ),
-                              );
-                            },
-                            icon: const Icon(
-                              Icons.arrow_forward_ios,
-                              color: Colors.blue,
-                              size: 20,
-                            ),
-                            splashRadius: 20,
-                          ),
-                        ],
-                      ),
-                    ),
-                  );
-              },
-            );
+                                );
+                        },
+                      );
       }),
     );
   }

@@ -11,8 +11,7 @@ T? parseNullable<T>(dynamic value, T Function(dynamic) parser) {
   }
 }
 
-String? parseString(dynamic v) =>
-    v == null ? null : v.toString();
+String? parseString(dynamic v) => v == null ? null : v.toString();
 
 int? parseInt(dynamic v) =>
     v == null ? null : (v is int ? v : int.tryParse(v.toString()));
@@ -87,47 +86,52 @@ class ForzadoApprove {
   final int? proyectoId;
   final String? probabilidadDescripcion;
   final String? impactoDescripcion;
+  final String? tagConcat;
+  final String? grupoNombre;
 
-  ForzadoApprove({
-    this.id,
-    this.nombre,
-    this.area,
-    this.subarea,
-    this.tipo,
-    this.solicitante,
-    this.aprobador,
-    this.ejecutor,
-    this.solicitanteAId,
-    this.aprobadorAId,
-    this.ejecutorAId,
-    this.solicitanteBId,
-    this.aprobadorBId,
-    this.ejecutorBId,
-    this.estado,
-    this.fecha,
-    this.descripcion,
-    this.estadoSolicitud,
-    this.fechaRealizacion,
-    this.fechaCierre,
-    this.usuarioCreacion,
-    this.fechaCreacion,
-    this.usuarioModificacion,
-    this.fechaModificacion,
-    this.subareaCodigo,
-    this.subareaDescripcion,
-    this.disciplinaDescripcion,
-    this.turnoDescripcion,
-    this.motivoRechazoDescripcion,
-    this.tipoForzadoDescripcion,
-    this.tagCentroCodigo,
-    this.tagCentroDescripcion,
-    this.responsableNombre,
-    this.riesgoDescripcion,
-    this.interlock,
-    this.proyectoDescripcion,
-    this.proyectoId,
-    this.probabilidadDescripcion, this.impactoDescripcion
-  });
+  ForzadoApprove(
+      {this.id,
+      this.nombre,
+      this.area,
+      this.subarea,
+      this.tipo,
+      this.solicitante,
+      this.aprobador,
+      this.ejecutor,
+      this.solicitanteAId,
+      this.aprobadorAId,
+      this.ejecutorAId,
+      this.solicitanteBId,
+      this.aprobadorBId,
+      this.ejecutorBId,
+      this.estado,
+      this.fecha,
+      this.descripcion,
+      this.estadoSolicitud,
+      this.fechaRealizacion,
+      this.fechaCierre,
+      this.usuarioCreacion,
+      this.fechaCreacion,
+      this.usuarioModificacion,
+      this.fechaModificacion,
+      this.subareaCodigo,
+      this.subareaDescripcion,
+      this.disciplinaDescripcion,
+      this.turnoDescripcion,
+      this.motivoRechazoDescripcion,
+      this.tipoForzadoDescripcion,
+      this.tagCentroCodigo,
+      this.tagCentroDescripcion,
+      this.responsableNombre,
+      this.riesgoDescripcion,
+      this.interlock,
+      this.proyectoDescripcion,
+      this.proyectoId,
+      this.probabilidadDescripcion,
+      this.impactoDescripcion,
+      this.tagConcat,
+      this.grupoNombre
+      });
 
   factory ForzadoApprove.fromJson(Map<String, dynamic> json) {
     // estado viene como String, validamos si no es null
@@ -140,12 +144,18 @@ class ForzadoApprove {
       area: parseString(json["area"]),
       subarea: parseString(json["subarea"]),
       tipo: parseString(json["tipo"]),
-      solicitante: parseNullable(json["solicitante"], (v) =>
-          utf8.decode(latin1.encode(v.toString()), allowMalformed: true)),
-      aprobador: parseNullable(json["aprobador"], (v) =>
-          utf8.decode(latin1.encode(v.toString()), allowMalformed: true)),
-      ejecutor: parseNullable(json["ejecutor"], (v) =>
-          utf8.decode(latin1.encode(v.toString()), allowMalformed: true)),
+      solicitante: parseNullable(
+          json["solicitante"],
+          (v) =>
+              utf8.decode(latin1.encode(v.toString()), allowMalformed: true)),
+      aprobador: parseNullable(
+          json["aprobador"],
+          (v) =>
+              utf8.decode(latin1.encode(v.toString()), allowMalformed: true)),
+      ejecutor: parseNullable(
+          json["ejecutor"],
+          (v) =>
+              utf8.decode(latin1.encode(v.toString()), allowMalformed: true)),
       solicitanteAId: parseInt(json["solicitanteAId"]),
       aprobadorAId: parseInt(json["aprobadorAId"]),
       ejecutorAId: parseInt(json["ejecutorAId"]),
@@ -157,7 +167,8 @@ class ForzadoApprove {
       descripcion: parseString(json["descripcion"]),
       estadoSolicitud: parseString(json["estadoSolicitud"]),
       fechaRealizacion: parseDateTime(json["fechaRealizacion"]),
-      fechaCierre: json["fechaCierre"], // si quieres DateTime, aplica parseDateTime
+      fechaCierre:
+          json["fechaCierre"], // si quieres DateTime, aplica parseDateTime
       usuarioCreacion: parseString(json["usuarioCreacion"]),
       fechaCreacion: parseDateTime(json["fechaCreacion"]),
       usuarioModificacion: parseString(json["usuarioModificacion"]),
@@ -177,6 +188,8 @@ class ForzadoApprove {
       proyectoId: parseInt(json["proyectoId"]),
       probabilidadDescripcion: parseString(json["probabilidadDescripcion"]),
       impactoDescripcion: parseString(json["impactoDescripcion"]),
+      tagConcat: parseString(json["tagConcat"]),
+      grupoNombre: parseString(json["grupoNombre"]),
     );
   }
 

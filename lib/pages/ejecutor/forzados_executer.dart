@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:forzado/adapters/adapter_three.dart';
 import 'package:forzado/core/configs/theme/app_colors.dart';
+import 'package:forzado/models/user/model_user.dart';
 import 'package:forzado/pages/aprobador/provider/forzados_provider.dart';
-import 'package:forzado/pages/ejecutor/home_executor.dart';
 import 'package:forzado/pages/ejecutor/models/aprobador.dart';
 import 'package:provider/provider.dart';
 
@@ -86,13 +87,11 @@ class _ListExecuterForzadoState extends State<ListExecuterForzado> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 detalleItem(
-                    'Usuario', forzado.usuarioCreacion ?? 'No disponible'),
-                detalleItem('Nombre del Proyecto',
-                    forzado.proyectoDescripcion ?? 'No disponible'),
+                    'Tag concatenado', '${forzado.tagConcat}' ?? 'No disponible'),
                 detalleItem(
-                    'Centro', forzado.tagCentroDescripcion ?? 'No disponible'),
+                    'Tag centro', forzado.tagCentroCodigo ?? 'No disponible'),
                 detalleItem(
-                    'Descripción', forzado.descripcion ?? 'No disponible'),
+                    'Descripción', forzado.descripcion.toString().fixSpanishChars() ?? 'No disponible'),
                 detalleItem('Disciplina',
                     forzado.disciplinaDescripcion ?? 'No disponible'),
                 detalleItem(
@@ -106,9 +105,9 @@ class _ListExecuterForzadoState extends State<ListExecuterForzado> {
                 detalleItem(
                     'Solicitante', forzado.solicitante ?? 'No disponible'),
                 detalleItem('Aprobador', forzado.aprobador ?? 'No disponible'),
-                detalleItem('Ejecutor', forzado.ejecutor ?? 'No disponible'),
-                detalleItem('Tipo de Forzado',
-                    forzado.tipoForzadoDescripcion ?? 'No disponible'),
+              
+                detalleItem('Grupo de ejecución',
+                    forzado.grupoNombre ?? 'No disponible'),
                 detalleItem('Motivo de rechazo',
                     forzado.motivoRechazoDescripcion ?? 'No disponible'),
               ],

@@ -978,8 +978,10 @@ class DropdownProviderManagerOffline with ChangeNotifier {
         orElse: () => modelthird.Value(id: 0000, nombre: 'Error'));
     if (solicitante.nombre.toLowerCase() == 'error') {
       currentStateApplicant == null;
+      print('No hay solicitante');
     } else {
 
+      print('Si hay solicitante');
       currentStateApplicant = solicitante;
     }
   }

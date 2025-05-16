@@ -50,7 +50,7 @@ class _BajasForzadoOfflineState extends State<BajasForzadoOffline> {
                   ),
                 ),
                 const Text(
-                  'Detalles del Forzado Baja',
+                  'Detalles del Forzado retiro',
                   style: TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
