@@ -17,6 +17,23 @@ class AdapterThree extends HiveObject {
   });
   factory AdapterThree.fromValue(modelThree.Value value) {
     return AdapterThree(
-        id: value.id, nombre: '${value.nombre} ${value.apePaterno ?? ' '}');
+        id: value.id, nombre: '${value.nombre}');
+  }
+
+
+  
+}
+
+
+extension StringExtensions on String {
+  String normalizeAccents() {
+    const withAccents = 'áéíóúÁÉÍÓÚñÑ';
+    const withoutAccents = 'aeiouAEIOUnN';
+    
+    String result = this;
+    for (int i = 0; i < withAccents.length; i++) {
+      result = result.replaceAll(withAccents[i], withoutAccents[i]);
+    }
+    return result;
   }
 }

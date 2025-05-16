@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:forzado/data/providers/dropdown/dropdown_provider_off.dart';
 import 'package:forzado/pages/resquester/offline/datatable%20_forzados.dart';
 import 'package:forzado/pages/resquester/offline/screens/bajas_forzado_offline.dart';
 import 'package:forzado/pages/resquester/offline/screens/list_forzados_ejecutado_alta.dart';
 import 'package:forzado/pages/resquester/offline/stepper_form.dart';
-import 'package:provider/provider.dart';
 
 class PageOffline extends StatefulWidget {
   const PageOffline({super.key});

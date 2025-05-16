@@ -29,6 +29,8 @@ class _MainHomePageState extends State<MainHomePage>
 
   void veryfyUserLoggedAndConnection(BuildContext c, List<int> roles) {
     final esRequester = roles.contains(1);
+    print(roles);
+    print('cx');
     setState(() {
       isRequester = esRequester;
     });
@@ -211,7 +213,7 @@ class _MainHomePageState extends State<MainHomePage>
               automaticallyImplyLeading: false,
               title: Consumer<AuthProvider>(
                 builder: (context, value, child) => Text(
-                  'Hola ${utf8.decode(latin1.encode(value.user!.name), allowMalformed: true)}  ${isConnected}',
+                  'Hola ${utf8.decode(latin1.encode(value.user!.name), allowMalformed: true)}',
                   style: const TextStyle(
                       fontFamily: 'noto', fontWeight: FontWeight.bold),
                 ),

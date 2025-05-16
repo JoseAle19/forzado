@@ -116,8 +116,6 @@ class AuthProvider with ChangeNotifier {
 
       if (res.statusCode == 200) {
         ApiResponseDetailUser user = apiResponseDetailUserFromJson(res.body);
-         int role = int.parse(user.roles.keys
-            .reduce((a, b) => int.parse(a) > int.parse(b) ? a : b));
         if (user.flagNuevoIngreso == 1) {
           showPasswordDialog(context, user.id, () async {
             await PreferencesHelper().setUser(user);

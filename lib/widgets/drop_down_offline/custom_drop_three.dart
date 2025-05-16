@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:forzado/adapters/adapter_three.dart';
+import 'package:forzado/models/user/model_user.dart';
 import 'package:hive/hive.dart';
 
 // ignore: must_be_immutable
@@ -70,10 +71,16 @@ class _CustomDropDownButtonState extends State<CustomDropDownButtonThreeOff> {
                       child: SizedBox(
                         width: 200,
                         child: Text(
-                          item.nombre,
+                          item.nombre.fixSpanishChars(),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
-                          style: const TextStyle(fontSize: 12),
+                          style: const TextStyle(
+                            fontSize: 12,
+                            fontFamily: 'Roboto', // Fuente que soporte UTF-8
+                            fontFeatures: [
+                              FontFeature.enable('locl')
+                            ], // Para soporte de locales
+                          ),
                         ),
                       ));
                 }).toList(),

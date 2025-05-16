@@ -81,15 +81,9 @@ class StepOneContent extends StatelessWidget {
                 const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
           ),
         ),
+
         const SizedBox(height: 10),
-        CustomDropdownButton<modelTwo.Value>(
-          hintText: 'Circuito *:',
-          items: dropdownProvider.listCircuitos,
-          selectedItem: dropdownProvider.currentValueCircuitos,
-          onChanged: (v) => dropdownProvider.currentValueCircuitos = v!,
-        ),
-        const SizedBox(height: 10),
-        // Descripción (replicamos _inputDescription aquí)
+              // Descripción (replicamos _inputDescription aquí)
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -99,7 +93,7 @@ class StepOneContent extends StatelessWidget {
               initialValue: dropdownProvider.currentValueDescription,
               onChanged: (v) => dropdownProvider.currentValueDescription = v,
               maxLength: 100,
-              maxLines: 2,
+              maxLines: 4,
               decoration: const InputDecoration(
                 hintText: 'Agregue una descripción',
                 border: OutlineInputBorder(),
@@ -110,6 +104,14 @@ class StepOneContent extends StatelessWidget {
           ],
         ),
         const SizedBox(height: 10),
+        CustomDropdownButton<modelTwo.Value>(
+          hintText: 'Circuito *:',
+          items: dropdownProvider.listCircuitos,
+          selectedItem: dropdownProvider.currentValueCircuitos,
+          onChanged: (v) => dropdownProvider.currentValueCircuitos = v!,
+        ),
+        const SizedBox(height: 10),
+  
         CustomDropdownButton<modelTwo.Value>(
           hintText: 'Disciplina *:',
           items: dropdownProvider.listDiciplinas,

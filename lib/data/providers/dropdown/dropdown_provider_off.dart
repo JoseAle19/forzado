@@ -469,13 +469,10 @@ class DropdownProviderManagerOffline with ChangeNotifier {
           grupoId: u.grupoId));
     }
 
-
-    provider.users.forEach((s){
-
+    provider.users.forEach((s) {
       print('Solicitante nombre ${s.nombre}');
-      
+
       print('Solicitante descripcion ${s.puestoDescripcion}');
-      
     });
   }
 
@@ -490,36 +487,31 @@ class DropdownProviderManagerOffline with ChangeNotifier {
     await maestrasProvider.getShifts();
     try {
       final res = await client.get(AppUrl.tagsMatrizRiesgo);
- 
 
       final tagMatrizRiesgoModel = modelTagsMatrizFromJson(res.body).values;
- 
 
       final tagsMatrizRiesgo = tagMatrizRiesgoModel
           .map((v) => AdapterTagForzado.fromModel(v))
           .toList();
- 
-      tagsMatrizRiesgo
-          .forEach((tag) => print(tag.toJson()));
+
+      tagsMatrizRiesgo.forEach((tag) => print(tag.toJson()));
 
       await boxTagsMtarizRiesgo.clear();
       await Future.wait([
         boxTagsMtarizRiesgo.addAll(tagsMatrizRiesgo),
       ]);
 
-    
       final puestosConvertidos = providerDropOn.listPuestos
           .map((lt) => PuestoValue.fromJson(lt))
           .toList();
 
-      puestosConvertidos
-          .forEach((puesto) => print(puesto.toJson())); 
+      puestosConvertidos.forEach((puesto) => print(puesto.toJson()));
 
       final boxPuestos = Hive.box<PuestoValue>('staffPosition');
       await boxPuestos.clear();
       await boxPuestos.addAll(puestosConvertidos);
     } catch (e, stackTrace) {
-   print('${stackTrace} 😎');
+      print('${stackTrace} 😎');
       CustomModal modal = CustomModal();
       modal.showModal(c, 'Ocurrio un error.', Colors.red, false);
     }
@@ -597,7 +589,7 @@ class DropdownProviderManagerOffline with ChangeNotifier {
     listCircuitos = boxCircuitos.values
         .map((e) => modeltwo.Value(id: e.id, descripcion: e.descripcion))
         .toList();
-    
+
     notifyListeners();
   }
 
@@ -698,7 +690,6 @@ class DropdownProviderManagerOffline with ChangeNotifier {
         }
       }
     } catch (e, stackTrace) {
-    
       print('ocurrio un error ${e} stack 😎 ${stackTrace}');
     }
   }
@@ -984,8 +975,12 @@ class DropdownProviderManagerOffline with ChangeNotifier {
     ApiResponseDetailUser? _user = PreferencesHelper().getUser();
 
     final solicitante = listSolicitantes.firstWhere((u) => u.id == _user!.id,
-        orElse: () => throw Exception("No se encontró el usuario"));
+        orElse: () => modelthird.Value(id: 0000, nombre: 'Error'));
+    if (solicitante.nombre.toLowerCase() == 'error') {
+      currentStateApplicant == null;
+    } else {
 
-    currentStateApplicant = solicitante;
+      currentStateApplicant = solicitante;
+    }
   }
 }

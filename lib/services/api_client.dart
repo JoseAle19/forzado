@@ -32,7 +32,10 @@ class ApiClient {
   }
 
   Map<String, String> _headers() {
-    return {'Content-Type': 'application/json'};
+    return {
+            'Content-Type': 'application/json; charset=utf-8',
+
+      };
   }
 
   void close() {

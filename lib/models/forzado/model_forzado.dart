@@ -163,6 +163,7 @@ class ForzadoItem {
         riesgoDescripcion: json["riesgoDescripcion"] ?? "",
         interlock: json["interlock"] ?? 0,
         proyectoDescripcion: json["proyectoDescripcion"] ?? "",
+        descripcion: json["descripcion"] ?? "",
         proyectoId: json["proyectoId"] ?? 0,
         observadoEjecucion: json["observadoEjecucion"] == null ? false : true,
       );

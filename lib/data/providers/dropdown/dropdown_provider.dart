@@ -354,23 +354,23 @@ class DropDownValuesManagerProvider with ChangeNotifier {
 
     // Limpiar las listas
 
-    _listPrefijos =[];
-    _listCentros =[];
-    _listDiciplinas =[];
-    _listCircuitos =[];
-    _listTurnos =[];
-    _listProbabilidades =[];
-    _listImpactos =[];
-    _listRiesgos =[];
-    _listTipoDeForzados =[];
-    _listprojects =[];
-    _listSolicitantes =[];
-    _listResponsables =[];
-    _listAprobadores =[];
-    _listEjecutores =[];
-    _listGrupos =[];
-    _listPuestos =[];
-     notifyListeners();
+    _listPrefijos = [];
+    _listCentros = [];
+    _listDiciplinas = [];
+    _listCircuitos = [];
+    _listTurnos = [];
+    _listProbabilidades = [];
+    _listImpactos = [];
+    _listRiesgos = [];
+    _listTipoDeForzados = [];
+    _listprojects = [];
+    _listSolicitantes = [];
+    _listResponsables = [];
+    _listAprobadores = [];
+    _listEjecutores = [];
+    _listGrupos = [];
+    _listPuestos = [];
+    notifyListeners();
   }
 
   // variable para el error
@@ -381,8 +381,6 @@ class DropDownValuesManagerProvider with ChangeNotifier {
   bool get isGettingdata => _isGettingData;
 
   // Llenar los dropdown co informacion de la api
-
- 
 
 // Mapa para definir el riesgo según el impacto y la probabilidad
   Map<String, Map<String, int>> riskMatrix = {
@@ -702,7 +700,7 @@ class DropDownValuesManagerProvider with ChangeNotifier {
           .get(AppUrl.getListUsers)
           .timeout(const Duration(seconds: 5));
       if (res.statusCode == 200) {
-        final mRiesgo = _mastersProvider?.matrizRiesgos;
+         final mRiesgo = _mastersProvider?.matrizRiesgos;
         final seenIds = <int>{}; // conjunto para rastrear ids ya agregados
 
         _riskLevels = mRiesgo!
@@ -761,6 +759,7 @@ class DropDownValuesManagerProvider with ChangeNotifier {
     } on TimeoutException catch (_) {
       _errorMessageGetUsers = 'La solicitud excedió el tiempo límite.';
     } catch (e) {
+      print('ocurrio un error users ${e}');
       _errorMessageGetUsers = 'Error en la solicitud: $e';
     } finally {
       _isLoadingGetUsers = false;
@@ -876,11 +875,15 @@ class DropDownValuesManagerProvider with ChangeNotifier {
 
   void seleccionarSolicitante() async {
     ApiResponseDetailUser? _user = PreferencesHelper().getUser();
+   
 
     final solicitante = listSolicitantes.firstWhere((u) => u.id == _user!.id,
-        orElse: () => throw Exception("No se encontró el usuario"));
-
-    currentStateApplicant = solicitante;
+        orElse: () => modelthird.Value(id: 0000, nombre: 'error'));
+    if (solicitante.nombre.toLowerCase() == 'error') {
+      currentStateApplicant = null;
+    } else {
+      currentStateApplicant = solicitante;
+    }
   }
 
   void formatDate() {
@@ -1033,8 +1036,6 @@ class DropDownValuesManagerProvider with ChangeNotifier {
     listImpactos = resImpactos.values;
     listTipoDeForzados = resTipoForzados.values;
     listProjects = resProjects.values;
-
- 
   }
 
   void _processModelThreeResponses(List<Response> responses) {

@@ -74,9 +74,9 @@ class Value {
 
   factory Value.fromJson(Map<String, dynamic> json) => Value(
         id: json["id"] ?? 0,
-        nombre: json["nombre"] ?? '',
-        apePaterno: json["apePaterno"] ?? '',
-        apeMaterno: json["apeMaterno"] ?? '',
+        nombre: json["nombre"].toString().fixSpanishChars() ?? '',
+        apePaterno: json["apePaterno"].toString().fixSpanishChars() ?? '',
+        apeMaterno: json["apeMaterno"].toString().fixSpanishChars() ?? '',
         areaId: json["areaId"] ?? 0,
         areaDescripcion: json["areaDescripcion"] ?? '',
         rolId: json["rolId"] ?? 0,
@@ -99,9 +99,9 @@ class Value {
 
   Map<String, dynamic> toJson() => {
         "id": id,
-        "nombre": nombre,
-        "apePaterno": apePaterno,
-        "apeMaterno": apeMaterno,
+        "nombre": nombre?.toString().fixSpanishChars(),
+        "apePaterno": apePaterno?.toString().fixSpanishChars(),
+        "apeMaterno": apeMaterno?.toString().fixSpanishChars(),
         "areaId": areaId,
         "areaDescripcion": areaDescripcion,
         "rolId": rolId,
@@ -129,4 +129,24 @@ class Value {
       turnos: turnos ?? this.turnos,
     );
   }
+  
+}extension StringUtils on String {
+  String fixSpanishChars() {
+    const replacements = {
+      'Ã¡': 'á',
+      'Ã©': 'é',
+      'Ã³': 'ó',
+      'Ãº': 'ú',
+      'Ã±': 'ñ',
+      'Ã': 'í',
+      'Â': '',
+     };
+    
+    String result = this;
+    replacements.forEach((key, value) {
+      result = result.replaceAll(key, value);
+    });
+     return result;
+  }
 }
+

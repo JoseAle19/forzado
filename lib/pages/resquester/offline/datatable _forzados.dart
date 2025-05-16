@@ -49,8 +49,10 @@ class _ForzadosDataTableState extends State<ForzadosDataTable> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              detalleItem('Usuario',
-                  '${forzado.usuarioDescription} | ${forzado.idUsuario.toString()}'?? 'No definido'),
+              detalleItem(
+                  'Usuario',
+                  '${forzado.usuarioDescription} | ${forzado.idUsuario.toString()}' ??
+                      'No definido'),
               detalleItem(
                   'Prefijo', forzado.tagPrefijoDescripcion ?? 'No definido'),
               detalleItem(
@@ -146,7 +148,7 @@ class _ForzadosDataTableState extends State<ForzadosDataTable> {
         Provider.of<ForzadosProvider>(context, listen: false);
     CustomModal modal = CustomModal();
 
-    Box<Forzado> box =   Hive.box<Forzado>('Forzado');
+    Box<Forzado> box = Hive.box<Forzado>('Forzado');
 
     setState(() {
       isSync = true;
@@ -328,26 +330,107 @@ class _ForzadosDataTableState extends State<ForzadosDataTable> {
                       },
                     ),
           if (isSync)
-            Container(
-              color: Colors.black.withOpacity(0.5),
-              child: const Center(
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    CircularProgressIndicator(),
-                    SizedBox(height: 16),
-                    Text(
-                      'Sincronizando información...',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ],
+            Center(
+              child: Container(
+                width: double.infinity,
+                height: double.infinity,
+                decoration: const BoxDecoration(
+                  color: Color.fromARGB(123, 0, 0, 0),
+               
                 ),
+                child: Center(
+                  child: Container(
+                    padding: const EdgeInsets.all(24),
+                    decoration: BoxDecoration(
+                      color: Colors.white.withOpacity(0.12),
+                      borderRadius: BorderRadius.circular(20),
+                      border: Border.all(
+                        color: Colors.white.withOpacity(0.2),
+                        width: 1,
+                      ),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.3),
+                          blurRadius: 20,
+                          spreadRadius: 2,
+                          offset: const Offset(0, 4),
+                        ),
+                      ],
+                    ),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        // Indicator with pulse animation
+                        TweenAnimationBuilder(
+                          tween: Tween<double>(begin: 0.95, end: 1.05),
+                          duration: const Duration(milliseconds: 800),
+                          curve: Curves.easeInOut,
+                          builder: (context, value, child) {
+                            return Transform.scale(
+                              scale: value,
+                              child: child,
+                            );
+                          },
+                          child: const CircularProgressIndicator(
+                            valueColor: AlwaysStoppedAnimation<Color>(
+                                Colors.lightBlueAccent),
+                            strokeWidth: 3,
+                            backgroundColor: Colors.white24,
+                          ),
+                        ),
+                        const SizedBox(height: 20),
+                        // Text with subtle animation
+                        TweenAnimationBuilder(
+                          tween: Tween<double>(begin: 0, end: 1),
+                          duration: const Duration(milliseconds: 500),
+                          builder: (context, value, child) {
+                            return Opacity(
+                              opacity: value,
+                              child: Transform.translate(
+                                offset: Offset(0, 10 * (1 - value)),
+                                child: child,
+                              ),
+                            );
+                          },
+                          child: Column(
+                            children: [
+                              const Text(
+                                'Sincronizando información',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.w600,
+                                  letterSpacing: 0.3,
+                                ),
+                              ),
+                              const SizedBox(height: 6),
+                              Text(
+                                'Por favor espere...',
+                                style: TextStyle(
+                                  color: Colors.white.withOpacity(0.8),
+                                  fontSize: 14,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        // Optional progress text (uncomment if you have progress)
+                        /*
+            const SizedBox(height: 16),
+            Text(
+              '${(progress * 100).toStringAsFixed(1)}% completado',
+              style: TextStyle(
+                color: Colors.white.withOpacity(0.7),
+                fontSize: 12,
               ),
             ),
+            */
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            )
         ],
       ),
     );
