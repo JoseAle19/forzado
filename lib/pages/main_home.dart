@@ -43,12 +43,12 @@ class _MainHomePageState extends State<MainHomePage>
         await (Connectivity().checkConnectivity());
     if (connectivityResult.contains(ConnectivityResult.wifi) ||
         connectivityResult.contains(ConnectivityResult.ethernet)) {
-          setState(() {
-      isConnected = true;
-          });
+      setState(() {
+        isConnected = true;
+      });
     } else {
       setState(() {
-      isConnected = false;
+        isConnected = false;
       });
     }
   }
@@ -138,7 +138,7 @@ class _MainHomePageState extends State<MainHomePage>
 
   @override
   Widget build(BuildContext context) {
-    if (!isRequester && !isConnected ) {
+    if (!isRequester && !isConnected) {
       return Scaffold(
         backgroundColor: Colors.grey.shade100,
         body: Center(
@@ -237,9 +237,9 @@ class _MainHomePageState extends State<MainHomePage>
             ),
             body: const PageOffline())
         : Scaffold(
-          // appBar: AppBar(
-          //   title:  Text(isConnected.toString()),
-          // ),
+            // appBar: AppBar(
+            //   title:  Text(isConnected.toString()),
+            // ),
             body: GestureDetector(
               behavior: HitTestBehavior.opaque,
               onTap: () {},

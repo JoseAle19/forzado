@@ -1,10 +1,10 @@
 class AppUrl {
   // Base URL del servidor
-  // static const String url = "https://sntps2jn-3001.brs.devtunnels.ms/";
-  static const String url = "https://forzados.goldfields.cl/";
-  // static const String url = "https://bvhdzwrb-3001.use.devtunnels.ms/";
-  // Cambia según tu configuración
+  static const String url = "https://sntps2jn-3001.brs.devtunnels.ms";
 
+/*   static const String url = "https://forzados.goldfields.cl/"; */
+
+  // Cambia según tu configuración
 
   // Endpoints  para vitarme equivocacion de rutas
   static const String login = "/api/mobile/auth/";
@@ -49,17 +49,11 @@ class AppUrl {
   static const String isEnabledRuleRisk = "/api/parametros-globales";
   static const String tagsMatrizRiesgo = "/api/maestras/tags-matriz-riesgo";
 
-  
-  
-  
   static const String getGrupos = "/api/maestras/grupo";
   //Para los turnos
   static const String getturnos = "/api/maestras/turno";
   static const String getPuestos = "/api/puesto-turno";
 
-
-
   // combinacionaciones de la matriz de riesgo
-  static const String getMatrizRiesgo= "/api/maestras/matriz-riesgo";
-  
+  static const String getMatrizRiesgo = "/api/maestras/matriz-riesgo";
 }

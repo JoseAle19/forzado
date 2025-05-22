@@ -18,7 +18,7 @@ class ApiClient {
     Map<String, dynamic> bodyMap = jsonDecode(body);
     bodyMap['usuario'] = user?.id ?? 0;
     String updatedBody = jsonEncode(bodyMap);
-   
+
     return http.post(url, body: updatedBody, headers: _headers());
   }
 
@@ -33,9 +33,8 @@ class ApiClient {
 
   Map<String, String> _headers() {
     return {
-            'Content-Type': 'application/json; charset=utf-8',
-
-      };
+      'Content-Type': 'application/json; charset=utf-8',
+    };
   }
 
   void close() {

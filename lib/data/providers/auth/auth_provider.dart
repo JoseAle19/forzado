@@ -39,7 +39,7 @@ class AuthProvider with ChangeNotifier {
   Future<ApiResponse> login(BuildContext context) async {
     isLoading = true;
     notifyListeners();
-     final username = usernameController.text.trim();
+    final username = usernameController.text.trim();
     final password = passwordController.text.trim();
     CustomModal modal = CustomModal();
 
@@ -53,7 +53,8 @@ class AuthProvider with ChangeNotifier {
       final response = await http
           .post(
             Uri.parse(
-                'https://forzados.goldfields.cl/api/mobile/auth'),
+                /*        'https://forzados.goldfields.cl/api/mobile/auth'), */
+                'https://sntps2jn-3001.brs.devtunnels.ms/api/mobile/auth'),
             headers: headers,
             body: body,
           )
@@ -61,7 +62,7 @@ class AuthProvider with ChangeNotifier {
       isLoading = false;
       notifyListeners();
       if (response.statusCode == 200) {
-         resetData();
+        resetData();
         final decodedToken = JwtDecoder.decode(response.body);
         final jwtModel = JwtModel.fromJson(decodedToken);
         await getUserByEmail(jwtModel.email, context);
@@ -101,7 +102,6 @@ class AuthProvider with ChangeNotifier {
 
   Future<ApiResponseDetailUser> getUserByEmail(
       String email, BuildContext context) async {
-    
     try {
       isLoading = true;
       notifyListeners();
@@ -110,25 +110,24 @@ class AuthProvider with ChangeNotifier {
         '/api/usuarios/por-correo',
         jsonEncode({'email': email}),
       );
-
       isLoading = false;
       notifyListeners();
 
+      print('Res ${res.body}');
       if (res.statusCode == 200) {
         ApiResponseDetailUser user = apiResponseDetailUserFromJson(res.body);
         if (user.flagNuevoIngreso == 1) {
           showPasswordDialog(context, user.id, () async {
             await PreferencesHelper().setUser(user);
             await checkSession();
-                        navigateHandleRole(user.roles.keys.toList(), context);
+            navigateHandleRole(user.roles.keys.toList(), context);
           });
 
           return user;
         } else {
-      
           await PreferencesHelper().setUser(user);
           await checkSession();
-           navigateHandleRole(user.roles.keys.toList(), context);
+          navigateHandleRole(user.roles.keys.toList(), context);
           return user;
         }
       } else {
@@ -151,8 +150,11 @@ class AuthProvider with ChangeNotifier {
   void navigateHandleRole(List<String> rolesAsString, BuildContext context) {
     List<int> roles = rolesAsString.map((s) => int.parse(s)).toList();
 
-        final route = MaterialPageRoute(builder: (_) =>     MainHomePage(roles: roles,));
-        Navigator.pushReplacement(context, route);
+    final route = MaterialPageRoute(
+        builder: (_) => MainHomePage(
+              roles: roles,
+            ));
+    Navigator.pushReplacement(context, route);
   }
 
   void showPasswordDialog(
