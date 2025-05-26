@@ -165,7 +165,7 @@ class ListForzadosFlag extends StatelessWidget {
             ],
           ),
           content: SingleChildScrollView(
-            child: Column(
+            child: Column( 
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 // Sección 1: Información básica
@@ -209,8 +209,8 @@ class ListForzadosFlag extends StatelessWidget {
                 detalleItem(
                     'Riesgo', forzado.riesgoDescripcion ?? 'No disponible'),
                 detalleItem(
-                    'Probabilidad', forzado.probabilidad ?? 'No disponible'),
-                detalleItem('Impacto', forzado.impacto ?? 'No disponible'),
+                    'Probabilidad', forzado.probabilidadDescripcion ?? 'No disponible'),
+                detalleItem('Impacto', forzado.impactoDescripcion ?? 'No disponible'),
                 detalleItem(
                     'Nivel de Riesgo', forzado.nivelRiesgo ?? 'No disponible'),
 
