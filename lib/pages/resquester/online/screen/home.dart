@@ -145,7 +145,7 @@ class PageOnline extends StatelessWidget {
           width: double.infinity,
           alignment: Alignment.center,
           child: const Text(
-            'Pendientes por sincronizar',
+            'Sincronizar Data',
             style: TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.w500,

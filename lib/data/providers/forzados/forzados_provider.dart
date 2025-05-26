@@ -131,7 +131,6 @@ class ForzadosProvider with ChangeNotifier {
           String state = f.estado!.toLowerCase();
           if (state.contains("retiro")) {
             state = state.replaceAll("retiro", "retiro");
-            print(state);
           } else if (state.contains("forzado")) {
             state = state.replaceAll("forzado", "forzado");
           }
@@ -174,7 +173,16 @@ class ForzadosProvider with ChangeNotifier {
               observadoEjecucion: f.observadoEjecucion,
               proyectoDescripcion: f.proyectoDescripcion,
               proyectoId: f.proyectoId,
-              subarea: f.subarea);
+              subarea: f.subarea,
+              tagConcat: f.tagConcat,
+              reiniciado: f.reiniciado,
+              tagPrefijo: f.tagPrefijo,
+              tagSufijo: f.tagSufijo,
+              etapa: f.tipo,
+              probabilidadDescripcion: f.probabilidadDescripcion,
+              impactoDescripcion: f.impactoDescripcion,
+              nivelRiesgo: f.riesgoDescripcion
+              );
         }).toList();
 
         _forzados.sort((a, b) {
@@ -195,8 +203,8 @@ class ForzadosProvider with ChangeNotifier {
     } on http.ClientException {
       _errorMessageGetForzados =
           'Error al conectar con el servidor. Verifique la URL.';
-    } catch (e) {
-      print('Error: ${e}');
+    } catch (e, stacktrace) {
+      print('Error: ${e} line ${stacktrace}');
       _errorMessageGetForzados =
           'Error interno del servidor. Por favor, intente más tarde.';
     } finally {

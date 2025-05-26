@@ -79,6 +79,16 @@ class ForzadoItem {
   String? proyectoDescripcion;
   int? proyectoId;
   bool? observadoEjecucion;
+  String? tagConcat;
+  String? reiniciado;
+  String? tagPrefijo;
+  String? tagSufijo;
+  String? etapa;
+  String? probabilidad;
+  String? impacto;
+  String? nivelRiesgo;
+  String? impactoDescripcion;
+  String? probabilidadDescripcion;
 
   ForzadoItem({
     this.id,
@@ -119,53 +129,70 @@ class ForzadoItem {
     this.proyectoDescripcion,
     this.proyectoId,
     this.observadoEjecucion,
+    this.tagConcat,
+    // Nuevos campos
+    this.reiniciado,
+    this.tagPrefijo,
+    this.tagSufijo,
+    this.etapa,
+    this.probabilidadDescripcion,
+    this.impactoDescripcion,
+    this.nivelRiesgo,
   });
- 
   factory ForzadoItem.fromJson(Map<String, dynamic> json) => ForzadoItem(
-        id: json["id"] ?? 0,
-        nombre: json["nombre"] ?? "",
-        area: json["area"] ?? "",
-        subarea: json["subarea"] ?? "",
-        tipo: json["tipo"] ?? "",
-        solicitante: json["solicitante"] ?? "",
-        aprobador: json["aprobador"] ?? "",
-        ejecutor: json["ejecutor"] ?? "",
-        solicitanteAId: json["solicitanteAId"] ?? 0,
-        aprobadorAId: json["aprobadorAId"] ?? 0,
-        ejecutorAId: json["ejecutorAId"] ?? 0,
-        solicitanteBId: json["solicitanteBId"] ?? 0,
-        aprobadorBId: json["aprobadorBId"] ?? 0,
-        ejecutorBId: json["ejecutorBId"] ?? 0,
-        estado: json["estado"] ?? "",
-        fecha: json["fecha"] == null ? null : DateTime.tryParse(json["fecha"]),
-         estadoSolicitud: json["estadoSolicitud"] ?? "",
-        fechaRealizacion: json["fechaRealizacion"] == null
-            ? null
-            : DateTime.tryParse(json["fechaRealizacion"]),
-        fechaCierre: json["fechaCierre"],
-        usuarioCreacion: json["usuarioCreacion"] ?? "",
-        fechaCreacion: json["fechaCreacion"] == null
-            ? null
-            : DateTime.tryParse(json["fechaCreacion"]),
-        usuarioModificacion: json["usuarioModificacion"] ?? "",
-        fechaModificacion: json["fechaModificacion"] == null
-            ? null
-            : DateTime.tryParse(json["fechaModificacion"]),
-        subareaCodigo: json["subareaCodigo"] ?? "",
-        subareaDescripcion: json["subareaDescripcion"] ?? "",
-        disciplinaDescripcion: json["disciplinaDescripcion"] ?? "",
-        turnoDescripcion: json["turnoDescripcion"] ?? "",
-        motivoRechazoDescripcion: json["motivoRechazoDescripcion"] ?? "",
-        tipoForzadoDescripcion: json["tipoForzadoDescripcion"] ?? "",
-        tagCentroCodigo: json["tagCentroCodigo"] ?? "",
-        tagCentroDescripcion: json["tagCentroDescripcion"] ?? "",
-        responsableNombre: json["responsableNombre"] ?? "",
-        riesgoDescripcion: json["riesgoDescripcion"] ?? "",
-        interlock: json["interlock"] ?? 0,
-        proyectoDescripcion: json["proyectoDescripcion"] ?? "",
-        descripcion: json["descripcion"] ?? "",
-        proyectoId: json["proyectoId"] ?? 0,
-        observadoEjecucion: json["observadoEjecucion"] == null ? false : true,
+      id: json["id"] ?? 0,
+      nombre: json["nombre"] ?? "",
+      area: json["area"] ?? "",
+      subarea: json["subarea"] ?? "",
+      tipo: json["tipo"] ?? "",
+      solicitante: json["solicitante"] ?? "",
+      aprobador: json["aprobador"] ?? "",
+      ejecutor: json["ejecutor"] ?? "",
+      solicitanteAId: json["solicitanteAId"] ?? 0,
+      aprobadorAId: json["aprobadorAId"] ?? 0,
+      ejecutorAId: json["ejecutorAId"] ?? 0,
+      solicitanteBId: json["solicitanteBId"] ?? 0,
+      aprobadorBId: json["aprobadorBId"] ?? 0,
+      ejecutorBId: json["ejecutorBId"] ?? 0,
+      estado: json["estado"] ?? "",
+      fecha: json["fecha"] == null ? null : DateTime.tryParse(json["fecha"]),
+      estadoSolicitud: json["estadoSolicitud"] ?? "",
+      fechaRealizacion: json["fechaRealizacion"] == null
+          ? null
+          : DateTime.tryParse(json["fechaRealizacion"]),
+      fechaCierre: json["fechaCierre"],
+      usuarioCreacion: json["usuarioCreacion"] ?? "",
+      fechaCreacion: json["fechaCreacion"] == null
+          ? null
+          : DateTime.tryParse(json["fechaCreacion"]),
+      usuarioModificacion: json["usuarioModificacion"] ?? "",
+      fechaModificacion: json["fechaModificacion"] == null
+          ? null
+          : DateTime.tryParse(json["fechaModificacion"]),
+      subareaCodigo: json["subareaCodigo"] ?? "",
+      subareaDescripcion: json["subareaDescripcion"] ?? "",
+      disciplinaDescripcion: json["disciplinaDescripcion"] ?? "",
+      turnoDescripcion: json["turnoDescripcion"] ?? "",
+      motivoRechazoDescripcion: json["motivoRechazoDescripcion"] ?? "",
+      tipoForzadoDescripcion: json["tipoForzadoDescripcion"] ?? "",
+      tagCentroCodigo: json["tagCentroCodigo"] ?? "",
+      tagCentroDescripcion: json["tagCentroDescripcion"] ?? "",
+      responsableNombre: json["responsableNombre"] ?? "",
+      riesgoDescripcion: json["riesgoDescripcion"] ?? "",
+      interlock: json["interlock"] ?? 0,
+      proyectoDescripcion: json["proyectoDescripcion"] ?? "",
+      descripcion: json["descripcion"] ?? "",
+      proyectoId: json["proyectoId"] ?? 0,
+      observadoEjecucion: json["observadoEjecucion"] == null ? false : true,
+      tagConcat: json['tagConcat'],
+      reiniciado:json['reiniciado'],
+      tagPrefijo:json['tagPrefijo'],
+      tagSufijo:json['tagSufijo'],
+      etapa:json['etapa'],
+      probabilidadDescripcion:json['probabilidadDescripcion'],
+      impactoDescripcion:json['impactoDescripcion'],
+      nivelRiesgo:json['riesgoDescripcion'],
+      
       );
 
   Map<String, dynamic> toJson() => {
@@ -207,6 +234,6 @@ class ForzadoItem {
         "proyectoDescripcion": proyectoDescripcion,
         "proyectoId": proyectoId,
         "observadoEjecucion": observadoEjecucion,
+        'tagConcat': tagConcat
       };
-      
 }
