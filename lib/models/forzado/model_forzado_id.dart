@@ -40,9 +40,9 @@ class ForzadoId {
   int? turno;
   int? interlockSeguridad;
   int? responsable;
-  int? riesgo;
+  String? riesgo;
   int? probabilidad;
-  int? impacto;
+  String? impacto;
   int? solicitante;
   int? aprobador;
   int? ejecutor;
