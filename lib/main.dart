@@ -103,7 +103,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => ListForzadosEjecutadosProvider()),
         ChangeNotifierProvider(
             create: (_) => ForzadosProvider()
-              ..fetchCountForzados()
+              ..fetchCountForzados() 
               ..getForzados()),
         ChangeNotifierProvider(create: (_) => BottomNavigationBarProvider()),
         ChangeNotifierProvider(create: (_) => DropdownProviderManagerOffline()),
