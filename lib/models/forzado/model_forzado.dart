@@ -60,7 +60,7 @@ class ForzadoItem {
   String? descripcion;
   String? estadoSolicitud;
   DateTime? fechaRealizacion;
-  dynamic fechaCierre;
+  DateTime? fechaCierre;
   String? usuarioCreacion;
   DateTime? fechaCreacion;
   String? usuarioModificacion;
@@ -160,11 +160,13 @@ class ForzadoItem {
       fechaRealizacion: json["fechaRealizacion"] == null
           ? null
           : DateTime.tryParse(json["fechaRealizacion"]),
-      fechaCierre: json["fechaCierre"],
-      usuarioCreacion: json["usuarioCreacion"] ?? "",
+       usuarioCreacion: json["usuarioCreacion"] ?? "",
       fechaCreacion: json["fechaCreacion"] == null
           ? null
           : DateTime.tryParse(json["fechaCreacion"]),
+      fechaCierre: json["fechaCierre"] == null
+          ? null
+          : DateTime.tryParse(json["fechaCierre"]),
       usuarioModificacion: json["usuarioModificacion"] ?? "",
       fechaModificacion: json["fechaModificacion"] == null
           ? null

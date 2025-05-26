@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:forzado/pages/resquester/offline/datatable%20_forzados.dart';
 import 'package:forzado/pages/resquester/offline/screens/bajas_forzado_offline.dart';
 import 'package:forzado/pages/resquester/offline/screens/list_forzados_ejecutado_alta.dart';
@@ -54,18 +53,21 @@ class _PageOfflineState extends State<PageOffline> {
                       offset: Offset(-2.0, 0),
                     ),
                   ],
-                  color: const Color(0xff639777),
+                  color: const Color.fromARGB(255, 139, 40, 10),
                   borderRadius: BorderRadius.circular(10)),
-              child: Column(
+              child: const Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  SvgPicture.asset('assets/svgs/bank.svg'),
+                  const Icon(
+                    Icons.arrow_circle_up_rounded,
+                    color: Colors.white,
+                  ),
                   const SizedBox(
                     height: 5,
                   ),
                   const Text(
-                    'Solicitud de Forzado',
-                    style: TextStyle(color: Colors.white),
+                    'Crear Solicitud de Forzado',
+                    style: const TextStyle(color: Colors.white),
                   )
                 ],
               ),
@@ -90,18 +92,21 @@ class _PageOfflineState extends State<PageOffline> {
                       offset: Offset(-2.0, 0),
                     ),
                   ],
-                  color: const Color(0xff8B280A),
+                  color: const Color.fromARGB(255, 41, 101, 64),
                   borderRadius: BorderRadius.circular(10)),
-              child: Column(
+              child: const Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  SvgPicture.asset('assets/svgs/bank.svg'),
+                  const Icon(
+                    Icons.arrow_circle_down_rounded,
+                    color: Colors.white,
+                  ),
                   const SizedBox(
                     height: 5,
                   ),
                   const Text(
-                    'Solicitud de Retiro Forzado',
-                    style: TextStyle(color: Colors.white),
+                    'Crear Solicitud de Retiro',
+                    style: const TextStyle(color: Colors.white),
                   )
                 ],
               ),
@@ -117,24 +122,30 @@ class _PageOfflineState extends State<PageOffline> {
               margin: const EdgeInsets.only(top: 20),
               padding: const EdgeInsets.all(20),
               width: double.infinity,
-              decoration: BoxDecoration(boxShadow: const [
-                BoxShadow(
-                  color: Colors.black26,
-                  spreadRadius: 2.0,
-                  blurRadius: 5.0,
-                  offset: Offset(-2.0, 0),
-                ),
-              ], color: Colors.blue, borderRadius: BorderRadius.circular(10)),
-              child: Column(
+              decoration: BoxDecoration(
+                  boxShadow: const [
+                    BoxShadow(
+                      color: Colors.black26,
+                      spreadRadius: 2.0,
+                      blurRadius: 5.0,
+                      offset: Offset(-2.0, 0),
+                    ),
+                  ],
+                  color: const Color.fromARGB(255, 0, 72, 131),
+                  borderRadius: BorderRadius.circular(10)),
+              child: const Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  SvgPicture.asset('assets/svgs/bank.svg'),
+                  const Icon(
+                    Icons.cloud_upload,
+                    color: Colors.white,
+                  ),
                   const SizedBox(
                     height: 5,
                   ),
                   const Text(
-                    'Solicitudes Pendientes de Sincronización',
-                    style: TextStyle(color: Colors.white),
+                    'Solicitudes de Forzado Pendientes a Sincronizar',
+                    style: const TextStyle(color: Colors.white),
                   )
                 ],
               ),
@@ -150,23 +161,29 @@ class _PageOfflineState extends State<PageOffline> {
               margin: const EdgeInsets.only(top: 20),
               padding: const EdgeInsets.all(20),
               width: double.infinity,
-              decoration: BoxDecoration(boxShadow: const [
-                BoxShadow(
-                  color: Colors.black26,
-                  spreadRadius: 2.0,
-                  blurRadius: 5.0,
-                  offset: Offset(-2.0, 0),
-                ),
-              ], color: Colors.orange, borderRadius: BorderRadius.circular(10)),
-              child: Column(
+              decoration: BoxDecoration(
+                  boxShadow: const [
+                    BoxShadow(
+                      color: Colors.black26,
+                      spreadRadius: 2.0,
+                      blurRadius: 5.0,
+                      offset: Offset(-2.0, 0),
+                    ),
+                  ],
+                  color: const Color.fromARGB(255, 203, 97, 5),
+                  borderRadius: BorderRadius.circular(10)),
+              child: const Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  SvgPicture.asset('assets/svgs/bank.svg'),
-                  const SizedBox(
+                  Icon(
+                    Icons.cloud_upload,
+                    color: Colors.white,
+                  ),
+                  SizedBox(
                     height: 5,
                   ),
-                  const Text(
-                    'Solicitudes Retiro Pendientes de Sincronización',
+                  Text(
+                    'Solicitudes de Retiro Pendientes a Sincronizar',
                     style: TextStyle(color: Colors.white),
                   )
                 ],
