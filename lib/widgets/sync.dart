@@ -110,116 +110,116 @@ class _SyncDataState extends State<SyncData> {
     await box.clear();
     await box.addAll(forzadosAlta);
   }
+bool _isExpanded = true; 
 
   
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      children: [
-        Container(
-          padding: const EdgeInsets.all(16.0),
-          decoration: BoxDecoration(
-            color: const Color.fromARGB(29, 0, 30, 57),
-            borderRadius: BorderRadius.circular(12.0),
-            border: Border.all(color: const Color(0xff001d39), width: 2.0),
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Icon(
-                Icons.sync,
-                color: Color(0xff001d39),
-                size: 40.0,
-              ),
-              const SizedBox(height: 10.0),
-              const Text(
-                "¡Recuerda Sincronizar!",
-                style: TextStyle(
-                  fontSize: 18.0,
-                  fontWeight: FontWeight.bold,
-                  color: Color(0xff001d39),
-                ),
-              ),
-              const SizedBox(height: 8.0),
-              const Text(
-                "Antes de realizar inspecciones con el App, "
-                "asegúrate de presionar el botón de sincronizar para mantener toda la información actualizada.",
-                style: TextStyle(
-                  fontSize: 14.0,
-                  color: Colors.blueGrey,
-                ),
-              ),
-              const SizedBox(height: 16.0),
-              Align(
-                alignment: Alignment.centerRight,
-                child: ElevatedButton(
-                  onPressed: () async {
-                    setState(() {
-                      synchronizing = true;
-                    });
-                    try {
-                      final providerDropdownOff =
-                          Provider.of<DropdownProviderManagerOffline>(context,
-                              listen: false);
-
-                               print('no click');
-                             await   providerDropdownOff.pushUsers(context);
-                               print('click');
- 
-
-
-                      await Future.delayed(const Duration(seconds: 2));
-                      // await providerDropdownOff.clearAndPopulateBoxes(context);
-                      await getForzados(context);
-                      // Mostramos el modal después de completar la sincronización
-                      CustomModal().showModal(
-                          context, 'Sincronizados', Colors.green, true);
-                    } catch (e, stackTrace) {
-                      print('Ocurrio un error ${e} stack 😎 ${stackTrace}');
-                      CustomModal().showModal(
-                          context, 'Ocurrió un error', Colors.red, false);
-                    } finally {
-                      setState(() {
-                        synchronizing = false;
-                      });
-                    }
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xffc8a064),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8.0),
-                    ),
-                  ),
-                  child: Text(
-                    synchronizing == true
-                        ? 'Sincronizando informacion'
-                        : "Sincronizar",
-                    style: const TextStyle(color: Color(0xff001d39)),
-                  ),
-                ),
-              ),
-            ],
-          ),
+   return Column(
+  children: [
+    if (_isExpanded) ...[
+      Container(
+        padding: const EdgeInsets.all(16.0),
+        decoration: BoxDecoration(
+          color: const Color.fromARGB(29, 0, 30, 57),
+          borderRadius: BorderRadius.circular(12.0),
+          border: Border.all(color: const Color(0xff001d39), width: 2.0),
         ),
-        Positioned(
-            right: 10,
-            top: 10,
-            child: Consumer<AuthProvider>(
-              builder: (context, value, child) {
-                return IconButton(
-                  onPressed: () {
-                    value.toggleModalSync();
-                  },
-                  icon: const Icon(
-                    Icons.close,
-                    color: AppColors.primary,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Icon(
+              Icons.sync,
+              color: Color(0xff001d39),
+              size: 40.0,
+            ),
+            const SizedBox(height: 10.0),
+            const Text(
+              "¡Recuerda Sincronizar!",
+              style: TextStyle(
+                fontSize: 18.0,
+                fontWeight: FontWeight.bold,
+                color: Color(0xff001d39),
+              ),
+            ),
+            const SizedBox(height: 8.0),
+            const Text(
+              "Antes de realizar inspecciones con el App, "
+              "asegúrate de presionar el botón de sincronizar para mantener toda la información actualizada.",
+              style: TextStyle(
+                fontSize: 14.0,
+                color: Colors.blueGrey,
+              ),
+            ),
+            const SizedBox(height: 16.0),
+            Align(
+              alignment: Alignment.centerRight,
+              child: ElevatedButton(
+                onPressed: () async {
+                  setState(() {
+                    synchronizing = true;
+                  });
+                  try {
+                    final providerDropdownOff =
+                        Provider.of<DropdownProviderManagerOffline>(context, listen: false);
+                    await providerDropdownOff.pushUsers(context);
+                    await getForzados(context);
+                    CustomModal().showModal(
+                        context, 'Sincronizados', Colors.green, true);
+                  } catch (e, stackTrace) {
+                    CustomModal().showModal(
+                        context, 'Ocurrió un error', Colors.red, false);
+                  } finally {
+                    setState(() {
+                      synchronizing = false;
+                    });
+                  }
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xffc8a064),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8.0),
                   ),
-                );
-              },
-            )),
-      ],
-    );
+                ),
+                child: Text(
+                  synchronizing ? 'Sincronizando...' : "Sincronizar",
+                  style: const TextStyle(color: Color(0xff001d39)),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+      const SizedBox(height: 8),
+    ],
+    // Botón para expandir/colapsar
+    InkWell(
+      onTap: () => setState(() => _isExpanded = !_isExpanded),
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+        decoration: BoxDecoration(
+          color: const Color(0xff001d39),
+          borderRadius: BorderRadius.circular(20),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(
+              _isExpanded ? Icons.keyboard_arrow_up : Icons.keyboard_arrow_down,
+              color: Colors.white,
+            ),
+            const SizedBox(width: 8),
+            Text(
+              _isExpanded ? "Ocultar" : "Mostrar recordatorio",
+              style: const TextStyle(color: Colors.white),
+            ),
+          ],
+        ),
+      ),
+    ),
+  ],
+);
   }
 }
