@@ -389,7 +389,7 @@ class ListForzadosFlag extends StatelessWidget {
                     padding:
                         const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                   ),
-                  onPressed: forzado.observadoEjecucion == true
+                  onPressed: forzado.observadoEjecucion == true && forzado.estado == 'pendiente'
                       ? () async {
                           final dropdownProvider =
                               Provider.of<DropDownValuesManagerProvider>(
