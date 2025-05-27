@@ -165,13 +165,14 @@ class ListForzadosFlag extends StatelessWidget {
             ],
           ),
           content: SingleChildScrollView(
-            child: Column( 
+            child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 // Sección 1: Información básica
                 _buildSectionTitle('Información Básica'),
                 detalleItem('ID', forzado.id?.toString() ?? 'No disponible'),
-                detalleItem('Estado', forzado.estado!.toUpperCase() ?? 'No disponible'),
+                detalleItem(
+                    'Estado', forzado.estado!.toUpperCase() ?? 'No disponible'),
                 detalleItem('Etapa', forzado.etapa ?? 'No disponible'),
                 detalleItem(
                     'Reiniciado', forzado.reiniciado == true ? 'Sí' : 'No'),
@@ -208,9 +209,10 @@ class ListForzadosFlag extends StatelessWidget {
                 _buildSectionTitle('Evaluación de Riesgos'),
                 detalleItem(
                     'Riesgo', forzado.riesgoDescripcion ?? 'No disponible'),
+                detalleItem('Probabilidad',
+                    forzado.probabilidadDescripcion ?? 'No disponible'),
                 detalleItem(
-                    'Probabilidad', forzado.probabilidadDescripcion ?? 'No disponible'),
-                detalleItem('Impacto', forzado.impactoDescripcion ?? 'No disponible'),
+                    'Impacto', forzado.impactoDescripcion ?? 'No disponible'),
                 detalleItem(
                     'Nivel de Riesgo', forzado.nivelRiesgo ?? 'No disponible'),
 
@@ -224,7 +226,6 @@ class ListForzadosFlag extends StatelessWidget {
                 detalleItem('Responsable',
                     forzado.responsableNombre ?? 'No disponible'),
 
-                
                 // // Sección 8: Adicionales
                 // _buildSectionTitle('Información Adicional'),
                 // detalleItem('Usuario Creación',
@@ -337,7 +338,7 @@ class ListForzadosFlag extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const Text(
-                    'Tag-Concat:',
+                    'Tag :',
                     style: TextStyle(
                       fontSize: 11,
                       fontWeight: FontWeight.w500,
@@ -389,7 +390,8 @@ class ListForzadosFlag extends StatelessWidget {
                     padding:
                         const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                   ),
-                  onPressed: forzado.observadoEjecucion == true && forzado.estado == 'pendiente'
+                  onPressed: forzado.observadoEjecucion == true &&
+                          forzado.estado == 'pendiente'
                       ? () async {
                           final dropdownProvider =
                               Provider.of<DropDownValuesManagerProvider>(

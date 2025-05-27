@@ -55,7 +55,7 @@ class CardsDashBoard extends StatelessWidget {
                   child: DashboardCard(
                     title: "Forzado Pendiente",
                     count: value.pendingHighCount,
-                    color: AppColors.earringColor,
+                    color: const Color.fromARGB(251, 251, 188, 4),
                   ),
                 ),
                 const SizedBox(width: 16),
@@ -63,7 +63,7 @@ class CardsDashBoard extends StatelessWidget {
                   child: DashboardCard(
                     title: "Retiro Pendiente",
                     count: value.pendingLowCount,
-                    color: AppColors.earringColor,
+                    color: const Color.fromARGB(251, 251, 188, 4),
                   ),
                 ),
               ],
@@ -75,7 +75,7 @@ class CardsDashBoard extends StatelessWidget {
                   child: DashboardCard(
                     title: "Forzado Aprobado",
                     count: value.approvedHighCount,
-                    color: AppColors.approvedColor,
+                    color: const Color.fromARGB(255, 96, 153, 246),
                   ),
                 ),
                 const SizedBox(width: 16),
@@ -83,33 +83,31 @@ class CardsDashBoard extends StatelessWidget {
                   child: DashboardCard(
                     title: "Retiro Aprobado",
                     count: value.approvedLowCount,
-                    color: AppColors.approvedColor,
+                    color: const Color.fromARGB(255, 96, 153, 246),
                   ),
                 ),
               ],
             ),
             const SizedBox(height: 16),
-            
             Row(
               children: [
                 Expanded(
                   child: DashboardCard(
                     title: "Forzado Rechazado",
                     count: value.rejectedHighCount,
-                    color: AppColors.refusedColor,
+                    color: const Color.fromARGB(255, 242, 142, 134),
                   ),
                 ),
                 const SizedBox(width: 16),
                 Expanded(
                   child: DashboardCard(
-                    title: "Retiro Rechazado",
+                    title: "Retiro     Rechazado",
                     count: value.rejectedLowCount,
-                    color: AppColors.refusedColor,
+                    color: const Color.fromARGB(255, 242, 142, 134),
                   ),
                 ),
               ],
             ),
-
             const SizedBox(height: 16),
             Row(
               children: [
@@ -120,13 +118,13 @@ class CardsDashBoard extends StatelessWidget {
                     color: AppColors.executedColor,
                   ),
                 ),
-                  // Expanded(
-                  //   child: DashboardCard(
-                  //     title: "Retiro Ejecutado",
-                  //     count: value.executedHighCount,
-                  //     color: AppColors.executedColor,
-                  //   ),
-                  // ),
+                // Expanded(
+                //   child: DashboardCard(
+                //     title: "Retiro Ejecutado",
+                //     count: value.executedHighCount,
+                //     color: AppColors.executedColor,
+                //   ),
+                // ),
               ],
             ),
             const SizedBox(height: 16),
@@ -136,7 +134,7 @@ class CardsDashBoard extends StatelessWidget {
                   child: DashboardCard(
                     title: "Finalizado",
                     count: value.finalizedCount,
-                    color: const Color.fromARGB(255, 73, 104, 215),
+                    color: AppColors.finalizedColor,
                   ),
                 ),
               ],
@@ -174,7 +172,8 @@ class DashboardCard extends StatelessWidget {
             BoxShadow(
               color: Colors.black.withOpacity(0.15),
               blurRadius: 10,
-              offset: const Offset(3, 3), // Sombra desplazada hacia abajo y derecha
+              offset:
+                  const Offset(3, 3), // Sombra desplazada hacia abajo y derecha
             ),
             BoxShadow(
               color: Colors.white.withOpacity(0.1),

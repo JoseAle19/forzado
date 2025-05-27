@@ -23,44 +23,6 @@ class PageOnline extends StatelessWidget {
         GestureDetector(
           onTap: () {
             final route =
-                MaterialPageRoute(builder: (_) =>   StepperForm());
-            Navigator.push(context, route);
-          },
-          child: Container(
-            padding: const EdgeInsets.all(20),
-            width: double.infinity,
-            decoration: BoxDecoration(
-                boxShadow: const [
-                  BoxShadow(
-                    color: Colors.black26,
-                    spreadRadius: 2.0,
-                    blurRadius: 5.0,
-                    offset: Offset(-2.0, 0),
-                  ),
-                ],
-                color: const Color.fromARGB(255, 139, 40, 10),
-                borderRadius: BorderRadius.circular(10)),
-            child: const Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Icon(
-                  Icons.arrow_circle_up_rounded,
-                  color: Colors.white,
-                ),
-                SizedBox(
-                  height: 5,
-                ),
-                Text(
-                  'Crear Solicitud de Forzado',
-                  style: TextStyle(color: Colors.white),
-                )
-              ],
-            ),
-          ),
-        ),
-        GestureDetector(
-          onTap: () {
-            final route =
                 MaterialPageRoute(builder: (_) => const ListForzadosFlag());
             Navigator.push(context, route);
           },
@@ -99,6 +61,45 @@ class PageOnline extends StatelessWidget {
         ),
         GestureDetector(
           onTap: () {
+            final route = MaterialPageRoute(builder: (_) => StepperForm());
+            Navigator.push(context, route);
+          },
+          child: Container(
+            margin: const EdgeInsets.only(top: 20),
+            padding: const EdgeInsets.all(20),
+            width: double.infinity,
+            decoration: BoxDecoration(
+                boxShadow: const [
+                  BoxShadow(
+                    color: Colors.black26,
+                    spreadRadius: 2.0,
+                    blurRadius: 5.0,
+                    offset: Offset(-2.0, 0),
+                  ),
+                ],
+                color: const Color.fromARGB(255, 139, 40, 9),
+                borderRadius: BorderRadius.circular(10)),
+            child: const Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Icon(
+                  Icons.arrow_circle_up_rounded,
+                  color: Colors.white,
+                ),
+                SizedBox(
+                  height: 5,
+                ),
+                Text(
+                  'Crear Solicitud de Forzado',
+                  style: TextStyle(color: Colors.white),
+                )
+              ],
+            ),
+          ),
+        ),
+
+        GestureDetector(
+          onTap: () {
             final route = MaterialPageRoute(
                 builder: (_) => const ListForzadosRequesterLow());
             Navigator.push(context, route);
@@ -116,7 +117,7 @@ class PageOnline extends StatelessWidget {
                     offset: Offset(-2.0, 0),
                   ),
                 ],
-                color: const Color.fromARGB(255, 41, 101, 64),
+                color: const Color.fromARGB(255, 41, 101, 65),
                 borderRadius: BorderRadius.circular(10)),
             child: const Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -137,7 +138,7 @@ class PageOnline extends StatelessWidget {
           ),
         ),
 
-        Container(
+        /*   Container(
           margin: const EdgeInsets.only(top: 20),
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 5),
           // height: 40,
@@ -153,7 +154,7 @@ class PageOnline extends StatelessWidget {
             ),
             textAlign: TextAlign.center,
           ),
-        ),
+        ), */
         // Colocar el widget de sincronizacion
         Consumer<AuthProvider>(
           builder: (context, value, child) {
