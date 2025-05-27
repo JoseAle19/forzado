@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -776,6 +777,7 @@ class DropDownValuesManagerProvider with ChangeNotifier {
       if (res.statusCode == 200) {
         final decodeData = modelForzadoByIdFromJson(res.body);
         ForzadoId f = decodeData.data![0];
+      print('Resultado de la request ${f.tagPrefijo} ');
 
         // Filtrar valores de las listas y asignar
         currentValueTagPrefijo = _listPrefijos.firstWhere(
@@ -783,7 +785,6 @@ class DropDownValuesManagerProvider with ChangeNotifier {
           orElse: () =>
               modelone.Value(id: 0, codigo: '', descripcion: 'No encontrado'),
         );
-
         currentValueTagCentro = _listCentros.firstWhere(
           (element) => element.id == f.tagCentro,
           orElse: () =>
@@ -866,8 +867,8 @@ class DropDownValuesManagerProvider with ChangeNotifier {
       } else {
         print('Ocurrió un error en la solicitud: ${res.statusCode}');
       }
-    } catch (e) {
-      print('Ocurrió un error: $e');
+    } catch (e, stacktrace) {
+      print('Ocurrió un error: $e line ${stacktrace}');
     }
   }
 
