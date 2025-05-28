@@ -12,7 +12,7 @@ class HomeApprove extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-       appBar: AppBar(
+      appBar: AppBar(
         automaticallyImplyLeading: false,
         title: Consumer<AuthProvider>(
           builder: (context, value, child) => Text(
@@ -30,7 +30,7 @@ class HomeApprove extends StatelessWidget {
                     MaterialPageRoute(builder: (_) => const LoginPage());
                 Navigator.pushAndRemoveUntil(context, route, (route) => false);
               },
-              icon: const  Icon(Icons.login_rounded))
+              icon: const Icon(Icons.login_rounded))
         ],
       ),
       body: Padding(
@@ -58,7 +58,7 @@ class HomeApprove extends StatelessWidget {
                         offset: Offset(-2.0, 0),
                       ),
                     ],
-                    color: const Color(0xff639777),
+                    color: const Color.fromARGB(255, 139, 40, 9),
                     borderRadius: BorderRadius.circular(10)),
                 child: const Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -108,7 +108,7 @@ class HomeApprove extends StatelessWidget {
                         offset: Offset(-2.0, 0),
                       ),
                     ],
-                    color: const Color(0xff8B280A),
+                    color: const Color.fromARGB(255, 41, 101, 65),
                     borderRadius: BorderRadius.circular(10)),
                 child: const Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -144,10 +144,7 @@ class HomeApprove extends StatelessWidget {
               color: const Color(0xffD9D9D9),
               width: double.infinity,
             ),
-
             const CardsDashBoard()
-
-            
           ],
         ),
       ),

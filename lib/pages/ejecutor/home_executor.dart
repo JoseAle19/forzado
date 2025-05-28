@@ -13,7 +13,7 @@ class HomeExecuter extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-       appBar: AppBar(
+      appBar: AppBar(
         automaticallyImplyLeading: false,
         title: Consumer<AuthProvider>(builder: (context, value, child) {
           String name = utf8.decode(latin1.encode(value.user!.name),
@@ -25,7 +25,6 @@ class HomeExecuter extends StatelessWidget {
           );
         }),
         actions: [
-          
           IconButton(
               onPressed: () async {
                 await PreferencesHelper().clear();
@@ -61,7 +60,7 @@ class HomeExecuter extends StatelessWidget {
                         offset: Offset(-2.0, 0),
                       ),
                     ],
-                    color: const Color(0xff639777),
+                    color: const Color.fromARGB(255, 139, 40, 9),
                     borderRadius: BorderRadius.circular(10)),
                 child: const Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -111,7 +110,7 @@ class HomeExecuter extends StatelessWidget {
                         offset: Offset(-2.0, 0),
                       ),
                     ],
-                    color: const Color(0xff8B280A),
+                    color: const Color.fromARGB(255, 41, 101, 65),
                     borderRadius: BorderRadius.circular(10)),
                 child: const Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -147,8 +146,6 @@ class HomeExecuter extends StatelessWidget {
               width: double.infinity,
             ),
             const CardsDashBoard()
-
-          
           ],
         ),
       ),
