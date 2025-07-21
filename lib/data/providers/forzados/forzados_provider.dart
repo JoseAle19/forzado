@@ -181,8 +181,7 @@ class ForzadosProvider with ChangeNotifier {
               etapa: f.tipo,
               probabilidadDescripcion: f.probabilidadDescripcion,
               impactoDescripcion: f.impactoDescripcion,
-              nivelRiesgo: f.riesgoDescripcion
-              );
+              nivelRiesgo: f.riesgoDescripcion);
         }).toList();
 
         _forzados.sort((a, b) {
@@ -398,6 +397,4 @@ class ForzadosProvider with ChangeNotifier {
 
     return true;
   }
-
-
 }

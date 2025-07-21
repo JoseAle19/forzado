@@ -66,4 +66,6 @@ class ApiResponseDetailUser {
         name: '',
         roles: {});
   }
+
+  get roleName => null;
 }

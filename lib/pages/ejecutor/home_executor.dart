@@ -13,7 +13,7 @@ class HomeExecuter extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
+      /*     appBar: AppBar(
         automaticallyImplyLeading: false,
         title: Consumer<AuthProvider>(builder: (context, value, child) {
           String name = utf8.decode(latin1.encode(value.user!.name),
@@ -34,7 +34,7 @@ class HomeExecuter extends StatelessWidget {
               },
               icon: const Icon(Icons.login_rounded))
         ],
-      ),
+      ), */
       body: Padding(
         padding: const EdgeInsets.all(8.0),
         child: ListView(

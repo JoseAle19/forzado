@@ -1,8 +1,8 @@
 class AppUrl {
   // Base URL del servidor
-/*   static const String url = "https://sntps2jn-3001.brs.devtunnels.ms"; */
+  static const String url = "https://sntps2jn-3001.brs.devtunnels.ms";
 
-  static const String url = "https://forzados.goldfields.cl/";
+/*   static const String url = "https://forzados.goldfields.cl/"; */
 
   // Cambia según tu configuración
 

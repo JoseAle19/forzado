@@ -12,7 +12,7 @@ class HomeApprove extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
+/*       appBar: AppBar(
         automaticallyImplyLeading: false,
         title: Consumer<AuthProvider>(
           builder: (context, value, child) => Text(
@@ -32,7 +32,7 @@ class HomeApprove extends StatelessWidget {
               },
               icon: const Icon(Icons.login_rounded))
         ],
-      ),
+      ), */
       body: Padding(
         padding: const EdgeInsets.all(8.0),
         child: ListView(

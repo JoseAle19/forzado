@@ -27,7 +27,7 @@ class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
+      /*     appBar: AppBar(
         automaticallyImplyLeading: false,
         title: Consumer<AuthProvider>(
           builder: (context, value, child) => Text(
@@ -56,7 +56,7 @@ class _HomeState extends State<Home> {
             },
           )
         ],
-      ),
+      ), */
       body: Consumer<RequesterHomeProvider>(
         builder: (context, value, child) {
           return PageView(
